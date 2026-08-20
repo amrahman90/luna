@@ -1,0 +1,419 @@
+=====================================================================
+LUNARVOID
+Calibrated Multi-Evidence Inference, Benchmarking, and Digital
+Twinning for Lunar Lava Tube Exploration
+Research Project Plan — Version 3.0
+Supersedes: "AI-Driven Digital Twin Framework..." v2.0 and the
+Lunar_LavaTube_Research_Project_Plan v1.0
+Prepared: 03 August 2026
+=====================================================================
+
+=====================================================================
+0. WHAT CHANGED IN v3.0, AND WHY
+=====================================================================
+
+v2.0 was written to sound fundable. v1.0 was written to be executable.
+v3.0 keeps v2.0's ambition and structure while removing the claims a
+planetary-science reviewer would reject on physical grounds.
+
+The single hardest constraint, which v2.0 does not acknowledge anywhere,
+is this: THERE IS NO DIRECT OBSERVATION OF THE INTERIOR OF ANY INTACT
+LUNAR LAVA TUBE. One radar dataset indicates an accessible conduit
+behind the Mare Tranquillitatis Pit. That is the entirety of the
+subsurface ground truth for the Moon. Approximately 20 pits in mare and
+highland terrain are plausibly tube-related, out of ~281 catalogued.
+There are zero verified negatives. Roughly 2% of the surface has
+high-resolution stereo coverage.
+
+Every v2.0 component was triaged against that reality:
+
+ADOPTED (genuine improvements, incorporated in full)
+  - Work-package structure. Improves legibility and fundability.
+  - The benchmark dataset (LLTB-1). PROMOTED TO FLAGSHIP DELIVERABLE.
+    This is the strongest single idea in v2.0 and directly completes
+    the degradation-ladder work already planned in v1.0.
+  - Decision support / mission target ranking (WP6). Already present in
+    v1.0 as a value-of-information layer; v2.0's framing is better.
+  - Strategic per-venue publication planning.
+  - Explicit ablation, blind testing, domain adaptation, uncertainty
+    estimation as named validation activities.
+  - Project naming and positioning ambition.
+
+REFRAMED (good instinct, unsupportable as stated)
+  - "Digital Twin" -> "Uncertainty-Quantified Geospatial Model (UQGM)".
+    A digital twin is a model synchronised to a real observed system.
+    You cannot twin an unobserved void. We build honest twins only
+    where observation exists: terrestrial analog caves (full LiDAR
+    ground truth) and lunar pit interiors down to the shadow line
+    (multi-illumination photometric stereo). Everything deeper is a
+    SIMULATION ENSEMBLE with error bars, and is labelled as such.
+  - "Global Lunar Lava Tube Database" -> "Regional Candidate Catalogue
+    with Calibrated Probabilities and Explicit Coverage Bounds".
+    Global detection is impossible at 2% stereo coverage. Claiming it
+    invites immediate rejection.
+  - "Knowledge Graph" -> "Evidence-Provenance Graph". Retained, but its
+    job is tracking which instrument, at which resolution, with which
+    uncertainty, supports each candidate — not ontological reasoning
+    over minerals we have not measured. This version is actually
+    useful for multi-scale fusion.
+  - "Roof thickness estimation" -> retained ONLY at pits where wall
+    cross-sections are visible (e.g. ~26 m at Marius Hills Hole).
+    Generalised roof-thickness mapping is not derivable from available
+    data.
+  - Multi-agent robotics -> moved to WP7 as a PARTNER-DEPENDENT
+    extension with a defined interface, not a core deliverable.
+
+REJECTED (would fail technical review)
+  - "Gravity inversion" to reconstruct tube geometry. GRAIL's effective
+    resolution is 10-30 km; candidate tubes are 60-300 m wide. This is
+    a 2-3 order-of-magnitude mismatch. Exactly this error produced a
+    published candidate ~9 km wide, 60 km long, 605 m deep with 55 m
+    central height — a geometry structural modellers regard as
+    implausible as a single stable void. GRAIL is retained strictly as
+    a coarse km-scale mass-deficit prior.
+  - Ice detection inside mare lava tubes. LAMP and volatile datasets
+    address polar cold traps; candidate tubes are equatorial mare
+    features. Wrong latitude band, wrong physics.
+  - ShadowCam as a detection input. It images permanently shadowed
+    polar regions; mare tubes are not in PSRs. Retained only as an
+    illumination-limits reference.
+  - NeRF / Gaussian Splatting as a primary reconstruction method for
+    orbital data. Both assume photometric consistency across many
+    views. Lunar surface albedo, extreme illumination variation and
+    sparse view geometry break that assumption. Retained as a
+    candidate method for TERRESTRIAL analog reconstruction only,
+    benchmarked against ASP stereo rather than assumed superior.
+  - Reinforcement learning for mission planning. No validated
+    environment exists to train in; an RL policy trained on a
+    simulator we ourselves built is circular.
+  - "Interactive LLM Assistant" as a research contribution. It is an
+    interface, not a result.
+  - The v2.0 self-scorecard (e.g. "Digital Twin 3/10 -> 10/10"). Adding
+    components a team cannot execute LOWERS funding competitiveness.
+    Reviewers score feasibility, not component count.
+
+NET EFFECT: fewer promises, all of them defensible; one flagship
+deliverable (LLTB-1) the field genuinely lacks; and an explicit
+scope-discipline section, which reads as maturity rather than
+limitation.
+
+=====================================================================
+1. VISION AND PRINCIPAL GOAL
+=====================================================================
+
+Develop and validate a calibrated, uncertainty-quantified inference
+framework that fuses orbital morphometry, thermal, radar and gravity
+evidence to identify and rank lunar lava tube candidates; establish the
+first open benchmark for planetary void detection; and deliver
+mission-ready target rankings to robotic cave-exploration programmes.
+
+Guiding principle: WE DO NOT DETECT LAVA TUBES. WE INFER THEM, WITH
+ERROR BARS, AND WE SAY SO. A tree is above the surface; a lava tube is
+below it. Photogrammetry reconstructs only the illuminated envelope, so
+every optical conclusion is indirect inference from surface expression.
+
+Central methodological insight carried from v1.0: replace the forestry
+canopy height model (CHM = DSM - DTM) with a DEPRESSION-DEPTH RASTER
+(sink-filled DTM minus DTM). This is its exact mathematical mirror and
+is the anchor of the detection method.
+
+Distinctive scientific hook: the field searches for HOLES. We also
+search for ROOFS — the shallow, linear, laterally continuous residual
+depression produced by flexure of an intact tube roof.
+
+=====================================================================
+2. RESEARCH QUESTIONS
+=====================================================================
+
+RQ1  At what ground sample distance, sun geometry and roof thickness
+     does a lava tube's surface expression become undetectable?
+RQ2  Can intact-roof sag be discriminated from sinuous rilles, wrinkle
+     ridges, graben, lava channels and secondary crater chains at 2-5 m
+     DTM posting?
+RQ3  Does hierarchical fusion of morphometric, thermal, radar and
+     gravity evidence across a 2 m-to-30 km scale gap yield
+     better-calibrated void probabilities than any single stream?
+RQ4  How should candidate uncertainty be represented so that mission
+     planners can act on it, and which targets maximise expected
+     information gain per unit mission cost?
+RQ5  Can uncertainty-quantified geospatial models of pit interiors and
+     analog caves support quantitative habitat and traversability
+     assessment?
+
+=====================================================================
+3. WORK PACKAGES
+=====================================================================
+
+WP0 — FOUNDATION AND REPRODUCIBILITY (M0-M3)
+Tasks: prior-art matrix over the ~33-reference corpus; Tier-0
+infrastructure and environment snapshot; download index layers
+(SHAPEFILE_NAC_DTMS with relative-linear-error and triangulation-RMS
+fields, Lunar Pit Atlas, Hurwitz 195-rille shapefile, NAC Stereo
+Catalog) and intersect them to define scope; reproduce one published
+LROC NAC DTM end-to-end with ISIS + Ames Stereo Pipeline at Mare
+Tranquillitatis Pit to within its stated error bars.
+Deliverable: reproducibility report; scope map; working depression-depth
+primitive verified against catalogued pits.
+
+WP1 — LLTB-1 BENCHMARK AND DETECTABILITY LIMITS (M3-M9) [FLAGSHIP]
+Tasks: convert NASA Planetary Pits and Caves analog LiDAR (King's Bowl
+530 MB; Indian Tunnel surface 1.1 GB and cave interior 2.07 GB; Fieg;
+Sheepridge — research/academic licence, ~4.5 GB total) from .f32 to
+LAS/COPC; add Corona/Lanzarote TLS and Grotta di Monte Intraleo open
+datasets; optionally fly a drone survey over a tube field with an
+existing cave survey. Register surveyed void footprints to surface
+DTMs. Build the degradation ladder: 2 cm -> 0.5 m -> 2 m -> 5 m -> 60 m,
+re-rendered under a Hapke photometric function across a sun
+incidence/azimuth grid, with NAC-like MTF blur, noise and pushbroom
+geometry, vegetation returns stripped.
+Deliverable: LLTB-1 — the Lunar Lava Tube Benchmark. Paired
+surface/subsurface geometry, multi-resolution, multi-illumination, with
+true labels, standardised splits, baseline scores and an evaluation
+harness. This is the deliverable the field most conspicuously lacks and
+the one most likely to be widely cited.
+Also: the DETECTABILITY CURVE (detection probability vs GSD x sun angle
+x roof thickness), which directly informs future mission camera specs.
+
+WP2 — ROOF-SAG SEARCH AND CANDIDATE CATALOGUE (M9-M15)
+Tasks: port the LLTB-1-validated detector to all published NAC DTMs in
+mare terrain; detrend against SLDEM2015 (+/-60 deg, ~59 m/px, 3-4 m
+vertical); anisotropic Hessian/Frangi vesselness tuned to 60-300 m
+widths; continuity and alignment scoring. Build the CONFUSION LAYER
+FIRST — rasterised Hurwitz rilles (offset-corrected, since they were
+digitised on Kaguya TC), LU5M812TGT craters (~5M to 0.4 km), wrinkle
+ridges, graben. Exploit the Hurwitz catalogue's own definition: rilles
+are included only where continuously unroofed, so partially roofed
+bridge segments are precisely what it excludes. Multi-illumination
+stacking on NAC CDRs, treating sun azimuth as the pseudo-temporal axis.
+Targeted Tier-1 DTM builds only where the Stereo Catalog permits.
+Deliverable: regional candidate catalogue with per-candidate evidence
+vectors, confuser-discrimination scores, explicit coverage bounds and
+honest nulls.
+
+WP3 — MULTI-EVIDENCE FUSION AND CALIBRATION (M15-M24)
+Tasks: co-register evidence layers to SLDEM2015 — Diviner
+topography-removed nighttime temperature and rock abundance, Mini-RF /
+DFSAR circular polarisation, GRAIL gradients (Gzz, Ghh from
+GRGM1200A/GL1500E via pyshtools), SELENE LRS echo tracks. Build the
+hierarchical multi-resolution model (Pyro/NumPyro Bayesian, or a GNN
+over nested cells) that bridges 2 m to 30 km. Positive-unlabeled
+learning over ~20 positives with no verified negatives; one-class and
+anomaly baselines; MGC3 + HiRISE cross-body pretraining with explicit
+domain-gap reporting; conformal prediction (MAPIE/crepes) for calibrated
+coverage. Physics-informed screening encoding finite-element stability
+bounds (~60-300 m realistic spans) as a prior, with Costello-type
+protolith contrasts (competent basalt at Tranquillitatis vs friable
+vesicular material at Marius Hills) as a covariate.
+Scope: Marius Hills + Mare Tranquillitatis + Mare Ingenii.
+Deliverable: calibrated P(void) maps with coverage guarantees; the
+scale-bridging machinery is independently publishable in a remote
+sensing venue.
+
+WP4 — UNCERTAINTY-QUANTIFIED GEOSPATIAL MODELS (M18-M27)
+Tasks: automated pit-interior reconstruction with per-vertex error bars
+using multi-illumination photometric stereo plus shadow-boundary
+constraints, extending single-site photogrammetric work into a pipeline.
+Full-geometry UQGMs for terrestrial analog caves where LiDAR ground
+truth exists. For unobserved lunar interiors, produce SIMULATION
+ENSEMBLES (thermal, radiation, structural) spanning the plausible
+geometry space rather than a single false-precision model. Thermal
+boundary conditions anchored on published values: pits ~100 K warmer
+than surroundings at night; modelled cave interiors near a constant
+~290 K. Explicitly label every layer as OBSERVED, INFERRED or SIMULATED.
+Deliverable: UQGM platform; per-site geometry with error bars;
+simulation ensembles with stated assumptions.
+
+WP5 — EVIDENCE-PROVENANCE GRAPH AND GEOLOGICAL CONTEXT (M20-M30)
+Tasks: build a graph linking candidate -> evidence -> instrument ->
+resolution -> uncertainty -> derived claim, enabling automated audit of
+which conclusions rest on which measurements. Attach geological context
+(host terrain, protolith competence, rille association, unit age) from
+published catalogues. Vision-transformer / segmentation models applied
+ONLY to tasks with real labels: pit-wall stratigraphy, boulder and rock
+abundance, collapse morphology. No mineral or ice classification claims
+without matched spectral ground truth.
+Deliverable: queryable provenance graph; per-claim traceability.
+
+WP6 — MISSION DECISION SUPPORT (M24-M30)
+Tasks: value-of-information ranking combining P(void) with accessibility
+(slope, boulder abundance, illumination and comms windows), descent
+corridor and anchor-point analysis from WP4 geometry, and science return.
+Habitat-suitability scoring built strictly on quantities we can defend:
+radiation shielding from measured roof thickness where visible, thermal
+stability from Diviner-anchored models, structural plausibility from
+stability bounds. Every score reported as a distribution.
+Deliverable: ranked target list with uncertainty; handoff package for
+LunarLeaper- and Moon-Diver-class mission teams.
+
+WP7 — ROBOTIC EXPLORATION INTERFACE (PARTNER-DEPENDENT, M27+)
+Not a core deliverable of this project. We define and publish the
+INTERFACE: LLTB-1-derived analog environments for SLAM and traversability
+benchmarking, UQGM-derived descent corridors, and uncertainty-aware
+waypoint specifications. Multi-agent architectures, tether systems and
+swarm hardware are contributed by robotics partners (e.g. DFKI, TU Delft,
+university robotics groups already publishing lava-tube SLAM datasets)
+rather than built in-house.
+Deliverable: interface specification; joint benchmark with one partner.
+
+=====================================================================
+4. METHOD STACK
+=====================================================================
+
+Photogrammetry: USGS ISIS3/ISIS8 (lronac2isis, spiceinit web=yes,
+lronaccal RadiometricType=RADIANCE — the IOF default silently produces
+zero-filled cubes with the SPICE web service), NASA Ames Stereo Pipeline
+(bundle_adjust, parallel_stereo --stereo-algorithm asp_mgm, point2dem),
+shape-from-shading refinement with albedo-artifact controls.
+Terrain: WhiteboxTools FillDepressions, RichDEM, GDAL, SAGA, geomorphons.
+Point clouds: PDAL, CloudCompare, Open3D.
+Learning: PyTorch; 2D baselines (Mask R-CNN class) benchmarked against
+point-cloud-native networks (PointNet++, KPConv, Point Transformer v3),
+with explicit focus on overhang cases where 2.5D rasters structurally
+fail. Conformal prediction for calibration. PU-learning estimators.
+Fusion: Pyro/NumPyro hierarchical Bayesian; GNN over multi-scale cells.
+Gravity: pyshtools spherical-harmonic gradients.
+Rendering: Hapke BRDF via ASP SfS forward model, PANGU, or Blender.
+
+=====================================================================
+5. DATA AND LICENCE DISCIPLINE
+=====================================================================
+
+Substrate: LROC NAC DTMs (2-5 m, quarterly releases), filtered by
+shapefile error metrics. Imagery: NAC EDR/CDR fetched by product ID only
+— the archive is ~579 TB EDR and >1 PB CDR and must never be mirrored.
+Trend surface: SLDEM2015. Mid-scale: Kaguya TC USGS/ASP DTMs (~35 m,
+LOLA-aligned) as Cloud Optimized GeoTIFFs, enabling windowed HTTP reads
+that collapse storage requirements. Labels: Lunar Pit Atlas, restricted
+to the ~20 mare/highland pits. Hard negatives: Hurwitz rilles,
+LU5M812TGT. Transfer: MGC3 + HiRISE. High-resolution follow-up:
+Chandrayaan-2 OHRC (0.25 m GSD) and TMC-2 stereo triplets — exclude the
+~200 GB attitude-kernel directory, pull date-matched kernels only.
+Baseline: published ESSA weights and detection shapefiles, used as a
+baseline to beat and never as a label source (it was trained on the Pit
+Atlas; scoring it against the Atlas is circular).
+
+Licence audit, not assumption: PDS holdings are public domain but not
+analysis-ready; the NASA analog dataset is research/academic use only
+with commercial use requiring written consent; ISRO mandates prescribed
+acknowledgement wording; LROC web-product terms differ from PDS.
+
+=====================================================================
+6. VALIDATION AND EVALUATION PROTOCOL
+=====================================================================
+
+The base rate is unforgiving. Maria at ~16% of a 3.79e7 km^2 surface,
+tiled at 5 x 5 km, gives ~240,000 candidate tiles against ~20 usable
+positives. A 1% false-positive rate returns ~2,400 false candidates
+against 20 real ones — precision near 0.8%. Accuracy and balanced-set F1
+conceal this entirely.
+
+Mandatory reporting:
+  - performance on unseen PITS, SITES, ILLUMINATION and INSTRUMENTS —
+    never unseen tiles from seen pits (NAC images overlap; DTMs derive
+    from overlapping pairs; flagship pits recur across nearly every
+    derived product);
+  - one entire mare basin held out untouched until final evaluation;
+  - detection probability vs GSD and sun angle (the WP1 curve);
+  - FALSE POSITIVES PER 10^4 km^2, not false-positive rate;
+  - explicit confusion breakdown against all five confuser classes;
+  - conformal coverage rather than hard detections;
+  - cross-body tests (Mars-trained/Moon-tested and reverse);
+  - ablation over every evidence stream in the fusion model;
+  - blind test on a partner-withheld region where feasible.
+
+Validation levels: (1) terrestrial ground truth — the only true
+validation available; (2) reproduction of published lunar products;
+(3) simulation-based consistency; (4) cross-body transfer; (5) expert
+geological review; (6) statistical calibration testing.
+
+=====================================================================
+7. SCOPE DISCIPLINE — WHAT THIS PROJECT DELIBERATELY EXCLUDES
+=====================================================================
+
+Stated explicitly, because reviewers reward it: no global detection
+claim; no gravity inversion for sub-kilometre geometry; no in-house
+robotic hardware; no mineral or ice classification without matched
+spectral ground truth; no ISRU or life-support engineering; no claim of
+verified subsurface detection anywhere except where independent radar
+evidence already exists. Each exclusion has a physical or resource
+justification recorded in Section 0.
+
+=====================================================================
+8. RISK REGISTER
+=====================================================================
+
+R1  No lunar ground truth -> calibrated probabilities only; all method
+    validation anchored on Earth (WP1).
+R2  Sag signal below DTM noise -> tested on LLTB-1 BEFORE lunar work;
+    pre-registered pivot to pit-chain and bridge-segment detection.
+R3  Confuser dominance -> confusion layer built before scoring.
+R4  SfS albedo/topography confusion manufacturing false depressions ->
+    multi-illumination consistency checks.
+R5  Overclaiming GRAIL or thermal -> both constrained by written policy
+    in every output: GRAIL is km-scale only; thermal IR sees the pit,
+    not the cave.
+R6  Stereo scarcity (~2%) -> regional scope declared up front.
+R7  Compute cost -> tiered infrastructure: Tier 0 (~$10-20/month) for
+    all of WP0-WP2; GPU hourly on demand; Tier 1 (16-32 dedicated cores,
+    64-128 GB RAM, 1-2 TB NVMe) only in bursts, using --resume-at-corr
+    for spot instances. Ceiling ~$800 self-funded before credits.
+R8  Prior-art collision with ESSA -> cite early, position as inference
+    vs detection, audit product-list overlap.
+R9  Label circularity -> pit-level splits; ESSA never used as labels.
+R10 Licence exposure -> per-dataset audit before any redistribution.
+R11 Scope creep (the failure mode of v2.0) -> WP7 partner-gated;
+    Section 7 exclusions enforced at each stage gate.
+
+=====================================================================
+9. TIMELINE, GATES AND DELIVERABLES
+=====================================================================
+
+M3   G0: reproduction matches published DTM; depression primitive
+     recovers known pits; scope map complete.
+M9   G1: LLTB-1 v1.0 released + detectability curve. PAPER 1.
+M15  G2: candidate catalogue with full confusion analysis and coverage
+     bounds. PAPER 2.
+M24  G3: fusion model beats every single-stream baseline on calibrated
+     metrics on the held-out basin. PAPER 3 (+ optional methods paper).
+M30  Ranked mission-target list, UQGM platform, provenance graph, full
+     open-source release, partner benchmark. PAPERS 4-5.
+
+Deliverables: LLTB-1 benchmark dataset and harness; open detection and
+fusion codebase; regional candidate catalogue; UQGM platform; evidence-
+provenance graph; ranked mission target list; web visualisation portal.
+
+=====================================================================
+10. PUBLICATION STRATEGY
+=====================================================================
+
+1. Remote Sensing of Environment / ISPRS Journal — LLTB-1 and the
+   detectability curve (benchmark papers are durable and heavily cited).
+2. Icarus or Planetary and Space Science — roof-sag candidate catalogue.
+3. IEEE TGRS — hierarchical multi-scale fusion across a 10^4 scale gap
+   (methodologically novel independent of the lunar application).
+4. JGR Planets — uncertainty-quantified pit-interior models.
+5. Acta Astronautica — mission target ranking and habitat scoring.
+6. IEEE RA-L — joint robotics benchmark with WP7 partner.
+Nature Astronomy remains aspirational and should be attempted only if
+WP3 produces a genuinely surprising, independently corroborated result.
+
+=====================================================================
+11. BOTTOM LINE
+=====================================================================
+
+v2.0's instinct was right: this should be a platform, not a study. But a
+platform built on unsupportable physics collapses under review. v3.0
+keeps every genuinely strong v2.0 idea — work packages, the benchmark,
+decision support, strategic publishing — while replacing gravity
+inversion, global claims and twins of unobserved voids with calibrated
+inference, explicit coverage bounds and simulation ensembles.
+
+The forestry pipeline transfers; the physics does not. The point cloud
+gives the roof, never the void. Prove the method on Earth where the
+answer is known, publish the benchmark the field lacks, fuse every
+evidence stream at its honest resolution, report against a brutal base
+rate, and hand a ranked, physically screened target list to the missions
+that can actually go and look.
+
+Not "where are the holes." Where are the roofs still holding.
+=====================================================================

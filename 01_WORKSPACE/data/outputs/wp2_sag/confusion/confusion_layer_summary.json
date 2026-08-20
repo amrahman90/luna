@@ -1,0 +1,57 @@
+{
+  "generated": "2026-08-20 18:14:46.353461",
+  "dtms": [
+    "TRANQPIT1",
+    "MARIUSPIT01",
+    "INGENIIPIT"
+  ],
+  "cell_m": 50.0,
+  "class_table": {
+    "0": "background",
+    "1": "rille (Hurwitz 2013)",
+    "2": "crater chain (LU5M812TGT strip)",
+    "3": "(reserved)",
+    "4": "graben (derived placeholder, not curated)"
+  },
+  "per_dtm": {
+    "TRANQPIT1": {
+      "bbox_lonlat": [
+        33.11561975764573,
+        7.911320788723457,
+        33.26910513119691,
+        8.865035516575858
+      ],
+      "n_cells": 54426,
+      "n_rille_cells": 0,
+      "n_chain_cells": 17,
+      "n_graben_cells_placeholder": 15,
+      "out": "01_WORKSPACE/data/outputs/wp2_sag/confusion/confusion_TRANQPIT1.tif"
+    },
+    "INGENIIPIT": {
+      "bbox_lonlat": [
+        165.8969302293467,
+        -36.4403664018879,
+        166.2019998411198,
+        -35.51500691503708
+      ],
+      "n_cells": 104532,
+      "n_rille_cells": 0,
+      "n_chain_cells": 4,
+      "n_graben_cells_placeholder": 14,
+      "out": "01_WORKSPACE/data/outputs/wp2_sag/confusion/confusion_INGENIIPIT.tif"
+    },
+    "MARIUSPIT01": {
+      "bbox_lonlat": [
+        -56.97821168415103,
+        13.399113037201136,
+        -56.5567671925238,
+        15.048007348041537
+      ],
+      "n_cells": 256000,
+      "n_rille_cells": 1795,
+      "n_chain_cells": 31,
+      "n_graben_cells_placeholder": 25,
+      "out": "01_WORKSPACE/data/outputs/wp2_sag/confusion/confusion_MARIUSPIT01.tif"
+    }
+  }
+}

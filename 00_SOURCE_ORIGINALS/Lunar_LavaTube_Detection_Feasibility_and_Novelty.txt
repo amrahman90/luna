@@ -1,0 +1,512 @@
+================================================================================
+FROM DRONE FORESTRY POINT CLOUDS TO LUNAR LAVA TUBE DETECTION
+Feasibility, Novelty and Research-Gap Analysis
+Prepared: 31 July 2026
+================================================================================
+
+--------------------------------------------------------------------------------
+0. SHORT VERDICT
+--------------------------------------------------------------------------------
+
+FEASIBLE       : Yes, technically. Every stage of your drone pipeline has a
+                 working lunar equivalent, and the data is free and public.
+
+NOVEL          : Partially. The obvious version (CNN finds pits in orbital
+                 images) is already published and crowded. The non-obvious
+                 versions are wide open and genuinely publishable.
+
+CRITICAL CAVEAT: The analogy breaks in one specific place, and if you do not
+                 design around that break the project fails. See Section 2.
+
+BEST FRAMING   : Not "detect lava tubes." Instead: "infer a calibrated,
+                 uncertainty-quantified probability of subsurface void from
+                 fused surface morphometry and geophysics, trained on
+                 terrestrial analogs degraded to lunar observing conditions."
+
+--------------------------------------------------------------------------------
+1. YOUR EXISTING PIPELINE, ABSTRACTED
+--------------------------------------------------------------------------------
+
+Drone forestry / dead-tree detection, stripped to its logic:
+
+  1. Overlapping imagery
+  2. SfM-MVS -> sparse -> dense point cloud
+  3. Ground classification (CSF / progressive TIN) -> DTM
+  4. All-return surface -> DSM
+  5. CHM = DSM - DTM   <- the key normalisation step
+  6. Object segmentation (local maxima + watershed, or point-cloud clustering)
+  7. Feature stack:
+       structural : height, crown area, crown volume, verticality, roughness,
+                    point density, gap fraction
+       spectral   : NDVI, GNDVI, NDRE, VARI, GLI
+       contextual : neighbourhood stats, slope, aspect, elevation
+  8. Supervised classifier (RF / XGBoost / PointNet++) -> live / stressed / dead
+  9. Validation against field survey
+
+The transferable core is: NORMALISE TOPOGRAPHY AGAINST A LOCAL REFERENCE
+SURFACE, SEGMENT ANOMALIES, STACK HETEROGENEOUS FEATURES, CLASSIFY, VALIDATE.
+That core transfers to the Moon cleanly. The physics does not.
+
+--------------------------------------------------------------------------------
+2. THE CRITICAL BREAK IN THE ANALOGY  (read this before anything else)
+--------------------------------------------------------------------------------
+
+A tree is ABOVE the surface. A lava tube is BELOW it.
+
+Photogrammetry, on Earth or the Moon, reconstructs only the outer envelope of
+the illuminated surface. A point cloud of the Moon contains exactly zero direct
+information about a void 20-100 m beneath the regolith. You cannot "see" a lava
+tube in a point cloud the way you see a dead crown in a CHM.
+
+Everything you can do optically is INDIRECT INFERENCE from surface expression:
+
+   DIRECT EVIDENCE (visible)
+     - Pits / skylights: roof collapse holes. Rare but unambiguous.
+     - Sinuous rilles: many are collapsed tubes, roof entirely gone.
+     - Pit chains / collapse chains: aligned depressions along a lineament.
+
+   INDIRECT EVIDENCE (subtle, mostly unexploited -> this is your opportunity)
+     - Roof sag: a shallow, linear, laterally continuous residual depression
+       above an intact tube, from slow flexure of the roof slab.
+     - "Bridges": uncollapsed segments between two collapsed rille segments.
+     - Anomalous regolith thermophysics above a thin roof.
+     - Local mass deficit in gravity.
+
+   SUBSURFACE EVIDENCE (true measurement, but coarse or sparse)
+     - GRAIL Bouguer gravity gradients (mass deficit)
+     - Radar sounding (SELENE LRS) and radar imaging (LRO Mini-RF)
+
+Consequence for your design: DO NOT build a "detector." Build a multi-evidence
+inference system where the point cloud is one input among several, and where
+the output is a probability with an honest error bar. That reframing is also
+where the novelty lives.
+
+Corollary: negatives are not negatives. An area with no pit is not an area with
+no tube. This makes it a positive-unlabeled (PU) learning problem, not a normal
+binary classification problem. Most planetary ML papers get this wrong.
+
+--------------------------------------------------------------------------------
+3. PARAMETER TRANSLATION TABLE
+--------------------------------------------------------------------------------
+
+DRONE / FORESTRY                 -> LUNAR EQUIVALENT
+-------------------------------------------------------------------------------
+RGB / multispectral imagery      -> LROC NAC 0.5-2.0 m/px
+                                    Chandrayaan-2 OHRC ~0.25-0.30 m/px
+                                    Kaguya/SELENE TC 10 m/px
+                                    Chandrayaan-2 TMC-2 ~5 m/px
+                                    Chang'E-2 CCD 7 m/px
+
+SfM-MVS dense cloud              -> ASP parallel_stereo on NAC stereo pairs
+                                    + point cloud fusion across multiple pairs
+                                    + shape-from-shading (SfS) refinement
+
+DTM (ground classification)      -> Regional trend / low-pass surface fitted to
+                                    the NAC DTM; or SLDEM2015 (LOLA + Kaguya TC,
+                                    ~59 m/px) as the "reference ground"
+
+CHM = DSM - DTM                  -> RESIDUAL TOPOGRAPHY = DTM - trend surface.
+                                    NOTE: inverted sign. You want NEGATIVE
+                                    residuals (depressions), not positive.
+                                    *** Practical trick: run a hydrological
+                                    sink-fill (WhiteboxTools / RichDEM), then
+                                    FILLED minus ORIGINAL. That difference
+                                    raster is a depression-depth map and is the
+                                    exact mathematical mirror of a CHM. This is
+                                    the single cleanest bridge between your two
+                                    domains. ***
+
+Individual tree segmentation     -> Closed-depression segmentation; shadow-blob
+                                    segmentation in raw NAC; connected-component
+                                    labelling on the depression-depth raster
+
+NDVI / GNDVI / NDRE              -> There is no true equivalent. Substitutes:
+                                    - Diviner nighttime temperature anomaly
+                                      (topography-removed, Powell et al. 2023)
+                                    - Diviner rock abundance
+                                    - Mini-RF circular polarisation ratio (CPR)
+                                    - M3 / Kaguya MI derived FeO, TiO2
+                                    - Optical maturity (OMAT)
+                                    - Photometric roughness from multi-phase
+                                      NAC observations
+
+Tree height                      -> Pit depth (from shadow length + sun geometry,
+                                    and from DTM)
+
+Crown diameter                   -> Pit / depression diameter, funnel diameter
+
+Crown volume                     -> Void volume estimate from 3D reconstruction
+
+Verticality / point roughness    -> Wall slope, overhang presence, floor block
+                                    abundance, curvature, surface roughness
+
+Multi-TEMPORAL NDVI decline      -> Multi-ILLUMINATION stacking. The Moon is
+                                    static, but sun azimuth/incidence varies
+                                    across the >2.5 million NAC images. Treat
+                                    illumination angle as the pseudo-temporal
+                                    axis. Photometric stereo from that stack is
+                                    a real and underused signal.
+
+Field survey ground truth        -> Lunar Pit Atlas (Wagner & Robinson 2021),
+                                    281 catalogued pits; Mini-RF conduit
+                                    detection at Mare Tranquillitatis Pit
+                                    (Carrer et al. 2024); LRS + GRAIL at
+                                    Marius Hills (Kaku et al. 2017; Chappaz et
+                                    al. 2017; Zhu et al. 2024)
+
+No equivalent                    -> GRAIL gravity gradients (Gzz, Ghh) from
+                                    GRGM1200A / GL1500E spherical harmonics.
+                                    This is your only true volumetric sensor.
+
+--------------------------------------------------------------------------------
+4. DATA FEASIBILITY
+--------------------------------------------------------------------------------
+
+WHAT EXISTS AND IS FREE
+  - LROC NAC EDR/CDR: >2.5 million images, most of the surface at ~0.7-1.5 m
+  - LROC NAC stereo: historically only ~2% of the surface has proper
+    high-resolution stereo coverage. This is the binding constraint.
+  - Published LROC NAC DTMs: a few hundred sites, typically 2-5 m post spacing,
+    registered to LOLA with sub-metre vertical / <10 m horizontal accuracy
+  - SLDEM2015 (LOLA + Kaguya TC): global, ~59 m/px equatorial
+  - LOLA: global altimetry, much denser near poles
+  - Diviner: global thermal, ~128 ppd products with topographic removal
+  - Mini-RF: S-band and X-band radar, partial coverage
+  - GRAIL: global gravity to high degree/order, but effective spatial resolution
+    only ~10-30 km
+  - SELENE LRS: 5 MHz sounder, sparse orbital tracks
+  - Chandrayaan-2 OHRC / TMC-2 via ISSDC Pradan; M3 via PDS Imaging
+  - Lunar Pit Atlas (ASU) as the label set
+
+FEASIBILITY BY STAGE
+  Stereo DTM generation        : ROUTINE. ISIS + Ames Stereo Pipeline. Free,
+                                 open source, well documented for NAC.
+  SfS refinement               : FEASIBLE but delicate and compute-heavy;
+                                 requires careful albedo/topography separation.
+  Depression / residual maps   : TRIVIAL once you have DTMs.
+  Feature stacking             : MODERATE. Reprojection and co-registration
+                                 across instruments with wildly different
+                                 footprints is the real work.
+  ML classification            : FEASIBLE, but see Section 6 on label scarcity.
+  Global-scale processing      : HARD. NAC images are ~52,000 x 5,000 px.
+                                 Full-Moon processing is an HPC problem, not a
+                                 laptop problem. Scope regionally.
+
+HARD DATA LIMITS
+  - Stereo coverage sparsity is the number one constraint. You cannot make a
+    global high-resolution point cloud today.
+  - Illumination: pit interiors are only lit near local noon at low latitudes.
+    At high latitude and in polar regions, shadows destroy stereo matching.
+  - Extreme class imbalance: ~281 catalogued pits across ~3.79 x 10^7 km^2 of
+    lunar surface. And most of those are impact-melt pits, NOT lava-tube
+    related. Only about 20 sit in mare or highland terrain, which is the
+    subset actually relevant to tubes.
+  - Ground truth is effectively nonexistent. One pit (Mare Tranquillitatis) has
+    radar evidence of an actual conduit. Nothing has ever been measured in situ.
+
+--------------------------------------------------------------------------------
+5. NOVELTY AUDIT - WHAT IS ALREADY PUBLISHED
+--------------------------------------------------------------------------------
+
+Be honest with yourself about prior art before writing a proposal. The
+following are DONE and will not carry a paper on their own:
+
+  DONE - Automated pit detection by thresholding NAC images
+         (PitScan; Wagner & Robinson 2014)
+  DONE - Comprehensive pit catalogue
+         (Lunar Pit Atlas, Wagner & Robinson 2021, 281 features)
+  DONE - Deep learning detection of candidate cave entrances
+         (Watson & Baldini, Icarus 2025). Mask R-CNN with ResNet50 backbone,
+         trained jointly on lunar data, Martian HiRISE pit data, and synthetic
+         lunar imagery made by implanting warped Martian pit pixels into empty
+         NAC frames. Reported ~89% bbox F1 and ~96% mask F1.
+  DONE - Photogrammetric 3D reconstruction of lava tube pits
+         (Zhou et al. 2024, Earth and Space Science). Refined census cost,
+         coarse-to-fine point cloud registration, weighted multi-pair fusion,
+         2 m DTMs of Mare Tranquillitatis Pit and Marius Hills Hole.
+  DONE - Mono/stereo 3D analysis of pit interiors (Wagner & Robinson 2022)
+  DONE - GRAIL gradiometry and cross-correlation for buried void detection
+         (Chappaz et al. 2017; Zhu et al. 2024)
+  DONE - Radar sounder detection of subsurface echoes at Marius Hills
+         (Kaku et al. 2017, SELENE LRS)
+  DONE - Radar imaging evidence of an accessible conduit beneath the Mare
+         Tranquillitatis Pit (Carrer et al. 2024, Nature Astronomy)
+  DONE - Thermal characterisation of pits: Tranquillitatis and Ingenii pits run
+         roughly 100 K warmer than surroundings at night; modelled cave
+         interiors sit near a constant ~290 K
+         (Horvath et al. 2022). Important negative result: thermal IR detects
+         the PIT well but is essentially blind to the CAVE behind it.
+  DONE - Roof stability and maximum stable width modelling
+         (Blair et al. 2017; Theinat et al. 2020; Chwala et al. 2024)
+  DONE - Terrestrial analog geophysics: ERT, GPR, TLS/LiDAR at Lanzarote
+         Corona system, Lava Beds NM, Ape Cave; gravity forward modelling from
+         a terrestrial analog (Montanez Munoz et al. 2025)
+  DONE - Protolith / rock-competence context for the two flagship pits
+         (Costello et al. 2026, JGR Planets): Tranquillitatis sits in competent
+         dense basalt, Marius Hills in a more friable, vesicular protolith.
+
+So: "I will use deep learning on orbital images to find lunar pits" is 2025
+work. You need to go past it.
+
+--------------------------------------------------------------------------------
+6. WHERE THE REAL NOVELTY IS  (ranked, highest first)
+--------------------------------------------------------------------------------
+
+GAP 1 - MULTI-MODAL, MULTI-SCALE PROBABILISTIC FUSION            [HIGH NOVELTY]
+  Every evidence stream above exists as a SEPARATE paper. Nobody has built a
+  single calibrated model that ingests NAC-DTM morphometry, Diviner thermal
+  anomaly and rock abundance, Mini-RF CPR, GRAIL gravity gradients and LRS
+  echoes, and outputs P(void | all evidence) with uncertainty.
+  The hard and interesting part is the SCALE MISMATCH: your morphometry is at
+  2-5 m and your gravity is at 10-30 km. That is 3-4 orders of magnitude. A
+  hierarchical / multi-resolution Bayesian model, or a graph neural network
+  over a multi-scale cell hierarchy, is a genuine methodological contribution
+  in its own right and is publishable in a remote sensing venue independent of
+  the lunar result.
+
+GAP 2 - DETECTING UNCOLLAPSED TUBES FROM ROOF SAG                [HIGH NOVELTY]
+  Everyone searches for holes. Almost nobody has systematically searched for
+  the subtle, laterally continuous, linear residual depression that an INTACT
+  roof over a void should produce. This is the closest true analog to your CHM
+  workflow, and it is your strongest single idea.
+  Method sketch: high-pass / trend-removed NAC DTM -> directional (anisotropic)
+  filtering -> ridge/valley (Hessian eigenvalue, Frangi-style vesselness)
+  detection tuned to linear depressions of 60-300 m width -> continuity and
+  alignment scoring against mapped sinuous rilles -> screen candidates against
+  mechanical plausibility (Gap 6).
+  Risk to control: sinuous rilles, wrinkle ridges, graben, secondary crater
+  chains and lava channels all produce linear depressions. Your entire
+  contribution rests on discriminating sag from these. Build that
+  discrimination test FIRST, on terrestrial data where you know the answer.
+
+GAP 3 - TERRESTRIAL-TO-LUNAR DOMAIN ADAPTATION WITH PHYSICAL
+        DEGRADATION AND A RESOLUTION-ABLATION STUDY          [HIGH-MED NOVELTY]
+  This is where your existing drone expertise becomes an asset rather than a
+  loose analogy.
+  Published work has done Mars-to-Moon transfer and synthetic pit implantation.
+  Nobody has taken real drone/LiDAR point clouds over terrestrial lava tube
+  fields with KNOWN cave surveys underneath, and systematically degraded them
+  to lunar observing conditions:
+     - resample 2 cm -> 0.5 m -> 2 m -> 5 m -> 60 m
+     - re-render under lunar photometric function (Hapke) at varied sun
+       incidence/azimuth
+     - inject NAC-like noise, MTF blur, and pushbroom geometry
+     - remove atmospheric/vegetation returns to mimic bare regolith
+  Then answer the question nobody has answered: AT WHAT GROUND SAMPLE DISTANCE
+  AND SUN ANGLE DOES A TUBE SIGNATURE BECOME UNDETECTABLE? That single curve
+  is a highly citable result and directly informs future mission camera specs.
+  Analog sites with existing survey data: Corona/Lanzarote (~5 km TLS-mapped),
+  Lava Beds NM California, Craters of the Moon Idaho, Undara Australia,
+  Kazumura and Thurston Hawaii, Icelandic tubes, Ape Cave Washington.
+
+GAP 4 - POINT-CLOUD-NATIVE DEEP LEARNING FOR PLANETARY SURFACES   [MED-HIGH]
+  Essentially all planetary DL is 2D CNNs on rasters. Running PointNet++,
+  KPConv or a Point Transformer directly on lunar point clouds - the way modern
+  forestry does with PointNet++ on ALS data - is close to unexplored.
+  Advantage: rotation/illumination invariance and native handling of overhangs,
+  which a 2.5D raster literally cannot represent. Pit overhangs are exactly
+  where rasters fail and point clouds win. Strong technical hook.
+
+GAP 5 - POSITIVE-UNLABELED LEARNING AND CALIBRATED UNCERTAINTY         [MED]
+  With ~20 relevant positives and no true negatives anywhere on the Moon,
+  standard supervised metrics are close to meaningless. PU learning, one-class
+  / anomaly detection (normalising flows, deep SVDD), conformal prediction for
+  calibrated coverage, and explicit reporting of expected false positives per
+  10^4 km^2 would be a methodological correction to the existing literature.
+  This is a "we did the statistics properly" paper and those age well.
+
+GAP 6 - PHYSICS-INFORMED SCREENING                                     [MED]
+  Existing gravity-based candidates have produced geologically implausible
+  geometries - one GRAIL analysis inferred a tube ~9 km wide, ~60 km long,
+  buried ~605 m deep with ~55 m central height, which structural modellers
+  regard as unlikely to be stable as a single void. Meanwhile finite-element
+  limit analyses put realistic tube widths beneath observed skylights at
+  roughly 60-300 m. Embedding those stability bounds as a prior or a
+  regularisation term, so mechanically impossible candidates are automatically
+  down-weighted, is a clean and defensible contribution.
+
+GAP 7 - AUTOMATED, UNCERTAINTY-QUANTIFIED PIT INTERIOR RECONSTRUCTION  [MED]
+  Extend Zhou et al. and Wagner & Robinson from hand-tuned single-site work
+  into an automated pipeline: multi-illumination photometric stereo plus
+  shadow-boundary constraints to reconstruct overhang geometry and the first
+  few tens of metres of the void behind the pit wall, with per-vertex error
+  bars. Directly feeds mission planning (descent corridors, anchor points).
+
+GAP 8 - VALUE-OF-INFORMATION TARGET RANKING                            [MED]
+  Given a ranked candidate list, which site should LunarLeaper-class or
+  Moon-Diver-class missions actually visit to maximise expected information
+  gain per euro? Combine your P(void) with accessibility (slope, boulder
+  abundance, illumination and comms windows) and science return. This connects
+  your work directly to live mission planning and makes it fundable.
+
+LOW NOVELTY - AVOID AS A PRIMARY CONTRIBUTION
+  - Plain CNN pit detection in NAC imagery
+  - Re-cataloguing pits
+  - Single-site photogrammetric reconstruction with no new method
+
+--------------------------------------------------------------------------------
+7. CONCRETE PROJECT OPTIONS, SIZED
+--------------------------------------------------------------------------------
+
+P1  MSc / 6-9 months  - "Resolution Limits of Lava Tube Detection"
+    Drone survey a terrestrial tube field with a surveyed cave beneath.
+    Build the point cloud. Degrade it through the lunar-conditions ladder.
+    Measure detection performance vs GSD, sun angle and roof thickness.
+    Deliverable: a detectability curve plus open code and dataset.
+    Low risk, guaranteed result, immediately citable.
+
+P2  MSc-PhD / 9-15 months - "Roof-Sag Signature Search"
+    Implement the sink-fill-difference + anisotropic vesselness detector.
+    Validate on terrestrial data (Gap 3 output), then run over all published
+    LROC NAC DTMs in mare terrain. Produce a candidate catalogue with
+    explicit confusion analysis against rilles, ridges and crater chains.
+    Medium risk (the signal may be below noise), high reward if it works.
+
+P3  PhD / 2-3 years - "Multi-Evidence Void Inference for the Moon"
+    The full Gap 1 system. Hierarchical multi-scale fusion of NAC-DTM
+    morphometry, Diviner, Mini-RF, GRAIL and LRS, with PU learning and
+    conformal calibration, physics-informed screening, and a target-ranking
+    layer. Regional scope: Marius Hills + Mare Tranquillitatis + Ingenii.
+    Highest impact. Requires geophysics collaboration.
+
+P4  Methods paper / 4-6 months - "Point Transformers for Planetary Terrain"
+    Benchmark 2D CNN vs 3D point-cloud networks on the pit classification
+    task, with explicit analysis of overhang cases where 2.5D rasters fail.
+    Publishable in a remote sensing / ML venue on the method alone.
+
+P5  Cross-body extension - do the same on Mars first.
+    HiRISE gives 0.25 m/px with far better stereo coverage, CTX gives a
+    global mosaic, and Martian pit catalogues are larger. If your goal is a
+    METHODS contribution, Mars is the easier proving ground and the Moon
+    becomes the transfer demonstration. This also strengthens Gap 3.
+
+--------------------------------------------------------------------------------
+8. HONEST RISK REGISTER
+--------------------------------------------------------------------------------
+
+R1  You cannot validate. Accept it and design for it: report calibrated
+    probabilities, not "detections." Reviewers will forgive uncertainty; they
+    will not forgive overclaiming.
+R2  The roof-sag signal may simply be below the noise floor of a 2-5 m DTM.
+    Test this on terrestrial data before committing (that is why P1 comes
+    first).
+R3  Confusion with rilles, wrinkle ridges, graben and secondary crater chains
+    is the dominant failure mode for any linear-depression method.
+R4  Shape-from-shading confuses albedo variation with topography. Lunar
+    albedo varies with maturity and composition. SfS artefacts can manufacture
+    fake depressions.
+R5  GRAIL cannot resolve a 60-300 m tube. Do not let a reviewer catch you
+    implying otherwise. GRAIL constrains only kilometre-scale mass deficits.
+R6  Thermal IR sees the pit, not the cave. Horvath et al. established this
+    explicitly. Use Diviner as a pit confirmer, not a void detector.
+R7  Compute. Global NAC processing is not a small undertaking. Scope
+    regionally and say so up front.
+R8  Prior-art collision. Watson & Baldini (2025) already occupy the obvious
+    ML-detection niche. Cite them early and position against them clearly.
+
+--------------------------------------------------------------------------------
+9. SUGGESTED TOOLCHAIN
+--------------------------------------------------------------------------------
+
+Photogrammetry   : USGS ISIS3/ISIS8 (lronac2isis, spiceinit, lronaccal),
+                   NASA Ames Stereo Pipeline (bundle_adjust, parallel_stereo,
+                   sfs, point2dem), CSM camera models for speed
+Rasters          : GDAL, rasterio, xarray, rioxarray
+Terrain analysis : WhiteboxTools (FillDepressions, StochasticDepression),
+                   RichDEM, SAGA GIS, GRASS r.geomorphon
+Point clouds     : PDAL, CloudCompare, Open3D, laspy
+Deep learning    : PyTorch; torch-points3d, KPConv, PointNet++,
+                   Point Transformer v3; Detectron2/MMDetection for 2D baselines
+Gravity          : pyshtools / SHTools for spherical harmonic gradients from
+                   GRGM1200A or GL1500E
+Synthetic render : ASP's SfS forward model, or PANGU, or Blender with a Hapke
+                   BRDF for lunar-realistic illumination simulation
+Uncertainty      : MAPIE or crepes for conformal prediction; Pyro/NumPyro for
+                   hierarchical Bayesian fusion
+
+DATA PORTALS
+  PDS Geosciences Node, PDS Imaging Node, LROC RDR (wms.lroc.asu.edu),
+  LROC QuickMap, USGS Astrogeology Astropedia, JAXA SELENE Data Archive,
+  ISRO ISSDC Pradan (OHRC, TMC-2), ASU Lunar Pit Atlas
+
+--------------------------------------------------------------------------------
+10. PRIORITY TARGET SITES
+--------------------------------------------------------------------------------
+
+  Mare Tranquillitatis Pit   8.34 N,  33.22 E
+      Funnel ~140-146 m, inner pit ~88-100 m, depth ~105 m. Radar evidence of
+      an accessible conduit. Competent dense basalt protolith. Best-studied
+      site on the Moon and your natural benchmark / calibration target.
+
+  Marius Hills Hole         14.2 N, 303.3 E
+      ~65 m diameter, ~46 m depth, ~26 m roof thickness. Sits within a sinuous
+      rille. Supported by both LRS radar echoes and GRAIL gradients. Friable,
+      vesicular protolith. Primary target of the LunarLeaper mission concept.
+
+  Mare Ingenii Pit          35.95 S, 166.06 E
+      Farside. Strong Diviner nighttime thermal anomaly.
+
+  Sinus Iridum pit          candidate identified via GRAIL cross-correlation
+
+  Rille systems for Gap 2 sag search:
+      Rima Sharp, Rima Hadley, Rimae Prinz, Schroter's Valley, Vallis Alpes,
+      and the Marius Hills rille network
+
+--------------------------------------------------------------------------------
+11. SUGGESTED 18-MONTH ROADMAP
+--------------------------------------------------------------------------------
+
+  M0-M3    Literature lock-down and prior-art matrix. Reproduce one published
+           NAC DTM end-to-end with ISIS + ASP at Mare Tranquillitatis Pit.
+           Success criterion: your DTM matches the published one within
+           stated error bars. Do not skip this.
+
+  M3-M6    Terrestrial analog campaign. Drone survey a tube field with an
+           existing cave survey. Build the reference point cloud. Establish
+           ground truth geometry.
+
+  M6-M9    Degradation ladder and detectability curve (P1). First paper.
+
+  M9-M12   Port the detector to lunar DTMs. Run over all published NAC DTMs in
+           mare terrain. Build the candidate catalogue with confusion analysis.
+
+  M12-M15  Add the non-optical evidence layers (Diviner, Mini-RF, GRAIL) and
+           build the fusion model with calibrated uncertainty.
+
+  M15-M18  Physics-informed screening, target ranking, second paper, and an
+           open dataset release. Approach the LunarLeaper / Moon Diver
+           communities with the ranked target list.
+
+--------------------------------------------------------------------------------
+12. KEY REFERENCES TO READ FIRST
+--------------------------------------------------------------------------------
+
+  Wagner & Robinson (2014) Icarus - pit distribution and formation, PitScan
+  Wagner & Robinson (2021/2022) - Lunar Pit Atlas; pit interior 3D analysis
+  Watson & Baldini (2025) Icarus - deep learning candidate cave entrances
+  Zhou et al. (2024) Earth Space Sci. - multi-stereo photogrammetric pit models
+  Carrer et al. (2024) Nature Astronomy - radar evidence of MTP cave conduit
+  Kaku et al. (2017) GRL - SELENE LRS detection at Marius Hills
+  Chappaz et al. (2017) GRL - GRAIL gradiometry for buried tubes
+  Zhu et al. (2024) Icarus - GRAIL gravity gradients at Marius Hills
+  Horvath et al. (2022) GRL - Diviner thermal environments of pits and caves
+  Powell et al. (2023) JGR Planets - Diviner nighttime T and rock abundance
+  Blair et al. (2017); Theinat et al. (2020); Chwala et al. (2024) - stability
+  Henderson et al. (2016) Icarus - LROC NAC DTM production and accuracy
+  Beyer, Alexandrov & McMichael - Ames Stereo Pipeline
+  Sauro et al. (2020) Earth-Sci. Rev.; Springer Space Sci. Rev. (2025) review -
+      lava tubes on Earth, Moon and Mars
+  Montanez Munoz et al. (2025) JGR Planets - terrestrial analog gravity model
+  Costello et al. (2026) JGR Planets - protolith properties at the two pits
+  LunarLeaper mission concept (Acta Astronautica, 2025)
+
+================================================================================
+BOTTOM LINE
+
+The pipeline transfers. The physics does not. Your point cloud gives you the
+roof, never the void. Build an inference system, not a detector; anchor it in
+terrestrial analogs where ground truth actually exists; fuse the geophysics;
+and quantify uncertainty honestly. Do that and you have two to three solid
+papers and a result that a real mission can use. Skip the terrestrial anchor
+and you have a pretty map that nobody can check.
+================================================================================

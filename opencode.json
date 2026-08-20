@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "permission": {
+    "edit": {
+      "*": "allow",
+      "00_SOURCE_ORIGINALS/**": "deny",
+      "00_SOURCE_ORIGINALS/*": "deny"
+    },
+    "bash": {
+      "*": "allow",
+      "rm *00_SOURCE_ORIGINALS*": "deny",
+      "mv *00_SOURCE_ORIGINALS*": "deny",
+      "cp * 00_SOURCE_ORIGINALS*": "deny",
+      "chmod *00_SOURCE_ORIGINALS*": "deny",
+      "chown *00_SOURCE_ORIGINALS*": "deny",
+      "touch *00_SOURCE_ORIGINALS*": "deny",
+      "tee *00_SOURCE_ORIGINALS*": "deny",
+      "sed * *00_SOURCE_ORIGINALS*": "deny",
+      "truncate *00_SOURCE_ORIGINALS*": "deny",
+      "shred *00_SOURCE_ORIGINALS*": "deny"
+    }
+  }
+}

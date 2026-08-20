@@ -1,0 +1,340 @@
+================================================================================
+RESEARCH PROJECT PLAN
+FROM DRONE FORESTRY POINT CLOUDS TO LUNAR LAVA TUBE INFERENCE
+A synthesis of the feasibility analysis, infrastructure guide, and dataset
+assessment developed in this project thread
+Prepared: 03 August 2026 | Length: under 3,000 words
+================================================================================
+
+--------------------------------------------------------------------------------
+1. PROJECT THESIS AND FRAMING
+--------------------------------------------------------------------------------
+
+Working title:
+  "Calibrated Multi-Evidence Inference of Lunar Subsurface Voids from Fused
+   Surface Morphometry and Geophysics, Anchored in Terrestrial Analogs"
+
+The founding idea: adapt a proven drone-forestry pipeline (SfM-MVS point
+clouds -> DTM/DSM -> canopy height model -> feature stacking -> supervised
+dead-tree classification) to satellite-derived 3D reconstruction of the Moon
+for lava tube detection.
+
+The single most important design decision, established in the feasibility
+analysis, is this: a tree is ABOVE the surface; a lava tube is BELOW it.
+Photogrammetry reconstructs only the illuminated outer envelope, so a lunar
+point cloud contains zero direct information about a void 20-100 m down.
+Therefore this project does NOT build a "detector." It builds a probabilistic
+INFERENCE system whose output is P(void | all evidence) with calibrated
+uncertainty, where the point cloud is one input among several.
+
+The cleanest methodological bridge from forestry to the Moon: replace
+CHM = DSM - DTM with a DEPRESSION-DEPTH RASTER computed as hydrological
+sink-fill(DTM) minus DTM. This is the exact mathematical mirror of a canopy
+height model and is the anchor of the whole method.
+
+Positioning against prior art (all verified as published):
+  - CNN pit detection exists (ESSA, Mask R-CNN, Icarus 2025).
+  - Photogrammetric pit models exist (Zhou et al. 2024).
+  - Radar conduit evidence exists at Mare Tranquillitatis (Carrer 2024).
+  - GRAIL gradiometry and SELENE LRS candidates exist (Chappaz 2017,
+    Kaku 2017, Zhu 2024).
+Our novelty lives in five gaps: (1) multi-modal multi-scale fusion, (2) intact
+roof-sag detection, (3) a terrestrial-to-lunar degradation ladder with a
+detectability curve, (4) positive-unlabeled learning with conformal
+calibration, (5) physics-informed stability screening.
+
+--------------------------------------------------------------------------------
+2. RESEARCH QUESTIONS
+--------------------------------------------------------------------------------
+
+RQ1  At what ground sample distance, sun geometry, and roof thickness does a
+     lava tube's surface expression become undetectable? (Detectability curve.)
+RQ2  Can intact-roof sag — a shallow, linear, laterally continuous residual
+     depression — be discriminated from sinuous rilles, wrinkle ridges,
+     graben, lava channels, and secondary crater chains at 2-5 m DTM posting?
+RQ3  Does fusing NAC-DTM morphometry with Diviner thermal, Mini-RF radar,
+     GRAIL gravity gradients, and SELENE LRS echoes yield better-calibrated
+     void probabilities than any single stream, given a 3-4 order-of-magnitude
+     scale mismatch (2-5 m vs 10-30 km)?
+RQ4  Which candidate sites maximize expected information gain for
+     LunarLeaper- or Moon-Diver-class missions?
+
+--------------------------------------------------------------------------------
+3. DATA ARCHITECTURE (from the dataset assessment)
+--------------------------------------------------------------------------------
+
+Primary substrate:  LROC NAC DTM collection (2-5 m posting, quarterly
+  releases) filtered through SHAPEFILE_NAC_DTMS error metrics (relative
+  linear error at 90% confidence, triangulation RMS). Usability 9.4/10.
+Imagery:            LROC NAC EDR/CDR (>2.5M images, 0.5-2 m/px) fetched by
+  product ID only — never mirrored (archive is ~579 TB EDR, >1 PB CDR).
+  NAC Stereo Catalog identifies buildable pairs. 9.2/10.
+Labels:             Lunar Pit Atlas / SHAPEFILE_LUNAR_PIT_LOCATIONS. Critical
+  constraint: of ~281 pits, most are impact-melt; only ~15-16 mare and ~5
+  highland pits are plausibly tube-related. Roughly 20 usable positives,
+  zero verified negatives. 9.1/10.
+Baseline:           ESSA model weights, training product list, and detection
+  shapefiles (Zenodo/GitHub) — a baseline to beat, never a label source,
+  because it was trained on the Pit Atlas (circularity risk). 8.9/10.
+Trend surface:      SLDEM2015 (+/-60 deg, ~59 m/px, 3-4 m vertical). 8.7/10.
+Mid-scale:          Kaguya TC observations and USGS ASP DTMs as Cloud
+  Optimized GeoTIFFs on AWS — windowed HTTP reads collapse storage needs
+  to near zero. 8.6/10.
+Ground truth:       NASA Planetary Pits and Caves Analog Dataset (FARO TLS:
+  King's Bowl, Indian Tunnel surface + cave interior, Fieg, Sheepridge;
+  ~4.5 GB, .f32 format). RESEARCH/ACADEMIC USE ONLY — no commercial use or
+  redistribution without written consent. Supplement with Corona/Lanzarote
+  TLS and Grotta di Monte Intraleo open LiDAR. 8.5/10.
+Hard negatives:     Hurwitz et al. 195-rille shapefile (drawn on Kaguya TC —
+  expect small offsets vs LROC) and LU5M812TGT (~5M craters to 0.4 km) as
+  the confuser inventory. 8.3 and 6.0/10.
+Transfer:           MGC3 Mars catalogue (>1,000 candidates, CTX/HiRISE) for
+  cross-body pretraining to escape the label famine. 8.2/10.
+Confirmation-only layers: Diviner thermal (pits run ~100 K warmer at night,
+  but thermal IR is blind to the cave behind the pit — confirmer, not
+  detector), Mini-RF/DFSAR radar, GRAIL GRGM1200A/GL1500E gradients
+  (10-30 km effective resolution only), SELENE LRS sparse tracks.
+High-upside/high-friction: Chandrayaan-2 OHRC (0.25 m GSD) and TMC-2 stereo
+  triplets via ISSDC PRADAN; exclude the ~200 GB ck-kernel directory and pull
+  only date-matched kernels; mandatory ISRO acknowledgement wording. 8.0/10.
+
+Split discipline: never random-tile-split. The same flagship pits
+(Tranquillitatis, Marius Hills, Ingenii) recur across nearly every derived
+product; splits must be by physical pit, by site, and by illumination
+geometry, with one entire mare basin held out untouched until final testing.
+
+--------------------------------------------------------------------------------
+4. INFRASTRUCTURE PLAN (from the VPS guide)
+--------------------------------------------------------------------------------
+
+Tier 0 (Months 0-9, ~$10-20/month): 2-4 vCPU, 8-16 GB RAM, 200-500 GB disk.
+  Runs GDAL, WhiteboxTools, RichDEM, PDAL, scikit-learn, pyshtools. Sufficient
+  for everything built on published DTMs — genuinely enough for Paper 1.
+Tier 2 (GPU, on demand only, ~$0.30-2.00/hour): prototype on free Colab/
+  Kaggle tiers; pay only for final training runs. Never rent monthly.
+Tier 1 (Months 12+, hourly/spot, ~$50-150/month-equivalent bursts): 16-32
+  DEDICATED cores (not burstable vCPU), 64-128 GB RAM, 1-2 TB NVMe scratch.
+  ASP rule of thumb: ~20k x 20k px imagery needs ~40 GB RAM / 16 cores for
+  4-20 hours per terrain model; SGM/MGM subprocesses can exceed 4 GB each
+  (workable config: 8 processes on 64 GB). Budget 100-250 GB scratch per
+  stereo pair; use --keep-only and --resume-at-corr (spot-friendly).
+Known traps to engineer around: burstable-vCPU throttling; NFS-killed I/O;
+  the 520 GB full ISIS data area (pull base ~26 GB + lro excluding kernels;
+  use spiceinit web=yes); and the silent lronaccal IOF/zero-data bug — always
+  set RadiometricType=RADIANCE with the SPICE web service.
+Total 18-24 month compute budget target: under $600-800, sequenced; snapshot
+  the working environment image and destroy idle instances. Apply early for
+  cloud research credits and institutional HPC (ASP ships as an HPC module
+  with SLURM examples).
+
+--------------------------------------------------------------------------------
+5. STEP-BY-STEP EXECUTION PLAN
+--------------------------------------------------------------------------------
+
+PHASE 0 — FOUNDATION AND REPRODUCTION (Months 0-3)
+Step 0.1  Literature lock-down. Build a prior-art matrix over the ~33-item
+          reference list already compiled (Wagner & Robinson 2014/2021/2022;
+          Le Corre/ESSA 2025; Zhou 2024; Carrer 2024; Kaku 2017; Chappaz
+          2017; Zhu 2024; Horvath 2022; Powell 2023; Blair 2017; Theinat
+          2020; Chwala 2024; Sauro 2020; Costello 2026; Hurwitz 2013;
+          Barker 2015; LunarLeaper concept). One row per paper: data used,
+          method, claim, gap left open.
+Step 0.2  Stand up Tier 0 box (Ubuntu LTS). Install the terra conda stack
+          (gdal, rasterio, whitebox, richdem, pdal, geopandas, scikit-learn,
+          xgboost, pyshtools). Snapshot the image.
+Step 0.3  Download the index layers first: SHAPEFILE_NAC_DTMS,
+          SHAPEFILE_LUNAR_PIT_LOCATIONS, Hurwitz rille shapefile, NAC Stereo
+          Catalog. Intersect them: which tube-relevant pits and rille systems
+          already have published DTMs, and which have buildable stereo but no
+          DTM. This one map defines the whole project's scope.
+Step 0.4  Reproduce one published NAC DTM end-to-end (ISIS + ASP) at Mare
+          Tranquillitatis Pit on a short-lived Tier 1 rental. Success
+          criterion: match the published product within its stated error
+          bars. Budget 4-6 weeks; treat as a milestone, not a chore. This
+          de-risks the entire photogrammetry arm before it is needed.
+Step 0.5  Implement the core primitive on a published DTM: FillDepressions ->
+          filled minus original -> depression-depth raster. Verify it
+          recovers every catalogued pit inside that DTM footprint.
+Gate G0:  Reproduction matches; depression primitive recovers known pits.
+
+PHASE 1 — TERRESTRIAL ANCHOR AND DEGRADATION LADDER (Months 3-9) -> PAPER 1
+Step 1.1  Acquire ground truth. Convert the NASA Pits and Caves .f32 clouds
+          (King's Bowl, Indian Tunnel surface AND cave interior — the paired
+          surface/void case) into LAS/COPC via PDAL. Add Corona/Lanzarote and
+          Monte Intraleo open LiDAR where licences permit. If field access
+          exists, fly a drone survey over one tube field with an existing
+          cave survey (Lava Beds NM, Craters of the Moon, Undara, Kazumura
+          class sites) to add a wholly-owned dataset with known geometry.
+Step 1.2  Build the reference surface models and register cave centerlines
+          to surface coordinates. Ground truth = the vertical projection of
+          the surveyed void footprint onto the surface DTM.
+Step 1.3  Build the degradation ladder. Resample 2 cm -> 0.5 m -> 2 m ->
+          5 m -> 60 m; re-render under a lunar photometric function (Hapke
+          BRDF via Blender, PANGU, or ASP's SfS forward model) across a grid
+          of sun incidence/azimuth; inject NAC-like MTF blur, noise, and
+          pushbroom geometry; strip vegetation returns to mimic regolith.
+Step 1.4  Run the depression-depth + anisotropic linear-feature detector
+          (high-pass residual -> Hessian/Frangi vesselness tuned to 60-300 m
+          widths -> continuity and alignment scoring) at every ladder rung.
+Step 1.5  Measure detection probability versus GSD x sun angle x roof
+          thickness. This detectability curve answers RQ1 and is Paper 1:
+          low risk, guaranteed result, directly informative for future
+          mission camera specifications.
+Gate G1:  Curve produced with confidence intervals; the GSD at which
+          tube signatures vanish is quantified. If the sag signal is already
+          below noise at 2-5 m equivalent, pivot Phase 2 toward pit-chain /
+          bridge-segment detection instead of pure sag (pre-registered
+          contingency).
+
+PHASE 2 — LUNAR ROOF-SAG SEARCH AND CANDIDATE CATALOGUE (Months 9-15)
+          -> PAPER 2
+Step 2.1  Port the validated detector to all published NAC DTMs in mare
+          terrain (Tier 0 workload). Detrend against SLDEM2015 / low-pass
+          surfaces; compute morphometric stacks (depth, width, elongation,
+          continuity, curvature, wall slope, roughness, alignment).
+Step 2.2  Build the confusion layer BEFORE scoring candidates: rasterized
+          Hurwitz rilles (offset-corrected against LROC), LU5M812TGT crater
+          chains, wrinkle-ridge and graben maps. Any linear-depression claim
+          must survive explicit discrimination against all five confusers —
+          this discrimination test is the paper's core contribution.
+Step 2.3  Prioritize rille systems for bridge/sag search: Rima Sharp, Rima
+          Hadley, Rimae Prinz, Schroter's Valley, Vallis Alpes, Marius Hills
+          network. Exploit the Hurwitz catalogue's own definition (rilles
+          continuously unroofed by construction) — partially roofed segments
+          are precisely what it excludes, hence our opportunity.
+Step 2.4  Multi-illumination stacking on NAC CDRs over top candidates: treat
+          sun azimuth as the pseudo-temporal axis (the lunar analog of
+          multi-temporal NDVI decline); photometric-stereo consistency checks
+          separate real topography from albedo/SfS artifacts.
+Step 2.5  Where a high-value candidate lacks a DTM but the Stereo Catalog
+          shows a pair: spin up Tier 1 (spot), build the DTM with asp_mgm,
+          snapshot, destroy. Consider Chandrayaan-2 TMC-2 triplets / OHRC
+          for sub-metre follow-up at the very best sites (budget several
+          weeks of PRADAN/kernel friction).
+Step 2.6  Release a candidate catalogue with per-candidate evidence vectors,
+          confuser-discrimination scores, and honest nulls.
+Gate G2:  Catalogue passes confusion analysis; false-candidate density per
+          10^4 km^2 reported.
+
+PHASE 3 — MULTI-EVIDENCE FUSION, PU LEARNING, PHYSICS SCREENING
+          (Months 15-24) -> PAPER 3
+Step 3.1  Co-register evidence layers to a common frame (SLDEM2015 base):
+          Diviner topography-removed nighttime T and rock abundance, Mini-RF
+          CPR, GRAIL gradients (Gzz, Ghh from GRGM1200A/GL1500E via
+          pyshtools), SELENE LRS echo tracks. Regional scope only: Marius
+          Hills + Mare Tranquillitatis + Mare Ingenii.
+Step 3.2  Build the hierarchical fusion model across the 2 m -> 30 km scale
+          gap: multi-resolution Bayesian model (Pyro/NumPyro) or a graph
+          neural network over a nested cell hierarchy. The scale-bridging
+          machinery is itself a methods contribution publishable in a remote
+          sensing venue independent of the lunar result.
+Step 3.3  Handle labels honestly: positive-unlabeled learning (~20 positives,
+          no verified negatives), one-class/anomaly baselines, MGC3+HiRISE
+          cross-body pretraining with explicit domain-gap reporting, and
+          conformal prediction (MAPIE/crepes) for calibrated coverage.
+Step 3.4  Physics-informed screening: encode finite-element stability bounds
+          (realistic spans ~60-300 m; down-weight geometries like the
+          implausible 9 km x 60 km GRAIL candidate) as a prior or
+          regularizer, so mechanically impossible candidates are suppressed
+          automatically. Use Costello 2026 protolith contrasts
+          (competent basalt at Tranquillitatis vs friable vesicular material
+          at Marius Hills) as a covariate.
+Step 3.5  Optional methods spin-off (Paper 4 track): benchmark 2D CNN vs
+          point-cloud-native networks (PointNet++, KPConv, Point Transformer)
+          on pit classification, focused on overhang cases where 2.5D
+          rasters structurally fail.
+Gate G3:  Fusion beats every single-stream baseline on calibrated metrics on
+          the held-out basin.
+
+PHASE 4 — TARGET RANKING AND MISSION HANDOFF (Months 24-30)
+Step 4.1  Value-of-information ranking: combine P(void) with accessibility
+          (slope, boulder abundance from Diviner rock abundance, illumination
+          and comms windows) and science return per candidate.
+Step 4.2  Automated pit-interior reconstruction with per-vertex error bars
+          (multi-illumination photometric stereo + shadow-boundary
+          constraints) for the top 3-5 targets, extending Zhou 2024 from
+          hand-tuned single sites to an automated pipeline.
+Step 4.3  Open release: code, degraded-analog dataset, candidate catalogue,
+          fusion model. Approach the LunarLeaper and Moon-Diver communities
+          with the ranked list. Benchmark ESSA's shapefiles against ours
+          with contamination audited via its published product list.
+
+--------------------------------------------------------------------------------
+6. EVALUATION PROTOCOL (non-negotiable)
+--------------------------------------------------------------------------------
+
+The base rate is brutal: ~6 x 10^6 km^2 of maria tiled at 5 x 5 km gives
+~240,000 tiles against ~20 usable positives; a 1% false-positive rate yields
+~2,400 false candidates versus 20 real — precision near 0.8%. Accuracy and
+balanced-set F1 conceal this completely. Therefore report:
+  - performance on unseen PITS, unseen SITES, unseen ILLUMINATION, unseen
+    INSTRUMENTS — never unseen tiles from seen pits;
+  - detection probability vs GSD and sun angle (the Phase 1 curve);
+  - FALSE POSITIVES PER 10^4 km^2, not FPR;
+  - explicit confusion breakdown vs rilles, ridges, graben, crater chains;
+  - calibrated probabilities with conformal coverage, never hard detections;
+  - cross-body tests (Mars-trained/Moon-tested and reverse);
+  - all claims phrased as calibrated inference, never verified detection —
+    nothing subsurface on the Moon is verifiable today except the radar-
+    evidenced Tranquillitatis conduit.
+
+--------------------------------------------------------------------------------
+7. RISK REGISTER AND MITIGATIONS
+--------------------------------------------------------------------------------
+
+R1 No ground-truth validation on the Moon -> design for calibrated
+   probability output; anchor all method validation on Earth (Phase 1).
+R2 Sag signal below DTM noise floor -> tested on terrestrial data FIRST at
+   Gate G1; pre-registered pivot to pit-chain/bridge detection.
+R3 Confuser dominance (rilles/ridges/graben/chains) -> confusion layer built
+   before candidate scoring; discrimination is the contribution, not a caveat.
+R4 SfS albedo-topography confusion manufacturing fake depressions ->
+   multi-illumination consistency checks (Step 2.4).
+R5 Overclaiming GRAIL/thermal: GRAIL resolves only km-scale deficits; Diviner
+   sees the pit, not the cave -> both used strictly as coarse priors or
+   confirmers, stated explicitly in every paper.
+R6 Stereo-coverage scarcity (~2% of surface) -> regional scope declared up
+   front; targeted Tier 1 DTM builds only where the Stereo Catalog permits.
+R7 Compute/cost overrun -> tier sequencing, snapshots, spot instances,
+   --resume-at-corr; hard budget ceiling ~$800 before external credits.
+R8 Prior-art collision with ESSA -> cite early, position as inference-vs-
+   detection, audit product-list overlap, use it as the baseline to beat.
+R9 Licence exposure -> NASA analog dataset is research-use-only; ISRO
+   acknowledgement mandatory; LROC web-product terms distinct from PDS
+   public domain; audit before any redistribution.
+R10 Label circularity -> pit-level splits, held-out basin, ESSA never used
+   as labels.
+
+--------------------------------------------------------------------------------
+8. DELIVERABLES AND TIMELINE SUMMARY
+--------------------------------------------------------------------------------
+
+M3   Prior-art matrix; reproduced NAC DTM; working depression primitive. (G0)
+M9   Paper 1: "Resolution Limits of Lava Tube Detectability" + open degraded-
+     analog dataset and code. (G1)
+M15  Paper 2: roof-sag/bridge candidate catalogue for lunar maria with full
+     confusion analysis. (G2)
+M24  Paper 3: multi-evidence calibrated void-probability maps for Marius
+     Hills, Tranquillitatis, Ingenii; optional Paper 4 methods benchmark. (G3)
+M30  Ranked mission-target list with accessibility scoring; top-site interior
+     reconstructions; full open release; mission-community engagement.
+
+Budget: Tier 0 ~$120-240 total; GPU tens of dollars; Tier 1 bursts a few
+hundred; ceiling ~$800 self-funded, offset by cloud research credits and
+institutional HPC where available.
+
+--------------------------------------------------------------------------------
+9. BOTTOM LINE
+--------------------------------------------------------------------------------
+
+The forestry pipeline transfers; the physics does not. The point cloud gives
+the roof, never the void. So: prove the method on Earth where the answer is
+known; run the cheap analysis on DTMs that already exist; buy cores only when
+a specific site demands them; fuse every independent evidence stream at its
+honest resolution; report calibrated probabilities against a brutal base rate;
+and hand a ranked, physically screened target list to the missions that can
+actually go and look. Done in that order, this is two to three solid papers,
+an open benchmark the field currently lacks, and a defensible answer to a
+question no one has systematically asked: not "where are the holes," but
+"where are the roofs still holding."
+================================================================================

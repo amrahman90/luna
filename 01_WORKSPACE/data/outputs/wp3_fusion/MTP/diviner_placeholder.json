@@ -1,0 +1,15 @@
+{
+  "layer": "Diviner nighttime T + rock abundance",
+  "source": "PDS Geosciences Node L4 RDR (Powell et al. 2023 derivative)",
+  "fetch_url": "https://pds-geosciences.wustl.edu/dataserv/diviner.html",
+  "resolution_ppd": 128,
+  "region_overlap_lon": [
+    30.0,
+    35.0
+  ],
+  "region_overlap_lat": [
+    6.0,
+    11.0
+  ],
+  "status": "v0.1 placeholder; full ingestion deferred to Z3 continuation"
+}

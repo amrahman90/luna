@@ -1,0 +1,462 @@
+=====================================================================
+LUNARVOID — Version 4.0
+Rebuilt around reusable, already-validated DLR Jena method components
+Supersedes v3.0 (LUNARVOID) and v1.0/v2.0
+Source papers:
+  [P1] Mueller et al. (2026), Arctic Science 12:1-23, doi:10.1139/as-2025-0062
+       "High-resolution mapping of snow depth and snow thermal insulation
+        using low-cost UAVs in complex Arctic Urban Terrains" (CC BY 4.0)
+  [P2] Reichenzeller et al. (2026), Forests 17:807, doi:10.3390/f17070807
+       "Individual Tree Stem Detection Using the Vertical Complexity Index
+        on Structure-from-Motion Point Clouds" (CC BY)
+Prepared: 06 August 2026
+=====================================================================
+
+=====================================================================
+0. WHY THESE TWO PAPERS CHANGE THE PLAN
+=====================================================================
+
+Previous versions argued by analogy: forestry pipelines "resemble" what
+a lunar void-inference pipeline would need. These two papers replace
+analogy with INHERITANCE. They contain three components that solve
+problems v3.0 had flagged as open risks, and they were produced by the
+same institute, on the same software stack, with published parameters.
+
+THE THREE DECISIVE TRANSFERS
+
+(1) THE ICP + KRIGING DISTORTION MAP [P1] solves the systematic-error
+    problem that Gate G1 depends on.
+    v3.0 risk R2 was: "the roof-sag signal may be below the DTM noise
+    floor." That risk was unquantifiable because systematic vertical
+    distortion in a DTM was being treated as irreducible. P1 shows it
+    is not. Their sequence, measured at 20 independent check points:
+        initial      Z bias +4.18 m,  RMSE 4.53 m
+        after ICP    Z bias -0.53 m,  RMSE 1.26 m
+        after Kriging Z bias -0.02 m, RMSE 0.21 m
+    A factor-of-six further reduction AFTER ICP had already converged,
+    achieved by sampling 205 points at locations where no true
+    elevation change was expected, kriging those residuals into a
+    continuous "distortion map," and subtracting it.
+    Critically, P1 reports the kriged surface was a smooth,
+    low-frequency gradient contrasting with the high-frequency
+    variability of the real signal — i.e. the correction removed
+    global alignment error WITHOUT smoothing the localized features
+    of interest. That is exactly the property a roof-sag search needs,
+    because sag is a low-amplitude but spatially coherent signal that
+    naive detrending would destroy.
+
+(2) THE VERTICAL COMPLEXITY INDEX [P2] gives a laptop-scale,
+    non-deep-learning, point-cloud-native overhang detector.
+    v3.0 Gap 4 argued that 2.5D rasters structurally fail at overhangs
+    and that point-cloud-native networks were the answer. P2 offers a
+    far cheaper answer. VCI = -sum(p_i ln p_i)/ln(n_HB) is the Shannon
+    evenness of the vertical point distribution within a voxel column:
+    0 when all points fall in one height bin, 1 when spread evenly.
+    Over flat lunar mare, a photogrammetric cloud is effectively 2.5D
+    and VCI collapses toward 0. At a PIT WALL OR OVERHANG the cloud is
+    genuinely 3D within a single column — so VCI spikes precisely
+    where rasters fail. The tree-stem case and the pit-wall case are
+    the same geometry: a vertical column of returns.
+    P2 ran the whole workflow in about 30 seconds per dataset on an
+    Intel Core i7-10810U laptop with 16 GB RAM. This independently
+    validates the v3.0 Tier-0 infrastructure claim.
+
+(3) THE SNOW DAMPING FORMALISM [P1, Appendix C] converts Diviner from
+    a pit confirmer into a roof-thickness constraint.
+    P1 computes a damping factor n_f = exp(-S_eff/D) with damping depth
+    D = sqrt(2*kappa/omega), kappa = k_eff/(rho*c_p), then a surface
+    temperature offset dT_s = (FDD_a - FDD_s)/(N_f + N_t) with
+    FDD_s = n_f * FDD_a.
+    D = sqrt(2*kappa/omega) is the standard diffusion skin depth — the
+    same expression already used in planetary thermal modelling. The
+    PHYSICS is therefore not novel; what transfers is the WORKFLOW
+    PATTERN: a remotely-sensed thickness map drives a damping factor,
+    which produces a predicted surface-temperature-offset map, which is
+    then compared against measurement. Run forward, it predicts the
+    thermal signature of a given roof thickness. Run inverse, and a
+    measured Diviner nighttime anomaly becomes a constraint on roof
+    thickness plus void presence.
+    This matters because v3.0 had to concede that thermal IR "sees the
+    pit, not the cave." That remains true for detection. But an
+    anomaly amplitude still carries quantitative information about the
+    material column above a void, and P1 supplies a validated,
+    published pipeline shape for extracting it.
+
+=====================================================================
+1. FULL COMPONENT REUSE MATRIX
+=====================================================================
+
+--- FROM [P1] SNOW DEPTH / ARCTIC INFRASTRUCTURE -------------------
+
+C1  Multi-epoch DSM differencing
+    Lunar: DTM minus regional trend surface; and sink-filled DTM minus
+    DTM (depression-depth raster). Sign inverted — we want negative
+    residuals. -> WP2
+
+C2  ICP fine registration (CloudCompare 2.13.2)
+    Published parameters directly portable: RMS convergence threshold
+    1.0e-7; final overlap 90%; adjust scale enabled; random sampling
+    limit 500,000 points; farthest point removal enabled; scalar field
+    weights applied to both clouds; no constraints on rotation or
+    translation.
+    Lunar: registering overlapping NAC stereo-derived clouds to each
+    other and to SLDEM2015/LOLA. Note one change: "adjust scale" should
+    be DISABLED for lunar work, because scale is fixed by the camera
+    model and SPICE geometry, and allowing it absorbs real relief.
+    -> WP0, WP2
+
+C3  *** KRIGING DISTORTION MAP *** (pykrige, spherical variogram,
+    2000 x 2000 interpolation grid)
+    Lunar: select "no-change" reference points on flat mare panels with
+    no mapped features, at LOLA track crossings, and on independently
+    surveyed flat surfaces; extract residuals between the NAC DTM and
+    LOLA; krige into a continuous systematic-error surface; subtract.
+    Report the kriged surface's spatial frequency content alongside the
+    residual map, exactly as P1 did, to demonstrate the correction did
+    not eat the signal. -> WP1, WP2 (highest-priority transfer)
+
+C4  Zero-change internal validation surface (snow-cleared roads)
+    P1 extracted 1.9 million pixels within 1 m buffers of road
+    centrelines where true depth was known to be ~0, and reported the
+    full distribution: mean 10.99 cm, median 8.24 cm, SD 21.64 cm,
+    10th/90th percentiles -5.72 / 33.17 cm.
+    Lunar: the identical construct is flat mare panels with no mapped
+    features. The residual distribution there IS THE NOISE FLOOR, and
+    it is the direct, quantitative answer to Gate G1 — whether roof sag
+    of a given amplitude is detectable at all. This converts v3.0's
+    biggest open risk into a measurement. -> WP1, Gate G1
+
+C5  Watershed segmentation on an inverted DSM (Orfeo ToolBox 8.1.2)
+    P1 inverted the DSM so building roofs became catchment basins.
+    Parameters: depth threshold 0.01; flood level 0.1; vector mode;
+    tile size 4096 px; polygon stitching enabled; minimum object size
+    1000 px. Post-processing: area filter 15-4000 m^2; Douglas-Peucker
+    simplification at 1 m tolerance.
+    Lunar: DO NOT INVERT. Pits and sag are already basins. The same
+    algorithm and post-processing chain applies directly, with the area
+    filter rescaled to lunar feature sizes (pit funnels roughly
+    60-150 m across; sag features 60-300 m wide). -> WP2
+
+C6  Segment-and-buffer statistical extraction with DIRECTIONAL SECTORS
+    P1 buffered roads (4 m exclusion + 5 m analysis), segmented into
+    max 50 m / min 12 m sections, and classified each into N/S/E/W
+    sectors, finding South-facing embankments significantly deeper
+    (0.77 m) than North (0.66 m), East (0.60 m) and West (0.60 m) by
+    Mann-Whitney U with Bonferroni correction.
+    Lunar: buffer and segment along rille centrelines and candidate
+    lineaments, then stratify residual depth BY SUN-AZIMUTH SECTOR.
+    This is a decisive artifact test: if apparent depression depth
+    varies systematically with illumination azimuth, it is a
+    shape-from-shading or shadow artifact, not topography. If it does
+    not, the feature is real. v3.0 listed SfS albedo confusion as risk
+    R4 with no concrete test; this is the test. -> WP2
+
+C7  Reference-surface bias -> conservative lower-bound framing
+    P1's snow-free DSM captured shrub canopy tops rather than ground,
+    producing systematic underestimation (bias -17.32 cm, RMSE
+    30.45 cm, R^2 0.35; improving to -6.7 cm, 20.7 cm, R^2 0.46 with
+    high-shrub sites removed). Rather than treat this as failure, P1
+    reframed its product as a defensible MINIMUM snow depth.
+    Lunar: regolith mantles and smooths the true structural roof
+    surface, so any measured sag is a LOWER BOUND on true flexure.
+    Adopt the same framing verbatim. This is scientifically honest and,
+    for hazard and mission-planning purposes, the conservative
+    direction. -> WP2, WP4
+
+C8  Steady-state damping model (Appendix C)
+    See transfer (3) above. -> WP4
+
+C9  Honest coverage-bound reporting
+    P1 discarded the western part of the study area outright after
+    encountering vertical GNSS errors exceeding 60 m that could not be
+    corrected, reducing the area to 0.98 km^2 and excluding 14 of 44
+    in-situ points. The paper states this plainly in Methods.
+    Lunar: the same discipline for NAC DTMs failing the shapefile error
+    thresholds, and for the ~2% stereo coverage limit. -> all WPs
+
+C10 Variable-geometry acquisition design (Mueller et al. 2023 spiral
+    flight, gimbal continuously varying 0-35 deg off-nadir)
+    Lunar: the case for prioritising OFF-NADIR / OBLIQUE NAC
+    observations over nadir-only stacks when reconstructing subtle
+    topography and, especially, pit walls. -> WP2, WP4
+
+--- FROM [P2] VCI TREE STEM DETECTION -------------------------------
+
+C11 *** VERTICAL COMPLEXITY INDEX as an overhang/verticality detector
+    See transfer (2). Implementation: compute VCI per voxel column ->
+    raster -> threshold -> local maximum filter (P2 used neighbourhood
+    size 5) -> centroid points.
+    Lunar parameter translation from P2's calibrated set:
+        height segment 3-15 m  ->  depth band below local rim, scaled
+                                   to pit depth (e.g. 5-60 m)
+        pixel size 0.5 m       ->  2-5 m (NAC DTM posting)
+        height bin height 1 m  ->  2-5 m
+        VCI threshold 0.4      ->  MUST BE RE-CALIBRATED (see C13)
+    -> WP2, WP4
+
+C12 Calibrate-once-then-transfer-unchanged protocol
+    P2 calibrated four parameters on a single dataset (SfM22), then
+    applied that configuration WITHOUT adjustment to every other
+    dataset to test robustness. Best configuration: 3-15 m segment,
+    0.5 m pixel, 1 m HBH, 0.4 threshold -> 75.25% of overstory
+    reference trees detected, precision 0.8172, F1 0.7835.
+    Lunar: calibrate on one well-characterised site (Mare
+    Tranquillitatis Pit), then transfer unchanged to Marius Hills and
+    Ingenii. Report the unchanged-transfer result as the honest
+    headline number. -> WP2, evaluation protocol
+
+C13 *** THRESHOLDS DO NOT TRANSFER ACROSS INSTRUMENTS ***
+    The most operationally important finding in P2. Applying the
+    SfM-tuned parameter set to the Jülich UAV-LiDAR cloud gave recall
+    0.9727 but precision 0.5297 (95 false positives), F1 0.6859.
+    Re-tuning a single parameter — the VCI threshold, from 0.4 to 0.8 —
+    produced F1 0.86 with recall 0.89 and precision 0.82, exceeding
+    every SfM result.
+    Lunar consequence: the degradation ladder in WP1 must re-tune the
+    threshold AT EVERY RESOLUTION RUNG and every instrument, and report
+    threshold sensitivity as a RESULT rather than a nuisance parameter.
+    A single fixed threshold applied across GSDs would have
+    manufactured a false detectability cliff. -> WP1 (design change)
+
+C14 Full sensitivity heatmap as a deliverable
+    P2 reported 96 parameter combinations (2 height segments x 4 pixel
+    sizes x 4 HBH x 3 thresholds) as heatmaps, F1 ranging 0.6971 to
+    0.7835 — a spread of only ~0.09, which is itself the robustness
+    evidence.
+    Lunar: this is the exact template for the LLTB-1 ablation tables.
+    -> WP1
+
+C15 Declared matching radius with justification
+    P2 matched detections to references within 1.5 m and explicitly
+    noted there is no community standard, with many studies using wider
+    radii — then justified 1.5 m against mean DBH (49.85 cm) and raster
+    resolution.
+    Lunar: Lunar Pit Atlas coordinates are accurate to roughly 30 m, so
+    the matching radius must be at least that, stated up front, with
+    sensitivity to the choice reported. -> evaluation protocol
+
+C16 *** APPARENT FALSE POSITIVES MAY BE UNLABELLED TRUE POSITIVES ***
+    P2 found 34 FPs against overstory references on SfM22; 21 matched
+    documented UNDERSTORY trees, leaving only 13 genuine FPs and
+    lifting precision above 0.93 (above 0.87 across all SfM datasets).
+    Lunar consequence, and a direct correction to v3.0: with roughly 20
+    labelled positives and no verified negatives, EVERY apparent false
+    positive must be manually inspected in NAC imagery before being
+    scored as an error. Published deep-learning work already
+    demonstrated this by surfacing two previously uncatalogued
+    skylights while surveying only about 1.9% of the lunar maria.
+    Scoring blind against the Pit Atlas systematically understates
+    precision. -> evaluation protocol (mandatory change)
+
+C17 Error stratification by object property, with significance testing
+    P2 stratified FN vs TP by DBH using Wilcoxon rank-sum (alpha 0.01),
+    finding trees below 0.25 m DBH particularly hard to detect, roughly
+    81% detected at DBH >= 0.2 m rising to about 91% at DBH >= 0.6 m.
+    Lunar: this IS a detectability curve, and it is the structural
+    template for WP1's headline product — detection rate stratified by
+    pit diameter, sag amplitude, and roof span, with significance
+    tests. -> WP1
+
+C18 Independent covariate to control confounds
+    P2 computed the Laser Penetration Index from an INDEPENDENT
+    airborne laser scanning dataset specifically so the density metric
+    would not share data gaps with the SfM cloud under test, and added
+    distance-to-nearest-canopy-gap as a second check. LPI differences
+    were significant (alpha 0.01); canopy-gap distance was not
+    (alpha 0.05) — and P2 reported both, including the null.
+    Lunar: test detection performance against covariates derived from a
+    DIFFERENT dataset than the one being evaluated — LOLA track
+    density, NAC image count per tile, slope from SLDEM2015 — and
+    report nulls. -> evaluation protocol
+
+C19 Acquisition-condition effect, honestly hedged
+    P2 observed that the 2025 SfM cloud (492 pts/m^2, versus 289-385
+    for other years) was acquired under clear skies while all others
+    were overcast, and detected substantially more stems (recall
+    0.8168, the highest of the SfM set) — then explicitly labelled this
+    "a hypothesis based on a single observation" requiring further
+    quantitative investigation.
+    Lunar: sun incidence angle is the exact equivalent of weather. Copy
+    both the analysis and the hedging. -> WP1, WP2
+
+C20 Predictable geometric failure mode
+    P2 detected only 4-6 of 11 documented leaning stems, because a
+    leaning trunk splits across multiple voxel columns, flattening the
+    vertical distribution and lowering VCI.
+    Lunar: FUNNEL-SHAPED pit geometry will degrade VCI in exactly the
+    same way. Mare Tranquillitatis Pit has a funnel plus a narrower
+    inner pit; Marius Hills Hole sits in friable, vesicular material
+    with sloped walls. Predict up front that VCI will perform best on
+    vertical inner walls and worst on funnel slopes — then test it.
+    A pre-registered, mechanistically-derived failure prediction is
+    strong methodology. -> WP2, WP4
+
+C21 Height normalisation against an independent ground reference
+    P2 normalised point clouds using ground classification from open
+    federal geodata rather than from the cloud itself.
+    Lunar: normalise NAC DTMs against SLDEM2015 rather than against a
+    surface fitted to the NAC DTM itself, avoiding circularity. -> WP2
+
+C22 Demonstrated compute footprint
+    ~30 s per dataset on a 16 GB laptop with integrated graphics.
+    Lunar: confirms Tier 0 ($10-20/month) suffices for WP0-WP2.
+    -> infrastructure
+
+=====================================================================
+2. WHAT v3.0 GOT WRONG, CORRECTED
+=====================================================================
+
+E1  v3.0 treated DTM systematic error as an irreducible noise floor.
+    P1 shows it is reducible by roughly a factor of six after ICP has
+    already converged (RMSE 1.26 m -> 0.21 m). Gate G1's pass criterion
+    must therefore be evaluated AFTER kriging correction, not before.
+    Applying it before would very likely have failed the gate and
+    killed a viable project.
+
+E2  v3.0 jumped from raster methods to point-cloud deep learning,
+    skipping an entire intermediate class. VCI is interpretable, needs
+    no labels, has four parameters, runs in seconds, and attacks
+    precisely the overhang case that motivated the deep-learning
+    argument. Deep learning moves later and must beat VCI as its
+    baseline.
+
+E3  v3.0's evaluation protocol scored candidates against the Lunar Pit
+    Atlas. Per C16 that systematically understates precision, because
+    unlabelled real features are counted as errors. Manual inspection
+    of every apparent FP is now mandatory.
+
+E4  v3.0's degradation ladder held detector parameters fixed across
+    resolution rungs. Per C13 that would have produced an artificial
+    detectability cliff. Re-tune per rung; report the threshold
+    trajectory.
+
+E5  v3.0 listed SfS albedo/topography confusion as a risk without a
+    test. C6's sun-azimuth sector stratification is a concrete,
+    published-precedent test.
+
+=====================================================================
+3. REVISED WORK PACKAGES (v4.0)
+=====================================================================
+
+WP0  FOUNDATION (M0-M3)
+     Prior-art matrix; Tier-0 setup; index-layer intersection;
+     reproduce one published NAC DTM end-to-end (ISIS + ASP).
+     ADDED: port the P1 ICP configuration (C2, scale adjustment
+     disabled) and stand up the pykrige distortion-map routine (C3)
+     against the reproduced DTM before anything else.
+
+WP1  LLTB-1 BENCHMARK AND DETECTABILITY LIMITS (M3-M9) [FLAGSHIP]
+     NASA Planetary Pits and Caves analog LiDAR (~4.5 GB, research/
+     academic licence) plus Corona/Lanzarote and Monte Intraleo;
+     degradation ladder 2 cm -> 60 m under Hapke re-rendering.
+     ADDED: zero-change noise-floor panels (C4) as the quantitative
+     Gate G1 criterion; per-rung threshold re-tuning (C13); full
+     sensitivity heatmaps (C14); DBH-style stratified detectability
+     curves (C17).
+
+WP2  ROOF-SAG SEARCH AND CANDIDATE CATALOGUE (M9-M15)
+     ADDED: ICP + kriging correction pipeline (C2, C3) applied to every
+     NAC DTM before detection; OTB watershed on the non-inverted DTM
+     with rescaled area filters (C5); rille-segment buffering with
+     sun-azimuth sector stratification as the artifact test (C6);
+     VCI computation on multi-view stereo clouds (C11); calibrate on
+     Tranquillitatis and transfer unchanged (C12); SLDEM2015-based
+     normalisation (C21); lower-bound framing for regolith mantling
+     (C7); pre-registered funnel-geometry failure prediction (C20).
+
+WP3  MULTI-EVIDENCE FUSION AND CALIBRATION (M15-M24)
+     Unchanged from v3.0: hierarchical multi-resolution Bayesian or GNN
+     fusion across the 2 m to 30 km scale gap; PU learning over ~20
+     positives; conformal calibration; physics-informed stability
+     screening at 60-300 m spans.
+     ADDED: kriged distortion surfaces enter the fusion model as an
+     explicit per-DTM uncertainty layer rather than being discarded.
+
+WP4  UNCERTAINTY-QUANTIFIED GEOSPATIAL MODELS (M18-M27)
+     ADDED: the damping-depth workflow (C8) run forward to predict
+     thermal signatures from candidate roof thicknesses and inverse to
+     constrain roof thickness from Diviner nighttime anomalies, with
+     regolith and basalt thermophysical properties substituted for
+     snow. VCI-derived overhang geometry (C11) feeds pit-interior
+     reconstruction. Oblique-observation prioritisation (C10).
+
+WP5  EVIDENCE-PROVENANCE GRAPH (M20-M30)   unchanged
+WP6  MISSION DECISION SUPPORT (M24-M30)    unchanged
+WP7  ROBOTIC INTERFACE (partner-gated, M27+) unchanged
+
+=====================================================================
+4. REVISED EVALUATION PROTOCOL
+=====================================================================
+
+Retained from v3.0: splits by physical pit, site, illumination and
+instrument, never by tile; one mare basin held out untouched; false
+positives per 10^4 km^2 rather than false-positive rate; conformal
+coverage; cross-body testing; the ~0.8%-precision base-rate reality
+(~240,000 5 km tiles across the maria against ~20 usable positives).
+
+Added from the two papers:
+  - Every apparent false positive manually inspected in NAC imagery
+    before scoring (C16), with a separate "unlabelled candidate" class
+    reported alongside true errors.
+  - Matching radius declared at >= 30 m to respect Pit Atlas positional
+    accuracy, with sensitivity to that choice reported (C15).
+  - Detection stratified by feature size with Wilcoxon/Kruskal-Wallis
+    significance testing (C17).
+  - Confound covariates drawn from independent datasets, with nulls
+    reported (C18).
+  - Threshold sensitivity reported as a result, per instrument and per
+    resolution (C13).
+  - Zero-change panel residual distributions reported in full —
+    mean, median, SD, 10th and 90th percentiles — as P1 did (C4).
+
+=====================================================================
+5. STRATEGIC POSITIONING
+=====================================================================
+
+The strongest available framing is no longer "we will adapt forestry
+methods to the Moon." It is:
+
+  "The DLR Institute of Data Science has published and validated a
+   consumer-grade photogrammetric pipeline for detecting sub-metre
+   topographic signals beneath obscuring surface layers, including
+   quantified systematic-error correction and a voxel-based detector
+   for vertical structure. This project transfers that validated
+   pipeline to lunar orbital data to search for intact lava tube
+   roofs."
+
+That is defensible because it is true, both papers are open access with
+open code and data (P1: gitlab.com/dlr-dw/uav-snow-depth-monitoring,
+Zenodo 10.5281/zenodo.14608566, CC BY 4.0), and the internal
+collaboration path to the DLR Institute of Planetary Research is
+obvious. It also converts the terrestrial analog campaign from an
+expense into an in-house capability.
+
+Two further alignments worth noting. First, the "obscuring layer"
+framing is genuinely shared: P1's shrub canopy hides the ground and
+forces a minimum-depth interpretation, exactly as lunar regolith
+mantles a flexed roof and forces a lower-bound interpretation. Second,
+P2's leaf-off acquisition requirement — data collectable only in a
+specific seasonal window — maps onto the lunar constraint that pit
+interiors are illuminated only near local noon at low latitudes.
+
+=====================================================================
+6. BOTTOM LINE
+=====================================================================
+
+v3.0 was a defensible plan built on analogy. v4.0 is built on
+inheritance: three components with published parameters, measured error
+budgets and open code, each solving a problem the earlier plan had
+listed as an open risk.
+
+The kriging distortion map turns "is the signal above the noise floor?"
+from a gamble into a measurement. The VCI turns overhang detection from
+a deep-learning aspiration into a thirty-second computation. The
+damping-depth workflow turns Diviner from a pit confirmer into a
+roof-thickness constraint.
+
+The physics still does not transfer. The point cloud still gives the
+roof and never the void. But the machinery for pulling a low-amplitude,
+spatially coherent signal out from under an obscuring layer, and for
+proving honestly that you did not invent it, now transfers almost
+component for component.
+=====================================================================

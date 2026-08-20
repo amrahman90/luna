@@ -1,0 +1,45 @@
+{
+  "tag": "TRANQPIT1",
+  "ref_csv": "/home/frostflux/lunarvoid/data/lola_tracks/TRANQPIT1/LolaRDR_8N9N_33E33E_20260819T120304851_pts_csv.csv",
+  "n_query_shots": 8488,
+  "n_in_dtm": 4408,
+  "n_nochange": 2977,
+  "n_train": 2382,
+  "n_check": 595,
+  "variogram": {
+    "source": "pykrige-autofit",
+    "model": "spherical",
+    "psill": 0.10767262156878306,
+    "range": 27673.72157353587,
+    "nugget": 0.10189643061485516
+  },
+  "grid_spacing_m": 150.0,
+  "metrics": {
+    "before": {
+      "n": 595,
+      "bias_m": -0.0832564942390162,
+      "rmse_m": 0.37269918946069686
+    },
+    "after": {
+      "n": 595,
+      "bias_m": -0.023783311369425113,
+      "rmse_m": 0.3267485334806895
+    }
+  },
+  "spectra": {
+    "frac_correction_power_lambda_gt_300m": 0.9999999794516339,
+    "rms_correction_60_300m_band_m": 0.00251372549137944,
+    "rms_dtm_60_300m_band_m": 0.32885507702032213
+  },
+  "pit_check": {
+    "raw": 129.67047119140625,
+    "corrected": 129.7296142578125,
+    "ratio_vs_raw": 1.0004561028109396,
+    "pct_change": 0.04561028109395012
+  },
+  "outputs": {
+    "figure": "01_WORKSPACE/data/outputs/wp0_kriging/TRANQPIT1_corrections.png",
+    "metrics_csv": "01_WORKSPACE/data/outputs/wp0_kriging/TRANQPIT1_kriging_metrics.csv",
+    "corrected_dtm": "/home/frostflux/lunarvoid/data/outputs/TRANQPIT1/NAC_DTM_TRANQPIT1_krigcorr.tif"
+  }
+}

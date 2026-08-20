@@ -1,0 +1,27 @@
+{
+  "generated": "2026-08-20",
+  "dtms": [
+    "TRANQPIT1"
+  ],
+  "rungs": [
+    5.0,
+    10.0
+  ],
+  "summaries": {
+    "TRANQPIT1": {
+      "res_m_source": 2.0000000000006,
+      "rungs": {
+        "5.0": {
+          "shape": [
+            7194,
+            1186
+          ],
+          "n_peaks": 29,
+          "depth_max_m": 129.68463134765625,
+          "frangi_max": 0.8210031986236572,
+          "score_max": 21.060531616210938
+        }
+      }
+    }
+  }
+}

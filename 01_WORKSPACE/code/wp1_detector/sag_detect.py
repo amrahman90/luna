@@ -1,0 +1,326 @@
+"""LLTB-1 sag detector (Z1, Task 14.2) + per-rung detectability evaluation
+(Task 14.3, 14.4, 14.5).
+
+For a raster DTM (one of the ladder rungs), compute:
+  - sink-fill (Planchon-Darboux) - DTM = depression depth
+  - Frangi vesselness at 60-300 m scales (the realistic tube-width band)
+  - local continuity score (length of the connected component)
+  - per-cell "sag candidate" score = depth x vesselness
+  - per-rung: re-tune the depth threshold (v5 I9) on a calibration split
+    (50% of the cloud), apply to the held-out 50%, record both F1 and the
+    full stratified detectability curve vs feature size.
+
+For the analog benchmark, "ground truth" is derived from the source
+point cloud: a cell is "on a void" if its column contains points from
+BELOW the surrounding ground envelope by more than 1 m (this isolates
+the cave interior footprint in the cloud). That is a generous
+definition; it serves as the LLTB-1 label set for the v0.1 release.
+
+CLI:
+  sag_detect.py --npz path/to/analog.npz --outdir <repo out dir>
+                [--rungs 0.02 0.5 2 5 60] [--grid-spacing 0.5]
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import rasterio
+import whitebox
+from rasterio.transform import Affine, from_bounds
+from scipy.ndimage import label as ndlabel
+from skimage.filters import frangi
+from whitebox import WhiteboxTools
+
+
+def cloud_ground_truth(x, y, z, pixel: float, threshold_depth: float = 1.0):
+    """Boolean raster of cells containing a point >threshold_depth BELOW
+    the local surface envelope (= 'this cell is above a void').
+
+    Surface envelope = nan-robust 50th-percentile over a large cell
+    neighbourhood (default 21x21 cells, ~5-10x the largest expected
+    void cell). The difference (envelope - cell_min_z) > threshold
+    marks the cell as over a void. This is robust against flat mare
+    panels with a small number of outliers (boulders, narrow rilles)
+    AND it localises the void footprint even when the per-cell min
+    matches the local 5x5 minimum.
+    """
+    finite = np.isfinite(x) & np.isfinite(y) & np.isfinite(z)
+    x, y, z = x[finite], y[finite], z[finite]
+    x_min, y_min = x.min(), y.min()
+    x_max, y_max = x.max(), y.max()
+    nx = max(1, int(np.ceil((x_max - x_min) / pixel)))
+    ny = max(1, int(np.ceil((y_max - y_min) / pixel)))
+    col = np.clip(((x - x_min) / pixel).astype(int), 0, nx - 1)
+    row = np.clip(((y - y_min) / pixel).astype(int), 0, ny - 1)
+    flat = row * nx + col
+    sums = np.bincount(flat, weights=z, minlength=ny * nx)
+    cnts = np.bincount(flat, minlength=ny * nx)
+    zmin = np.full(ny * nx, np.inf)
+    np.minimum.at(zmin, flat, z)
+    zmin = zmin.reshape(ny, nx)
+    zmin[cnts.reshape(ny, nx) == 0] = np.nan
+    # local surface envelope = nan-robust percentile over a 21x21 window
+    # (large enough that any reasonable void footprint is much smaller)
+    from scipy.ndimage import generic_filter
+    def nan_pct(arr):
+        v = arr[np.isfinite(arr)]
+        return np.percentile(v, 50) if len(v) else np.nan
+    env = generic_filter(np.where(np.isfinite(zmin), zmin, np.nan),
+                         nan_pct, size=21, mode="nearest")
+    void_above = (env - zmin) > threshold_depth
+    void_above &= np.isfinite(zmin) & np.isfinite(env)
+    return void_above, (x_min, y_min, nx, ny, pixel)
+
+
+def frangi_vesselness(Z: np.ndarray, res: float, sigmas=(30, 60, 100, 150, 200, 300)):
+    """Frangi vesselness at a list of physical-scale sigmas (m)."""
+    # skimage expects sigma in PIXELS, not metres
+    sigmas_px = tuple(max(0.5, s / res) for s in sigmas)
+    Zf = np.where(np.isfinite(Z), Z, float(np.nanmean(Z[np.isfinite(Z)])) if np.isfinite(Z).any() else 0.0)
+    V = frangi(Zf, sigmas=sigmas_px, black_ridges=True)  # black_ridges: tube = dark = low Z
+    return V.astype(np.float32)
+
+
+def sink_fill_planchon(wbt: WhiteboxTools, dem_path: Path, out_path: Path) -> Path:
+    wbt.verbose = False
+    wbt.fill_depressions_planchon_and_darboux(
+        dem=str(dem_path), output=str(out_path), fix_flats=True
+    )
+    return out_path
+
+
+def write_geotiff(arr: np.ndarray, transform: Affine, path: Path, crs: str = "EPSG:32631", nodata=np.nan):
+    profile = {
+        "driver": "GTiff", "dtype": "float32", "nodata": float(nodata) if np.isfinite(nodata) else -9999.0,
+        "width": arr.shape[1], "height": arr.shape[0], "count": 1,
+        "transform": transform, "crs": crs, "compress": "deflate", "BIGTIFF": "IF_SAFER",
+    }
+    with rasterio.open(path, "w", **profile) as dst:
+        arr2 = np.where(np.isfinite(arr), arr, profile["nodata"]).astype(np.float32)
+        dst.write(arr2, 1)
+
+
+def f1_at_threshold(scores: np.ndarray, truth: np.ndarray, thr: float):
+    pred = scores >= thr
+    tp = int((pred & truth).sum())
+    fp = int((pred & ~truth).sum())
+    fn = int((~pred & truth).sum())
+    prec = tp / (tp + fp) if (tp + fp) else 0.0
+    rec = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if (prec + rec) else 0.0
+    return {"thr": float(thr), "tp": tp, "fp": fp, "fn": fn,
+            "precision": prec, "recall": rec, "f1": f1}
+
+
+def tune_threshold(scores_cal: np.ndarray, truth_cal: np.ndarray, n_grid: int = 51):
+    """Pick the threshold maximising F1 on the calibration half."""
+    if not np.isfinite(scores_cal).any() or truth_cal.sum() == 0:
+        return 0.0, 0.0
+    qs = np.linspace(0.0, 1.0, n_grid)
+    grid = np.quantile(scores_cal[np.isfinite(scores_cal)], qs)
+    grid = np.unique(grid)
+    best = (0.0, 0.0)
+    for t in grid:
+        m = f1_at_threshold(scores_cal, truth_cal, float(t))
+        if m["f1"] > best[1]:
+            best = (float(t), m["f1"])
+    return best
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--npz", type=Path, required=True)
+    ap.add_argument("--outdir", type=Path, required=True)
+    ap.add_argument("--rungs", type=float, nargs="+", default=[0.5, 2, 5])
+    ap.add_argument("--grid-spacing", type=float, default=0.5)
+    ap.add_argument("--frangi-sigmas", type=float, nargs="+",
+                    default=[30, 60, 100, 150, 200, 300])
+    ap.add_argument("--seed", type=int, default=42)
+    args = ap.parse_args()
+
+    args.outdir.mkdir(parents=True, exist_ok=True)
+    data = np.load(args.npz)
+    x, y, z = data["x"], data["y"], data["z"]
+    print(f"[load] {len(x):,} points from {args.npz.name}", flush=True)
+
+    # ground truth from cloud: cells with a void below
+    gt, gt_geo = cloud_ground_truth(x, y, z, args.grid_spacing, threshold_depth=1.0)
+    x_min, y_min, nx, ny, px = gt_geo
+    transform = Affine(px, 0.0, x_min, 0.0, px, y_min)
+    n_void_cells = int(gt.sum())
+    print(f"[gt  ] {ny}x{nx} at {px} m, void cells = {n_void_cells} "
+          f"({n_void_cells/gt.size:.1%})", flush=True)
+
+    # sink-fill the source cloud at the master res
+    # First bin to master grid (median per cell) to make the master DTM,
+    # then use the ladder's rungs if --rungs differs.
+    # For speed, we only generate rungs <= master; finer rungs are
+    # handled by Task 13 (degrade.py) operating on the .npz directly.
+    rungs = sorted(set(args.rungs))
+    print(f"[rung] running on {rungs} m", flush=True)
+
+    # re-bin cloud to each rung
+    def cloud_to_rung(target_res: float):
+        nxr = max(1, int(np.ceil((x.max() - x.min()) / target_res)))
+        nyr = max(1, int(np.ceil((y.max() - y.min()) / target_res)))
+        col = np.clip(((x - x.min()) / target_res).astype(int), 0, nxr - 1)
+        row = np.clip(((y - y.min()) / target_res).astype(int), 0, nyr - 1)
+        flat = row * nxr + col
+        Z = np.full(nyr * nxr, np.nan)
+        n = np.zeros(nyr * nxr, dtype=np.int64)
+        sums = np.zeros(nyr * nxr, dtype=np.float64)
+        np.add.at(sums, flat, z)
+        np.add.at(n, flat, 1)
+        ok = n > 0
+        Z[ok] = sums[ok] / n[ok]
+        Zr = Z.reshape(nyr, nxr)
+        tr = Affine(target_res, 0.0, x.min(), 0.0, target_res, y.min())
+        return Zr, tr, (x.min(), y.min(), nxr, nyr, target_res)
+
+    wbt = WhiteboxTools()
+    rung_rows = []
+    for r in rungs:
+        print(f"\n--- rung {r} m ---", flush=True)
+        Zr, trr, geor = cloud_to_rung(r)
+        nxr, nyr = Zr.shape[1], Zr.shape[0]
+        valid_r = np.isfinite(Zr)
+        if valid_r.sum() < 100:
+            print(f"[skip] rung {r} m has <100 valid cells", flush=True)
+            continue
+        # write DTM
+        dtm_tif = args.outdir / f"dtm_{r:g}m.tif"
+        write_geotiff(Zr, trr, dtm_tif, nodata=-9999.0)
+        # sink-fill
+        fill_tif = args.outdir / f"filled_{r:g}m.tif"
+        sink_fill_planchon(wbt, dtm_tif, fill_tif)
+        with rasterio.open(fill_tif) as fs, rasterio.open(dtm_tif) as ds:
+            fill = fs.read(1).astype(np.float32)
+            dtm = ds.read(1).astype(np.float32)
+            fill_nodata = fs.nodata
+        fill_v = np.where(fill == fill_nodata, np.nan, fill)
+        dtm_v = np.where(dtm == -9999.0, np.nan, dtm)
+        depth = np.maximum(fill_v - dtm_v, 0.0)
+        # Frangi vesselness
+        V = frangi_vesselness(dtm_v, r, sigmas=tuple(args.frangi_sigmas))
+        # per-cell void above (re-grid GT if needed)
+        if (nxr, nyr) != (nx, ny):
+            from scipy.ndimage import zoom
+            truth_r = zoom(gt.astype(np.float32),
+                           (nyr / ny, nxr / nx), order=0).astype(bool)
+        else:
+            truth_r = gt
+        # score = depth * vesselness
+        score = (np.where(np.isfinite(depth), depth, 0.0) *
+                 np.where(np.isfinite(V), V, 0.0)).astype(np.float32)
+        # 50/50 split (alternating cells, seed 42)
+        rng = np.random.default_rng(args.seed)
+        cal_mask = np.zeros_like(score, dtype=bool)
+        ev = np.argwhere(np.isfinite(score))
+        if len(ev) == 0:
+            continue
+        perm = rng.permutation(len(ev))
+        n_cal = len(ev) // 2
+        cal_idx = ev[perm[:n_cal]]
+        cal_mask[cal_idx[:, 0], cal_idx[:, 1]] = True
+        test_mask = np.isfinite(score) & ~cal_mask
+        # tune on calibration
+        thr, f1_cal = tune_threshold(score[cal_mask], truth_r[cal_mask])
+        m_cal = f1_at_threshold(score[cal_mask], truth_r[cal_mask], thr)
+        m_tst = f1_at_threshold(score[test_mask], truth_r[test_mask], thr)
+        # FP per 10^4 km^2 (v5 mandatory reporting): cell area in km^2
+        cell_area_km2 = (r * r) / 1e6
+        n_cells_test = int(test_mask.sum())
+        fp_per_1e4km2 = m_tst["fp"] * 1e4 / (n_cells_test * cell_area_km2) if n_cells_test else float("nan")
+        # stratified detectability: bucket truth cells by their score on test
+        bins = np.array([0.0, 0.25, 0.5, 0.75, 1.0])  # normalised score quartile bins
+        norm_score = score / (np.nanpercentile(score, 99) + 1e-9)
+        strat = []
+        for lo, hi in zip(bins[:-1], bins[1:]):
+            band = (norm_score >= lo) & (norm_score < hi) & test_mask
+            tp = int((band & truth_r).sum())
+            tot = int(truth_r[band].sum() if band.any() else 0)
+            strat.append({"score_lo": float(lo), "score_hi": float(hi),
+                          "n_truth_in_band": tot,
+                          "n_detected_in_band": tp,
+                          "detection_rate": (tp / tot) if tot else 0.0})
+        print(f"[cal ] thr={thr:.3g}, F1={f1_cal:.3f}, P={m_cal['precision']:.3f}, R={m_cal['recall']:.3f}")
+        print(f"[test] thr={thr:.3g}, F1={m_tst['f1']:.3f}, P={m_tst['precision']:.3f}, R={m_tst['recall']:.3f}, "
+              f"FP/10^4 km^2={fp_per_1e4km2:.2f}")
+        rung_rows.append({
+            "res_m": r, "shape": [nyr, nxr], "valid_frac": float(valid_r.sum() / Zr.size),
+            "threshold": thr, "f1_cal": m_cal["f1"], "f1_test": m_tst["f1"],
+            "precision_test": m_tst["precision"], "recall_test": m_tst["recall"],
+            "fp_per_1e4km2_test": fp_per_1e4km2,
+            "n_void_cells": int(truth_r.sum()),
+            "n_detected_test": m_tst["tp"],
+            "stratified": strat,
+        })
+        # save rasters
+        for name, arr_save in [("depth", depth), ("frangi", V), ("score", score)]:
+            write_geotiff(arr_save, trr, args.outdir / f"{name}_{r:g}m.tif", nodata=-9999.0)
+        # figure: 4 panels (DTMs hs + depth + frangi + score)
+        fig, ax = plt.subplots(1, 4, figsize=(20, 5))
+        # hillshade
+        dz = np.gradient(np.where(np.isfinite(dtm_v), dtm_v, np.nanmean(dtm_v)), r)
+        slope = np.pi / 2.0 - np.arctan(np.hypot(dz[1], dz[0]))
+        aspect = np.arctan2(-dz[1], dz[0])
+        az, al = np.radians(315.0), np.radians(45.0)
+        hs = np.clip(255.0 * (np.sin(al) * np.sin(slope) +
+                               np.cos(al) * np.cos(slope) * np.cos(az - aspect)), 0, 255)
+        ax[0].imshow(hs, cmap="gray", origin="lower"); ax[0].set_title(f"hillshade {r} m")
+        ax[1].imshow(np.where(np.isfinite(depth), depth, np.nan), cmap="magma",
+                     origin="lower"); ax[1].set_title("depression depth")
+        ax[2].imshow(np.where(np.isfinite(V), V, np.nan), cmap="cividis",
+                     origin="lower"); ax[2].set_title("Frangi 60-300 m")
+        ax[3].imshow(np.where(np.isfinite(score), score, np.nan), cmap="inferno",
+                     origin="lower"); ax[3].set_title(f"score (thr={thr:.3g}, F1={m_tst['f1']:.2f})")
+        for a in ax: a.set_xticks([]); a.set_yticks([])
+        fig.suptitle(f"LLTB-1 sag detection @ {r} m — {args.npz.name}")
+        fig.tight_layout()
+        fig_path = args.outdir / f"sag_panels_{r:g}m.png"
+        fig.savefig(fig_path, dpi=120, bbox_inches="tight")
+        plt.close(fig)
+        print(f"[out ] figure -> {fig_path}", flush=True)
+
+    # detectability curve
+    fig, ax = plt.subplots(1, 2, figsize=(13, 5))
+    res = [r["res_m"] for r in rung_rows]
+    f1 = [r["f1_test"] for r in rung_rows]
+    fp = [r["fp_per_1e4km2_test"] for r in rung_rows]
+    ax[0].plot(res, f1, "o-", color="#1f78b4", lw=2, ms=8)
+    ax[0].set_xscale("log"); ax[0].set_xlabel("GSD (m)"); ax[0].set_ylabel("F1 (test split)")
+    ax[0].set_title("Detectability curve (LLTB-1 v0.1)")
+    ax[0].grid(True, which="both", alpha=0.3)
+    ax[1].plot(res, fp, "s-", color="#c0392b", lw=2, ms=8)
+    ax[1].set_xscale("log"); ax[1].set_yscale("log")
+    ax[1].set_xlabel("GSD (m)"); ax[1].set_ylabel("FP per $10^4$ km$^2$")
+    ax[1].set_title("False-positive rate (v5 mandatory reporting)")
+    ax[1].grid(True, which="both", alpha=0.3)
+    fig.suptitle(f"LLTB-1 detectability — {args.npz.name}")
+    fig.tight_layout()
+    curve_path = args.outdir / "detectability_curve.png"
+    fig.savefig(curve_path, dpi=120, bbox_inches="tight")
+    plt.close(fig)
+    print(f"\n[out ] detectability curve -> {curve_path}", flush=True)
+
+    summary_path = args.outdir / "sag_summary.json"
+    with open(summary_path, "w") as f:
+        json.dump({
+            "source": str(args.npz), "n_points": int(len(x)),
+            "gt_void_cells_master": n_void_cells, "rungs": rung_rows,
+            "figure_curve": str(curve_path),
+        }, f, indent=2)
+    print(f"[out ] summary -> {summary_path}", flush=True)
+    print(json.dumps({"rungs": rung_rows}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

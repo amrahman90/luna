@@ -1,0 +1,29 @@
+{
+  "generated": "2026-08-19",
+  "dtms": [
+    "TRANQPIT1",
+    "MARIUSPIT01"
+  ],
+  "sagband_rms_m": {
+    "TRANQPIT1": 1.2451835860239746,
+    "MARIUSPIT01": 1.3792002486793873
+  },
+  "pooled_sd_m": {
+    "TRANQPIT1": {
+      "poly2": 2.2062341372526713,
+      "hp300": 1.5275299670121412
+    },
+    "MARIUSPIT01": {
+      "poly2": 2.1945292825477822,
+      "hp300": 1.6796543635812862
+    }
+  },
+  "n_panels": {
+    "TRANQPIT1": 7,
+    "MARIUSPIT01": 8
+  },
+  "outputs": {
+    "csv": "01_WORKSPACE/data/outputs/wp0_kriging/noise_floor_stats.csv",
+    "figure": "01_WORKSPACE/data/outputs/wp0_kriging/noise_floor_panels.png"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "generated": "2026-08-20",
+  "dtms": [
+    "INGENIIPIT"
+  ],
+  "rungs": [
+    2.0,
+    4.0,
+    8.0
+  ],
+  "summaries": {
+    "INGENIIPIT": {
+      "res_m_source": 2.0000000000006,
+      "rungs": {
+        "2.0": {
+          "shape": [
+            14105,
+            3933
+          ],
+          "frangi_shape": [
+            5000,
+            1394
+          ],
+          "n_peaks": 215,
+          "depth_max_m": 104.6298828125,
+          "frangi_max": 0.6303254961967468,
+          "score_max": 19.334537506103516
+        },
+        "4.0": {
+          "shape": [
+            7052,
+            1966
+          ],
+          "frangi_shape": [
+            5000,
+            1394
+          ],
+          "n_peaks": 193,
+          "depth_max_m": 104.20654296875,
+          "frangi_max": 0.6303254961967468,
+          "score_max": 19.408201217651367
+        }
+      }
+    }
+  }
+}

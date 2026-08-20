@@ -1,0 +1,285 @@
+================================================================================
+DOWNLOADABLE DATASETS FOR LUNAR LAVA TUBE / SUBSURFACE VOID DETECTION
+A ranked assessment for orbital-imagery and 3D point-cloud pipelines
+Prepared: 31 July 2026
+================================================================================
+
+
+## Assessment basis
+
+I rated each dataset for **orbital-imagery and photogrammetric detection of lunar
+lava tubes, pits and subsurface voids**, not for general lunar science.
+
+The score combines:
+
+* **30%** relevance to lava tube / subsurface void inference
+* **20%** spatial resolution and genuine 3D or elevation content
+* **20%** labels, morphometric annotations and geometric metadata
+* **15%** coverage, illumination and terrain diversity
+* **15%** download convenience and licence clarity
+
+Two crucial distinctions, both of which catch people out:
+
+**1. Public domain does not mean analysis-ready.** Most NASA PDS holdings are
+US Government public domain, but they arrive as raw pushbroom EDRs with
+detached PDS labels, requiring ISIS ingestion, SPICE attachment, radiometric
+calibration and map projection before a single pixel is usable. "Free" and
+"usable this afternoon" are very different claims.
+
+**2. Downloadable does not always mean openly licensed.** The terrestrial
+analog and mission-partner datasets carry real restrictions that the lunar
+orbital data does not:
+  - The NASA Planetary Pits and Caves Analog Dataset is explicitly **research
+    or academic use only**; commercial use or incorporation into a
+    redistributed database requires written consent from the authors.
+  - LROC web products carry an ASU "All rights reserved" terms-of-use and
+    citation policy notice, distinct from the PDS archive holdings themselves.
+  - ISRO requires a prescribed acknowledgement statement and reserves a
+    royalty-free right to reproduce copyrighted derivative publications.
+  - JAXA DARTS holdings carry their own terms, separate from the
+    USGS/NASA-reprocessed mirrors of the same observations.
+Any institutional redistribution or commercial product should have these
+audited individually rather than assumed uniform.
+
+
+## Ranked downloadable lunar void-detection datasets
+
+| Rank | Dataset | Main downloadable content | Best research use | Important limitations | Usability |
+|-----:|---------|---------------------------|-------------------|-----------------------|----------:|
+| **1** | **LROC NAC Digital Terrain Models (PDS RDR collection)** | Several hundred site DTMs at **2-5 m post spacing**, distributed as PDS products plus GDAL-generated GeoTIFF derivatives (colour-shaded relief, terrain-shaded relief, colour slope). Accompanied by **SHAPEFILE_NAC_DTMS**, a footprint layer carrying per-DTM relative linear error (vertical precision at 90% confidence) and triangulation RMS. New DTMs released quarterly. | The primary substrate for depression-depth rasters, roof-sag search, morphometric feature stacks and any 2.5D terrain ML. Requires **zero photogrammetry**. | Coverage is site-based, not global — historically only about **2% of the surface** has high-resolution stereo. Sites were chosen for exploration and science interest, not for lava tube relevance, so mare coverage is patchy. Vertical quality varies substantially between DTMs; the shapefile error fields must be used as a filter, not ignored. | **9.4/10** |
+| **2** | **LROC NAC EDR / CDR image archive** | Over **2.5 million images** at typically 0.7-1.5 m/px (0.5-2.0 m/px range), covering most of the surface. LROC has delivered roughly **579 TB of EDRs and over 1 PB of CDRs** to PDS, plus about 48,600 derived RDR products. Includes a published **NAC Stereo Catalog** listing every stereo pair and triplet suitable for DTM generation. | Multi-illumination stacking (sun azimuth as a pseudo-temporal axis), shadow-based depth estimation, photometric stereo, 2D detection baselines, and building new DTMs where none exist. | Enormous — mirroring is not feasible; fetch by product ID only. Raw EDRs need the full ISIS chain before use. Pit interiors are only illuminated near local noon at low latitudes. Individual images are roughly 52,000 x 5,000 px per CCD, which is an HPC-scale workload at global extent. | **9.2/10** |
+| **3** | **Lunar Pit Atlas (SHAPEFILE_LUNAR_PIT_LOCATIONS)** | Georeferenced catalogue of lunar pits with rich morphometric fields: funnel max/min diameter, inner max/min diameter, depth, host terrain (mare / highland / impact melt), pit sub-type, and a unique identifier scheme handling clustered and nested pits. Coordinates accurate to roughly 30 m. Interactive browse catalogue alongside the PDS shapefile. | **The label set.** Ground truth for any supervised or PU-learning approach, plus morphometric priors for candidate screening. | This is the central bottleneck of the whole field. Of roughly **281 catalogued pits, the overwhelming majority sit in impact melt ponds and are unrelated to lava tubes**; only about **15-16 mare pits and 5 highland pits** are plausibly tube-related. Note the count has been revised between publications as two pits were reclassified from mare to highland. There are no verified negatives anywhere on the Moon. | **9.1/10** |
+| **4** | **ESSA — Entrances to Sub-Surface Areas (Le Corre et al. 2025)** | PyTorch model checkpoint on Zenodo, inference instructions on GitHub, the **full list of LROC NAC and MRO HiRISE products used in training**, and **georeferenced shapefiles of every detection** made across the surveyed lunar regions. | The strongest available reproducible baseline. Lets you benchmark against published work rather than re-deriving it, and the product list makes train/test contamination auditable. | Reported performance differs between validation and test reporting — roughly **89.1 / 95.6% F1** (bbox / mask) in one framing versus **82.4 / 93.7%** on testing in the thesis; quote carefully. Applied to only about **1.9% of the lunar maria**, yielding two previously uncatalogued skylights. Trained on LPA labels, so evaluating it against LPA is circular. | **8.9/10** |
+| **5** | **SLDEM2015 (LOLA + SELENE Kaguya TC merge)** | Near-global DEM within **±60° latitude at 512 ppd (~59 m/px)**, typical vertical accuracy **3-4 m**. Built from about 4.5 x 10^9 LOLA heights co-registered with 43,200 one-degree TC stereo DEMs. Tiled distribution: 512 ppd IMG tiles about 1,350 MB each (JP2 roughly 150-175 MB); 256 ppd tiles about 1,800 MB (JP2 roughly 265 MB). | The regional trend / reference surface for residual-topography and depression-depth calculation. Also the natural base layer for co-registering every other instrument. | Too coarse to resolve a 60-300 m tube signature directly — this is context, not detection. Excludes latitudes beyond ±60°. Residual noise of roughly 2-3 m amplitude remains, which at some sites is comparable to or larger than the real topographic signal you are hunting. About 1% of the most poorly-fitting tiles were replaced with interpolated LOLA-only data. | **8.7/10** |
+| **6** | **Kaguya / SELENE Terrain Camera — observations and USGS ASP-derived DTMs** | TC monoscopic and stereo observations at **10 m/px**, plus USGS-generated **35 m post-spacing DTMs and orthoimages** produced with the Ames Stereo Pipeline, bundle-adjusted and absolutely aligned to LOLA. Horizontal accuracy better than one orthoimage pixel (~30 m); mean vertical precision about **3 m**. Also a near-global TC ortho mosaic. Available as **Cloud Optimized GeoTIFFs** on the AWS Registry of Open Data and via a STAC API. | The best-value middle scale between SLDEM2015 and NAC. COG streaming means **windowed reads over HTTP without downloading whole files** — the single biggest storage saving available to a small-budget project. | 10 m/px cannot resolve pit interiors or overhangs. Morning and evening low-sun tile sets have very different shadow expression and are not interchangeable. DTM quality varies with local contrast; featureless mare can defeat stereo correlation. | **8.6/10** |
+| **7** | **NASA Planetary Pits and Caves Analog Dataset** | Terrestrial LiDAR point clouds from FARO X130/X330 survey scanners, colourised, multi-station ICP-registered. Sites include **King's Bowl pit, Craters of the Moon (530 MB)**, **Indian Tunnel surface and collapses (1.1 GB)**, **Indian Tunnel cave interior (2.07 GB)**, an ultra-resolution HDR wall panel (175 MB), plus the Fieg (243 MB + 38 MB) and Sheepridge (328 MB + 11 MB) highwall sites with 3D-printable watertight meshes. Simple 7-attribute float32 binary format with Matlab I/O scripts. | **The only real ground truth in this entire list.** Essential for the terrestrial-to-lunar degradation ladder, for validating a roof-sag detector where you actually know the answer, and for point-cloud-native deep learning. Sheepridge ramps were explicitly used to study Lacus Mortis pit traversability; Fieg's cornered geometry resembles lunar impact melt pits. | **Research or academic use only** — commercial use or redistribution requires explicit written author consent. Explicitly offered with no guarantees of quality or accuracy. Only about **4.5 GB total across five sites**, and no site is a full intact tube with surveyed surface expression. The `.rar` packaging and `.f32` format need conversion work. Last substantive update 2019. | **8.5/10** |
+| **8** | **Hurwitz et al. lunar sinuous rille catalogue and atlas** | **195 globally distributed sinuous rilles** with an ArcGIS shapefile of mapped rille outlines (digitised on Kaguya TC), plus two tables: rille dimensions (location, length, width, depth, slope, sinuosity, source volume) and rille observations (host unit ages, source depression shape, associated features). Interactive atlas over the LROC WAC mosaic with per-rille TC imagery. | **The hard-negative and context layer.** Any linear-depression detector must discriminate roof sag from rilles; this is the reference layer that makes that test possible. Also the search prior — Oceanus Procellarum contains roughly 48% of mapped rilles, and rilles reach up to 566 km long, 4.3 km wide and 543 m deep. | Outlines were drawn on Kaguya TC, so **expect small offsets against LROC or other datasets**. The catalogue defines rilles as continuously unroofed for their entire length, which by construction excludes exactly the partially-roofed "bridge" segments most interesting for tube detection. Extended community additions (numbers 196+) are of uneven provenance. | **8.3/10** |
+| **9** | **MGC3 — Mars Global Cave Candidate Catalog** | PDS4 archive bundle with coordinates, feature type (lava tube skylight, deep fracture, atypical pit crater, karst-like void), a **priority/confidence rating** and a comment for **over 1,000 candidate cave entrances**, mostly identified in CTX (~6 m/px) with the best subsequently targeted by HiRISE (~0.25 m/px). Mirrored on USGS Astropedia and the NASA open data portal. | **Cross-body domain transfer and label augmentation** — this is precisely how published lunar work escaped the small-label problem, training jointly on lunar, Martian and synthetic implanted data. Mars also offers far better stereo coverage for proving methods before porting them. | Different planet: atmosphere, aeolian infill, dust mantling and gravity all alter both the morphology and the imaging. The confidence rating is a subjective expert judgement, not a calibrated probability. Domain gap must be handled explicitly, not assumed away. | **8.2/10** |
+| **10** | **Chandrayaan-2 OHRC and TMC-2** | **OHRC at 0.25 m nadir GSD** with a 3 km swath from 100 km altitude — roughly twice the resolution of LRO NAC at its best. **TMC-2 panchromatic at 5 m** with fore/nadir/aft **stereo triplets** designed for DEM production. Distributed as PDS4 through the ISSDC PRADAN portal and a map-based browse interface, with the SPICE kernel archive open alongside. | The highest-resolution lunar imagery publicly available, and the only route to sub-metre DEMs. TMC-2 triplets give proper stereo geometry rather than opportunistic off-nadir slews. | **Awkward access**: registration required, downloads arrive as zips, and PRADAN's browse workflow is less mature than PDS. Native ISIS support for OHRC was absent from stable releases until recently, and the full Chandrayaan-2 ISIS directory is about **200 GB, almost entirely attitude kernels** — you must exclude these and pull individual `ck` files by acquisition date. Coverage is targeted and sparse, heavily weighted to the south pole. Prescribed acknowledgement wording is mandatory. | **8.0/10** |
+
+
+## Special-purpose datasets with lower relevance
+
+### Diviner thermal products (nighttime temperature, rock abundance) — **7.5/10**
+
+Global thermal mapping with topographically-corrected temperature anomaly maps
+that isolate thermophysical variation rather than illumination geometry. The
+Tranquillitatis and Ingenii pits emit roughly **100 K warmer than surroundings
+at night**, and modelled permanently-shadowed cave interiors sit near a
+constant **~290 K**, close to the ~296 K blackbody-cavity equilibrium at the
+equator. Superb as a **pit confirmer**. But the published conclusion is
+explicit and unavoidable: thermal IR readily detects the pit signature and is
+**essentially insensitive to whether a cave lies behind it**. Treat it as a
+confirmation layer, never as a void detector.
+
+### Mini-RF and Chandrayaan-2 DFSAR radar — **7.2/10**
+
+Mini-RF S- and X-band imaging supplied the circular polarisation ratio context
+and, critically, the radar evidence of an **accessible conduit beneath the Mare
+Tranquillitatis Pit**, the first lunar cave demonstrated beyond theory. DFSAR
+adds simultaneous L- and S-band full-polarimetric operation with 2 m slant
+range. Genuinely subsurface-sensitive, which almost nothing else here is.
+Limitations: partial and uneven coverage, complex speckle and geometric
+distortion, and interpretation requiring radar expertise most photogrammetry
+groups lack. Not an image dataset in the sense the rest of this list is.
+
+### GRAIL gravity models (GRGM1200A, GL1500E) — **6.8/10**
+
+Global spherical-harmonic gravity fields supporting gradiometry and
+cross-correlation detection of buried mass deficits, with published candidates
+at Marius Hills and Sinus Iridum. It is the **only genuinely volumetric sensor
+available**, which is why it belongs in a fusion stack at all. But effective
+spatial resolution is roughly **10-30 km** — three to four orders of magnitude
+coarser than your DTM. One published GRAIL-derived geometry (about 9 km wide,
+60 km long, 605 m deep, 55 m central height) is regarded by structural
+modellers as implausible as a single stable void, against finite-element
+estimates of roughly **60-300 m** widths beneath observed skylights. Use it to
+constrain kilometre-scale deficits and nothing finer.
+
+### SELENE Lunar Radar Sounder — **6.5/10**
+
+5 MHz sounder data that produced subsurface echo detections at Marius Hills
+consistent with a void extending tens of kilometres west of the Marius Hills
+Hole. Real subsurface measurement, and the strongest independent corroboration
+of the GRAIL result. Sparse orbital track coverage means it can confirm or
+refute a specific candidate but cannot survey. Requires radar sounding
+processing expertise.
+
+### Terrestrial lava tube LiDAR: Corona/Lanzarote, Grotta di Monte Intraleo — **6.5/10**
+
+The Corona system on Lanzarote has roughly **5 km mapped in 3D at centimetre
+resolution** by TLS, georeferenced to drone surveys of the cave entrances,
+national LiDAR and RTK GNSS — the most complete tube-plus-surface pairing in
+existence. Recent robotic quadruped-plus-LiDAR SLAM surveys have added
+open-access datasets, including Grotta di Monte Intraleo in Sicily. A recent
+review found that of nine identified lava tube LiDAR surveys, **only five are
+open access**, and one covers only the floor and skylight. Valuable, but
+scattered across separate Zenodo deposits with inconsistent formats, framing
+and completeness. Assembling them into a coherent training corpus is itself a
+project.
+
+### DeepMoon supplemental materials — **6.3/10**
+
+**MIT-licensed**, well-documented HDF5 train/validation/test splits, the global
+DEM downsampled to 118 m/px, Keras model weights and sample outputs. Wrong
+target class entirely — craters, not voids — but it is the **cleanest available
+template** for how to structure a planetary detection dataset, and its craters
+are exactly the confusers your detector must reject. Use it as an engineering
+pattern and a hard-negative source, not as task data.
+
+### LU5M812TGT crater catalogue — **6.0/10**
+
+Roughly **5 million craters down to 0.4 km diameter**, openly on Zenodo, with
+about 69.3% below 1 km. Its value here is inverted: it is the definitive
+**hard-negative and confusion inventory**. Any depression detector that cannot
+suppress this catalogue is not a void detector. Also the natural source for
+secondary crater chains, which mimic pit chains.
+
+### Europlanet GMAP lava tube training bundle — **5.5/10**
+
+A **1.2 GB** teaching package for the Arsia Mons region of Mars containing an
+image, a DTM and test shapefiles. Excellent for a two-day onboarding exercise
+and for verifying a toolchain works end to end. Far too small and too
+pedagogical to serve as research data.
+
+### Synthetic and simulator-derived imagery (PANGU-based, implanted-pit synthesis) — **5.8/10**
+
+Perfect label sets by construction, and demonstrated to help: published lunar
+pit detection improved when synthetic lunar data (warped Martian pit pixels
+implanted into empty NAC frames) was added to real training data. The
+simulation gap is the whole problem, and learned domain adaptation is still an
+open research question rather than a solved preprocessing step. Treat as
+augmentation, never as benchmark.
+
+
+## Recommended dataset architecture
+
+I would **not pool every DTM and randomly split tiles**. That produces
+deceptively strong numbers, because NAC images overlap heavily, DTMs are built
+from overlapping stereo pairs, and the same handful of flagship pits
+(Tranquillitatis, Marius Hills, Ingenii) recur across nearly every derived
+product in this list. Random tile splitting leaks the same physical pit into
+train and test.
+
+A stronger design:
+
+| Function | Recommended datasets |
+|----------|----------------------|
+| **Ground truth and method validation** | NASA Planetary Pits and Caves Analog Dataset + Corona/Lanzarote TLS |
+| **Resolution-degradation ladder** | Your own drone/LiDAR surveys, degraded against the analog clouds |
+| **Primary lunar detection substrate** | LROC NAC DTM collection + NAC CDR multi-illumination stacks |
+| **Regional context and trend surface** | SLDEM2015 + Kaguya TC USGS DTMs (COG streaming) |
+| **Labels** | Lunar Pit Atlas, restricted to the mare and highland subset |
+| **Cross-body pretraining and transfer** | MGC3 + HiRISE, with explicit domain-gap reporting |
+| **Hard negatives** | Hurwitz rille shapefile, LU5M812TGT craters, wrinkle ridge and graben maps |
+| **Independent confirmation layers** | Diviner thermal, Mini-RF, GRAIL gradients, SELENE LRS |
+| **Held-out generalisation test** | An entire mare basin never touched during development |
+| **Published baseline comparison** | ESSA weights and detection shapefiles |
+
+The Hurwitz and LU5M812TGT layers are not optional garnish. A real system must
+reject sinuous rilles, wrinkle ridges, graben, secondary crater chains, lava
+channels and ordinary degraded craters — every one of which produces a negative
+topographic residual that looks like roof sag at 5 m posting.
+
+
+## Most important methodological warning
+
+The base rate here is brutal, and standard classification metrics conceal it
+completely.
+
+Take the lunar maria as roughly 16% of a 3.79 x 10^7 km² surface, about
+6 x 10^6 km². Tiled at 5 x 5 km, that is on the order of **240,000 candidate
+tiles**. Against those sit roughly **20 catalogued mare and highland pits**.
+A detector with a 1% false-positive rate therefore returns about **2,400 false
+candidates against 20 real ones — a precision near 0.8%**. Ordinary accuracy,
+or even a respectable F1 on a curated balanced set, tells you nothing about
+this. (Illustrative order-of-magnitude figures; the exact tiling and mare
+fraction you adopt will shift them, but not the conclusion.)
+
+Compounding it: **there are no verified negatives**. An area with no visible pit
+is not an area with no tube. This is a positive-unlabeled problem, and treating
+it as ordinary binary classification silently mislabels most of your training
+data.
+
+The project should therefore report:
+
+* performance on **unseen pits**, not unseen tiles from seen pits
+* performance under **unseen illumination geometry** (sun azimuth and incidence)
+* performance on **unseen DTM sites and unseen instruments**
+* **detection probability versus ground sample distance and sun angle** — the
+  degradation curve is itself the most citable result available here
+* **false positives per 10^4 km²**, not false-positive rate
+* explicit confusion breakdown against rilles, ridges, graben and crater chains
+* **calibrated probabilities with uncertainty** (conformal prediction or
+  equivalent), not hard detections
+* cross-body testing (Mars-trained, Moon-tested and vice versa) rather than
+  random splits
+
+Claiming "detection" of an unverifiable subsurface void is the single fastest
+way to lose a reviewer. Claim calibrated inference instead.
+
+
+## Final selection
+
+The strongest initial combination:
+
+1. **LROC NAC DTM collection + footprint shapefile** — primary substrate,
+   already processed, error-quantified, quarterly-updated.
+2. **NASA Planetary Pits and Caves Analog Dataset** — the only real ground
+   truth, and the anchor for the degradation ladder.
+3. **Lunar Pit Atlas (mare and highland subset)** — labels, used with full
+   awareness that this is about 20 usable positives.
+4. **SLDEM2015 + Kaguya TC COGs** — regional trend surface and co-registration
+   frame, at near-zero storage cost via windowed COG reads.
+5. **Hurwitz rille shapefile + LU5M812TGT** — the hard negatives that make any
+   claim credible.
+6. **MGC3 + HiRISE** — transfer learning to escape the label famine.
+
+**ESSA should be used as a baseline to beat, not as a label source.** Its
+training drew on the Lunar Pit Atlas, so scoring it against the Atlas is
+circular; treat its detection shapefiles as a comparison set and audit its
+published product list against your own splits.
+
+**Chandrayaan-2 OHRC is the highest-upside item on this list and the highest
+friction.** At 0.25 m GSD it is the only path to sub-metre lunar DEMs, but
+budget several weeks for portal navigation, kernel wrangling and ISIS camera
+support before expecting a usable product.
+
+
+## Sources
+
+[1]  LROC PDS RDR archive and NAC DTM collection — pds.lroc.asu.edu ; lroc.im-ldi.com/data
+[2]  SHAPEFILE_NAC_DTMS — data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_NAC_DTMS
+[3]  LROC PDS release notes (archive volumes and delivery totals) — lroc.im-ldi.com/news
+[4]  Henriksen et al. (2017), Icarus 283, 122-137 — NAC DTM production and accuracy
+[5]  Lunar Pit Atlas / SHAPEFILE_LUNAR_PIT_LOCATIONS — data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS ; lroc.im-ldi.com/atlases/pits
+[6]  Wagner & Robinson (2021), LPSC 52, Abstract #2530 — pit catalogue
+[7]  Wagner & Robinson (2022), JGR Planets — lunar pit morphology, doi:10.1029/2022JE007328
+[8]  Le Corre et al. (2025), Icarus 441 — "New candidate cave entrances on the Moon found using deep learning"; ESSA weights on Zenodo, code on GitHub
+[9]  Watson & Baldini (2024), Icarus 411, 115952 — Martian cave detection via machine learning
+[10] Barker et al. (2015), Icarus — SLDEM2015; tiles at imbrium.mit.edu/BROWSE/SLDEM2015/TILES
+[11] SLDEM2015 via USGS Astropedia — Moon LRO LOLA / SELENE Kaguya TC DEM Merge 60N60S 59m
+[12] JAXA / USGS / NASA Kaguya TC observations and DTMs — registry.opendata.aws/jaxa-usgs-nasa-kaguya-tc ; .../jaxa-usgs-nasa-kaguya-tc-dtms ; STAC at stac.astrogeology.usgs.gov
+[13] Adoram-Kershner et al. (2021), USGS data release doi:10.5066/P94KDDPX — Kaguya TC ASP DTMs
+[14] NASA Planetary Pits and Caves Analog Dataset — ti.arc.nasa.gov/dataset/caves (Wong, Whittaker, Jones & Whittaker, 2014)
+[15] Hurwitz, Head & Hiesinger (2013), Planet. Space Sci. 79-80, 1-38; Atlas at lpi.usra.edu/lunar/rilles ; shapefile at planetary.brown.edu/html_pages/rilles.html
+[16] Cushing (2015/2017), Mars Global Cave Candidate Catalog PDS4 Archive Bundle, doi:10.17189/1519222 ; USGS Astropedia mirror
+[17] Chandrayaan-2 PRADAN portal — pradan.issdc.gov.in/ch2 ; chmapbrowse.issdc.gov.in
+[18] Ames Stereo Pipeline Chandrayaan-2 documentation — stereopipeline.readthedocs.io/en/latest/examples/chandrayaan2.html
+[19] Horvath, Hayne & Paige (2022), GRL — Diviner thermal environments of lunar pits and caves, doi:10.1029/2022GL099710
+[20] Powell et al. (2023), JGR Planets — high-resolution Diviner nighttime temperature and rock abundance, doi:10.1029/2022JE007532
+[21] Carrer et al. (2024), Nature Astronomy — radar evidence of a cave conduit below the Mare Tranquillitatis Pit
+[22] Kaku et al. (2017), GRL 44 — SELENE LRS detection of intact lava tubes at Marius Hills, doi:10.1002/2017GL074998
+[23] Chappaz et al. (2017), GRL — GRAIL gradiometry and cross-correlation for buried lava tubes
+[24] Zhu et al. (2024), Icarus 408, 115814 — GRAIL gravity gradients at Marius Hills
+[25] Chwala et al. (2024) and Montanez Munoz et al. (2025), JGR Planets — lava tube stability bounds and analog gravity modelling
+[26] Silburt et al. (2019), Icarus — DeepMoon; code github.com/silburt/DeepMoon (MIT), data doi:10.5281/zenodo.1133969
+[27] La Grassa et al. (2024), ISPRS J. Photogramm. — LU5M812TGT catalogue, zenodo.org/records/13990480
+[28] Santagata et al. (2018) and Sauro et al. (2020), Earth-Sci. Rev. — Corona/Lanzarote TLS survey and lava tube review, doi:10.1016/j.earscirev.2020.103288
+[29] Dominguez et al. (2025), Science Robotics — cooperative robotic exploration of a planetary skylight and lava cave, data doi:10.5281/zenodo.14611244
+[30] Hidding et al. (2026), Front. Robot. AI — robotic lava tube mapping, Grotta di Monte Intraleo open-access LiDAR dataset, doi:10.3389/frobt.2026.1855443
+[31] Europlanet GMAP Winter School lava tubes training bundle — zenodo.org/records/18336136
+[32] Zhou et al. (2024), Earth Space Sci. 11(11) — photogrammetric models of lunar lava tube pits, doi:10.1029/2024EA003532
+[33] Costello et al. (2026), JGR Planets — protolith properties at Tranquillitatis and Marius Hills, doi:10.1029/2025JE009427
+
+================================================================================

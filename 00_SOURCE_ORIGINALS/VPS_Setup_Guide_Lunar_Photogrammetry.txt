@@ -1,0 +1,289 @@
+================================================================================
+RUNNING THE LUNAR LAVA TUBE PIPELINE ON A RENTED VPS
+Practical sizing, cost, data sourcing and setup guide
+Prepared: 31 July 2026
+================================================================================
+
+--------------------------------------------------------------------------------
+0. SHORT ANSWER
+--------------------------------------------------------------------------------
+
+YES. All software is free and open source, all data is public and free, and it
+all runs on Linux. No licences, no institutional access required.
+
+BUT: a standard cheap VPS (2 vCPU / 4 GB RAM / 80 GB SSD) will fail. Not
+"be slow" - fail. Ames Stereo Pipeline will run out of memory and die.
+
+THE KEY INSIGHT that saves you most of the cost:
+
+  *** You do not need to run photogrammetry at all for the first phase. ***
+
+  Hundreds of LROC NAC Digital Terrain Models are ALREADY PROCESSED and
+  published as PDS Reduced Data Record products, downloadable as GeoTIFF,
+  along with a footprint shapefile containing per-DTM error metrics. The LROC
+  team releases new ones quarterly.
+
+  Your Gap-2 roof-sag detector, your depression-depth rasters, your terrain
+  derivatives, your feature stacking, your PU-learning classifier - ALL of that
+  runs on these pre-made DTMs. On a $10/month box.
+
+  Only build your own DTMs later, when you need coverage that does not exist
+  yet, or when you need SfS refinement beyond the published product.
+
+So sequence it: cheap box first, big box only when justified.
+
+--------------------------------------------------------------------------------
+1. THREE TIERS OF INFRASTRUCTURE
+--------------------------------------------------------------------------------
+
+TIER 0 - "ANALYSIS ONLY"                    approx. $6-20 / month
+  Spec:      2-4 vCPU, 8-16 GB RAM, 200-500 GB disk
+  Runs:      GDAL, WhiteboxTools, RichDEM, SAGA, PDAL, Python/scikit-learn,
+             pyshtools, QGIS headless
+  Does:      Published NAC DTM download and analysis, SLDEM2015/LOLA work,
+             depression-depth rasters, anisotropic filtering, morphometrics,
+             Diviner/Mini-RF/GRAIL raster fusion, classical ML, PU learning,
+             candidate catalogue generation
+  Covers:    Gaps 1 (partially), 2, 5, 6, 8 from the research plan
+  Verdict:   THIS IS WHERE YOU START. Genuinely sufficient for a first paper.
+
+TIER 1 - "PHOTOGRAMMETRY"                   approx. $50-150 / month
+  Spec:      16-32 DEDICATED cores, 64-128 GB RAM, 1-2 TB NVMe
+  Runs:      ISIS + Ames Stereo Pipeline, full NAC stereo DTM production
+  Sizing evidence:
+             ASP's own documentation gives a rule of thumb: images around
+             20,000 x 20,000 px on a machine with 40 GB RAM and 16 cores can
+             produce a terrain model in roughly 4-20 hours. An LROC NAC image
+             is about 52,224 lines x 5,064 samples per CCD, so a stitched pair
+             is in the same pixel-count ballpark. Budget the same or worse.
+             SGM/MGM correlation subprocesses have been observed using over
+             4 GB each; a common working config is 8 processes on a 64 GB node.
+  Verdict:   Only rent this once you have a specific site that lacks a
+             published DTM. Consider renting hourly/spot rather than monthly.
+
+TIER 2 - "DEEP LEARNING"                    approx. $0.30-2.00 / hour, on demand
+  Spec:      1 GPU with 16-24 GB VRAM, 8-16 vCPU, 64 GB RAM
+  Runs:      PyTorch, PointNet++/KPConv/Point Transformer, Mask R-CNN baselines
+  Verdict:   NEVER rent this monthly. Rent by the hour, or use free tiers
+             (Google Colab, Kaggle) for prototyping and only pay for final runs.
+
+--------------------------------------------------------------------------------
+2. CRITICAL VPS BUYING TRAPS
+--------------------------------------------------------------------------------
+
+TRAP 1 - SHARED / BURSTABLE vCPU
+  Budget VPS "vCPUs" are usually oversubscribed and throttled after a burst
+  credit runs out. ASP will saturate every core for hours. You will get
+  throttled to a crawl and be charged for the wall-clock time anyway.
+  -> For Tier 1 you need DEDICATED vCPU instances, or a bare-metal / dedicated
+     root server. Budget European dedicated-server providers give far better
+     price-performance for this workload than mainstream cloud VPS.
+
+TRAP 2 - DISK IS THE REAL BOTTLENECK
+  ASP generates enormous intermediates: tiled disparity maps, subpixel
+  refinement products, per-tile subdirectories. Expect scratch usage many times
+  the input size. Budget 100-250 GB of scratch PER STEREO PAIR during
+  processing, even though the final DTM is only a few GB.
+  -> Use --keep-only to prune intermediates.
+  -> NVMe, not spinning disk, not network-attached storage. ASP is I/O bound
+     in several stages and NFS will destroy you.
+
+TRAP 3 - BANDWIDTH CAPS AND EGRESS BILLING
+  Many VPS plans cap monthly transfer. INBOUND is usually free or generous;
+  OUTBOUND is what gets billed. You will download a lot and upload little, so
+  this is usually fine - but check that inbound is genuinely unmetered.
+  -> Never try to mirror the archive. Scale reference: the LROC team has
+     delivered on the order of 579 TB of EDRs and over 1 PB of CDRs to PDS.
+     Derived RDR products are a much smaller collection. Download only what
+     you need, by ID.
+
+TRAP 4 - THE ISIS DATA AREA
+  The full ISIS ancillary data set for all missions is roughly 520 GB, most of
+  it SPICE kernels. You do not need it.
+  -> base area alone is around 26 GB.
+  -> Fetch only the lro mission area, and exclude kernels.
+  -> Use the SPICE Web Service instead of local kernels (see Section 4).
+  -> If you later add Chandrayaan-2: its full ISIS directory is around 200 GB,
+     almost entirely reconstructed attitude (ck) kernels covering the whole
+     mission. Exclude them and pull only the two or three ck files spanning
+     your acquisition dates via rclone.
+
+TRAP 5 - OPERATING SYSTEM
+  ISIS does not run on Windows natively. Any Linux VPS is fine. Ubuntu LTS or
+  Rocky/Alma are the safest choices.
+
+TRAP 6 - REBUILDING THE ENVIRONMENT
+  Setting up ISIS + ASP + GDAL + a Python stack takes hours and the data
+  download takes longer. Once it works, SNAPSHOT THE IMAGE. Then you can
+  destroy and recreate large instances on demand and only pay while running.
+
+--------------------------------------------------------------------------------
+3. WHERE THE FREE DATA ACTUALLY IS
+--------------------------------------------------------------------------------
+
+PRE-MADE DTMs (start here - no processing needed)
+  LROC PDS RDR archive, NAC_DTM collection
+      pds.lroc.asu.edu  and  lroc.im-ldi.com/data
+      Delivered as PDS products plus GeoTIFF derivatives (colour-shaded relief,
+      terrain-shaded relief, colour slope map) generated with GDAL.
+  NAC DTM footprint SHAPEFILE
+      Polygons for every published DTM with expanded error metrics, including
+      relative linear error (vertical precision at 90% confidence) and
+      triangulation RMS. Download this FIRST - it is your index and your
+      quality filter in one file.
+  NAC Stereo Catalog (PDF)
+      Lists all NAC stereo pairs and triplets suitable for DTM generation.
+      This tells you what you could build that does not exist yet.
+
+GLOBAL BASE LAYERS
+  SLDEM2015 (LOLA + Kaguya TC merged), ~59 m/px equatorial - USGS Astropedia
+  LOLA gridded products - PDS Geosciences Node
+  WAC global morphology mosaic and WAC DTM - LROC RDR
+
+NON-OPTICAL EVIDENCE LAYERS
+  Diviner thermal / rock abundance     - PDS Geosciences Node
+  Mini-RF radar                        - PDS Geosciences Node
+  GRAIL gravity models (GRGM1200A etc) - PDS Geosciences Node
+  SELENE LRS radar sounder             - JAXA SELENE Data Archive
+  M3 spectral                          - PDS Imaging Node
+
+LABELS
+  Lunar Pit Atlas (Wagner & Robinson) - ASU / LROC
+
+RAW IMAGERY (only if building your own DTMs)
+  LROC EDR/CDR via wms.lroc.asu.edu/lroc/search or the PDS Imaging Node
+  Chandrayaan-2 OHRC / TMC-2 via ISRO ISSDC Pradan (free, requires
+      registration; downloads arrive as zips with .img + .xml)
+
+CLOUD-HOSTED MIRRORS
+  Some planetary datasets are published on the AWS Registry of Open Data as
+  Cloud Optimized GeoTIFFs, which allows windowed reads over HTTP without
+  downloading whole files. Coverage is stronger for Mars/HiRISE than for the
+  Moon at present - worth checking, because if a COG mirror exists for what you
+  need, your storage requirement collapses to almost nothing.
+
+--------------------------------------------------------------------------------
+4. MINIMAL SETUP, TIER 1
+--------------------------------------------------------------------------------
+
+# --- Miniforge + ISIS via conda -----------------------------------------
+conda create -n isis -c usgs-astrogeology -c conda-forge isis rclone
+conda activate isis
+export ISISROOT=$CONDA_PREFIX
+export ISISDATA=$HOME/isisdata
+export ALESPICEROOT=$ISISDATA
+mkdir -p $ISISDATA
+
+# base area, ~26 GB
+downloadIsisData base $ISISDATA
+
+# LRO mission area WITHOUT the SPICE kernels
+downloadIsisData lro $ISISDATA --exclude="kernels/**"
+
+# --- Ames Stereo Pipeline (prebuilt binary, no compiling) ----------------
+# grab the current release tarball from the ASP GitHub releases page
+tar xjf StereoPipeline-*.tar.bz2
+export PATH=$PWD/StereoPipeline-*/bin:$PATH
+
+# --- NAC ingestion --------------------------------------------------------
+f=M104318871LE
+lronac2isis from=${f}.IMG to=${f}.cub
+spiceinit   from=${f}.cub web=yes          # <-- uses SPICE Web Service,
+                                           #     avoids 100s of GB of kernels
+lronaccal   from=${f}.cub to=${f}.cal.cub radiometrictype=RADIANCE
+lronacecho  from=${f}.cal.cub to=${f}.cal.echo.cub
+
+  *** GOTCHA: lronaccal defaults to RadiometricType=IOF, which needs the
+      target-to-sun distance. The SPICE Web Service does not attach that, so
+      IOF against web=yes produces cubes full of zeros. Either use
+      RADIANCE (as above), or download the local mission data. This one
+      silently wastes days if you do not know it. ***
+
+# --- stereo ---------------------------------------------------------------
+bundle_adjust <cubes...> -o ba/run
+
+parallel_stereo \
+    --stereo-algorithm asp_mgm \
+    --processes 8 \
+    --threads-multiprocess 2 \
+    --corr-memory-limit-mb 6000 \
+    --bundle-adjust-prefix ba/run \
+    <left.cub> <right.cub> stereo/run
+
+point2dem --tr 5 --t_srs "<lunar equirectangular proj4>" stereo/run-PC.tif
+
+  Tune --processes and --corr-memory-limit-mb together:
+  processes x corr-memory-limit-mb must stay comfortably below total RAM.
+  If a run dies mid-correlation, lower --processes and resume with
+  --resume-at-corr rather than starting over.
+
+# --- Tier 0 analysis stack ------------------------------------------------
+conda create -n terra -c conda-forge \
+    gdal rasterio rioxarray xarray whitebox richdem pdal python-pdal \
+    geopandas scikit-learn xgboost pyshtools numpy scipy matplotlib
+
+  Depression-depth raster (your CHM analog):
+      whitebox_tools -r=FillDepressions -i=dtm.tif -o=filled.tif
+      gdal_calc.py -A filled.tif -B dtm.tif --outfile=depth.tif --calc="A-B"
+
+--------------------------------------------------------------------------------
+5. REALISTIC BUDGET AND SEQUENCING
+--------------------------------------------------------------------------------
+
+MONTHS 0-6   Tier 0 box only.
+             Published DTMs + global layers + your own terrestrial drone data.
+             Build the depression-depth detector, validate on Earth, run the
+             degradation ladder. Produce paper 1.
+             Cost: roughly $10-20/month plus storage.
+
+MONTHS 6-12  Add Tier 2 GPU hours as needed, on demand only.
+             Train the classifier. Do NOT keep a GPU idle.
+             Cost: tens of dollars total if you prototype on free tiers.
+
+MONTHS 12+   Spin up Tier 1 only when you have identified specific sites where
+             no published DTM exists and the stereo catalog says a pair does.
+             Process in batches, snapshot, destroy the instance between runs.
+             Cost: hourly, bursty, likely a few hundred dollars total.
+
+TOTAL over 18 months: plausibly under $600-800 if you sequence it this way.
+If you rent a big permanent box from day one instead, the same 18 months costs
+several thousand and most of those cores sit idle.
+
+--------------------------------------------------------------------------------
+6. CHEAPER OR FREE ALTERNATIVES WORTH CHECKING FIRST
+--------------------------------------------------------------------------------
+
+  - If you are affiliated with any university, ask about institutional HPC.
+    ASP is already packaged as a module on several national HPC systems
+    (with SLURM job scripts documented), so someone has done the install work.
+  - Cloud provider research credit programmes (AWS, Google, Azure) routinely
+    grant several thousand dollars of credit to academic and open-science
+    projects. Worth an application before you spend your own money.
+  - Google Colab / Kaggle free GPU tiers for all DL prototyping.
+  - Spot / preemptible instances for photogrammetry: ASP's --resume-at-corr
+    makes interrupted runs recoverable, which fits the spot model well.
+  - Ask the LROC SOC directly whether a DTM exists for your target before
+    building one. They release new NAC DTMs every quarter.
+
+--------------------------------------------------------------------------------
+7. WHAT WOULD ACTUALLY STOP YOU
+--------------------------------------------------------------------------------
+
+Not money. Not compute. Not data access. The realistic blockers are:
+
+  1. Stereo coverage. Only a small fraction of the lunar surface has proper
+     high-resolution stereo. No VPS fixes this.
+  2. Scope discipline. Global processing is an HPC problem. Regional scope is
+     a VPS problem. Choose regional.
+  3. The ISIS/ASP learning curve, which is steep and poorly signposted. Budget
+     4-6 weeks just to reproduce one published DTM end to end and confirm it
+     matches within stated error bars. Treat that as a milestone, not a chore.
+
+================================================================================
+BOTTOM LINE
+
+Rent a small box. Use the DTMs that already exist. Prove the method on your own
+terrestrial drone data where you have ground truth. Only pay for cores once you
+have a specific site that demands them. The expensive infrastructure is the
+last thing you need, not the first.
+================================================================================

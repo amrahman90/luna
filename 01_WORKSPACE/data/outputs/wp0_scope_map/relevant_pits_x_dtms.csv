@@ -1,0 +1,24 @@
+Name,Terrain,Type,Latitude,Longitude,InMaxDiam,Depth,Overhang,StereoIDs,DTM,DTM_NAME,sitename,resolution,relat_le,triang_rms,lola_rms,cov_sqkm,num_stereo,quality,completion,url
+Marius Hills Pit,Mare,,14.0917,-56.7701,55,40,Y,"M1274616922L,M1274609891L",NAC_DTM_MARIUSPIT01,MARIUSPIT01,Marius Pit,4.0,3.43,0.321,1.42,449.88,1.0,good,2020-10-26,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_MARIUSPIT01
+Marius Hills Pit,Mare,,14.0917,-56.7701,55,40,Y,"M1274616922L,M1274609891L",NAC_DTM_MARIUSPIT01,MARIUSCONE,Marius Hills Pit and Broken Cone,4.0,3.43,0.321,1.64,811.89,2.0,good,2020-11-12,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_MARIUSCONE
+West Marius Hills Pit,Mare,,13.5507,-58.1733,N/A,16,Y?,"M1313401618L,M1313394599L",,,,,,,,,,,,
+Mare Tranquillitatis Pit,Mare,,8.3355,33.222,100,105,Y,"M152655237R,M137332905R",NAC_DTM_TRANQPIT1,TRANQPIT1,Mare Tranquillitatis Pit,2.0,0.72,0.379,0.55,124.72,1.0,good,2019-03-05,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_TRANQPIT1
+Southwest Mare Tranquillitatis Pit,Mare,,4.1438,24.6871,32,25,?,"M1341063036R,M1297582135L",,,,,,,,,,,,
+Southwest Mare Tranquillitatis B Pit,Mare,,4.1438,24.6867,18,13,?,N/A,,,,,,,,,,,,
+Mare Ingenii Pit,Mare,,-35.9494,166.0559,104,55,Y,"M1117792640R,M1117785537L",,INGENIIPIT,Mare Ingenii Pit,2.0,1.74,0.227,1.63,185.25,1.0,good,2019-02-05,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_INGENIIPIT
+Runge Pit,Mare,,-2.7024,86.78,14,5,?,"M190036923R,M190022623R",,,,,,,,,,,,
+Lacus Mortis Pit,Mare,,44.9608,25.6119,N/A,60,Y,"M1317542330L,M1317528271L",,,,,,,,,,,,
+Compton Pit,Mare,,56.2247,106.1955,110,35,?,"M1225299477R,M1225278371L",,,,,,,,,,,,
+North Procellarum 1 Pit,Mare,,35.4097,-45.6398,157,54,?,"M1206329407R,M1206315342L",NAC_DTM_PRCLRMPIT01,PRCLRMPIT01,Procellarum Pits,5.0,3.36,0.302,2.52,771.23,1.0,good,2016-04-09,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_PRCLRMPIT01
+North Procellarum 2 Pit,Mare,Large Bowl,35.3433,-45.6553,160,43,N,"M1206329407L,M1206315342L",NAC_DTM_PRCLRMPIT01,PRCLRMPIT01,Procellarum Pits,5.0,3.36,0.302,2.52,771.23,1.0,good,2016-04-09,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_PRCLRMPIT01
+Sinus Iridum Pit,Mare,,45.623,-28.811,66,16,?,"M1223843860R,M1223829793R",NAC_DTM_IRIDIUMPIT1,IRIDIUMPIT1,Sinus Iridium Pit,5.0,3.97,0.862,2.06,809.9,1.0,good,2018-01-20,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_IRIDIUMPIT1
+Mare Insularum Pit,Mare,,8.6861,-29.0335,N/A,63,N,N/A,,,,,,,,,,,,
+Mare Moscoviense Pit,Mare,Large Bowl,29.5025,150.4647,175,40,N,"M1319088918L,M1319074859L",,,,,,,,,,,,
+Mare Serenitatis Pit,Mare,,35.1041,17.4017,21,>25,?,"M1345798646L,M1345784596R",,,,,,,,,,,,
+Central Mare Fecunditatis Pit,Mare,Large Bowl,-0.9182,48.6595,122,42,N,"M1107968066R,M1107953768R",NAC_DTM_FECNDITATS2,FECUNPIT,Fecunditatis Pit,5.0,5.0,0.0,2.19,669.29,1.0,good,2013-07-22,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_FECUNPIT
+Central Mare Fecunditatis Pit,Mare,Large Bowl,-0.9182,48.6595,122,42,N,"M1107968066R,M1107953768R",NAC_DTM_FECNDITATS2,FECNDITATS2,Bouldered ridge in Mare Fecunditatis NE of Messier Crater,4.0,2.11,1.06,5.22,663.69,1.0,good,2014-03-20,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_FECNDITATS2
+Southwest Mare Fecunditatis Pit,Highland,,-6.7521,42.7595,19,51,Y,"M1108003923R,M1107996775R",,SWFECUNPIT1,SW Mare Fecunditatis Pit,3.0,1.58,0.525,3.12,448.69,1.0,good,2023-08-21,https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_SWFECUNPIT1
+Schlï¿½ter Pit,Highland,,-5.8395,-83.05,37,57,Y,"M1311225886R,M1114710368L",,,,,,,,,,,,
+Highland 1,Highland,,43.9662,23.0836,41,27,N?,N/A,,,,,,,,,,,,
+Highland 2,Highland,,41.1563,18.8206,34,>24,N?,N/A,,,,,,,,,,,,
+Highland 3,Highland,,42.3941,-39.6924,45,27,N?,N/A,,,,,,,,,,,,

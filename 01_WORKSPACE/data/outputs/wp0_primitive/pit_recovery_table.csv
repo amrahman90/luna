@@ -1,0 +1,9 @@
+Name,Terrain,catalogued_depth_m,recovered_depth_m,recovered_frac,dtm,pass_50pct,nodata_frac_200m,note
+Mare Tranquillitatis Pit,Mare,105.0,129.67,1.235,TRANQPIT1,True,0.081,"tile NAC_DTM_TRANQPIT1.TIF; pit pixel (8004,1612), lon_used=33.22, 2 m/px"
+Marius Hills Pit,Mare,40.0,14.56,0.364,MARIUSPIT01,False,0.02,"tile NAC_DTM_MARIUSPIT01.TIF; pit pixel (7262,1649), lon_used=-56.77, 4 m/px"
+Mare Ingenii Pit,Mare,55.0,88.06,1.601,INGENIIPIT,True,0.056,"tile NAC_DTM_INGENIIPIT.TIF; pit pixel (6626,2074), lon_used=166.06, 2 m/px"
+Southwest Mare Fecunditatis Pit,Highland,51.0,33.66,0.66,SWFECUNPIT1,True,0.0,"tile NAC_DTM_SWFECUNPIT1.TIF; pit pixel (8584,1309), lon_used=42.76, 3 m/px"
+Central Mare Fecunditatis Pit,Mare,42.0,50.1,1.193,FECNDITATS2,True,0.0,"tile NAC_DTM_FECNDITATS2.TIF; pit pixel (14394,1550), lon_used=48.66, 2 m/px"
+North Procellarum 1 Pit,Mare,54.0,62.31,1.154,PRCLRMPIT01,True,0.0,"tile NAC_DTM_PRCLRMPIT01.TIF; pit pixel (6191,1733), lon_used=-45.64, 5 m/px"
+North Procellarum 2 Pit,Mare,43.0,49.19,1.144,PRCLRMPIT01,True,0.0,"tile NAC_DTM_PRCLRMPIT01.TIF; pit pixel (6594,1656), lon_used=-45.66, 5 m/px"
+Sinus Iridum Pit,Mare,16.0,37.19,2.324,IRIDIUMPIT1,True,0.0,"tile NAC_DTM_IRIDIUMPIT1.TIF; pit pixel (5572,1632), lon_used=-28.81, 5 m/px"

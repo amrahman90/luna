@@ -1,0 +1,45 @@
+{
+  "generated": "2026-08-20",
+  "dtms": [
+    "MARIUSPIT01"
+  ],
+  "rungs": [
+    4.0,
+    8.0
+  ],
+  "summaries": {
+    "MARIUSPIT01": {
+      "res_m_source": 3.9999999999986,
+      "rungs": {
+        "4.0": {
+          "shape": [
+            12529,
+            3331
+          ],
+          "frangi_shape": [
+            5000,
+            1329
+          ],
+          "n_peaks": 139,
+          "depth_max_m": 190.38720703125,
+          "frangi_max": 0.7811170220375061,
+          "score_max": 5.035857677459717
+        },
+        "8.0": {
+          "shape": [
+            6264,
+            1665
+          ],
+          "frangi_shape": [
+            5000,
+            1329
+          ],
+          "n_peaks": 137,
+          "depth_max_m": 190.3408203125,
+          "frangi_max": 0.7811170220375061,
+          "score_max": 5.02492094039917
+        }
+      }
+    }
+  }
+}

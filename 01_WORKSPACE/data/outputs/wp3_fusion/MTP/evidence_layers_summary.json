@@ -1,0 +1,27 @@
+{
+  "grail": {
+    "tab": "/home/frostflux/lunarvoid/data/evidence/grail/GRGM1200A_SHA.TAB",
+    "region_lon": [
+      30.0,
+      35.0
+    ],
+    "region_lat": [
+      6.0,
+      11.0
+    ],
+    "res_deg": 0.25,
+    "n_cells": 441,
+    "gr_r_min": -1.6264594793319702,
+    "gr_r_max": -1.6250407695770264,
+    "gmag_min": 6.59540644321055e-10,
+    "gmag_max": 3.934736270139183e-08,
+    "gmag_p50": 1.0128284877453098e-08,
+    "gmag_p99": 2.5164627714957533e-08,
+    "note": "v0.1: gravity VECTOR (radial + theta + phi) from pyshtools.expand; gradient magnitude is finite-difference of gr_r, NOT the full gravity gradient tensor. Full Gxx/Gyy/Gzz computation requires either spherical-harmonic synthesis with derivatives OR a higher-order method; deferred to v0.2."
+  },
+  "diviner": "placeholder",
+  "outputs": {
+    "grail_dir": "01_WORKSPACE/data/outputs/wp3_fusion/MTP",
+    "grail_figure": "01_WORKSPACE/data/outputs/wp3_fusion/MTP/grail_gradients_overview.png"
+  }
+}

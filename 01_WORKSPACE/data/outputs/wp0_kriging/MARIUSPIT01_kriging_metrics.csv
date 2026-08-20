@@ -1,0 +1,4 @@
+# grid_spacing_m=150.0, n_train=6000, n_nochange=20737, slope_max_deg=2.0, holdout_frac=0.2, seed=42, variogram=pykrige-autofit spherical nugget=2.542e-08 psill=1.716 range_m=7814.5
+stage,n_checkpoints,bias_m,rmse_m
+before,4147,0.0584,1.4253
+after,4147,-0.0023,0.5407
