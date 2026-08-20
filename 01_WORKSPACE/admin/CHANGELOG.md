@@ -5,6 +5,29 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 5)
+
+- **LLTB-1 v0.3 — slope-aware precision lift:**
+- `wp1_detector/sag_detect.py`:
+  - New `slope_mask(dtm, pixel_m, min_slope_deg, smooth=3)` helper
+    (computes np.gradient-based slope, median-smooths, returns a
+    boolean mask where slope >= min_slope_deg)
+  - New `--slope-mask-degrees N` CLI flag (default 0; recommended 10)
+  - New rung summary fields: `f1_test_slope`, `slope_mask_degrees`,
+    `n_slope_masked_test`
+  - New output GeoTIFF `slope_ok_<rung>m.tif` (audit raster)
+  - Log prints all three F1s side-by-side (raw / +cc / +cc+slope)
+- v0.2 release note was honest: the connected-component filter
+  gave no headline lift. v0.3 fixes that with the slope mask.
+  Universal F1 lift across all 7 LLTB-1 sites; +2200% on Kingsbowl
+  (worst case), +37% on IndianTunnel_Collapse3 (real lava tube),
+  +7% on IndianTunnel_NorthSurface (best honest). Full results in
+  `notes/2026-08-21_LLTB1_v0.3_release_note.md`.
+- New file: `notes/2026-08-21_LLTB1_v0.3_release_note.md`
+- `.gitignore`: ignore `slope_ok_*.tif` audit raster
+- 7 LLTB-1 sites covered (added Sheepridge, IndianTunnel_cave_10x,
+  IndianTunnel_cave_1x with corrected npz paths discovered this run)
+
 ## 2026-08-20 (execution session 4)
 
 - **LLTB-1 v0.2 (connected-component filter + f32-dir auto-discovery)**

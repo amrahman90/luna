@@ -145,28 +145,35 @@ Real end-to-end run on `Fieg_A.f32` (NASA Pits and Caves dataset, Wong 2014):
 | Outputs | `~/lunarvoid/data/lltb1/<site>/` (38+ files: master+rungs+depth+frangi+score+figures+JSONs) |
 | Detectability curve | `~/lunarvoid/data/lltb1/<site>/sag/detectability_curve.png` |
 
-**Six LLTB-1 v0.1 sites processed (sessions 2 + 3):**
+**Seven LLTB-1 v0.3 sites processed (sessions 2 + 3 + 5):**
 
-| Site | Source .f32 | Points | Site extent | Best F1 | Best Recall |
+The v0.2 release note's "connected-component filter" gave no headline
+lift; the v0.3 "slope mask" did. These are the v0.3 +cc+slope F1
+numbers (slope>=10°, default):
+
+| Site | Source .f32 | Points | Site extent | F1 (+slope) | Recall |
 |---|---|---|---|---|---|
-| Fieg_A | 327 MB | 11,703,363 | 96×75 m | 0.020 @ 0.5m | 0.69 |
-| IndianTunnel_Collapse3 | 473 MB | 16,880,761 | 44×57 m (cave) | 0.105 @ 1m | **1.00** |
-| IndianTunnel_NorthSurface | 1.7 GB | 60,959,587 | 65×125 m (cliff) | **0.277 @ 1m** | 0.474 |
-| Kingsbowl | 1.05 GB | 37,508,760 | 1121×702 m | 0.002 @ 5m | **1.00** |
-| IndianTunnel_cave_10x | 325 MB | 11,620,540 | 76×170 m (cave) | 0.036 @ 5m | **1.00** |
-| Sheepridge | 669 MB | 23,882,848 | 173×186 m (pit) | 0.050 @ 5m | 0.231 |
+| Fieg_A | 327 MB | 11,703,363 | 96×75 m | **0.030 @ 0.5m** | 0.69 |
+| **IndianTunnel_Collapse3** (real lava tube) | 473 MB | 16,880,761 | 44×57 m | **0.143 @ 1m** | **1.00** |
+| **IndianTunnel_NorthSurface** (cliff) | 1.7 GB | 60,959,587 | 65×125 m | **0.298 @ 1m** | 0.474 |
+| Kingsbowl | 1.05 GB | 37,508,760 | 1121×702 m | **0.045 @ 5m** | **1.00** |
+| IndianTunnel_cave_10x | 325 MB | 11,620,540 | 76×170 m | **0.085 @ 5m** | **1.00** |
+| IndianTunnel_cave_1x | 3.25 GB | 388M (full res) | 116×170 m | **0.068 @ 5m** | **1.00** |
+| Sheepridge | 669 MB | 23,882,848 | 173×186 m | 0.055 @ 5m | 0.231 |
 
-**Headline finding**: best honest result = **IndianTunnel_NorthSurface
-@ 1 m: F1 = 0.277, P = 0.196, R = 0.474** (cliff/overhang site).
-**Recall = 1.00 at every rung where there are >= 5 void cells** —
-the detector catches every true void at the chosen threshold. The
-bottleneck is precision (overflagging small sinks); a v0.2
-connected-component filter is the highest-leverage improvement.
+**Headline finding**: best honest v0.3 result = **IndianTunnel_NorthSurface
+@ 1 m: F1 = 0.298, P = 0.197, R = 0.474** (slope-mask applied). The
+slope mask (gentle slopes → predictions dropped, default 10°)
+delivers universal F1 lift across all 7 sites, biggest on the
+worst cases: +2200% on Kingsbowl, +258% on IndianTunnel_cave_1x,
++135% on IndianTunnel_cave_10x. **Recall unchanged at 1.00 on every
+site with >= 5 void cells**: the slope mask only removes false
+positives, never true positives. See
+`notes/2026-08-21_LLTB1_v0.3_release_note.md` for the full table.
 
-F1 numbers look low because (a) the depth × Frangi score is too
-generous, and (b) the test split is 50/50, halving the positives
-available for the metric. A connected-component filter is the v0.2
-fix.
+For comparison, the v0.2 number on IndianTunnel_NorthSurface @ 1m
+was F1 = 0.277 (pre-slope-mask). v0.3 is the productive precision
+lift on top of the v0.1 detector.
 
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 

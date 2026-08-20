@@ -60,4 +60,7 @@ Thumbs.db
 01_WORKSPACE/data/outputs/wp0_primitive/*/dtm_*.tif
 01_WORKSPACE/data/outputs/wp3_fusion/MTP/grail_*.tif
 
+# v0.3 slope mask audit raster (regenerable from slope_mask() + DTM)
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_[0-9]m_slope_ok.tif
+
 # Working/scratch directories (none in repo right now, just being safe)

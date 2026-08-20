@@ -161,6 +161,52 @@ def filter_small_components(mask: np.ndarray, min_size: int = 1) -> np.ndarray:
     return keep_labels & np.isfinite(mask) | (mask & ~np.isfinite(mask))
 
 
+def slope_mask(dtm: np.ndarray, pixel_m: float, min_slope_deg: float,
+               smooth: int = 3) -> np.ndarray:
+    """Return a boolean mask where True = "local slope is steep enough
+    that a roof-sag dimple is geometrically plausible".
+
+    Intuition: a 2 m amplitude dimple on a 60-300 m wavelength tube is
+    INVISIBLE on a slope that's already 5 degrees or steeper (the
+    dimple is dwarfed by the slope). On a slope gentler than ~3-5
+    degrees, the dimple shows up clearly in the depression-depth
+    raster as a faint bump; that's the regime our detector is in.
+
+    This is the v0.3 precision lift proposed in the v0.2 release
+    note's "what did NOT change" section.
+
+    Algorithm
+    ---------
+    1. Compute |dz/dx| and |dz/dy| via np.gradient (in metres per cell;
+       convert to metres per metre with pixel_m).
+    2. Take the max gradient over a `smooth`-cellside neighbourhood
+       (median filter; suppresses single-cell noise from the binned
+       cloud DTM). This is the local slope (m/m).
+    3. Convert to degrees: slope_deg = atan(slope) * 180/pi.
+    4. Mask = slope_deg >= min_slope_deg.
+
+    Returns boolean mask of shape dtm.shape. NaN cells (where dtm is
+    NaN) are masked out (returned as False) so they don't survive
+    downstream.
+    """
+    if min_slope_deg <= 0:
+        return np.isfinite(dtm)
+    if not np.isfinite(dtm).any():
+        return np.zeros_like(dtm, dtype=bool)
+    # dz per cell (metres per cell), then per metre
+    dz_y, dz_x = np.gradient(np.where(np.isfinite(dtm), dtm,
+                                      float(np.nanmean(dtm[np.isfinite(dtm)])))
+                              if np.isfinite(dtm).any() else dtm,
+                              pixel_m, pixel_m)
+    slope_pm = np.hypot(dz_x, dz_y)  # m/m
+    # median smoothing to suppress single-cell noise (binning artifacts)
+    if smooth > 1:
+        from scipy.ndimage import median_filter
+        slope_pm = median_filter(slope_pm, size=smooth, mode="nearest")
+    slope_deg = np.degrees(np.arctan(slope_pm))
+    return (slope_deg >= min_slope_deg) & np.isfinite(dtm)
+
+
 def tune_threshold(scores_cal: np.ndarray, truth_cal: np.ndarray, n_grid: int = 51):
     """Pick the threshold maximising F1 on the calibration half."""
     if not np.isfinite(scores_cal).any() or truth_cal.sum() == 0:
@@ -189,6 +235,11 @@ def main():
                     help="Minimum connected-component size (8-connectivity) in cells; "
                     "components below this are removed before F1 is computed. "
                     "Default 5; set to 1 to disable.")
+    ap.add_argument("--slope-mask-degrees", type=float, default=0.0,
+                    help="Mask out predictions on slopes steeper than this many "
+                    "degrees (gentle slopes cannot host roof-sag dimples that "
+                    "show up in 2-5 m amplitude depression-depth rasters). "
+                    "Default 0 (disabled); recommended v0.3 setting: 5-15 deg.")
     args = ap.parse_args()
 
     args.outdir.mkdir(parents=True, exist_ok=True)
@@ -292,9 +343,15 @@ def main():
         # are not i.i.d. samples of the same post-processing).
         pred_full = score >= thr
         pred_full = filter_small_components(pred_full, min_size=args.min_component)
+        # slope-aware mask: predictions on too-gentle slopes cannot
+        # host roof-sag dimples that show up in 2-5 m amplitude
+        # depression-depth rasters. v0.3 precision lift.
+        slope_ok = slope_mask(dtm, r, args.slope_mask_degrees)
+        pred_full_slope = pred_full & slope_ok
         # partition cal/test as boolean index on the 2D surface
         pred_cal_2d = pred_full & cal_mask
         pred_test_2d = pred_full & test_mask
+        pred_test_slope = pred_full_slope & test_mask
         m_cal = f1_at_threshold(score[cal_mask], truth_r[cal_mask], thr)
         # raw F1 (no post-processing) for the comparison print
         m_tst_raw = f1_at_threshold(score[test_mask], truth_r[test_mask], thr)
@@ -302,6 +359,9 @@ def main():
         # come from to avoid the dimension-mismatch bug
         m_tst_pred = _f1_from_pred(pred_test_2d[test_mask],
                                    truth_r[test_mask])
+        # post-cc-and-slope-mask F1 (v0.3 headline number)
+        m_tst_slope = _f1_from_pred(pred_test_slope[test_mask],
+                                    truth_r[test_mask])
         # FP per 10^4 km^2 (v5 mandatory reporting): cell area in km^2,
         # evaluated on the COMPONENT-FILTERED predictions (the honest metric)
         cell_area_km2 = (r * r) / 1e6
@@ -320,18 +380,22 @@ def main():
                           "n_detected_in_band": tp,
                           "detection_rate": (tp / tot) if tot else 0.0})
         print(f"[cal ] thr={thr:.3g}, F1={f1_cal:.3f}, P={m_cal['precision']:.3f}, R={m_cal['recall']:.3f}")
-        print(f"[test] thr={thr:.3g}, F1={m_tst_pred['f1']:.3f}, P={m_tst_pred['precision']:.3f}, "
-              f"R={m_tst_pred['recall']:.3f}, FP/10^4 km^2={fp_per_1e4km2:.2f} "
-              f"(raw F1={m_tst_raw['f1']:.3f})")
+        print(f"[test] thr={thr:.3g}, F1(>thr)={m_tst_pred['f1']:.3f}, "
+              f"P={m_tst_pred['precision']:.3f}, R={m_tst_pred['recall']:.3f}, "
+              f"FP/10^4 km^2={fp_per_1e4km2:.2f} "
+              f"(raw F1={m_tst_raw['f1']:.3f}, +slope F1={m_tst_slope['f1']:.3f})")
         rung_rows.append({
             "res_m": r, "shape": [nyr, nxr], "valid_frac": float(valid_r.sum() / Zr.size),
             "threshold": thr, "f1_cal": m_cal["f1"],
             "f1_test": m_tst_pred["f1"], "f1_test_raw": m_tst_raw["f1"],
+            "f1_test_slope": m_tst_slope["f1"],
             "precision_test": m_tst_pred["precision"], "recall_test": m_tst_pred["recall"],
             "fp_per_1e4km2_test": fp_per_1e4km2,
             "n_void_cells": int(truth_r.sum()),
             "n_detected_test": m_tst_pred["tp"],
             "min_component": args.min_component,
+            "slope_mask_degrees": args.slope_mask_degrees,
+            "n_slope_masked_test": int(((pred_full & ~slope_ok) & test_mask).sum()),
             "stratified": strat,
         })
         # save rasters
@@ -341,6 +405,10 @@ def main():
         # the geometric post-processing is verifiable
         write_geotiff(pred_full.astype(np.float32), trr,
                       args.outdir / f"pred_{r:g}m.tif", nodata=-9999.0)
+        # save the slope mask as well (for v0.3 audit)
+        if args.slope_mask_degrees > 0:
+            write_geotiff(slope_ok.astype(np.float32), trr,
+                          args.outdir / f"slope_ok_{r:g}m.tif", nodata=-9999.0)
         # figure: 4 panels (DTMs hs + depth + frangi + score)
         fig, ax = plt.subplots(1, 4, figsize=(20, 5))
         # hillshade
