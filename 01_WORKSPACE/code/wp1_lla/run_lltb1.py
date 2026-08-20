@@ -49,7 +49,39 @@ def main():
     # 1. pick the .f32
     f32s = sorted(args.f32_dir.glob("*.f32"))
     if not f32s:
-        raise SystemExit(f"no .f32 files in {args.f32_dir}")
+        # Auto-discovery: if --f32-dir is empty (a common failure mode
+        # when a previous background process stripped the symlink),
+        # search the canonical analog layout before raising.
+        # Canonical paths checked (in order):
+        #   ~/lunarvoid/data/analog/<site>/*.f32
+        #   ~/lunarvoid/data/analog/<site>/*/*.f32     (subdirs, e.g. IndianTunnel_cave/Full/)
+        # Also try a stripped variant of <site> in case the user named
+        # the LLTB-1 run with a suffix (e.g. IndianTunnel_cave_10x ->
+        # searches both IndianTunnel_cave_10x/ AND IndianTunnel_cave/).
+        candidate_sites = [args.site]
+        for suffix in ("_10x", "_1x", "_full", "_topo", "_Mesh"):
+            if args.site.endswith(suffix):
+                candidate_sites.append(args.site[: -len(suffix)])
+                break
+        search_roots = []
+        for site_name in candidate_sites:
+            canonical = Path.home() / "lunarvoid" / "data" / "analog" / site_name
+            if canonical.exists():
+                search_roots.append(canonical)
+                search_roots.extend(p for p in canonical.iterdir() if p.is_dir())
+                break
+        for root in search_roots:
+            f32s = sorted(root.glob("*.f32"))
+            if f32s:
+                print(f"[site] f32-dir was empty; auto-discovered {len(f32s)} .f32 files in {root}",
+                      flush=True)
+                args.f32_dir = root
+                break
+        if not f32s:
+            raise SystemExit(
+                f"no .f32 files in {args.f32_dir} and none found under "
+                f"{[str(r) for r in search_roots]}. Did the .rar get extracted?"
+            )
     f32 = args.f32_name or str(f32s[0])
     if not Path(f32).exists():
         f32 = str(f32s[0])
@@ -95,7 +127,7 @@ def main():
 
     # 6. v0.1 quicklook
     rc = run_module("wp1_lla/lltb1.py",
-                    ["str(args.outdir)", "--rung", str(args.rungs[len(args.rungs) // 2]),
+                    [str(args.outdir), "--rung", str(args.rungs[len(args.rungs) // 2]),
                      "--npz-name", str(npz.name)])
     if rc != 0:
         print(f"[warn] quicklook rc={rc}; continuing", flush=True)

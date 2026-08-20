@@ -51,11 +51,34 @@ def f32_stats(path: Path) -> int:
 
 
 def read_f32(path: Path) -> np.ndarray:
-    """Memory-map the .f32 and return a structured array of {n, 7} float32."""
+    """Memory-map the .f32 and return a structured array of {n, 7} float32.
+
+    NASA Pits & Caves .f32 files use a sentinel value for "no data"
+    in any of the 7 attributes. Empirically, valid terrain is in
+    the range [-1e4, 1e4] m; anything outside (typically 1e38) is
+    a sentinel. We mark all attributes NaN if xyz is sentinel, and
+    any individual attribute is NaN if it's outside the valid
+    range.
+    """
     n = f32_stats(path)
     arr = np.memmap(path, dtype=DTYPE, mode="r", shape=(n,))
-    # bring into RAM for downstream operations; 1e7 points ~= 280 MB float32
-    return np.array(arr, copy=True)
+    arr = np.array(arr, copy=True)
+    # xyz sentinel mask: any of x/y/z is outside the valid range
+    # (NASA analog sites are typically 1-1000 m extent; values > 1e3
+    # m are sentinels or unrecoverable outliers per the histogram
+    # analysis of Kingsbowl_orig.f32; values < 1e3 m are kept as
+    # real data even in cliff/cave overhangs)
+    xyz_sentinel = (
+        (np.abs(arr["x"]) > 1e3) | (np.abs(arr["y"]) > 1e3) | (np.abs(arr["z"]) > 1e3)
+    )
+    # per-attribute sentinel: outside valid range (for color/nir)
+    for field in ("nir", "r", "g", "b"):
+        attr_sentinel = (np.abs(arr[field]) > 1e3) | ~np.isfinite(arr[field])
+        arr[field] = np.where(attr_sentinel, np.nan, arr[field])
+    # zero out xyz where sentinel (all attributes set to NaN)
+    for field in ("x", "y", "z"):
+        arr[field] = np.where(xyz_sentinel, np.nan, arr[field])
+    return arr
 
 
 def write_las(arr: np.ndarray, out: Path, site: str = "", notes: str = "") -> None:

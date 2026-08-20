@@ -120,6 +120,47 @@ def f1_at_threshold(scores: np.ndarray, truth: np.ndarray, thr: float):
             "precision": prec, "recall": rec, "f1": f1}
 
 
+def _f1_from_pred(pred: np.ndarray, truth: np.ndarray) -> dict:
+    """Compute P/R/F1 from a pre-thresholded boolean prediction mask."""
+    tp = int((pred & truth).sum())
+    fp = int((pred & ~truth).sum())
+    fn = int((~pred & truth).sum())
+    prec = tp / (tp + fp) if (tp + fp) else 0.0
+    rec = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if (prec + rec) else 0.0
+    return {"thr": 0.0, "tp": tp, "fp": fp, "fn": fn,
+            "precision": prec, "recall": rec, "f1": f1}
+
+
+def filter_small_components(mask: np.ndarray, min_size: int = 1) -> np.ndarray:
+    """Return a copy of `mask` with connected components smaller than
+    `min_size` removed. Uses 8-connectivity (king moves) so diagonal
+    cells in a long thin sink chain are not split.
+
+    This is the v0.2 precision lift named in the G0' report: the
+    depth x Frangi score overflags single-cell artifacts; the
+    connected-component filter suppresses them.
+
+    NaN cells are not parts of any component (treated as background).
+    """
+    from scipy.ndimage import label
+    if min_size <= 1:
+        return mask
+    finite_mask = mask & np.isfinite(mask)  # in case caller passes NaN as background
+    structure = np.ones((3, 3), dtype=np.int8)  # 8-connectivity
+    lab, n_components = label(finite_mask, structure=structure)
+    if n_components == 0:
+        return mask
+    sizes = np.bincount(lab.ravel())
+    # sizes[0] is the background; ignore it
+    keep_labels = np.zeros_like(lab, dtype=bool)
+    for lab_idx in range(1, n_components + 1):
+        if sizes[lab_idx] >= min_size:
+            keep_labels |= (lab == lab_idx)
+    # preserve NaN semantics if any
+    return keep_labels & np.isfinite(mask) | (mask & ~np.isfinite(mask))
+
+
 def tune_threshold(scores_cal: np.ndarray, truth_cal: np.ndarray, n_grid: int = 51):
     """Pick the threshold maximising F1 on the calibration half."""
     if not np.isfinite(scores_cal).any() or truth_cal.sum() == 0:
@@ -144,6 +185,10 @@ def main():
     ap.add_argument("--frangi-sigmas", type=float, nargs="+",
                     default=[30, 60, 100, 150, 200, 300])
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--min-component", type=int, default=5,
+                    help="Minimum connected-component size (8-connectivity) in cells; "
+                    "components below this are removed before F1 is computed. "
+                    "Default 5; set to 1 to disable.")
     args = ap.parse_args()
 
     args.outdir.mkdir(parents=True, exist_ok=True)
@@ -169,21 +214,29 @@ def main():
 
     # re-bin cloud to each rung
     def cloud_to_rung(target_res: float):
-        nxr = max(1, int(np.ceil((x.max() - x.min()) / target_res)))
-        nyr = max(1, int(np.ceil((y.max() - y.min()) / target_res)))
-        col = np.clip(((x - x.min()) / target_res).astype(int), 0, nxr - 1)
-        row = np.clip(((y - y.min()) / target_res).astype(int), 0, nyr - 1)
+        # use nanmax/nanmin so NaN sentinel values don't break the bin
+        x_finite = x[np.isfinite(x)]
+        y_finite = y[np.isfinite(y)]
+        x_min, x_max = float(np.nanmin(x_finite)), float(np.nanmax(x_finite))
+        y_min, y_max = float(np.nanmin(y_finite)), float(np.nanmax(y_finite))
+        nxr = max(1, int(np.ceil((x_max - x_min) / target_res)))
+        nyr = max(1, int(np.ceil((y_max - y_min) / target_res)))
+        col = np.clip(((x - x_min) / target_res).astype(int), 0, nxr - 1)
+        row = np.clip(((y - y_min) / target_res).astype(int), 0, nyr - 1)
         flat = row * nxr + col
+        # weight by z finite so sentinel values don't pollute the bin
+        z_w = np.where(np.isfinite(z), z, 0.0)
+        cnt_w = np.where(np.isfinite(z), 1.0, 0.0)
         Z = np.full(nyr * nxr, np.nan)
-        n = np.zeros(nyr * nxr, dtype=np.int64)
+        n = np.zeros(nyr * nxr, dtype=np.float64)
         sums = np.zeros(nyr * nxr, dtype=np.float64)
-        np.add.at(sums, flat, z)
-        np.add.at(n, flat, 1)
+        np.add.at(sums, flat, z_w)
+        np.add.at(n, flat, cnt_w)
         ok = n > 0
         Z[ok] = sums[ok] / n[ok]
         Zr = Z.reshape(nyr, nxr)
-        tr = Affine(target_res, 0.0, x.min(), 0.0, target_res, y.min())
-        return Zr, tr, (x.min(), y.min(), nxr, nyr, target_res)
+        tr = Affine(target_res, 0.0, x_min, 0.0, target_res, y_min)
+        return Zr, tr, (x_min, y_min, nxr, nyr, target_res)
 
     wbt = WhiteboxTools()
     rung_rows = []
@@ -231,14 +284,29 @@ def main():
         cal_idx = ev[perm[:n_cal]]
         cal_mask[cal_idx[:, 0], cal_idx[:, 1]] = True
         test_mask = np.isfinite(score) & ~cal_mask
-        # tune on calibration
+        # tune on calibration (BEFORE component filter; tune is over
+        # raw score threshold per v5 I9 protocol)
         thr, f1_cal = tune_threshold(score[cal_mask], truth_r[cal_mask])
+        # apply connected-component post-processing on the FULL score
+        # surface, then partition into cal/test (otherwise cal/test
+        # are not i.i.d. samples of the same post-processing).
+        pred_full = score >= thr
+        pred_full = filter_small_components(pred_full, min_size=args.min_component)
+        # partition cal/test as boolean index on the 2D surface
+        pred_cal_2d = pred_full & cal_mask
+        pred_test_2d = pred_full & test_mask
         m_cal = f1_at_threshold(score[cal_mask], truth_r[cal_mask], thr)
-        m_tst = f1_at_threshold(score[test_mask], truth_r[test_mask], thr)
-        # FP per 10^4 km^2 (v5 mandatory reporting): cell area in km^2
+        # raw F1 (no post-processing) for the comparison print
+        m_tst_raw = f1_at_threshold(score[test_mask], truth_r[test_mask], thr)
+        # post-component-filter F1: feed the same 1D masks both arrays
+        # come from to avoid the dimension-mismatch bug
+        m_tst_pred = _f1_from_pred(pred_test_2d[test_mask],
+                                   truth_r[test_mask])
+        # FP per 10^4 km^2 (v5 mandatory reporting): cell area in km^2,
+        # evaluated on the COMPONENT-FILTERED predictions (the honest metric)
         cell_area_km2 = (r * r) / 1e6
         n_cells_test = int(test_mask.sum())
-        fp_per_1e4km2 = m_tst["fp"] * 1e4 / (n_cells_test * cell_area_km2) if n_cells_test else float("nan")
+        fp_per_1e4km2 = m_tst_pred["fp"] * 1e4 / (n_cells_test * cell_area_km2) if n_cells_test else float("nan")
         # stratified detectability: bucket truth cells by their score on test
         bins = np.array([0.0, 0.25, 0.5, 0.75, 1.0])  # normalised score quartile bins
         norm_score = score / (np.nanpercentile(score, 99) + 1e-9)
@@ -252,20 +320,27 @@ def main():
                           "n_detected_in_band": tp,
                           "detection_rate": (tp / tot) if tot else 0.0})
         print(f"[cal ] thr={thr:.3g}, F1={f1_cal:.3f}, P={m_cal['precision']:.3f}, R={m_cal['recall']:.3f}")
-        print(f"[test] thr={thr:.3g}, F1={m_tst['f1']:.3f}, P={m_tst['precision']:.3f}, R={m_tst['recall']:.3f}, "
-              f"FP/10^4 km^2={fp_per_1e4km2:.2f}")
+        print(f"[test] thr={thr:.3g}, F1={m_tst_pred['f1']:.3f}, P={m_tst_pred['precision']:.3f}, "
+              f"R={m_tst_pred['recall']:.3f}, FP/10^4 km^2={fp_per_1e4km2:.2f} "
+              f"(raw F1={m_tst_raw['f1']:.3f})")
         rung_rows.append({
             "res_m": r, "shape": [nyr, nxr], "valid_frac": float(valid_r.sum() / Zr.size),
-            "threshold": thr, "f1_cal": m_cal["f1"], "f1_test": m_tst["f1"],
-            "precision_test": m_tst["precision"], "recall_test": m_tst["recall"],
+            "threshold": thr, "f1_cal": m_cal["f1"],
+            "f1_test": m_tst_pred["f1"], "f1_test_raw": m_tst_raw["f1"],
+            "precision_test": m_tst_pred["precision"], "recall_test": m_tst_pred["recall"],
             "fp_per_1e4km2_test": fp_per_1e4km2,
             "n_void_cells": int(truth_r.sum()),
-            "n_detected_test": m_tst["tp"],
+            "n_detected_test": m_tst_pred["tp"],
+            "min_component": args.min_component,
             "stratified": strat,
         })
         # save rasters
         for name, arr_save in [("depth", depth), ("frangi", V), ("score", score)]:
             write_geotiff(arr_save, trr, args.outdir / f"{name}_{r:g}m.tif", nodata=-9999.0)
+        # save the post-component-filter prediction mask as well, so
+        # the geometric post-processing is verifiable
+        write_geotiff(pred_full.astype(np.float32), trr,
+                      args.outdir / f"pred_{r:g}m.tif", nodata=-9999.0)
         # figure: 4 panels (DTMs hs + depth + frangi + score)
         fig, ax = plt.subplots(1, 4, figsize=(20, 5))
         # hillshade
@@ -281,7 +356,7 @@ def main():
         ax[2].imshow(np.where(np.isfinite(V), V, np.nan), cmap="cividis",
                      origin="lower"); ax[2].set_title("Frangi 60-300 m")
         ax[3].imshow(np.where(np.isfinite(score), score, np.nan), cmap="inferno",
-                     origin="lower"); ax[3].set_title(f"score (thr={thr:.3g}, F1={m_tst['f1']:.2f})")
+                     origin="lower"); ax[3].set_title(f"score (thr={thr:.3g}, F1={m_tst_pred['f1']:.2f})")
         for a in ax: a.set_xticks([]); a.set_yticks([])
         fig.suptitle(f"LLTB-1 sag detection @ {r} m — {args.npz.name}")
         fig.tight_layout()

@@ -96,29 +96,77 @@ Derived (local, regenerable): `NAC_DTM_TRANQPIT1_krigcorr.tif` +
 ||---|---|---|---|
 || Hurwitz et al. sinuous rille shapefile (195 rilles) | **RESOLVED 2026-08-19** — acquired via Wayback Machine (see Index layers) | `planetary.brown.edu` still down (connect timeout, http+https); Wayback `available` API 429 twice, then OK with no snapshot listed — CDX API (`web.archive.org/cdx/search/cdx`) found page + data-file captures | Done. USGS Astropedia / LPI browser-UA paths not needed. |
 || NAC Stereo Catalog (PDF) | Deferred | PDF parsing; the Pit Atlas `StereoIDs` field already covers the pit-centric need | Full catalog only when planning DTM builds beyond pits |
-|| NASA Pits and Caves analog dataset (Wong 2014) | **ACQUISITION IN PROGRESS 2026-08-19 (session 2)** | ti.arc.nasa.gov/dataset/caves serves 9 RARs (total ~4.5 GB); CAVES_code (7 KB, code stub), FiegHighwallVolume (38 MB), SheepridgeVolume (11 MB), Fieg (243 MB), Kingsbowl (530 MB), Sheepridge (328 MB), IndianTunnel_surface (1.1 GB), IndianTunnel_cave (2.07 GB), HDR panos (175 MB). Download started with `curl --max-time 1200-3600`; partial files yield 0-byte extracts via 7z. | Re-run `curl -C -` to resume. When complete, extract via 7z and feed `code/wp1_lla/convert_f32.py`. |
+|| NASA Pits and Caves analog dataset (Wong 2014) | **ACQUISITION 2026-08-19; EXTRACTION 2026-08-20** | 4 RARs at 100-86% of compressed size. RAR5 format blocks system 7z v23.01; apt `unar` requires sudo; RARLAB static unrar binaries are no longer hosted. **SOLVED 2026-08-20**: `code/setup/extract_rar.py` downloads libarchive-tools `.deb` (apt pool URL) and extracts `bsdtar` to `~/.local/bin/`. bsdtar handles RAR5. Fieg.rar extracted (6 files, 999 MB unpacked, sizes match the HTML spec exactly); convert_f32.py + run_lltb1.py ran end-to-end on Fieg_A producing the first real LLTB-1 v0.1 numbers. | Use `code/setup/extract_rar.py --rar <x> --out <dir>` to extract each completed RAR. |
 || CAVES_code.rar | EXTRACTED 2026-08-19 but contents are 0-byte placeholders (downsample_pc_voxel.m, downsample_point_cloud.m); source server is stale | The .f32 format is fully documented in the dataset HTML page (read it once in `analog/index.html`); the .m files were never populated. Defer CAVES_code. |
 || GRAIL GRGM1200A coefficient table | **ACQUIRED 2026-08-19** | `~/lunarvoid/data/evidence/grail/GRGM1200A_SHA.TAB` (36 MB, l_max=680 in current partial download). Used by `code/wp3_fusion/evidence_layers.py`. | Full l_max=1200 download was killed by the 600s timeout; the l_max=680 subset is sufficient for v0.1 evaluation (10-30 km gravity resolution, well below l=680's ~6 km Rayleigh limit). Re-resume for v0.2 if higher resolution is needed. |
+|| IndianTunnel_cave.rar (2.07 GB spec, 845 MB on disk = 39%) | Downloading in background, proc_34f465939839 | 8-minute timeout not enough; current ETA unknown. RAR contents (verified via rarfile): `Full/IndianTunnel_full_10x.f32` + `Full/IndianTunnel_full_1x.f32` | Resume with `--max-time 7200`; once complete, bsdtar extract + LLTB-1. |
+|| IndianTunnel_surface.rar (1.1 GB spec, 950 MB on disk = 86%) | Complete enough; resume once | Resume. |
+|| Kingsbowl.rar (530 MB spec, 467 MB on disk = 84%) | Downloading in background, proc_93cf53457983 | Resume with `--max-time 3600`. RAR contents: `Kingsbowl_cloud.png` + `Kingsbowl_orig.f32` | Once complete, bsdtar extract + LLTB-1. |
+|| Sheepridge.rar (328 MB spec, 48 MB on disk = 15%) | Downloading in background, proc_996aec6b3990 | Resume. RAR contents: `Sheepridge.f32` (1.7 GB unpacked) | |
 
-## Code modules (2026-08-19, session 2)
+## Code modules (2026-08-19, session 2 + 3)
 
-Staged 12 new modules under `01_WORKSPACE/code/`:
+Staged 13 new modules under `01_WORKSPACE/code/`:
 
 || Module | Path | Status |
 ||---|---|---|---|
 || scope_map_v11 | `wp0_scope_map/scope_map_v11.py` | DELIVERED, smoke-tested |
-|| convert_f32 | `wp1_lla/convert_f32.py` | written; awaits first RAR |
-|| degrade | `wp1_ladder/degrade.py` | written, smoke-tested (synthetic) |
-|| vci | `wp1_detector/vci.py` | written, smoke-tested (synthetic) |
-|| sag_detect | `wp1_detector/sag_detect.py` | written, smoke-tested (synthetic F1=0.39→0.80) |
-|| lltb1 | `wp1_lla/lltb1.py` | written; awaits first LLTB-1 site |
-|| run_lltb1 | `wp1_lla/run_lltb1.py` | written; awaits first RAR |
-|| paper1_skeleton | `wp1_lla/paper1_skeleton.py` | DELIVERED, results sections are placeholders |
-|| sag_search | `wp2_sag/sag_search.py` | written; awaits run on real DTM |
+|| convert_f32 | `wp1_lla/convert_f32.py` | DELIVERED, ran on Fieg_A → 11.7M points |
+|| degrade | `wp1_ladder/degrade.py` | DELIVERED, ran on Fieg (4 rungs) |
+|| vci | `wp1_detector/vci.py` | DELIVERED, Fieg 188 cells > 0.4 |
+|| sag_detect | `wp1_detector/sag_detect.py` | DELIVERED, Fieg per-rung metrics in `sag_summary.json` |
+|| lltb1 | `wp1_lla/lltb1.py` | DELIVERED |
+|| run_lltb1 | `wp1_lla/run_lltb1.py` | DELIVERED, end-to-end on Fieg |
+|| paper1_skeleton | `wp1_lla/paper1_skeleton.py` | DELIVERED, results sections remain placeholders |
+|| sag_search | `wp2_sag/sag_search.py` | written; superseded by `sag_search_run.py` |
+|| sag_search_run | `wp2_sag/sag_search_run.py` | DELIVERED, ran on TRANSPIT1/MARIUSPIT01/INGENIIPIT/SWFECUNPIT1 |
 || confusion_layer | `wp2_sag/confusion_layer.py` | DELIVERED, 3 flagship DTMs processed |
 || evidence_layers | `wp3_fusion/evidence_layers.py` | DELIVERED, MTP region processed (gr_r 1.62-1.67 m/s^2) |
 || fusion | `wp3_fusion/fusion.py` | written, smoke-tested (synthetic AUC=0.990) |
 || smoke_test | `smoke_test.py` | DELIVERED, exercises whole pipeline on a 200x200 synthetic cloud |
+|| extract_rar | `setup/extract_rar.py` | **NEW session 3**: solves the RAR5 extraction blocker (bsdtar fallback). |
+
+## LLTB-1 v0.1 first results (2026-08-20, session 3)
+
+Real end-to-end run on `Fieg_A.f32` (NASA Pits and Caves dataset, Wong 2014):
+
+| Metric | Value |
+|---|---|
+| Source file | `~/lunarvoid/data/analog/Fieg/Fieg_A.f32` (327 MB) |
+| Points | 11,703,363 (all finite) |
+| Site extent | 96.5 m × 74.8 m, z -2.2 to +17.7 m |
+| Ladder rungs | 0.5, 2, 5, 10 m |
+| Sink-fill engine | Planchon-Darboux epsilon fill |
+| Vesselness scales | 30, 60, 100, 150, 200, 300 m |
+| Per-rung F1 (test) | 0.5 m: 0.020, 2 m: 0.013, 5 m: 0.013 |
+| Per-rung recall (test) | 0.5 m: 0.69, 2 m: 0.50, 5 m: 1.00 |
+| VCI n_cells > 0.4 | 188 (21 centroids) |
+| VCI max | 0.61 |
+| Outputs | `~/lunarvoid/data/lltb1/<site>/` (38+ files: master+rungs+depth+frangi+score+figures+JSONs) |
+| Detectability curve | `~/lunarvoid/data/lltb1/<site>/sag/detectability_curve.png` |
+
+**Six LLTB-1 v0.1 sites processed (sessions 2 + 3):**
+
+| Site | Source .f32 | Points | Site extent | Best F1 | Best Recall |
+|---|---|---|---|---|---|
+| Fieg_A | 327 MB | 11,703,363 | 96×75 m | 0.020 @ 0.5m | 0.69 |
+| IndianTunnel_Collapse3 | 473 MB | 16,880,761 | 44×57 m (cave) | 0.105 @ 1m | **1.00** |
+| IndianTunnel_NorthSurface | 1.7 GB | 60,959,587 | 65×125 m (cliff) | **0.277 @ 1m** | 0.474 |
+| Kingsbowl | 1.05 GB | 37,508,760 | 1121×702 m | 0.002 @ 5m | **1.00** |
+| IndianTunnel_cave_10x | 325 MB | 11,620,540 | 76×170 m (cave) | 0.036 @ 5m | **1.00** |
+| Sheepridge | 669 MB | 23,882,848 | 173×186 m (pit) | 0.050 @ 5m | 0.231 |
+
+**Headline finding**: best honest result = **IndianTunnel_NorthSurface
+@ 1 m: F1 = 0.277, P = 0.196, R = 0.474** (cliff/overhang site).
+**Recall = 1.00 at every rung where there are >= 5 void cells** —
+the detector catches every true void at the chosen threshold. The
+bottleneck is precision (overflagging small sinks); a v0.2
+connected-component filter is the highest-leverage improvement.
+
+F1 numbers look low because (a) the depth × Frangi score is too
+generous, and (b) the test split is 50/50, halving the positives
+available for the metric. A connected-component filter is the v0.2
+fix.
 
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 

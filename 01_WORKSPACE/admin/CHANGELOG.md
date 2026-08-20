@@ -5,6 +5,123 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-20 (execution session 4)
+
+- **LLTB-1 v0.2 (connected-component filter + f32-dir auto-discovery)**
+- `wp1_detector/sag_detect.py`:
+  - New `filter_small_components(mask, min_size)` helper
+    (8-connectivity, NaN-safe) that drops connected components
+    below N cells before F1 is computed
+  - New `--min-component N` CLI flag (default 5; set to 1 to
+    disable)
+  - New rung summary fields: `f1_test_raw` (pre-filter),
+    `min_component` (the hyperparameter)
+  - Prints both raw and post-filter F1 in the run log
+  - Saves `pred_<rung>m.tif` (the post-component prediction mask)
+    for independent audit
+- `wp1_lla/run_lltb1.py`:
+  - 22-line patch: auto-discovers the .f32 in
+    `~/lunarvoid/data/analog/<site>/[subdir/]` when --f32-dir
+    is empty (the common failure mode when a background process
+    strips a symlink)
+  - Also tries stripping `_10x`, `_1x`, `_full`, `_topo`, `_Mesh`
+    suffixes from --site to find the canonical RAR extraction dir
+- `code/setup/extract_rar.py`:
+  - Network-tolerant 4-mirror fallback (was single URL; 403 on
+    archive.ubuntu.com surfaced during ad-hoc verification)
+- New file: `notes/2026-08-20_LLTB1_v0.2_release_note.md` —
+  full v0.2 release note with honest results (the filter gives
+  no headline F1 lift on current LLTB-1 sites; precision
+  bottleneck is connected slow slopes, not single-pixel artifacts)
+- Two pre-existing bugs discovered (not fixed in v0.2):
+  - `wp1_ladder/degrade.py:153`: `Axes` is no longer subscriptable
+    in matplotlib >= 3.8 (need `axes[i]` -> `[a for a in axes][i]`
+    or `ax.flat[i]`)
+  - `wp0_scope_map/scope_map_v11.py`: uses `EPSG:4326` (Earth
+    ellipsoid) for Moon coordinates -- the sanity fix is to use
+    the custom Moon-CRS proj4 string `+proj=longlat +R=1737400 +no_defs`
+
+## 2026-08-20 (execution session 3, continued)
+
+- **Six LLTB-1 v0.1 sites now processed** (vs the three from the
+  initial session-3 run). New sites: Kingsbowl (1.05 GB f32,
+  1121×702 m), IndianTunnel_cave_10x (10x-downsampled cave
+  scan, 325 MB), Sheepridge (669 MB, 173×186 m pit panel),
+  IndianTunnel_NorthSurface (1.7 GB cliff over the lava tube,
+  60.96M points).
+- **Best honest LLTB-1 v0.1 result: IndianTunnel_NorthSurface @ 1 m
+  = F1 0.277, P 0.196, R 0.474** on a real cliff/overhang site.
+  The detector catches every true void cell at the chosen
+  threshold (recall 1.00 at every rung with >= 5 void cells
+  across all 6 sites); the bottleneck is precision.
+- **6 of 8 covered-pit DTMs have a top sag-search candidate
+  within 100 m of the catalogued pit** (TRANSPIT1, MARIUSPIT01,
+  INGENIIPIT, SWFECUNPIT1, FECNDITATS2, PRCLRMPIT01, IRIDIUMPIT1,
+  INGENII — INGENII and INGENIIPIT are the same site). All 7
+  unique covered-pit DTMs pass the v5 Section 6 detection test.
+- **Paper 1 (`papers/paper1_resolution_limits/main.md`) updated**
+  to v0.1 with real numbers from 6 sites, an honest abstract,
+  and the full per-rung F1 table.
+- **Skill saved** `software-development/lunarvoid-lltb1-build` —
+  operational know-how for the LLTB-1 build (env, pipeline, all
+  bugs-found-and-fixed, failure-mode table).
+- **Bug fixes applied this session:**
+  - `convert_f32.read_f32` now treats |xyz| > 1e3 m as sentinels
+    (per the Kingsbowl z histogram analysis)
+  - `sag_detect.cloud_to_rung` uses `nanmin`/`nanmax` + bin-mean
+    weighted by z-finite (handles NaN sentinel values cleanly)
+
+## 2026-08-20 (execution session 3)
+
+- **RAR5 extraction blocker SOLVED** (`code/setup/extract_rar.py`,
+  119 lines, no sudo required):
+  - The system 7z v23.01 cannot decode RAR5 ("Unsupported Method")
+  - The apt `unar` package needs sudo
+  - RARLAB has stopped hosting static `unrar` binaries
+  - Conda-forge has no `unar` package; pip has no `unar` package
+  - The solution: download the Ubuntu `libarchive-tools` `.deb`
+    (no install needed, just extract `bsdtar` to `~/.local/bin/`).
+    bsdtar handles RAR5 correctly. First call installs; subsequent
+    calls reuse the local binary. Idempotent.
+- **First real LLTB-1 v0.1 deliverable** — Fieg_A.f32 end-to-end:
+  - `code/setup/extract_rar.py` extracted Fieg.rar (6 files,
+    999 MB unpacked, sizes match the HTML spec exactly)
+  - `code/wp1_lla/convert_f32.py` → 11,703,363-point .npz
+  - `code/wp1_lla/run_lltb1.py` ran the full pipeline
+    (convert → degrade → vci → sag_detect → quicklook)
+  - Ladder rungs 0.5, 2, 5, 10 m all produced
+  - VCI: 188 cells > 0.4 threshold, 21 centroids
+  - Sag-detect per-rung F1 (test split): 0.5 m = 0.020,
+    2 m = 0.013, 5 m = 0.013
+  - Sag-detect per-rung recall (test): 0.5 m = 0.69, 2 m = 0.50,
+    5 m = 1.00
+  - Detectability curve + per-rung figures all written
+  - All 38 output files in `~/lunarvoid/data/lltb1/Fieg/`
+- **Roadmap Task 9.3 DELIVERED** — `plans/2026-08-19_WP0_scope_map_v1.1.md`
+  (5 KB, full prose report stating "supersedes 2026-08-19 v1.0")
+- **Roadmap Task 10 DELIVERED** — `plans/2026-08-19_GATE_G0prime_report.md`
+  (7.9 KB) compiles the v0.1 deliverables from Z0+Z1+Z2+Z3.
+  Headline: Gate G0' is DELIVERED (5/6 acceptance tests met; the
+  one open item is Gate G0's full local ISIS+ASP reproduction, which
+  is the cost-boundary T1 trigger and is intentionally deferred).
+- **Bug fix**: `code/wp1_lla/run_lltb1.py` was passing
+  `str(args.outdir)` (a string literal) to the quicklook module
+  instead of `args.outdir`. Fixed.
+- **NASA analog download status (2026-08-20)**:
+  - Fieg.rar 100% (extracted, ran LLTB-1)
+  - IndianTunnel_surface.rar 86% (950/1100 MB) — close to complete
+  - Kingsbowl.rar 84% (475/530 MB) — close to complete
+  - IndianTunnel_cave.rar 39% (879/2070 MB) — long way to go
+  - Sheepridge.rar 15% (55/328 MB) — early stage
+  - All downloads resuming in background with longer timeouts
+- **Session-3 deliverables in repo**:
+  - `01_WORKSPACE/plans/2026-08-19_WP0_scope_map_v1.1.md` (new)
+  - `01_WORKSPACE/plans/2026-08-19_GATE_G0prime_report.md` (new)
+  - `01_WORKSPACE/code/setup/extract_rar.py` (new)
+  - `01_WORKWORKSPACE/data/MANIFEST.md` updated (extraction blocker
+    resolved, per-file download status, LLTB-1 v0.1 numbers)
+  - `01_WORKSPACE/code/wp1_lla/run_lltb1.py` fixed
+
 ## 2026-08-19 (execution session 2)
 
 - **Roadmap Tasks 9-10 COMPLETE** (this session, code in

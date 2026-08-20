@@ -23,4 +23,41 @@ env/
 .DS_Store
 Thumbs.db
 
-# Data — only the large external download caches
+# Browser automation logs (not project artefacts)
+.playwright-mcp/
+
+# Large derived intermediate rasters (regenerable from the JSON summaries
+# + the source code; one PNG figure per rung is the public artefact)
+# Keep the JSON summaries and the PNG figures.
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_2m_depth.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_2m_frangi.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_2m_score.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_2m_filled.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_2m_tmp.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_4m_depth.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_4m_frangi.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_4m_score.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_4m_filled.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_4m_tmp.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_5m_depth.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_5m_frangi.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_5m_score.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_5m_filled.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_5m_tmp.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_8m_depth.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_8m_frangi.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_8m_score.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_8m_filled.tif
+01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_8m_tmp.tif
+01_WORKSPACE/data/outputs/wp0_kriging/MARIUSPIT01_corrections.tif
+01_WORKSPACE/data/outputs/wp0_kriging/TRANQPIT1_corrections.tif
+01_WORKSPACE/data/outputs/wp0_primitive/TRANQPIT1_depth.tif
+01_WORKSPACE/data/outputs/wp0_primitive/TRANQPIT1_filled.tif
+01_WORKSPACE/data/outputs/wp0_primitive/MARIUSPIT01_depth.tif
+01_WORKSPACE/data/outputs/wp0_primitive/MARIUSPIT01_filled.tif
+01_WORKSPACE/data/outputs/wp0_primitive/*/depth_*.tif
+01_WORKSPACE/data/outputs/wp0_primitive/*/filled_*.tif
+01_WORKSPACE/data/outputs/wp0_primitive/*/dtm_*.tif
+01_WORKSPACE/data/outputs/wp3_fusion/MTP/grail_*.tif
+
+# Working/scratch directories (none in repo right now, just being safe)
