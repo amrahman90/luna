@@ -1,6 +1,25 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["AGENTS.md"],
+  "default_agent": "lunar-orchestrator",
+  "compaction": { "auto": true, "tail_turns": 15 },
+  "tool_output": { "max_lines": 400, "max_bytes": 20000 },
+  "mcp": {
+    "arxiv": {
+      "type": "local",
+      "command": ["uvx", "arxiv-mcp-server"],
+      "enabled": true,
+      "environment": {
+        "ARXIV_STORAGE_PATH": "/home/frostflux/lunarvoid/mcp/arxiv"
+      }
+    },
+    "zotero": {
+      "type": "local",
+      "command": ["uvx", "zotero-mcp"],
+      "enabled": true,
+      "environment": { "ZOTERO_LOCAL": "true" }
+    }
+  },
   "permission": {
     "edit": {
       "*": "allow",
@@ -18,7 +37,10 @@
       "tee *00_SOURCE_ORIGINALS*": "deny",
       "sed * *00_SOURCE_ORIGINALS*": "deny",
       "truncate *00_SOURCE_ORIGINALS*": "deny",
-      "shred *00_SOURCE_ORIGINALS*": "deny"
+      "shred *00_SOURCE_ORIGINALS*": "deny",
+      "find *00_SOURCE_ORIGINALS*": "deny",
+      "rsync *00_SOURCE_ORIGINALS*": "deny",
+      "xargs *00_SOURCE_ORIGINALS*": "deny"
     }
   }
 }
