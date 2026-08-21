@@ -497,11 +497,12 @@ downloads in progress in background.
 
 ## Task 12 — Paired surface/void registration
 
-- [ ] **Step 12.1** For Indian Tunnel: register cave-interior cloud to
+- [x] **Step 12.1** For Indian Tunnel: register cave-interior cloud to
   surface cloud (shared entrance geometry; ICP with I1 parameters —
   CloudCompare CLI `cc_icp` or Open3D `registration_icp`, RMS threshold
   1e-7, overlap 90%, **adjust-scale OFF** per v5 lunar change).
-- [ ] **Step 12.2** Rasterize the cave centerline footprint → the ground
+  *(dense gate 9.3% inliers/0.490 m RMS; <0.1 m target not reached — entrance-only overlap)*
+- [x] **Step 12.2** Rasterize the cave centerline footprint → the ground
   truth = vertical projection of surveyed void onto surface DTM.
 
 **Verification:** registration residual < 0.1 m reported; footprint

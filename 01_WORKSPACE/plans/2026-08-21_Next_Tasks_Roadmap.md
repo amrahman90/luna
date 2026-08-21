@@ -31,10 +31,10 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
 
 ## Phase 1 — analog ground truth + degradation rungs → LLTB-1 v0.5
 
-- [ ] **P1.1 = Step 12.1** [geo-coder] Register Indian Tunnel
+- [x] **P1.1 = Step 12.1** [geo-coder] Register Indian Tunnel
   cave-interior point cloud to its DTM (ICP or documented manual
   transform; report residual error bars). M.
-- [ ] **P1.2 = Step 12.2** [geo-coder, depends P1.1] Rasterize cave
+- [x] **P1.2 = Step 12.2** [geo-coder, depends P1.1] Rasterize cave
   centerline footprint → ground-truth void mask for cave rungs. S.
 - [ ] **P1.3 = Step 13.2** [archivist, record-only] Log vegetation-
   stripping OUT-OF-SCOPE decision in findings.md + CHANGELOG (terrestrial

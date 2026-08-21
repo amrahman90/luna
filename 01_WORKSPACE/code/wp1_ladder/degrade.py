@@ -48,12 +48,16 @@ def cloud_to_master_grid(x, y, z, grid_spacing: float):
     ny = max(1, int(np.ceil((y_max - y_min) / grid_spacing)))
     col = np.clip(((x - x_min) / grid_spacing).astype(int), 0, nx - 1)
     row = np.clip(((y - y_min) / grid_spacing).astype(int), 0, ny - 1)
-    Z = np.full((ny, nx), np.nan, dtype=np.float64)
+    Z = np.zeros((ny, nx), dtype=np.float64)
     cnt = np.zeros((ny, nx), dtype=np.int64)
     np.add.at(Z, (row, col), z)
     np.add.at(cnt, (row, col), 1)
     valid = cnt > 0
-    Z[valid] = Z[valid] / cnt[valid]
+    # np.add.at into a NaN-initialised array leaves NaN (NaN+z=NaN) —
+    # accumulate in zeros and NaN-mask only the empty cells (bug found
+    # 2026-08-21: every master/rung raster written before this fix was
+    # silently all-NaN).
+    Z = np.where(valid, Z / np.maximum(cnt, 1), np.nan)
     transform = from_bounds(x_min, y_min, x_min + nx * grid_spacing, y_min + ny * grid_spacing, nx, ny)
     return Z, transform, valid, (x_min, y_min, nx, ny)
 

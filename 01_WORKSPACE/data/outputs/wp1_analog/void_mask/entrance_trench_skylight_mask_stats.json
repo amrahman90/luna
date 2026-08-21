@@ -1,0 +1,61 @@
+{
+  "grid": {
+    "source": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_NorthSurface/lltb1/ladder/master_0.5m.tif",
+    "width": 131,
+    "height": 250,
+    "res_m": 0.5,
+    "transform": [
+      0.5,
+      0.0,
+      -43.914756774902344,
+      0.0,
+      -0.5,
+      13.548316955566406
+    ],
+    "crs": null,
+    "crs_note": "local scanner metric frame (ENU, metres); dataset has no georeferencing \u2014 see registration_report.json",
+    "valid_dtm_cells": 12402
+  },
+  "mask": {
+    "raw_occupancy_cells": 2176,
+    "cleaned_cells": 2055,
+    "closing": "binary 3x3",
+    "min_component_cells": 5,
+    "area_m2": 513.75,
+    "raw_area_m2": 544.0,
+    "pct_of_dtm_extent": 0.06274809160305343,
+    "pct_of_valid_dtm": 0.09280761167553621,
+    "cells_also_valid_dtm": 1151,
+    "open_cells_entrance_skylight": 1146,
+    "roofed_void_cells": 5,
+    "open_area_m2": 286.5,
+    "roofed_area_m2": 1.25,
+    "roof_depth_m_p50": 1.2652007639408112,
+    "roof_depth_m_p90": 1.5631806848803536,
+    "floor_depth_m_p50": 0.12733042240142822,
+    "floor_depth_m_p90": 0.6743173599243164,
+    "floor_depth_m_max": 1.7922657526796684,
+    "corridor_length_m": 50.593321633507486,
+    "corridor_axis_deg_in_grid": 179.25474228684158,
+    "corridor_width_m_mean": 9.879807692307692,
+    "corridor_width_m_median": 9.5,
+    "corridor_width_m_p90": 13.475,
+    "corridor_width_m_max": 14.5,
+    "n_open_clusters": 3
+  },
+  "cloud": {
+    "registered_npz": "/home/frostflux/lunarvoid/data/outputs/wp1_analog/indian_tunnel_cave_registered_to_NorthSurface.npz",
+    "n_points": 2836982,
+    "n_inside_extent": 1090090
+  },
+  "seed": 42,
+  "corridor_overlap_check": {
+    "sag_raster": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_NorthSurface/lltb1/sag/depth_1m.tif",
+    "n_valid_sag_cells": 3543,
+    "median_sag_depth_in_mask_cells_m": 0.0,
+    "median_sag_depth_in_raster_m": 0.0,
+    "frac_zero_sag_in_mask_cells": 0.927233780773025,
+    "frac_zero_sag_in_raster": 0.786339260513689,
+    "note": "P-D depression depth is 0 on terrain that drains; the in-window corridor is an OPEN entrance trench (see open_cells stats) which drains out the entrance, so a zero median here is expected and NOT evidence against the registration. Deep closed sags would only appear over the roofed tube, which lies outside this DTM window."
+  }
+}

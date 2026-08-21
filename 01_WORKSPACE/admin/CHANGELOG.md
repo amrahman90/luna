@@ -5,6 +5,31 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 11 — Task 12 analog GT + Phase-0 residual)
+
+- **Task 12 (Steps 12.1–12.2 / P1.1–P1.2) — Indian Tunnel analog
+  registration + mask:** cave cloud → NorthSurface DTM via coarse yaw
+  search + ICP (adjust-scale OFF). Dense gate **9.3% inliers <1 m, RMS
+  0.490 m** (trimmed 0.139 m on 2.6% of correspondences; entrance-only
+  overlap 61.6% vs assumed 90%); **<0.1 m residual target NOT reached**
+  — documented, entrance-only overlap is the cause. New code:
+  `code/wp1_analog/` (6 modules); outputs:
+  `data/outputs/wp1_analog/{registration,void_mask}/` + task NOTES.
+- **Mask relabeled per skeptic (SOUND-with-objections, resolved):**
+  raster is **entrance-trench + skylight footprint**, not roofed-void
+  GT (roofed void in-window = 5 cells/1.25 m²). v0.5 guardrails:
+  excluded from sag-rung F1; cave rungs reported separately; never
+  folded into §8 v0.4 site table. Findings entry appended
+  (`notes/findings.md`, dated section).
+- **BONUS: degrade.py NaN-accumulation bug found + fixed**
+  (`code/wp1_ladder/degrade.py`): rungs regenerated, **40% now valid**
+  (were accumulating NaNs); smoke test unchanged — F1 0.392/0/0.800,
+  AUC 0.990 (byte-identical headline).
+- `papers/gate_reports/G0prime_report_v1.1.md`: status flipped by
+  paper-writer (Task-12/Phase-0 cross-reference update).
+- Roadmaps ticked: ZEROCOST 12.1/12.2 + Next_Tasks P1.1/P1.2.
+- Cost: **$0**. Acquisitions: none (MANIFEST unchanged).
+
 ## 2026-08-21 (execution session 10 — G0' passed; Phase 0 complete)
 
 - **Gate D1 — G0′ PASSED by user direction**; report status flipped to

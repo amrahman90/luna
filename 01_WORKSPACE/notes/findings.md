@@ -69,3 +69,64 @@ Format per entry:
   `data/outputs/wp0_kriging/noise_floor_stats.csv`. The "3× sag-band
   RMS" rule is a PROJECT CONVENTION; no such multiplier appears in
   v5 §4 (grep-verified 2026-08-21) — do not cite v5 for it.
+
+## 2026-08-22 — skeptic review, Task 12 analog "void ground truth" (verdict: SOUND-with-objections)
+
+- **Relabel required**: `void_mask_gt.tif` is an **entrance-trench +
+  skylight footprint** over the NorthSurface window (1,146/1,151
+  DTM-overlapping cells are open = 99.6%; roofed-void GT in-window is
+  **5 cells / 1.25 m²**). It is NOT valid roofed-void ground truth for
+  ladder/sag rung F1: n=5 supports no statistic, and 92.7% of mask cells
+  have P-D depth exactly 0 (trench drains out the entrance) — grading a
+  sag detector against these labels measures *surface-depression*
+  detection, the confounder class (crater floor / rille shoulder), i.e.
+  benchmark bias OPPOSITE the lunar sag thesis. v0.5 protocol must:
+  (a) rename/flag the artifact; (b) exclude it from sag-rung F1;
+  (c) report NorthSurface cave rungs separately with this caveat and
+  never fold them into the §8 v0.4 site table.
+- **Registration gate statistic**: headline "0.139 m trimmed RMSE" uses
+  8,955/342k correspondences (2.6%) at the 0.25 m cap with ICP
+  non-converged (100-iter cap, ΔRMS 0.008 ≫ eps 1e-7) and overlap=90%
+  assumed vs ~entrance-only actual overlap. Gate on the dense numbers
+  (9.3% inliers, 0.490 m RMS) instead. Seed→final yaw consistency
+  verified (−102° seed vs −106.6° final; coarse "deg" sign convention
+  is inverted, Rz=[[c,s],[−s,c]] — document it).
+- **Notes wording fix**: NOTES says mask = "9.28% of valid DTM cells";
+  2055/12402 = 16.6%. The 9.28% is the 1,151 DTM-overlapping cells /
+  12,402 valid. JSON is correct; the notes sentence conflates.
+- **Scale caveat**: analog is informative for trench/corridor morphology
+  (9.5–14.5 m width, 50.6 m length) and pipeline mechanics, NOT
+  quantitatively for 1–2 m sag amplitude F1 (0.49 m dense RMS ≈ half a
+  rung cell; roof-depth p50 1.27 m from n=5 cells).
+
+## finding 2026-08-21 — Indian Tunnel analog registration + mask semantics
+
+Terrestrial analog study (El Malpais, NM); inference-neutral wording —
+this constrains pipeline mechanics on Earth data, not any lunar claim.
+
+- Registration (cave cloud → NorthSurface DTM): coarse yaw search + ICP
+  (adjust-scale OFF) lands at dense-gate **9.3% inliers <1 m, RMS
+  0.490 m**; trimmed ICP RMSE 0.139 m uses only 8,955/342k
+  correspondences (2.6%) at the 0.25 m cap; effective overlap is
+  **entrance-only 61.6%**, not the assumed 90% (MEDIUM — dense gate is
+  the honest statistic) — evidence:
+  `data/outputs/wp1_analog/registration/registration_report.json`,
+  `coarse_search.json`.
+- Corridor morphology: **50.6 m long × 9.5–14.5 m wide** — within the
+  lunar-relevant skylight-conduit size class inferred for the
+  Tranquillitatis conduit; width comparable to candidate mare tube
+  spans (MEDIUM) — evidence: `data/outputs/wp1_analog/NOTES_task12_registration_mask.md`.
+- **MASK SEMANTICS (relabel per skeptic, 2026-08-22 review):** the
+  rasterized footprint is an **entrance-trench + skylight footprint**,
+  NOT roofed-void ground truth (roofed-void in-window = 5 cells /
+  1.25 m²; n=5 supports no statistic). It is **excluded from sag-rung
+  F1 in v0.5**; NorthSurface cave rungs are reported separately and
+  never folded into the §8 v0.4 site table (HIGH — benchmark-bias
+  guardrail) — evidence:
+  `data/outputs/wp1_analog/void_mask/entrance_trench_skylight_mask_stats.json`.
+- Scale caveat: 0.490 m dense RMS ≈ half a rung cell (1 m); analog
+  informs registration/mask pipeline mechanics, not 1–2 m sag-F1
+  magnitudes (roof-depth p50 1.27 m from n=5 cells).
+- All Task-12 artefacts under `data/outputs/wp1_analog/`
+  (registration/, void_mask/, NOTES_task12_registration_mask.md);
+  code under `code/wp1_analog/` (6 modules).
