@@ -29,6 +29,16 @@ findings = what we learned.
 
 ## Task lifecycle (autonomous loop)
 
+0. **LOCK (mutual exclusion)**: before picking any task, acquire the
+   cross-framework orchestrator lock:
+   `bash ~/lunarvoid/bin/lunarvoid_lock.sh acquire opencode`
+   (Hermes-side orchestrator uses owner `hermes`; it lives at
+   `~/.hermes/skills/lunarvoid-orchestrator/SKILL.md` and follows this
+   same protocol). Non-zero exit → another orchestrator holds the
+   roadmap: STOP, report to user. Re-run `acquire` at the start of each
+   task cycle (same owner refreshes the heartbeat; 6 h TTL); `release`
+   on a clean session end. One driver on the roadmap at a time —
+   concurrent drivers caused the Task-8/R0 divergence.
 1. **PICK**: orchestrator reads
    `01_WORKSPACE/plans/2026-08-19_ZEROCOST_Roadmap.md`, selects the
    first unticked step of the lowest-numbered open task whose
