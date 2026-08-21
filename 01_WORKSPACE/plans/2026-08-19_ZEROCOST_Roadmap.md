@@ -740,7 +740,7 @@ and were left for a discrete fix because they don't block the v0.3
 deliverable. They're not in the v0 task list above (they were
 written before the bugs were known).
 
-- [ ] **Bug A.1** `wp1_ladder/degrade.py:153` — `axes[i]` subscripting
+- [x] **Bug A.1** `wp1_ladder/degrade.py:153` — `axes[i]` subscripting
   on a `matplotlib.Axes` is broken in matplotlib >= 3.8 (the
   `Axes` class is no longer subscriptable). Silently breaks every
   invocation of `run_lltb1.py` because `run_lltb1.py` calls
@@ -748,12 +748,12 @@ written before the bugs were known).
   `axes.flat[i]` or `[a for a in axes][i]`. Documented in
   `notes/2026-08-20_LLTB1_v0.2_release_note.md` and
   `admin/CHANGELOG.md` session 4.
-- [ ] **Bug A.2** `wp0_scope_map/scope_map_v11.py` — uses
+- [x] **Bug A.2** `wp0_scope_map/scope_map_v11.py` — uses
   `EPSG:4326` (Earth WGS84 ellipsoid) for Moon coordinates; the
   Earth CRS gives a ProjError when used with selenographic angles.
   Fix: use `CRS.from_proj4("+proj=longlat +R=1737400 +no_defs")`
   or a similar Moon-CRS proj4 string. Documented in
-  `admin/CHANGELOG.md` session 4.
+  `admin/CHANGELOG.md` session 4. *(found already fixed at HEAD 2026-08-21; re-run byte-identical: MARIUSCONE 23.950567)*
 
 ## Verification records
 

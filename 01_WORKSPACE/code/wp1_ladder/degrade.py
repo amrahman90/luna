@@ -129,7 +129,9 @@ def degradation_ladder(npz_path: Path, outdir: Path, rungs, grid_spacing: float,
         "master_valid_frac": float(valid0.mean()),
         "rungs": [],
     }
-    fig, axes = plt.subplots(1, len(rungs), figsize=(4 * len(rungs), 4))
+    # squeeze=False -> axes is ALWAYS a 2-D ndarray (matplotlib >=3.8 Axes
+    # objects are not subscriptable; bug A.1 fix).
+    fig, axes = plt.subplots(1, len(rungs), figsize=(4 * len(rungs), 4), squeeze=False)
     for i, r in enumerate(rungs):
         Zi, tri = resample(Z0, tr0, grid_spacing, r, method=method)
         npx = Zi.size
@@ -148,11 +150,11 @@ def degradation_ladder(npz_path: Path, outdir: Path, rungs, grid_spacing: float,
             az, al = np.radians(315.0), np.radians(45.0)
             hs = np.clip(255.0 * (np.sin(al) * np.sin(slope) +
                                    np.cos(al) * np.cos(slope) * np.cos(az - aspect)), 0, 255)
-            axes[i].imshow(hs, cmap="gray", origin="upper")
+            axes.flat[i].imshow(hs, cmap="gray", origin="upper")
         else:
-            axes[i].imshow(np.where(np.isfinite(Zi), Zi, np.nan), cmap="terrain", origin="upper")
-        axes[i].set_title(f"{r:g} m\n({Zi.shape[0]}x{Zi.shape[1]}, {nv/npx:.0%} valid)")
-        axes[i].set_xticks([]); axes[i].set_yticks([])
+            axes.flat[i].imshow(np.where(np.isfinite(Zi), Zi, np.nan), cmap="terrain", origin="upper")
+        axes.flat[i].set_title(f"{r:g} m\n({Zi.shape[0]}x{Zi.shape[1]}, {nv/npx:.0%} valid)")
+        axes.flat[i].set_xticks([]); axes.flat[i].set_yticks([])
         summary["rungs"].append({
             "res_m": float(r), "shape": list(Zi.shape),
             "valid_frac": float(nv / npx),

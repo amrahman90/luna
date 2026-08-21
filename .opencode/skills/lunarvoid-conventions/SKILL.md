@@ -175,15 +175,14 @@ SWFECUNPIT1 (closest 1.2-2.6 km). Max scores per run: TRANQPIT1
 21.06, INGENIIPIT 19.41, IRIDIUMPIT1 12.86, FECNDITATS2 9.49,
 PRCLRMPIT01 8.09, MARIUSPIT01 5.04, SWFECUNPIT1 1.60.
 
-### Pre-existing bugs (DOCUMENTED, NOT FIXED — don't re-discover)
+### Pre-existing bugs — RESOLUTION LOG (both closed 2026-08-21, Phase 0)
 
-1. `code/wp1_ladder/degrade.py:153` — `axes[i]` subscript breaks on
-   matplotlib ≥ 3.8 single-Axes grids; fix is `axes.flat[i]`. Breaks
-   the ladder step (symptom: "Axes object is no longer subscriptable").
-2. `code/wp0_scope_map/scope_map_v11.py` — uses Earth EPSG:4326 for
-   Moon lat/lon; should be
-   `CRS.from_proj4("+proj=longlat +R=1737400 +no_defs")` (affects
-   Task 9.3 deliverable only).
+1. `code/wp1_ladder/degrade.py` `axes[i]` subscript — FIXED
+   2026-08-21: `squeeze=False` + 4 sites `axes.flat[i]`; single-rung
+   runs verified; smoke test unchanged (F1 0.392/0/0.800, AUC 0.990).
+2. `code/wp0_scope_map/scope_map_v11.py` EPSG:4326 — found ALREADY
+   FIXED at HEAD (Moon proj4 CRS in place; roadmap bug list was
+   stale). Re-run byte-identical: 660 rows, MARIUSCONE 23.950567.
 
 ### Failure triage (symptom → fix)
 

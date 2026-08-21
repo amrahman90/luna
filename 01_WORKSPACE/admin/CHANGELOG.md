@@ -5,6 +5,21 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 10 — G0' passed; Phase 0 complete)
+
+- **Gate D1 — G0′ PASSED by user direction**; report status flipped to
+  FINAL-PASSED in `plans/2026-08-21_GATE_G0prime_report_v1.1.md`.
+  **D2 Task-8 stereo DEFERRED** (default; user-directed proceed) —
+  autonomous loop resumed with orchestrator lock active.
+- **Bug A.1 fixed** (`code/wp1_ladder/degrade.py`): `squeeze=False` +
+  `axes.flat[i]`; single-rung path verified; smoke test F1
+  0.392/0/0.800, AUC 0.990 exact (byte-identical).
+- **Bug A.2 found already-fixed at HEAD** (`scope_map_v11.py` Moon
+  CRS in place; roadmap bug list was stale); re-run byte-identical —
+  660 rows, MARIUSCONE 23.950567. Roadmap + conventions-skill bug
+  lists updated to resolution log.
+- Cost: $0.
+
 ## 2026-08-21 (execution session 9b — R1 roadmap)
 
 - **R1 roadmap — execution-order plan for the remaining 19 zero-cost

@@ -9,20 +9,22 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
 
 ## Entry decisions (user, pending)
 
-- [ ] **D1 — G0′ gate**: pass/fail on `2026-08-21_GATE_G0prime_report_v1.1.md`
+- [x] **D1 — G0′ gate**: pass/fail on `2026-08-21_GATE_G0prime_report_v1.1.md`
   (7 PASS + 2 process-only). On PASS: flip report status line to
   FINAL-PASSED (paper-writer, 1-line edit) before Phase 1 dispatch.
-- [ ] **D2 — Task 8 stereo**: choose (a) local rerun [$0, long CPU,
+  *(PASS, user 2026-08-21)*
+- [x] **D2 — Task 8 stereo**: choose (a) local rerun [$0, long CPU,
   assets in place], (b) Tier-1 rental [$50-150 — §8 cost trigger,
   REQUIRES explicit user pre-approval before any spend], or
   (c) defer until after Paper 1. Does not block Phases 0-2.
+  *(defer, default, user-directed proceed 2026-08-21)*
 
 ## Phase 0 — quick fixes (parallel, $0, ~1 cycle)
 
-- [ ] **P0.1 = Bug A.1** [geo-coder→verifier→archivist] Fix
+- [x] **P0.1 = Bug A.1** [geo-coder→verifier→archivist] Fix
   `wp1_ladder/degrade.py:153` `axes[i]` → `axes.flat[i]`; smoke test
   still PASS. S. MUST land before Phase-1 ladder reruns.
-- [ ] **P0.2 = Bug A.2** [geo-coder→verifier→archivist] Fix
+- [x] **P0.2 = Bug A.2** [geo-coder→verifier→archivist] Fix
   `wp0_scope_map/scope_map_v11.py` wrong EPSG (use conventions-skill
   eqc/longlat CRS pair); re-verify MARIUSCONE 23.95 ranking unchanged
   (or report change honestly). S.

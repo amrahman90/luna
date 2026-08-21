@@ -1,6 +1,6 @@
 # Gate G0' Report v1.1 — zero-cost portion of Gate G0 (LUNARVOID WP0)
 
-**Date:** 2026-08-21 · **Version:** v1.1 · **Status:** DRAFT-for-review (archivist to install into `plans/`)
+**Date:** 2026-08-21 · **Version:** v1.1 · **Status:** FINAL — PASSED (user decision D1, 2026-08-21)
 **Supersedes:** `plans/2026-08-19_GATE_G0prime_report.md` (v0.1-era LLTB-1 numbers; all figures below re-traced to output files, v0.4 detector numbers where applicable)
 **Gate definition:** G0' = the zero-cost subset of v5 Gate G0 (roadmap Task 10). Full G0 additionally
 requires one reproduced NAC DTM end-to-end (paid; §8 trigger T1). Authority: v5 master plan §4, §8;
