@@ -1,0 +1,44 @@
+{
+  "verification_status": "PASS",
+  "scope": "ad-hoc verification of session-3 edits, NOT a test suite",
+  "method": "ran /tmp/hermes_verify_lunarvoid.py against the venv Python (~/lunarvoid/venv/bin/python) which uses the same site-packages the project itself uses",
+  "script": "/tmp/hermes_verify_lunarvoid.py (2,397 bytes, present on disk)",
+  "result_file": "/tmp/hermes-verify-lunarvoid-session3.json (5,923 bytes, present on disk)",
+  "files_changed_in_session_3": [
+    "01_WORKSPACE/code/setup/extract_rar.py",
+    "01_WORKSPACE/code/wp1_detector/sag_detect.py",
+    "01_WORKSPACE/code/wp1_lla/convert_f32.py",
+    "01_WORKSPACE/code/wp1_lla/run_lltb1.py"
+  ],
+  "verification_checks": [
+    {"module": "extract_rar.py", "check": "bsdtar installed to ~/.local/bin/ (76,240 bytes, mode 0755)", "result": "PASS"},
+    {"module": "extract_rar.py", "check": "get_bsdtar() returns local path; no fresh network call when cache present", "result": "PASS"},
+    {"module": "extract_rar.py", "check": "CLI --help exits 0", "result": "PASS"},
+    {"module": "extract_rar.py", "check": "multi-mirror fallback (DEB_URL -> archive.ubuntu.com -> launchpad.net -> snapshot.ubuntu.com); 3/4 fail path verified (403, 403, network unreachable) and snapshot.ubuntu.com succeeds", "result": "PASS"},
+    {"module": "convert_f32.py", "check": "Fieg_A.f32 reads to n=11,703,363 (documented v0.1)", "result": "PASS"},
+    {"module": "convert_f32.py", "check": "sentinel filter: n_extreme=0 after |xyz| > 1e3 mask", "result": "PASS"},
+    {"module": "convert_f32.py", "check": "sentinel rows fully NaN across all 7 attributes", "result": "PASS"},
+    {"module": "convert_f32.py", "check": "x range sane: [-47.71, 48.83] (no 1e38 sentinels)", "result": "PASS"},
+    {"module": "convert_f32.py", "check": "CLI re-run produces Fieg_0.5m.npz (61,519,449 bytes, 58.7 MB)", "result": "PASS"},
+    {"module": "sag_detect.py", "check": "cloud_to_rung(0.5) returns sane shape on Fieg_A npz", "result": "PASS"},
+    {"module": "sag_detect.py", "check": "cloud_ground_truth finds 84 void cells on Fieg_A", "result": "PASS"},
+    {"module": "run_lltb1.py", "check": "Fieg ladder_summary.json present (1,229 bytes)", "result": "PASS"},
+    {"module": "run_lltb1.py", "check": "Fieg sag_summary.json present (3,643 bytes)", "result": "PASS"},
+    {"module": "run_lltb1.py", "check": "Fieg v01_summary.json present (370 bytes)", "result": "PASS"},
+    {"module": "run_lltb1.py", "check": "Fieg sag_summary n_points == 11,703,363 (documented v0.1)", "result": "PASS"},
+    {"module": "run_lltb1.py", "check": "Fieg has rung with recall >= 0.99 (recalls: [0.694, 0.5, 1.0])", "result": "PASS"}
+  ],
+  "summary": {"n_checks": 16, "n_pass": 16, "n_fail": 0, "all_ok": true},
+  "blocker_found_during_verification": {
+    "module": "extract_rar.py",
+    "issue": "the original single-mirror download path raised urllib.error.HTTPError 403 when the Ubuntu archive.ubuntu.com mirror returned Forbidden on the verification run",
+    "fix_applied": "added a 4-mirror fallback list (DEB_URL -> archive.ubuntu.com -> launchpad.net -> snapshot.ubuntu.com) and a clear RuntimeError if all mirrors fail",
+    "fix_verified": "end-to-end: 3 of 4 mirrors failed (403, 403, Network is unreachable) and snapshot.ubuntu.com succeeded, installing bsdtar to ~/.local/bin/ (76,240 bytes, mode 0755)"
+  },
+  "notes": [
+    "Verification is ad-hoc: a one-off script under /tmp that exercises the four changed modules against real Fieg_A data the session has already processed.",
+    "NOT a test suite. The right place for these checks is a tests/ directory with pytest fixtures; that work is a v0.2 deliverable.",
+    "Two earlier verification runs hit two distinct issues: (1) urllib HTTP 403 on the Ubuntu mirror -- surfaced a real bug now fixed; (2) the execute_code sandbox Python does not have numpy on sys.path when importing project modules -- fixed by switching to subprocess invocation through the venv Python.",
+    "The pre-existing artifacts (ladder, sag, v01 summaries, npz, the v0.1 documented numbers) are all intact and match the values reported in the G0' gate report and the Paper 1 abstract."
+  ]
+}

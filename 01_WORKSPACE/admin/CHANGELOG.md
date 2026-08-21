@@ -5,6 +5,25 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 6)
+
+- **Documentation complete + verification records versioned:**
+- New file: `notes/2026-08-21_session5_summary.md` — narrative
+  companion to commit `d81addd` (v0.3 slope-mask lift); the
+  audit trail tying everything together for a future agent
+- New dir: `admin/verification_evidence/` — versioned,
+  deterministic JSON records of the ad-hoc verification runs;
+  includes the 2 verification scripts so a future agent can
+  re-run them and re-generate the record. See
+  `admin/verification_evidence/README.md`.
+- `plans/2026-08-19_ZEROCOST_Roadmap.md` — added two new
+  discrete "Bug A.1 / A.2" unchecked items in the deferred
+  section: matplotlib `Axes` subscripting in
+  `wp1_ladder/degrade.py:153`, and `EPSG:4326` for Moon
+  coordinates in `wp0_scope_map/scope_map_v11.py`. These had
+  been in release notes only; now they're on the unchecked-task
+  list so a future agent doing a checklist scan will find them.
+
 ## 2026-08-21 (execution session 5)
 
 - **LLTB-1 v0.3 — slope-aware precision lift:**

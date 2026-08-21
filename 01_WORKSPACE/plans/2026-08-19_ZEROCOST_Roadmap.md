@@ -732,6 +732,37 @@ Everything through Task 21 is executable without touching this table.
 
 ---
 
+## Pre-existing bugs (discovered during v0.2/v0.3 sessions; ~25 min
+total to fix; flagged so the next agent doesn't miss them)
+
+These were discovered while running the v0.2 and v0.3 verifications
+and were left for a discrete fix because they don't block the v0.3
+deliverable. They're not in the v0 task list above (they were
+written before the bugs were known).
+
+- [ ] **Bug A.1** `wp1_ladder/degrade.py:153` — `axes[i]` subscripting
+  on a `matplotlib.Axes` is broken in matplotlib >= 3.8 (the
+  `Axes` class is no longer subscriptable). Silently breaks every
+  invocation of `run_lltb1.py` because `run_lltb1.py` calls
+  `degrade.py` as part of stage 3 of the LLTB-1 pipeline. Fix:
+  `axes.flat[i]` or `[a for a in axes][i]`. Documented in
+  `notes/2026-08-20_LLTB1_v0.2_release_note.md` and
+  `admin/CHANGELOG.md` session 4.
+- [ ] **Bug A.2** `wp0_scope_map/scope_map_v11.py` — uses
+  `EPSG:4326` (Earth WGS84 ellipsoid) for Moon coordinates; the
+  Earth CRS gives a ProjError when used with selenographic angles.
+  Fix: use `CRS.from_proj4("+proj=longlat +R=1737400 +no_defs")`
+  or a similar Moon-CRS proj4 string. Documented in
+  `admin/CHANGELOG.md` session 4.
+
+## Verification records
+
+The ad-hoc verification scripts and their deterministic result
+JSONs live in `admin/verification_evidence/`. A future agent
+that wants to confirm the v0.2 / v0.3 modules still work against
+the cached data can run those scripts; the record is versioned
+by commit.
+
 # 9. Progress tracking
 
 - Ticks live in this file (checkboxes) — update after every task.

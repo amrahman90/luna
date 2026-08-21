@@ -1,0 +1,113 @@
+{
+  "checks": [
+    {
+      "name": "filter_small_components function exists",
+      "ok": true,
+      "detail": "filter_small_components"
+    },
+    {
+      "name": "min_size=1 returns input unchanged (no-op fast path)",
+      "ok": true,
+      "detail": "shape=(10, 10), values match=True"
+    },
+    {
+      "name": "filter_small_components drops 1-cell component",
+      "ok": true,
+      "detail": "out2[0,0]=False"
+    },
+    {
+      "name": "filter_small_components drops 4-cell component (min_size=5)",
+      "ok": true,
+      "detail": "4-cell sum=0"
+    },
+    {
+      "name": "filter_small_components keeps 25-cell component",
+      "ok": true,
+      "detail": "25-cell sum=25"
+    },
+    {
+      "name": "filter_small_components is NaN-safe",
+      "ok": true,
+      "detail": "NaN cell=False, both 1-cell false=True"
+    },
+    {
+      "name": "--min-component in CLI help",
+      "ok": true,
+      "detail": "min-component MIN_COMPONENT]\n                     [--slope-mask-degrees SLOPE_MA"
+    },
+    {
+      "name": "sag_detect.py exits 0 on Fieg_A",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "sag_summary.json produced",
+      "ok": true,
+      "detail": "1496 bytes"
+    },
+    {
+      "name": "sag_summary rungs[0] has f1_test field",
+      "ok": true,
+      "detail": "keys=['res_m', 'shape', 'valid_frac', 'threshold', 'f1_cal', 'f1_test', 'f1_test_raw', 'f1_test_slope', 'precision_test', 'recall_test', 'fp_per_1e4km2_test', 'n_void_cells', 'n_detected_test', 'min_component', 'slope_mask_degrees', 'n_slope_masked_test', 'stratified']"
+    },
+    {
+      "name": "sag_summary rungs[0] has f1_test_raw field",
+      "ok": true,
+      "detail": "f1_test_raw=0.0132, f1_test=0.0132"
+    },
+    {
+      "name": "sag_summary rungs[0] has min_component field",
+      "ok": true,
+      "detail": "min_component=10"
+    },
+    {
+      "name": "f1_test_raw >= f1_test (filter is monotonic in TP count)",
+      "ok": true,
+      "detail": "raw=0.013245033112582783, filt=0.013245033112582783"
+    },
+    {
+      "name": "pred_5m.tif (audit raster) written",
+      "ok": true,
+      "detail": "455 bytes"
+    },
+    {
+      "name": "empty f32-dir triggers auto-discovery search",
+      "ok": true,
+      "detail": "search_roots=['/home/frostflux/lunarvoid/data/analog/IndianTunnel_cave', '/home/frostflux/lunarvoid/data/analog/IndianTunnel_cave/Full']"
+    },
+    {
+      "name": "auto-discovery finds .f32 under canonical subdir",
+      "ok": true,
+      "detail": "found 2 files"
+    },
+    {
+      "name": "suffix-stripping: '10x' parsed off",
+      "ok": true,
+      "detail": "candidate_sites=['IndianTunnel_cave_10x', 'IndianTunnel_cave']"
+    },
+    {
+      "name": "run_lltb1 module imports cleanly",
+      "ok": true,
+      "detail": "f32s_in_empty_dir=1 candidate_sites=['IndianTunnel_cave_10x']\n"
+    },
+    {
+      "name": "extract_rar.get_bsdtar returns a path",
+      "ok": true,
+      "detail": "/home/frostflux/.local/bin/bsdtar"
+    },
+    {
+      "name": "bsdtar binary present at local install",
+      "ok": true,
+      "detail": "/home/frostflux/.local/bin/bsdtar"
+    },
+    {
+      "name": "extract_rar.py has multiple mirror URLs",
+      "ok": true,
+      "detail": "ubuntu.com mentions=3, snapshot.ubuntu mentions=1"
+    }
+  ],
+  "n_checks": 21,
+  "n_ok": 21,
+  "n_fail": 0,
+  "all_ok": true
+}

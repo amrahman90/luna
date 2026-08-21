@@ -1,0 +1,83 @@
+{
+  "checks": [
+    {
+      "name": "slope_mask function exists",
+      "ok": true,
+      "detail": "slope_mask"
+    },
+    {
+      "name": "min=0: returns all-True mask",
+      "ok": true,
+      "detail": "True cells = 2500 / 2500"
+    },
+    {
+      "name": "min=10 on steep surface: most cells True",
+      "ok": true,
+      "detail": "True cells = 2500 / 2500"
+    },
+    {
+      "name": "min=10 on flat surface: most cells False",
+      "ok": true,
+      "detail": "True cells = 0 / 2500"
+    },
+    {
+      "name": "slope_mask is NaN-safe",
+      "ok": true,
+      "detail": "NaN cells False = True"
+    },
+    {
+      "name": "--slope-mask-degrees in CLI help",
+      "ok": true,
+      "detail": "slope-mask-degrees SLOPE_MASK_DEGREES]\n\nLLTB-1 sag detector (Z1, Task 14.2) + pe"
+    },
+    {
+      "name": "sag_detect.py exits 0 with --slope-mask-degrees=10",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "sag_summary.json produced",
+      "ok": true,
+      "detail": "2841 bytes"
+    },
+    {
+      "name": "rungs[0] has f1_test field (v0.2)",
+      "ok": true,
+      "detail": "keys=['res_m', 'shape', 'valid_frac', 'threshold', 'f1_cal', 'f1_test', 'f1_test_raw', 'f1_test_slope']"
+    },
+    {
+      "name": "rungs[0] has f1_test_slope field (NEW v0.3)",
+      "ok": true,
+      "detail": "f1_test=0.0202, f1_test_slope=0.0297"
+    },
+    {
+      "name": "rungs[0] has slope_mask_degrees field",
+      "ok": true,
+      "detail": "slope_mask_degrees=10.0"
+    },
+    {
+      "name": "f1_test_slope >= f1_test (mask is monotonic in TP)",
+      "ok": true,
+      "detail": "f1_test=0.0202, +slope=0.0297"
+    },
+    {
+      "name": "slope mask does not destroy recall (monotonic)",
+      "ok": true,
+      "detail": "recall_test=0.6939 (preserved by mask semantics)"
+    },
+    {
+      "name": "slope_ok_0.5m.tif audit raster written",
+      "ok": true,
+      "detail": "2602 bytes"
+    },
+    {
+      "name": "Kingsbowl: slope mask lifts F1 by >=10x",
+      "ok": true,
+      "detail": "F1 raw=0.0019, +slope=0.0447 (lift = 23.7x)"
+    }
+  ],
+  "n_checks": 15,
+  "n_ok": 15,
+  "n_fail": 0,
+  "all_ok": true
+}
