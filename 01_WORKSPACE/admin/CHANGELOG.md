@@ -5,6 +5,24 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 8 — R0 Task-8 close-out)
+
+- **Task 8 (local ISIS+ASP reproduction attempt) — honest close-out:**
+  - VERDICT: local not viable as-run — attempt incomplete within
+    time-box; Tier-1 rental stays in the §8 cost-boundary table
+    (T1 trigger unchanged).
+  - What exists: ISIS conda env (`~/miniforge3/envs/isis`), ASP 3.7.0
+    prebuilt binary, 6 NAC EDR products (3 TRANQPIT1 stereo pairs)
+    under `~/lunarvoid/data/edr/TRANQPIT1/`, and exactly ONE processed
+    cube (`M152655237LE.cub`) — the chain never reached
+    bundle_adjust / parallel_stereo / point2dem; no output DTM, so
+    Step 8.4 comparison was not attempted.
+  - Steps 8.1, 8.2, 8.5 ticked; 8.3/8.4 remain open (annotated in the
+    roadmap). Either-way clause satisfied; assets in place for an
+    optional rerun (env + EDRs + 154 GB free disk, 40 GB floor
+    respected).
+  - Log: `admin/2026-08-21_local_asp_attempt.md`.
+
 ## 2026-08-21 (execution session 7)
 
 - **LLTB-1 v0.4 — per-rung slope-threshold tuning:**

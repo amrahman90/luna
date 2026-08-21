@@ -372,18 +372,18 @@ intermediates immediately with `--keep-only`.
 - Create: `01_WORKSPACE/admin/2026-XX-XX_local_asp_attempt.md` (log)
 - Raw: `~/lunarvoid/isis/`, `~/lunarvoid/asp/`, `~/lunarvoid/data/edr/`
 
-- [ ] **Step 8.1** Install ISIS via conda-forge/astrogeology miniforge
+- [x] **Step 8.1** Install ISIS via conda-forge/astrogeology miniforge
   (`isis` env, separate from the uv venv), pull `base` (~26 GB) +
   `lro --exclude="kernels/**"`. Install ASP prebuilt binary tarball.
 
-- [ ] **Step 8.2** Fetch the TRANQPIT1 stereo pair by product ID (the
+- [x] **Step 8.2** Fetch the TRANQPIT1 stereo pair by product ID (the
   `images` field of the NAC_DTMS shapefile lists the exact NAC IDs used
   for that DTM — extract them with geopandas).
 
 - [ ] **Step 8.3** Run the documented chain with the two hard-won traps
   from the VPS guide: `spiceinit web=yes` and
   `lronaccal radiometrictype=RADIANCE` (NEVER IOF with web=yes — silent
-  zero-data bug):
+  zero-data bug): *(attempt incomplete — see admin/2026-08-21_local_asp_attempt.md)*
 
 ```bash
 lronac2isis from=<id>.IMG to=<id>.cub
@@ -398,9 +398,9 @@ point2dem --tr 2 stereo/run-PC.tif
 ```
 
 - [ ] **Step 8.4** Compare against the published TRANQPIT1: difference
-  raster; PASS if within stated error bars (relat_le 0.72 m at 90%).
+  raster; PASS if within stated error bars (relat_le 0.72 m at 90%). *(attempt incomplete — see admin/2026-08-21_local_asp_attempt.md)*
 
-- [ ] **Step 8.5** EITHER WAY, write the log: success → the Tier-1
+- [x] **Step 8.5** EITHER WAY, write the log: success → the Tier-1
   rental for the 8-pit build queue is DE-SCOPED to local hardware and the
   cost boundary moves past WP2; failure (OOM/throttle) → document the
   failure mode, confirm the rental plan, cost boundary stays as Section 8.
