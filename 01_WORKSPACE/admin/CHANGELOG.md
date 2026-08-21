@@ -5,6 +5,17 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 9b — R1 roadmap)
+
+- **R1 roadmap — execution-order plan for the remaining 19 zero-cost
+  steps:** new `plans/2026-08-21_Next_Tasks_Roadmap.md` (supplements,
+  does NOT supersede, `2026-08-19_ZEROCOST_Roadmap.md`): sequences the
+  19 open steps into Phases 0-5 with dependencies, agents, sizes, and
+  stop points; flags 2 pending user entry decisions (D1 G0′ gate
+  pass/fail, D2 Task-8 stereo path) and 2 pre-dispatch bug fixes
+  (P0.1 degrade.py axes indexing, P0.2 scope_map EPSG). ZEROCOST
+  roadmap remains source of truth; tick both on completion. Cost: $0.00.
+
 ## 2026-08-21 (execution session 9 — Task 10 G0' report)
 
 - **Task 10 (Gate G0' report v1.1) — zero-cost gate met:**
