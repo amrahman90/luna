@@ -46,9 +46,14 @@ techniques (PD fill, geodesy, claim language) against which you audit.
    Claim language compliant (inference-not-detection, FP per
    10^4 km²)? Seeds recorded? $0 spent?
 5. **Regression**: if a detector/module changed, smoke test
-   (`01_WORKSPACE/code/smoke_test.py`) still passes known-good values.
+   (`01_WORKSPACE/code/smoke_test.py`) still passes known-good values,
+   AND the latest versioned verification in
+   `01_WORKSPACE/admin/verification_evidence/scripts/` prints
+   `PASS: N/N (ALL OK)` — flag any drift >±5% from the committed
+   evidence JSONs (that is a T5 stop-trigger).
 6. **Files**: deliverables exist at the claimed paths, non-empty,
    correctly sized (PNG dimensions check programmatically).
+7. **Evidence**: tell the archivist which evidence JSONs to commit.
 
 ## Verdict format (your single return message)
 

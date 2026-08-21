@@ -40,6 +40,37 @@ Newest entries first. Format: date — what — where — why.
 - **v0.3 verification still passes 15/15**; **v0.4 verification
   11/11**. The slope tuning is non-degrading on the v0.3 path.
 
+## 2026-08-21 (execution session 7 — agentic bring-over)
+
+- **Setup merge (Hermes proposal + research_agent_demo adopted
+  parts):**
+  - `lunarvoid-lltb1-build` skill content (bug catalog, v0.4 site
+    table, failure triage, pre-existing bugs, Z2 top-scores) PORTED
+    into `.opencode/skills/lunarvoid-conventions/` §8 — single
+    source of truth; proposal note marked SUPERSEDED.
+  - NEW `.opencode/agent/skeptic.md` — adversarial scientific review
+    (edit-denied except findings.md append); fires before gates,
+    paper claims, candidate promotions. Model intentionally unset
+    (user to pin for model diversity).
+  - NEW `admin/orchestrator/` (pipeline.py + tasks.yaml) — MANUAL-ONLY
+    headless dispatch (`opencode run --agent X`): weekly-lit-scan,
+    skeptic-review, verify-regression. No cron by design; no git
+    writes from the pipeline.
+  - Protocol skill: skeptic role row, T5 stop-trigger (±5% v0.x
+    reproduction failure escalates), findings-log discipline,
+    skeptic-before-commit rule for scientific claims. /gate and
+    /smoke commands wired to skeptic + versioned verifications.
+  - NEW `notes/findings.md` — append-only scientific findings log
+    (seeded with backfilled headline results w/ evidence links).
+  - NEW `data/candidate_registry.csv` — schema + claim-discipline
+    rules (tier A requires two independent methods; morphometry
+    alone caps at tier B). Empty, ready for Task 18.
+- **R0 partial reconciliation:** Task 6 steps 6.1-6.3 ticked (work
+  was done in session 2 but never ticked; evidence:
+  `data/outputs/wp0_kriging/noise_floor_stats.csv`). Task 8: EDRs
+  for 3 TRANQPIT1 stereo pairs exist under `~/lunarvoid/data/edr/`
+  but no output DTM + no admin log — 8.3-8.5 remain open for R0.
+
 ## 2026-08-21 (execution session 6)
 
 - **Documentation complete + verification records versioned:**

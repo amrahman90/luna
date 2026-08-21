@@ -12,11 +12,20 @@ description: LUNARVOID agentic task lifecycle — how the orchestrator, geo-code
 | lunar-orchestrator | nothing directly (delegates) | — |
 | geo-coder | `01_WORKSPACE/code/**`, `01_WORKSPACE/data/outputs/**`, rasters under `~/lunarvoid/` | CHANGELOG, roadmap, MANIFEST, papers |
 | verifier | NOTHING (edit-denied; reports text only) | everything |
+| skeptic | `01_WORKSPACE/notes/findings.md` (append-only) — nothing else (edit-denied elsewhere) | everything else |
 | archivist | `admin/**`, `data/MANIFEST.md`, `plans/**` (checkboxes), `notes/**`, `.gitignore`; git add/commit (never push) | code, data outputs |
 | paper-writer | `papers/**`, `notes/**` | code, admin |
 
 `00_SOURCE_ORIGINALS/` is read-only for ALL agents (permission-enforced).
 Load the `lunarvoid-conventions` skill before any technical work.
+
+## Findings log (scientific memory, distinct from the CHANGELOG's process memory)
+
+`01_WORKSPACE/notes/findings.md` is append-only, dated-sectioned
+(`## <kind> YYYY-MM-DD`), and holds SCIENTIFIC claims each with a
+traceable evidence link (output CSV/JSON path). Skeptic reviews it;
+paper-writer mines it for papers. CHANGELOG = what we did;
+findings = what we learned.
 
 ## Task lifecycle (autonomous loop)
 
@@ -48,7 +57,19 @@ Load the `lunarvoid-conventions` skill before any technical work.
 - ANY §8 cost trigger would be needed (paid GPU, VPS, rental).
 - A gate decision (G0′/G1/...) requires human judgement.
 - Verifier FAIL ×3 on one task, or a rule/licence conflict.
+- **T5**: an agent cannot reproduce a published v0.x headline number
+  within ±5% (regression in the deliverable — escalate, don't patch
+  silently).
 - Anything that would write outside `01_WORKSPACE/` or `~/lunarvoid/`.
+
+## When skeptic must run (adversarial gate before scientific claims)
+
+Dispatch skeptic AFTER verifier PASS and BEFORE archivist commit for:
+gate reports, paper sections with claims, any promotion of candidates
+into the registry's CONFIRMED-tier, and any findings-log entry marked
+high-confidence. Skeptic's objections either get addressed (re-dispatch
+the producer) or the claim is downgraded — do not commit over an
+unaddressed UNSOUND verdict.
 
 ## Bookkeeping formats
 

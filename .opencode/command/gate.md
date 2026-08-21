@@ -17,6 +17,10 @@ zero-cost portion of Gate G0, roadmap Task 10).
    paragraph under claim discipline.
 3. Dispatch verifier to check every number in the report against its
    source CSV/JSON.
-4. Dispatch archivist to commit.
-Stop and surface to the user if any gate criterion fails or needs a
-human decision.
+4. Dispatch skeptic to attack the gate report's methodology and
+   claims (alternative explanations, base-rate honesty, claim
+   language). Address objections or downgrade claims before step 5;
+   do NOT commit over an unaddressed UNSOUND verdict.
+5. Dispatch archivist to commit.
+Stop and surface to the user if any gate criterion fails, the skeptic
+returns UNSOUND, or a decision needs a human.

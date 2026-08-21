@@ -17,4 +17,14 @@ likely module (recent CHANGELOG entries) and propose the fix — but do
 not implement it without the user's go (or dispatch geo-coder if the
 user says go).
 
-$ARGUMENTS
+THEN run the versioned verifications (deterministic, evidence-backed):
+
+```
+for s in 01_WORKSPACE/admin/verification_evidence/scripts/verify_v0*.py; do
+  ~/lunarvoid/venv/bin/python "$s"
+done
+```
+
+Each must print `PASS: N/N (ALL OK)`; results also land in
+`/tmp/hermes-verify-*.json` — compare with the latest committed
+evidence JSONs in `01_WORKSPACE/admin/verification_evidence/`.

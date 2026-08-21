@@ -309,15 +309,15 @@ Gate G0' report (Task 10).
 - Create: `01_WORKSPACE/code/wp0_kriging/noise_floor.py`
 - Create: `01_WORKSPACE/data/outputs/wp0_kriging/noise_floor_stats.csv`
 
-- [ ] **Step 6.1** Select ≥3 flat mare panels (≥1 km² each, slope < 2°,
+- [x] **Step 6.1** Select ≥3 flat mare panels (≥1 km² each, slope < 2°,
   no catalogued pits/rilles/craters > 50 m) inside TRANQPIT1 (and later
   MARIUSPIT01 as a second instrument-geometry case).
 
-- [ ] **Step 6.2** After Task-5 correction, compute the full residual
+- [x] **Step 6.2** After Task-5 correction, compute the full residual
   distribution per panel: mean, median, SD, P10, P90 (P1's reporting
   format: mean 10.99 cm / SD 21.64 cm is the terrestrial reference).
 
-- [ ] **Step 6.3** Write the one-line answer the whole project turns on
+- [x] **Step 6.3** Write the one-line answer the whole project turns on
   (v5 Section 4 critical path): **is the expected roof-sag amplitude
   (~1-5 m over 60-300 m width) above this noise floor at 2-5 m posting?**
   Record the verdict in `noise_floor_stats.csv` header comment — this is

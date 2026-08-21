@@ -104,7 +104,90 @@ already produced silent-wrong-answer bugs. Read fully before coding.
 - After ANY module change: run
   `~/lunarvoid/venv/bin/python 01_WORKSPACE/code/smoke_test.py`
   (known-good: per-rung F1 0.39/0/0.80 on synthetic; fusion AUC 0.990).
+- Versioned verifications live in
+  `01_WORKSPACE/admin/verification_evidence/scripts/`
+  (`verify_v02_f32dir_and_filter.py`, `verify_v03_slope_mask.py`,
+  `verify_v04_tune_slope.py`). Run the latest after touching
+  `extract_rar.py`, `convert_f32.py`, `sag_detect.py`, or
+  `run_lltb1.py`; each prints `PASS: N/N (ALL OK)` and writes a
+  deterministic JSON evidence record (commit those records).
+- Always subprocess the venv Python for checks (sandbox Python lacks
+  numpy). Test against the REAL on-disk artifacts under
+  `~/lunarvoid/data/lltb1/<site>/` — they are the documented ground
+  truth, stronger than synthetic tests.
 - Sanity-check geodesy BEFORE bulk processing: transform a known pit
   coordinate and confirm it lands inside the raster.
 - Plots: verify PNG dimensions programmatically if image preview is
   unavailable.
+
+## 8. LLTB-1 build know-how (ported from the parallel Hermes
+   agent's skill, 2026-08-21; content merged here — single truth)
+
+### Pipeline bug catalog (fixes already in code)
+
+1. **RAR5**: system 7z can't decode RAR5; `code/setup/extract_rar.py`
+   installs bsdtar from a .deb with a **4-mirror fallback**
+   (DEB_URL → archive.ubuntu → launchpad → snapshot.ubuntu). A single
+   mirror 403s (seen live); the fallback is load-bearing.
+2. **WhiteboxTools**: needs
+   `wbt.set_whitebox_dir(dirname(whitebox.__file__))`,
+   `wbt.set_working_dir('/tmp')`, absolute input paths, AND geokeys
+   in the GeoTIFF — copy `src.profile.copy()`, never build a fresh
+   CRS-less profile.
+3. **Frangi**: float32 overflows on large sigmas — cast to
+   `np.float64`, mask NaN after, sub-sample to ≤5000 px max dim
+   (Frangi is O(n²) in the larger dimension).
+4. **f32 sentinels**: NASA .f32 uses ~1e38 no-data; treat
+   |x|,|y|,|z| > 1000 m as NaN; weight bins by `np.isfinite(z)`;
+   use nanmin/nanmax on the finite subset.
+5. **Pit Atlas hygiene**: the `DTM` attribute misses 2 of 8 covered
+   pits (Ingenii, SW Fecunditatis) — **trust the spatial join, not
+   the attribute**. Atlas positional accuracy ~30 m; v5 I15 match
+   radius ≥ 30 m.
+6. GRAIL/pyshtools 4.x details are in §4 of session-2 summary; the
+   `gggrx_1200a_sha.tab` header's l_max is wrong — derive from data.
+
+### LLTB-1 v0.4 site table (7 sites, --tune-slope)
+
+| Site | F1 (v0.4 tuned) | Best recall | Note |
+|---|---|---|---|
+| IndianTunnel_NorthSurface (cliff) | **0.362 @ 1 m @ 45°** | 0.474 | best honest result |
+| IndianTunnel_Collapse3 (real tube) | 0.188 @ 0.5 m @ 45° | 1.00 | |
+| Fieg_A | 0.137 @ 0.5 m @ 45° | 0.69 | |
+| Sheepridge | 0.091 @ 5 m @ 45° | 0.231 | |
+| IndianTunnel_cave_10x | 0.085 @ 5 m @ 10° | 1.00 | |
+| Kingsbowl | 0.043 @ 5 m @ 20° | 1.00 | |
+| IndianTunnel_cave_1x (full res) | 0.049 @ 5 m @ 45° | 1.00 | **tune-slope REGRESSES here — use fixed `--slope-mask-degrees 10` (F1 0.068)** |
+
+Recall = 1.00 at every rung with ≥5 void cells; the bottleneck is
+precision (overflagged small sinks on gentle slopes).
+
+### Z2 sag-search top scores (all 8 covered DTMs, 2026-08-21)
+
+Top candidate within 100 m of the catalogued pit on all 7 unique
+DTMs: TRANQPIT1 21.06 (MTP), INGENIIPIT 19.33, IRIDIUMPIT1 12.86,
+FECNDITATS2 9.49, PRCLRMPIT01 8.09, MARIUSPIT01 5.04 (rille-funnel
+I14 mode), SWFECUNPIT1 1.60 (highland).
+
+### Pre-existing bugs (DOCUMENTED, NOT FIXED — don't re-discover)
+
+1. `code/wp1_ladder/degrade.py:153` — `axes[i]` subscript breaks on
+   matplotlib ≥ 3.8 single-Axes grids; fix is `axes.flat[i]`. Breaks
+   the ladder step (symptom: "Axes object is no longer subscriptable").
+2. `code/wp0_scope_map/scope_map_v11.py` — uses Earth EPSG:4326 for
+   Moon lat/lon; should be
+   `CRS.from_proj4("+proj=longlat +R=1737400 +no_defs")` (affects
+   Task 9.3 deliverable only).
+
+### Failure triage (symptom → fix)
+
+| Symptom | Fix |
+|---|---|
+| NaN→int ValueError in cloud_to_rung | f32 sentinels — see §8 bug 4 |
+| WBT "TIFF does not contain geokeys" | copy src.profile with CRS |
+| WBT "No such file or directory" | set_working_dir('/tmp') + abs paths |
+| Frangi 0/NaN | float64 + NaN mask (bug 3) |
+| `grav.expand()` 'int' not iterable | r must be an array |
+| projError Moon vs Earth | explicit +R=1737400 proj4 |
+| 403 on bsdtar install | 4-mirror fallback (bug 1) |
+| "no .f32 files in dir" | re-run; v0.2 auto-discovers the f32 dir |

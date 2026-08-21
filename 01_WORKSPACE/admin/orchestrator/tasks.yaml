@@ -1,0 +1,50 @@
+# LUNARVOID recurring-task definitions (manual dispatch only).
+# Run:  ~/lunarvoid/venv/bin/python 01_WORKSPACE/admin/orchestrator/pipeline.py
+# One:  ... pipeline.py --only weekly-lit-scan
+#
+# Tasks run headlessly via `opencode run --agent <agent>`. They are
+# READ/APPEND-ONLY by design: no git commits, no roadmap edits, no
+# deletions. Results land in orchestrator/logs/ and (where noted)
+# append to notes/findings.md sections maintained by the agents.
+
+- id: weekly-lit-scan
+  agent: paper-writer
+  prompt: >
+    Run a literature scan per the /litcheck command semantics: use the
+    arXiv MCP to search the last 90 days for lunar lava tube, skylight,
+    pit crater, sinuous rille, GRAIL/Diviner void detection, and DEM
+    uncertainty work. Especially watch for ESSA, Robinson, or Wagner
+    preprints (the named competitors). Append a dated section to
+    01_WORKSPACE/notes/findings.md (## lit-scan YYYY-MM-DD) listing
+    anything new with arXiv IDs; add genuinely-new rows to
+    notes/prior_art_matrix.csv per its existing schema. If the arXiv
+    MCP is unavailable, say so in the log and stop — do not scrape.
+
+- id: skeptic-review
+  agent: skeptic
+  prompt: >
+    Review the most recent entries in 01_WORKSPACE/notes/findings.md
+    and the current contents of
+    01_WORKSPACE/data/candidate_registry.csv (if non-empty). Attack
+    every claim per your checklist: alternative explanations, claim
+    strength vs the two-independent-methods rule, FP per 10^4 km^2
+    reporting, base-rate honesty. Append a dated
+    "## skeptic-review YYYY-MM-DD" section to notes/findings.md with
+    your VERDICT and falsifiable objections (or a plain statement
+    that none were found).
+
+- id: verify-regression
+  agent: verifier
+  prompt: >
+    Run the versioned verification regression: execute all three
+    scripts in 01_WORKSPACE/admin/verification_evidence/scripts/
+    (verify_v02_f32dir_and_filter.py, verify_v03_slope_mask.py,
+    verify_v04_tune_slope.py) with
+    /home/frostflux/lunarvoid/venv/bin/python and also run
+    01_WORKSPACE/code/smoke_test.py. Compare against the known-good
+    values in the latest verification_evidence JSONs and the smoke
+    baseline (F1 0.39/0/0.80, fusion AUC 0.990). Append a dated
+    "## verify-regression YYYY-MM-DD" section to
+    01_WORKSPACE/notes/findings.md with PASS/FAIL per check and the
+    numbers you observed. You are edit-denied for code — if something
+    fails, report it; do not fix it.

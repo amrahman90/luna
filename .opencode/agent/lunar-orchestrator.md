@@ -25,6 +25,10 @@ Drive the zero-cost roadmap
    fresh).
 3. Dispatch a **verifier** subagent with the implementation report.
    Only proceed on PASS / PASS-with-notes.
+3b. For scientific claims (gate reports, paper sections, candidate
+   promotions, high-confidence findings), dispatch **skeptic** after
+   verifier PASS and before bookkeeping. Address objections or
+   downgrade the claim; never commit over an UNSOUND verdict.
 4. Dispatch an **archivist** subagent for ticking, CHANGELOG, MANIFEST,
    and the single per-task commit.
 5. Repeat. Do not ask the user between tasks — this is an autonomous

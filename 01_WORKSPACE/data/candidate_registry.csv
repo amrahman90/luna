@@ -1,0 +1,31 @@
+# LUNARVOID Candidate Registry — the ONE project-level list of inferred
+# void candidates. Populated by WP2 sag search (Task 18+), enriched by
+# WP3 fusion, audited by skeptic. CLAIM DISCIPLINE APPLIES: these are
+# INFERENCES with confidence tiers, never detections. FP reporting per
+# 10^4 km^2 is computed over the searched area, not over this list.
+#
+# Schema (one row per candidate; append, never silently delete —
+# use status=DOWNGRADED with a reason):
+#
+# candidate_id   LV-<dtm>-<n> stable unique id
+# lon,lat        planetocentric, -180..180
+# dtm            NAC DTM name the candidate was found in
+# span_m         candidate long-axis span in metres (60-300 prior)
+# sag_amp_m      recovered depression amplitude (m)
+# score          raw detector score (depth x Frangi)
+# confusion      nearest confusion-layer class (rille/chain/ridge/
+#                graben/bg) + distance_m — a rille shoulder candidate
+#                must show this field before any promotion
+# methods        evidence streams currently agreeing, "|"-separated
+#                (morphometry|gravity|thermal|illumination)
+# tier           A = two+ independent methods agree; B = one method,
+#                confusion-cleared; C = raw morphometry only
+# status         ACTIVE / DOWNGRADED / SUPERSEDED
+# first_found    YYYY-MM-DD; updated: YYYY-MM-DD
+# evidence       path to the CSV/JSON row(s) backing this candidate
+# notes          one line; failure-mode flags (e.g. "I14 funnel risk")
+#
+# The two-independent-methods rule: tier A REQUIRES methods to include
+# at least one of gravity/thermal/illumination in addition to
+# morphometry. Morphometry alone can never exceed tier B.
+candidate_id,lon,lat,dtm,span_m,sag_amp_m,score,confusion,methods,tier,status,first_found,updated,evidence,notes
