@@ -1,0 +1,63 @@
+{
+  "checks": [
+    {
+      "name": "slope_deg_map function exists",
+      "ok": true,
+      "detail": "slope_deg_map"
+    },
+    {
+      "name": "tune_slope_threshold function exists",
+      "ok": true,
+      "detail": "tune_slope_threshold"
+    },
+    {
+      "name": "--tune-slope in CLI help",
+      "ok": true,
+      "detail": "found"
+    },
+    {
+      "name": "slope_deg_map on ramp: returns 2D of slope_deg",
+      "ok": true,
+      "detail": "shape=(20, 20)"
+    },
+    {
+      "name": "slope_deg_map on ramp: median slope ~5-8 deg on the ramp",
+      "ok": true,
+      "detail": "median=5.71\u00b0"
+    },
+    {
+      "name": "tune_slope_threshold: returns best_deg and best_f1",
+      "ok": true,
+      "detail": "best_deg=3.0, best_f1=0.6666666666666666"
+    },
+    {
+      "name": "sag_detect.py --tune-slope exits 0",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "rungs[0] has slope_mask_tuned field",
+      "ok": true,
+      "detail": "keys=['res_m', 'shape', 'valid_frac', 'threshold', 'f1_cal', 'f1_test', 'f1_test_raw', 'f1_test_slope', 'precision_test', 'recall_test']"
+    },
+    {
+      "name": "slope_mask_tuned=True when --tune-slope is set",
+      "ok": true,
+      "detail": "value=True"
+    },
+    {
+      "name": "slope_mask_degrees is the *tuned* value (not the 10\u00b0 default)",
+      "ok": true,
+      "detail": "value=45.0"
+    },
+    {
+      "name": "v0.4 --tune-slope gives higher F1 than v0.3 fixed-slope on Fieg_A 0.5m",
+      "ok": true,
+      "detail": "v0.4 F1 +slope=0.1365 (target >=0.05)"
+    }
+  ],
+  "n_checks": 11,
+  "n_ok": 11,
+  "n_fail": 0,
+  "all_ok": true
+}

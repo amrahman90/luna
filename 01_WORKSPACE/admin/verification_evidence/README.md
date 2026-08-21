@@ -52,6 +52,7 @@ results are derived from.
 | `49b9927` LLTB-1 v0.2 | v02 regression (21 checks) | ALL OK | `2026-08-21_v02_regression_verification.json` |
 | `cbc384c` LLTB-1 v0.2.1 | implicit (no code changes) | — | — |
 | `d81addd` LLTB-1 v0.3 | v03 lift (15 checks) | ALL OK | `2026-08-21_v03_lift_verification.json` |
+| `TBD` LLTB-1 v0.4 | v04 tune-slope (11 checks) | ALL OK | `2026-08-21_v04_tune_slope_verification.json` |
 
 When a new commit lands, append a new JSON and update this table.
 
@@ -78,3 +79,15 @@ When a new commit lands, append a new JSON and update this table.
   written
 - Lift verification on Kingsbowl 5m: F1 raw 0.0019 -> +slope
   0.0447 (>=10x lift)
+
+### v0.4 (verify_v04_tune_slope.py)
+- `wp1_detector/sag_detect.py`: `slope_deg_map()` returns the
+  continuous slope-degree map; `tune_slope_threshold()` picks
+  the F1-maximising slope on the calibration half
+- CLI `--tune-slope` flag present and wired (and `--help` doesn't
+  crash with `TypeError: %o format` after the help-string tweak)
+- End-to-end on Fieg_A with `--tune-slope`: `slope_mask_tuned`
+  field is True, `slope_mask_degrees` is the *tuned* value (not
+  the 10° default), F1 `+slope` lifts above 0.05 (we see 0.137)
+- v0.3 regression: re-running verify_v03_slope_mask.py still
+  passes 15/15 (no regression on the slope_mask path)

@@ -5,6 +5,41 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 7)
+
+- **LLTB-1 v0.4 — per-rung slope-threshold tuning:**
+- `wp1_detector/sag_detect.py`:
+  - New `slope_deg_map(dtm, pixel_m, smooth=3)` helper — the
+    continuous slope-degree map (the boolean `slope_mask()` is
+    thresholded on this)
+  - New `tune_slope_threshold(slope_deg, pred_full, truth_r, cal_mask, rungs_deg)`
+    helper — same discipline as v0.1 score-threshold tuning:
+    sweep a small grid on the calibration half, pick the F1-
+    maximising threshold; apply on the test half held out per
+    v5 I9
+  - New CLI flag `--tune-slope` (default off); when set, the
+    slope mask threshold per rung is calibrated-tuned
+  - New rung summary field `slope_mask_tuned` (bool)
+  - Default `--slope-mask-degrees` changed from 0° (off, the
+    v0.3 default) to 10° (recommended)
+  - New CLI rung sweep: `{3, 5, 8, 10, 15, 20, 30, 45}°` (45° cap)
+- New file: `admin/verification_evidence/scripts/verify_v04_tune_slope.py`
+- v0.4 HONEST RESULTS (--tune-slope, test split):
+  - **IndianTunnel_NorthSurface 1m (best honest)**:
+    F1 0.298 → **0.362** (+21%) at slope=45°
+  - **IndianTunnel_Collapse3 0.5m (real lava tube)**:
+    F1 0.097 → **0.188** (~2x) at slope=45°
+  - **IndianTunnel_Collapse3 1.0m**:
+    F1 0.143 → **0.181** (+26%) at slope=30°
+  - **Fieg_A 0.5m**: F1 0.030 → **0.137** (+360%, 5x) at slope=45°
+  - **Sheepridge 5m**: F1 0.055 → **0.091** (+65%) at slope=45°
+  - **IndianTunnel_cave_1x 5m**: F1 0.068 → 0.049 (-28%, REGRESSION;
+    cap at 45° is too aggressive for this cliff/overhang site.
+    The release note flags this and recommends --slope-mask-degrees 10
+    for this site.)
+- **v0.3 verification still passes 15/15**; **v0.4 verification
+  11/11**. The slope tuning is non-degrading on the v0.3 path.
+
 ## 2026-08-21 (execution session 6)
 
 - **Documentation complete + verification records versioned:**
