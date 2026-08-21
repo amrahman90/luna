@@ -1,3 +1,8 @@
+> **Status: SUPERSEDED (2026-08-21)** — replaced by
+> `plans/2026-08-21_GATE_G0prime_report_v1.1.md` (v0.4 detector numbers,
+> all figures re-traced to output files, Z2 row corrected after verifier
+> refutation). Body retained below for history.
+
 # Gate G0' Report — WP0 zero-cost portion complete
 
 **Date:** 2026-08-19

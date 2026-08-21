@@ -445,11 +445,11 @@ currently the canonical reference).
 **Files:**
 - Create: `01_WORKSPACE/plans/2026-XX-XX_GATE_G0prime_report.md`
 
-- [ ] **Step 10.1** Compile: primitive recovery table (Task 4), kriging
+- [x] **Step 10.1** Compile: primitive recovery table (Task 4), kriging
   correction numbers (Task 5), noise-floor stats + preliminary sag
   verdict (Task 6), prior-art matrix completion status (Task 1), scope
   map v1.1 (Task 9), local-ASP attempt outcome (Task 8).
-- [ ] **Step 10.2** State explicitly what remains for full G0 (the paid
+- [x] **Step 10.2** State explicitly what remains for full G0 (the paid
   Tier-1 reproduction, if Task 8 failed) and whether it blocks WP1
   (it does NOT — WP1 runs on terrestrial analogs + published DTMs).
 

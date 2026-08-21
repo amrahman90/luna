@@ -40,3 +40,32 @@ Format per entry:
   tuned slope 45°); recall 1.00 wherever ≥5 void cells; per-site
   slope tuning regresses on IndianTunnel_cave_1x (use fixed 10°)
   (HIGH) — evidence: `admin/verification_evidence/2026-08-21_v04_tune_slope_verification.json`.
+
+## findings 2026-08-21 (skeptic corrections, G0' report v1.1 review)
+
+- CORRECTION — the 2026-08-21 entry above ("Sag search recovers the
+  catalogued pit within 100 m as top candidate on ALL 8 covered DTMs
+  (HIGH)") is REFUTED: verifier pit-distance measurement shows
+  recovery within 100 m on 4/8 runs only (Ingenii 46 m, top of list;
+  MTP 45 m at rank 11/29, score 3.72; Procellarum 38–77 m at ranks
+  55/189); on the other 4 runs the closest candidate lies 1.2–2.6 km
+  away, and each run's global top score lies 5–29 km from the
+  catalogued pit (MTP top 21.06, ~12.5 km NNE) (HIGH, that the
+  original claim is false) — evidence:
+  `papers/gate_reports/G0prime_report_v1.1.md` row 8;
+  `admin/verification_evidence/2026-08-21_z2_pit_distance_verification.md`
+  (pending filing) — caveat: corrected claim is "detector responds at
+  some real pits; ranking uncalibrated and dominated by uncorroborated
+  candidates" at MEDIUM confidence (n=8, Wilson 95% CI on 4/8 ≈
+  0.18–0.82; FP/10^4 km² NOT MEASURED; only 21/278 catalogued pits are
+  tube-relevant, so pit response ≠ tube response).
+- CAVEAT — the sag-floor entry above: pooled sag-band RMS 1.245 m
+  (TRANQPIT1) / 1.379 m (MARIUSPIT01) ⇒ 3σ = 3.74 / 4.14 m, so
+  "A≥4 m single-DTM detectable" holds strictly only at TRANQPIT1
+  (4 m < 4.14 m at Marius). Per-panel RMS spans 0.74–2.05 m (Marius
+  P3 local 3σ ≈ 6.1 m); floor sampled at only 2 of ~649 mare DTMs.
+  Floor should read "≥5 m at both pooled sites (≥4 m at the quieter
+  site)" until per-DTM floors exist (MEDIUM) — evidence:
+  `data/outputs/wp0_kriging/noise_floor_stats.csv`. The "3× sag-band
+  RMS" rule is a PROJECT CONVENTION; no such multiplier appears in
+  v5 §4 (grep-verified 2026-08-21) — do not cite v5 for it.

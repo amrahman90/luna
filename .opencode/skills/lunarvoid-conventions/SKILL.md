@@ -162,12 +162,18 @@ already produced silent-wrong-answer bugs. Read fully before coding.
 Recall = 1.00 at every rung with ≥5 void cells; the bottleneck is
 precision (overflagged small sinks on gentle slopes).
 
-### Z2 sag-search top scores (all 8 covered DTMs, 2026-08-21)
+### Z2 sag-search scores (all 8 covered DTMs, 2026-08-21; CORRECTED
+   2026-08-21 after verifier refutation)
 
-Top candidate within 100 m of the catalogued pit on all 7 unique
-DTMs: TRANQPIT1 21.06 (MTP), INGENIIPIT 19.33, IRIDIUMPIT1 12.86,
-FECNDITATS2 9.49, PRCLRMPIT01 8.09, MARIUSPIT01 5.04 (rille-funnel
-I14 mode), SWFECUNPIT1 1.60 (highland).
+Top-scored candidate is NOT generally the catalogued pit (it lies
+5-29 km away on 6/8 runs — the top score usually picks other
+terrain). The pit itself surfaces as a candidate within 100 m on
+4/8: Ingenii 46 m (rank 1, score 19.33), MTP 45 m (rank 11/29,
+score 3.72 vs top 21.06), Procellarum 38-77 m (ranks 55/189); no
+candidate within 100 m on FECNDITATS2 / IRIDIUMPIT1 / MARIUS /
+SWFECUNPIT1 (closest 1.2-2.6 km). Max scores per run: TRANQPIT1
+21.06, INGENIIPIT 19.41, IRIDIUMPIT1 12.86, FECNDITATS2 9.49,
+PRCLRMPIT01 8.09, MARIUSPIT01 5.04, SWFECUNPIT1 1.60.
 
 ### Pre-existing bugs (DOCUMENTED, NOT FIXED — don't re-discover)
 

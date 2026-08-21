@@ -5,6 +5,29 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-21 (execution session 9 — Task 10 G0' report)
+
+- **Task 10 (Gate G0' report v1.1) — zero-cost gate met:**
+  - v1.1 report installed at
+    `plans/2026-08-21_GATE_G0prime_report_v1.1.md` (canonical; working
+    copy at `papers/gate_reports/G0prime_report_v1.1.md`); supersedes
+    `plans/2026-08-19_GATE_G0prime_report.md`, now banner-marked
+    SUPERSEDED. Steps 10.1–10.2 ticked.
+  - Criteria: **7 PASS + 2 PASS (process only)** (rows 6 Task-8
+    local-ASP close-out, 8 Z2 sag search) — 0 FAIL, 0 PARTIAL; every
+    known failure mode documented in-row.
+  - **Z2 claim refuted and corrected:** verifier pit-distance
+    measurement refuted "top candidate within 100 m on all 8 runs"
+    (6/8 top candidates 5–29 km from the pit; pit recovered ≤100 m on
+    4/8) → report row 8, conventions skill §8, and `notes/findings.md`
+    corrected same session; evidence doc filed at
+    `admin/verification_evidence/2026-08-21_z2_pit_distance_verification.md`.
+  - Skeptic verdict SOUND-with-objections; O2–O5 addressed (≥5 m floor
+    wording, "project convention" label on the 3× sag-band RMS rule,
+    Wilson 95% CI on the 4/8 recovery rate, SLDEM2015 + I12 deferrals
+    made explicit in §3).
+  - Cost: $0.00 (cumulative unchanged).
+
 ## 2026-08-21 (execution session 8 — R0 Task-8 close-out)
 
 - **Task 8 (local ISIS+ASP reproduction attempt) — honest close-out:**
