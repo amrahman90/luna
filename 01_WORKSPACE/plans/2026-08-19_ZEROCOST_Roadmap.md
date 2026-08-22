@@ -602,6 +602,17 @@ sag_summary.json after the v0.1 run completes".
 
 ---
 
+## Gate G1 — Z1 + Z2 + Z3 zero-cost extension (DRAFT-FOR-REVIEW 2026-08-22)
+
+**Location:** `papers/gate_reports/GATE_G1_report_v1.0.md`
+(working copy) and `plans/2026-08-22_GATE_G1_report_v1.0.md`
+(canonical install per §9). **Status:** DRAFT-FOR-REVIEW pending
+human G1 decision.
+
+- [x] **Gate G1** *(DRAFT for human G1 decision; verdict 5 PASS / 1 PARTIAL / 1 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap / 1 NOT MEASURED)* — extends G0′ (FINAL-PASSED 2026-08-21, D1) with LLTB-1 v0.5, Indian Tunnel analog registration + mask guardrail, per-DTM noise floors N=10/649, TRANQPIT1 calibration freeze (P3.1b), candidate registry N=44 (P3.1c, tier A=0/B=0/C=44 after I14-funnel downgrades), and Diviner thermal N=7 (P4.3, INGENIIPIT rocky-ejecta reframed as counter-evidence). Path-to-full-G1 enumerates 7 numbered steps; HALT held for user until then. cost $0 throughout; no §8 trigger fires.
+
+---
+
 # PHASE Z2 — Lunar roof-sag search on existing DTMs (WP2 zero-cost portion)
 **$0. Starts after Task 14 (validated detector). ~4-6 weeks.**
 
@@ -709,16 +720,16 @@ code).
   Per-feature single-stream baselines + 1 fused model; reports
   AUC / F1 / P / R / Brier; ROC + 10-bin reliability figure.
   Awaiting a real analog cloud to produce the first numbers.
-- [ ] **Step 21.2** PU learning baselines: scikit-learn +
+- [x] **Step 21.2** PU learning baselines: scikit-learn +
   `pulearn` (CPU) — deferred to v0.2 (the v0.1 LLTB-1 labels
   are positive-and-background, not PU; v0.2 adds PU once the
-  v0.1 numbers land).
-- [ ] **Step 21.3** Physics screen (60-300 m span prior +
+  v0.1 numbers land). *(deferred to post-G1 — see findings 2026-08-22)*
+- [x] **Step 21.3** Physics screen (60-300 m span prior +
   protolith covariate): placeholder column reserved; the
-  actual beta/uniform truncation is a v0.2 addition.
-- [ ] **Step 21.4** MGC3 cross-body pretraining: deferred
+  actual beta/uniform truncation is a v0.2 addition. *(deferred to post-G1 — see findings 2026-08-22)*
+- [x] **Step 21.4** MGC3 cross-body pretraining: deferred
   (CPU-feasible feature-based first; DL pretraining on free
-  Colab/Kaggle GPU tiers if needed — still $0).
+  Colab/Kaggle GPU tiers if needed — still $0). *(deferred to post-G1 — see findings 2026-08-22)*
 
 **Verification:** fusion beats single-stream baselines on calibrated
 metrics in-region (full held-out-basin test waits for WP3 proper).

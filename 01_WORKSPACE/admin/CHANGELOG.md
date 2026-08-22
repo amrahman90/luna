@@ -5,6 +5,36 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 18 — Phase 5 + G1 gate report DRAFT-FOR-REVIEW)
+
+- Phase 5 record-only deferrals: 21.2 PU (n=5 insufficient), 21.3
+  physics+tier-A (max tier C at G1), 21.4 MGC3 (Paper 2)
+- G1 gate report draft v1.0: 68 lines, 5 PASS / 1 PARTIAL /
+  1 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap / 1 NOT MEASURED
+- Verifier PASS-with-notes; skeptic SOUND-with-objections, all 5
+  addressed
+- Status: DRAFT-FOR-REVIEW → HALT for human G1 decision
+- D1 (G0′): PASSED; D2 (Task 8 stereo): deferred (drives the
+  DTM-production gap)
+- cost $0 throughout
+- 11 commits this run, tree clean (R1 draft untracked)
+
+---
+
+## 2026-08-22 (execution session 17 — Phase 5 record-only deferrals)
+
+- 21.2 PU baselines deferred (n=5 positives insufficient; need N≥30)
+- 21.3 physics screen + tier-A deferred (max tier at G1 = C by
+  definition: ≥2 independent evidence legs unmet; tier-A count = 0)
+- 21.4 MGC3 cross-body pretraining deferred to Paper 2 (out of scope
+  for Paper 1; lunar registry too small for transfer-learning eval)
+- no new work product; cost $0
+- roadmap Steps 21.2 / 21.3 / 21.4 ticked with deferral note;
+  Next_Tasks P5.1 / P5.2 / P5.3 ticked with deferral note;
+  findings.md appended three dated decision sections
+
+---
+
 ## 2026-08-22 (execution session 16 — Phase 4 P4.3 Diviner thermal)
 
 - Powell 2023 GHRM grids fetched by prior parallel session, sha256-verified this cycle, 0 new bytes

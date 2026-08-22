@@ -437,3 +437,87 @@ INSUFFICIENT — the `interpretation` block still misframes the result.
   (rocky-ejecta alternative)". Multi-evidence stacking claim
   held at DEMONSTRATION-only with morphometry as the sole active
   leg.
+
+## decision 2026-08-22 — PU learning baselines deferred to post-G1
+
+PU baselines (scikit-learn + `pulearn`; positive = catalogued pits,
+unlabeled = sweep) require positive-labeled data at sufficient scale
+for stable training. At G1, the only positive labels are the 5
+catalogued pits recovered in the Z2 calibration transfer (TRANQPIT1 TP
+rank-4, plus known-pit signal in 6 of the 7 DTMs — but as Frangi ring
+artifacts around the catalogued feature, not independent positives).
+n=5 is below any meaningful PU-learning threshold (typical need ≥30
+positives for scikit-learn baselines to produce stable held-out F1).
+Decision: defer PU baselines until the DTM-production gap (D2 Task 8 /
+§8 cost trigger) is closed and the registry grows to N ≥ 30 positives.
+Recorded as a G1 limitation; revisit post-G1.
+
+## decision 2026-08-22 — physics screen + tier-A promotion deferred to post-G1
+
+The v5 physics-screen rule (60–300 m span prior + depth-to-width
+ratio) and tier-A two-independent-method promotion require: (a) span
+measurements that the v0.5 ladder does not currently produce (span
+proxy from Frangi blob area is insufficient; need explicit pit-width
+rungs), and (b) ≥2 independent evidence legs per candidate — at G1 we
+have only Z2 morphometry at 7/7 + thermal at 2/7, with thermal
+INCONCLUSIVE at INGENIIPIT (P4.3 review above). Tier-A count at G1 = 0
+by definition. Decision: defer physics screen + tier-A promotion; at
+G1 the registry's max tier is C. The tier-B inversion of the I14
+funnel (above) reinforces that any "physics screen" must NOT use
+rille-intersection as a positive lever — it is the pre-registered
+failure mode. Tier-A promotion rules need a separate post-G1 spec.
+
+## decision 2026-08-22 — MGC3 cross-body pretraining deferred (Paper 2)
+
+MGC3 cross-body pretraining (Mars cave catalog Cushing 2015/2017) is
+out of scope for LUNARVOID Paper 1. Defer to Paper 2 (post-G1) when
+the lunar registry has enough scale to support a transfer-learning
+experiment (need N ≥ 30 lunar positives for a meaningful Mars→Moon
+transfer evaluation; cross-body sample sizes below that produce
+non-interpretable transfer-learning deltas). CPU-feasible
+feature-based fusion (Step 21.1 logistic-regression prototype) remains
+  the G1 path; DL pretraining on free Colab/Kaggle GPU tiers stays an
+
+## 2026-08-22 — skeptic review, G1 gate report v1.0 (verdict: SOUND-with-objections)
+- **OBJECTION O1 (HIGH) — headline 3.71 number placement invites misuse.**
+  §4 leads with "Aggregate FP 3.71 [0.76, 10.83] per 10⁴ km²" *before*
+  naming it calibration-context; a skim-reader can quote 3.71 as a
+  survey rate. Verifier #10 already says NOT MEASURED, but §4 is the
+  sentence a human will quote. Resolution: lead §4 FP sentence with
+  "FP rate NOT MEASURED at survey scale; TRANQPIT1 per-DTM
+  240.41 [49.58, 702.58] per 10⁴ km² (n=4) is the only honest rate."
+- **OBJECTION O2 (MED) — verdict column mixes FAILED and DEMONSTRATION.**
+  Row 7 reads "FAILED (claim holds as DEMONSTRATION only)"; row 9 reads
+  "FAILED (DTM-production gap)". Two distinct failure modes crammed into
+  one verb. Resolution: add a "Mode" column or split into two kinds —
+  DEMONSTRATION = "method works; scale insufficient for science claim";
+  DEFERRED-DTM-gap = "blocked on user-approved §8 trigger T1".
+- **OBJECTION O3 (MED) — §6 path-to-full-G1 missing branches.**
+  (a) No contingency for "if user never approves §8 trigger T1" — G1
+  then stays DEMONSTRATION-only indefinitely; needs explicit statement.
+  (b) No Paper 2 / G2 placeholder (findings.md already defers MGC3 +
+  cross-body PU + Mars→Moon to Paper 2 post-G1 — that deferral belongs
+  in §6). (c) No explicit non-goal sentence "LUNARVOID will not claim
+  detection at G1 or G2" — the thesis line carries it implicitly.
+- **OBJECTION O4 (MED) — "portable in principle across the 7" overclaim.**
+  §4 says portable across "the 7 on-disk NAC DTMs". With IRIDIUMPIT1
+  missed (n_tp=0) and 24 INGENIIPIT ring artifacts inflating tier-C
+  count, portability reads as 6/7. Recommend: "portable to 6 of 7 on-disk
+  NAC DTMs (IRIDIUMPIT1 missed) at the demonstrated noise floor".
+- **OBJECTION O5 (LOW) — 2 m sensor-only regression hidden in PASS #1.**
+  0.254→0.122 at n_void=53 (SNR non-monotone, "treat as real, ordering
+  as small-sample noise") appears only in PASS #1's measured column.
+  §4 claim-sentence and §5 what-does-NOT-pass both omit it. Resolution:
+  add §5 bullet "2 m rung single-DTM sensor-only F1 falls 0.254→0.122
+  (n=53, SNR non-monotone); 2 m sags require stacking, not single-DTM".
+- **PASS-item audit** — all 5 PASSes (#1–5) read as real science-outcome
+  PASSes (verify + reproducibility + audit trail), not process PASSes.
+  No downgrade warranted.
+- **Slipped-through from earlier phases** — LLTB-1 v0.5 2 m regression IS
+  in §2 row 1 (caveated), Task 8 §8 cost trigger IS named in §6 step 1
+  + §7 cost audit. Both visible. The Marius-Hills I14 funnel, Kingsbowl
+  F1 history (v0.4 note), 4/8 within-100 m, INGENIIPIT rocky-ejecta
+  reframing, tier-B inversion, 12-km FP visual-inspection flag, and
+  FP-rate calibration-context — all acknowledged in-row or in
+  traceable notes. No omissions found on that axis.
+option if needed, still $0.
