@@ -99,7 +99,7 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
 - [x] **P5.4 — G1 gate report** [paper-writer→verifier→skeptic→USER]
   Compile G1 report (v0.5 benchmark, transfer results, stacked
   candidates, PU calibration, honest Marius/funnel failures).
-  **HALT for human G1 decision.** M. *(DRAFT for human G1 decision; verdict 5 PASS / 1 PARTIAL / 1 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap / 1 NOT MEASURED)*
+  **HALT for human G1 decision.** M. *(FINAL-PASSED 2026-08-22; §8 T1 trigger APPROVED; cost ceiling $150)*
 - [ ] **P5.5 — Paper 1 v1.0** [paper-writer→verifier→skeptic→archivist,
   depends P5.4 approval] Full draft, figures, cover letter; LLTB-1
   Zenodo release tag. L.

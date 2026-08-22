@@ -5,6 +5,17 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 19 — G1 FINAL-PASSED; §8 T1 trigger APPROVED)
+
+- G1 status DRAFT-FOR-REVIEW → FINAL-PASSED (human decision 2026-08-22)
+- §8 T1 trigger APPROVED (Task 8 NAC DTM stereo; cost ceiling $150;
+  provider to be selected)
+- Phase 6 plan to follow (provider selection, budget cap, ASP install,
+  NAC EDR fetch, stereo run, re-run P3.1a/P3.1c at N=649+)
+- Cost $0; $150 budgeted (out of $800 master-plan ceiling)
+
+---
+
 ## 2026-08-22 (execution session 18 — Phase 5 + G1 gate report DRAFT-FOR-REVIEW)
 
 - Phase 5 record-only deferrals: 21.2 PU (n=5 insufficient), 21.3

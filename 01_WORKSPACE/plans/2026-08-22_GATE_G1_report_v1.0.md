@@ -10,7 +10,9 @@
 
 ---
 
-**Date:** 2026-08-22 · **Version:** v1.0 · **Status:** DRAFT-FOR-REVIEW
+**Date:** 2026-08-22 · **Version:** v1.0 · **Status:** FINAL-PASSED (human decision 2026-08-22)
+
+Status: FINAL-PASSED. The DEMONSTRATION-only verdict + DEFERRED-DTM-gap remain; D2 (Task 8 §8 T1 trigger) is APPROVED by the user 2026-08-22, cost ceiling $150.
 **Extends:** G0′ final `papers/gate_reports/G0prime_report_v1.1.md` (FINAL-PASSED 2026-08-21, D1). G1 = zero-cost extension covering LLTB-1 v0.5 degradation, Indian Tunnel analog registration, per-DTM noise floors, TRANQPIT1 calibration freeze / Phase-3 transfer, Powell 2023 Diviner thermal. Authority: v5 §4/§8; `plans/2026-08-19_ZEROCOST_Roadmap.md`.
 **Session commits since G0′:** `67146d3` Phase 0 G0′ FINAL · `c021298` G0′ report v1.1 · `da308cd` Task 12 Indian Tunnel + mask relabel · `1b08d35` Phase 1 LLTB-1 v0.5 (verify 11/11) · `0246f12` Phase 2 Paper 1 v0.2 §4.5 · `c1cc6c1` P3.1a per-DTM floors N=10/649 · `36edccf` Phase 3 transfer N=7/649 · `4a3a3d7` P4.3 Diviner N=7 INGENIIPIT rocky-ejecta. Paths `01_WORKSPACE/...` unless noted.
 
