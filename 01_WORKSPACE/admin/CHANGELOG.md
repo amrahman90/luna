@@ -5,6 +5,23 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 21 — LROC NAC DTM discovery; fetch pending)
+
+- LROC NAC DTM PDS discovery via NAC_DTMS_180.SHP index layer (geo-coder)
+- 19 unique DTMs overlap 82/278 catalogued pits; 8 already on disk; 11 NEW to fetch
+- 11 NEW = 3.59 GB total (TYCHOPK 1.5 GB, TYCHOPK07 382 MB, FRESHMELT 371 MB,
+  TYCHOPK02/03/04 ~670 MB, KINGCRATER2/3/4 ~605 MB, FECUNPIT 122 MB)
+- URL pattern verified live (HEAD 302→pds.mcp.nasa.gov→200); sha256s of on-disk 8
+  match MANIFEST byte-for-byte
+- 30 random mare sites: GAP — no LROC coverage (no DTM coordinates in archive for
+  non-pit sites)
+- Fetcher script ready with --dry-run / --max N / --priority-only / --skip-existing
+  flags
+- Discovery was free; NO actual fetch yet (orchestrator launches fetch in next
+  cycle)
+
+---
+
 ## 2026-08-22 (execution session 20 — G1 PASSED; Phase 6 plan + budget open; P6.0 credentials HALT)
 
 - G1 FINAL-PASSED (commit `33cce63`) + `papers/` mirror updated to
