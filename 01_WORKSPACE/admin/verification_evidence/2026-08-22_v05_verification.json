@@ -1,0 +1,65 @@
+{
+  "release": "LLTB-1 v0.5",
+  "date": "2026-08-22",
+  "checks": [
+    {
+      "name": "sensor_summary.json exists, task 13.4 + release v0.5",
+      "ok": true,
+      "detail": "release=LLTB-1 v0.5"
+    },
+    {
+      "name": "composed table: 4 rungs x {baseline,noise,sensor50/100/200,hapke,hapke+sensor} finite",
+      "ok": true,
+      "detail": "all present"
+    },
+    {
+      "name": "composed table recomputes from sensor_f1_comparison.csv (max err < 1e-9)",
+      "ok": true,
+      "detail": "max err=5.55e-17"
+    },
+    {
+      "name": "baseline/noiseonly/Hapke arms reproduce 13.3 CSV exactly (< 1e-9)",
+      "ok": true,
+      "detail": "max|dF1|=9.71445146547012e-17 over 56 rows"
+    },
+    {
+      "name": "headline numbers match quoted 0.349/0.300/0.309/0.096/0.096 (0.5 m) and sensor-2m regression 0.122, composed 0.109",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "voiding azimuth-means 0.615/0.753/0.918; ranges 52-68/67-80/85-95 %",
+      "ok": true,
+      "detail": "means=[0.615, 0.753, 0.918]; ranges=['0.52-0.68', '0.67-0.80', '0.85-0.95']"
+    },
+    {
+      "name": "hapke METHODS.md: corrected 62/75/92 %, favorable-azimuth note, per-geometry range 0.051-0.122, i=85 genuine-loss attribution, analog-scope caveat",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hapke_summary.json correction_2026-08-22 block logs both series",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "perturbed rung raster + preview PNG exist (>=800x500 px)",
+      "ok": true,
+      "detail": "raster=True, png=(881, 760)"
+    },
+    {
+      "name": "release note exists and quotes composed-table numbers",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "smoke test known-good: per-rung F1 0.392/0.000/0.800, fusion AUC 0.990",
+      "ok": true,
+      "detail": "F1=[0.392, 0.0, 0.8], AUC=0.99"
+    }
+  ],
+  "n_checks": 11,
+  "n_ok": 11,
+  "n_fail": 0,
+  "all_ok": true
+}

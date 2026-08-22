@@ -524,12 +524,12 @@ in env; will add when needed).
 - [x] **Step 13.1** Rung rasters: 2 cm → 0.5 m → 2 m → 5 m → 60 m via
   `rasterio.warp.reproject` (average downsampling — NOT nearest, which
   thins point support). Module: `code/wp1_ladder/degrade.py`.
-- [ ] **Step 13.2** Vegetation stripping: classified out of scope
+- [x] **Step 13.2** Vegetation stripping: classified out of scope
   (NASA analog sites are bare basalt — documented; user will need
   to apply this for the optional drone campaign).
-- [ ] **Step 13.3** Synthetic illumination re-rendering under Hapke
-  photometrics. Deferred to v0.2 (Blender OSL / ASP SfS).
-- [ ] **Step 13.4** Sensor degradation: deferred to v0.2.
+- [x] **Step 13.3** Synthetic illumination re-rendering under Hapke
+  photometrics. Deferred to v0.2 (Blender OSL / ASP SfS). *(F1 0.35→0.10 mean, range 0.051-0.122; shadow-voiding 62/75/92% az-means; analog-scope caveat)*
+- [x] **Step 13.4** Sensor degradation: deferred to v0.2. *(LLTB-1 v0.5 released; verify PASS 11/11; 2 m sensor-only regression 0.254→0.122 documented)*
 
 **Verification:** `degrade.py` runs end-to-end on a test .npz
 (validates rasters are produced at the requested rungs; produces a

@@ -5,6 +5,47 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 12 — Phase 1 complete: Hapke + sensor rungs, LLTB-1 v0.5)
+
+- **Step 13.3 (P1.4) — Hapke synthetic illumination re-rendering:**
+  ladder F1 **0.35 → 0.10 mean** (per-geometry range 0.051–0.122),
+  driven by shadow voiding of trench-hosted void labels (azimuth means
+  **62/75/92%** voided at i=45/65/85). Motivates Task 19
+  (shadow-aware re-tune / illumination-robust features). Code:
+  `code/wp1_ladder/hapke_render.py`; outputs:
+  `data/outputs/wp1_ladder/hapke/` (12 renders + METHODS +
+  comparison CSVs). **Verifier PASS-with-notes ×2 → resolved;
+  skeptic SOUND-with-objections → addressed.**
+- **Step 13.4 (P1.5) — sensor-degradation rung + LLTB-1 v0.5
+  release:** verify_v05 **PASS 11/11**; evidence JSON:
+  `admin/verification_evidence/2026-08-22_v05_verification.json`;
+  release note: `notes/2026-08-22_LLTB1_v0.5_release_note.md`.
+  2 m sensor-only F1 regression **0.254 → 0.122** documented
+  honestly in the release table. Code:
+  `code/wp1_ladder/sensor_degrade.py`, `code/wp1_lla/verify_v05.py`;
+  outputs: `data/outputs/wp1_ladder/sensor/`.
+- **METHODS correction (verifier/skeptic):** hapke METHODS.md now
+  reports **azimuth-means** (62/75/92%) with both denominators
+  (all void cells vs valid void-label cells) stated and logged.
+- **Step 13.2 (P1.3) — vegetation stripping OUT OF SCOPE:** Indian
+  Tunnel site is sparsely vegetated arid terrain; stripping would add
+  a supervised ML dependency with no lunar counterpart. Logged in
+  `notes/findings.md` (dated decision section) as a Paper 1
+  limitation.
+- **Findings entries appended (skeptic, Step 13.3):** illumination-
+  dominance claim QUALIFIED — analog-scoped (trench-hosted labels;
+  roofed-sag-on-open-mare untested), attribution = fixed-calibration
+  pipeline collapse not proven information loss at i=45–65, w-flatness
+  by construction, 5 m rung ~nil. See `notes/findings.md` 2026-08-22
+  section.
+- **SECURITY NOTE:** stray `.opencode/opencode.json` containing
+  `"permission": "allow"` found (created during session, origin
+  unknown) — **removed by orchestrator 2026-08-22**; canonical root
+  `opencode.json` untouched. **Watch for recurrence.**
+- Roadmaps ticked: ZEROCOST 13.2/13.3/13.4 + Next_Tasks
+  P1.3/P1.4/P1.5. **Phase 1 complete.**
+- Cost: **$0**. Acquisitions: none (MANIFEST unchanged).
+
 ## 2026-08-21 (execution session 11 — Task 12 analog GT + Phase-0 residual)
 
 - **Task 12 (Steps 12.1–12.2 / P1.1–P1.2) — Indian Tunnel analog

@@ -36,13 +36,13 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   transform; report residual error bars). M.
 - [x] **P1.2 = Step 12.2** [geo-coder, depends P1.1] Rasterize cave
   centerline footprint → ground-truth void mask for cave rungs. S.
-- [ ] **P1.3 = Step 13.2** [archivist, record-only] Log vegetation-
+- [x] **P1.3 = Step 13.2** [archivist, record-only] Log vegetation-
   stripping OUT-OF-SCOPE decision in findings.md + CHANGELOG (terrestrial
   analog caveat for Paper 1 limitations). S.
-- [ ] **P1.4 = Step 13.3** [geo-coder, depends P0.1] Hapke synthetic
+- [x] **P1.4 = Step 13.3** [geo-coder, depends P0.1] Hapke synthetic
   illumination re-rendering of Indian Tunnel DTM; re-run ladder rungs
   affected. M-L.
-- [ ] **P1.5 = Step 13.4** [geo-coder, depends P1.4] Sensor-degradation
+- [x] **P1.5 = Step 13.4** [geo-coder, depends P1.4] Sensor-degradation
   rung (PSF/noise model); release **LLTB-1 v0.5** via the /release
   protocol: verify_v05 script prints `PASS: N/N`, evidence JSON into
   `admin/verification_evidence/`, smoke test PASS, skeptic review of any

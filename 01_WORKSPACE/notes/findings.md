@@ -130,3 +130,43 @@ this constrains pipeline mechanics on Earth data, not any lunar claim.
 - All Task-12 artefacts under `data/outputs/wp1_analog/`
   (registration/, void_mask/, NOTES_task12_registration_mask.md);
   code under `code/wp1_analog/` (6 modules).
+
+## 2026-08-22 — Step 13.3 Hapke re-render: illumination-dominance claim QUALIFIED (skeerk review)
+
+Headline as proposed ("illumination is the dominant degradation mode for the sag
+detector") is accepted ONLY with these qualifications (evidence:
+`data/outputs/wp1_ladder/hapke/{METHODS.md,hapke_summary.json,hapke_f1_comparison.csv}`):
+
+- **Analog-scoped**: mechanism is shadow voiding of TRENCH-HOSTED void labels
+  (62/75/92% voided, azimuth means i=45/65/85 — independently recomputed from
+  the committed renders + frozen GT: 0.615/0.753/0.918). A roofed-sag-on-open-
+  mare target is UNTESTED by this experiment (METHODS caveat must ride along
+  verbatim into Paper 1).
+- **Attribution**: thr=0 predict-all = collapse of the PRODUCTION FIXED-CALIBRATION
+  PIPELINE, not proven information loss at i=45-65 (predict-all recall there
+  0.73-0.97); at i=85 recall ceiling 0.16-0.44 = genuine label voiding. No
+  shadow-aware re-tune was run (by protocol); do not write "detector collapses".
+- **Denominator inconsistency**: METHODS prints 68/79/95 ("valid void-label
+  cells") vs headline 62/75/92 (all void cells) without stating denominators;
+  neither series is logged in hapke_summary.json. Fix METHODS wording + log both.
+- **Noise control**: single geometry (i=65); it is a generous upper bound on the
+  noise pathway (keeps dim cells to 2.0 m cap that full arms NoData) —
+  shadow-dominance is conservative. No double-count with v0.4 rungs (baseline
+  arm unperturbed).
+- **w-flatness is by construction** (r_ref scales with w in sigma_z): report as
+  relative-SNR w-invariance, not general photometric insensitivity.
+- **Rung dependence**: effect ~nil at 5 m (delta -0.009; n_void=8 — no
+  statistic); claim is a 0.5-2 m phenomenon. Paper 1 must quote the
+  per-geometry range (0.051-0.122), not only the 0.10 mean.
+
+## decision 2026-08-22 — vegetation stripping out of scope
+
+Vegetation removal for terrestrial analogs is OUT OF SCOPE for
+LUNARVOID: the Indian Tunnel analog site is sparsely vegetated arid
+terrain (El Malpais basalt flow), and a stripping step would add a
+supervised ML dependency (training labels, model choice, per-site
+validation) with no lunar counterpart — the Moon has no vegetation, so
+the cost buys nothing transferable. Recorded as a limitation for
+Paper 1 (analog-derived rungs may carry small vegetation-biased
+residuals at 0.5–2 m rungs); revisit only if a drone campaign adds a
+vegetated site.
