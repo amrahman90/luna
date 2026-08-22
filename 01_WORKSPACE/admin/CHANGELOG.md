@@ -5,6 +5,25 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 15 — Phase 3 complete: mare transfer + registry)
+
+- **P3.1a**: per-DTM noise floors (N=10/649, 639 skipped —
+  DTM-production gap)
+- **P3.1b**: TRANQPIT1 calibration freeze with FREEZE stamp +
+  surface-recipe bug found + fixed (sub-sampled vs rung grid); FP
+  rate 240.41 [49.58, 702.58] per 10^4 km^2 with n=4 low-n caveat
+- **P3.1c**: transfer N=7/10 (3 DTMs skipped, no cached score); 44
+  candidates, A=0, B=0 (3 downgraded per skeptic I14-funnel
+  inversion), C=44; aggregate FP 3.71 [0.76, 10.83] per 10^4 km^2
+  calibration-context (NOT survey); G1 banner: DEMONSTRATION only
+- Skeptic UNSOUND → corrected (tier-B downgrades, ring-artifact
+  notes, IRIDIUMPIT1 missed-detection, framing fixes)
+- 18.2 multi-illumination deferred pending Task-19 stack
+- cost $0, no acquisitions → no MANIFEST rows
+- lock acquired for the whole Phase 3 cycle
+
+---
+
 ## 2026-08-22 (execution session 14 — P3.1a per-DTM floors)
 
 - **P3.1a (slice of Step 18.3) — per-DTM Z2-scale noise floors:**

@@ -265,3 +265,86 @@ are noise statistics, not detections of any subsurface void.
 BACKLOG: Kingsbowl per-cell sag stats unrecoverable (source dir
 empty) — optional Phase-3 re-run to repopulate; only F1 0.002/0.043
 corroborated via the v0.4 release notes.
+
+## 2026-08-22 — skeptic review, P3.1c registry + transfer (verdict: UNSOUND)
+
+Tier-B inversion of the I14 funnel, calibration/transfer leakage,
+unexplained large-amplitude FPs, ring-artifact inflation, n=7/10 scale.
+
+- **TIER-B INVERSION OF I14 FUNNEL (CRITICAL)** — the 3 tier-B rows
+  (MARIUSPIT01-0400cm-r001, r002, -0800cm-r002) earn tier B by the
+  rule "rille intersection within 100 m" (`METHODS.md` L213–215).
+  This is the **pre-registered v5 I14 failure mode** (pits incised
+  into rilles spill sideways — it is a FINDING in this project, see
+  2026-08-21 entries above). Promoting by the same criterion inverts a
+  known confounder into a positive signal. **Downgrade all 3 to tier C
+  with note "I14 funnel risk — rille intersection is the failure mode,
+  not independent confirmation"** (HIGH — must fix before any G1
+  registry citation). Tier-B count collapses 3 → 0; tier A stays 0.
+
+- **AGGREGATE FP RATE IS THE CALIBRATION RATE DILUTED, NOT A SURVEY
+  RATE** — `transfer_summary.json.aggregate.fp_per_1e4km2 = 3.71 [0.76,
+  10.83]`. All 3 FPs are TRANQPIT1; 6 of 7 contributing DTMs are n_fp=0
+  because they were selected BECAUSE they host catalogued pits. The
+  "10/649" sample is **10 pit-associated DTMs, not random mare**. The
+  honest numbers are TRANQPIT1's `240.41 [49.58, 702.58]` (small-sample
+  n=4) — a per-DTM calibration context, not an extrapolation. (HIGH —
+  G1 headline must reframe.)
+
+- **CALIBRATION/TRANSFER LEAKAGE** — `calibration_transqpit1.json`
+  tunes `frac=0.20 / slope=45°` on TRANQPIT1 alone (single positive;
+  50/50 split degenerate). "Transfer" to 9 other DTMs applies the
+  un-re-tuned threshold; this is portability demonstration, NOT
+  held-out evaluation. The v0.4 release note / I15 freeze protocol
+  acknowledges this implicitly but the framing as "transfer evaluation"
+  overstates it. (MEDIUM — terminology.)
+
+- **TRANQPIT1 12-km FPs ARE UNEXPLAINED LARGE FEATURES** — registry
+  rows 73–75 (r001 95.4 m, r002 57.4 m, r003 48.8 m amplitude, all
+  12.5 km NNE of MTP). These are LARGE Mare Tranquillitatis features,
+  not noise-spike FPs. Visual inspection (floor-fractured crater rim,
+  ejecta blanket, post-emplacement modification?) is REQUIRED before
+  the "FP" label sticks; the morphometric signal is real, the void
+  interpretation is unsupported. (MEDIUM — must inspect before Paper 1.)
+
+- **INGENIIPIT 24/44 ROWS ARE RING ARTIFACTS AROUND THE CATALOGUED
+  PIT** — registry rows 36–59. r001 (87.7 m, score 19.33) IS the
+  catalogued pit (score-rank-1 TP by 100 m convention). r002–r008 are
+  within ~10 km of r001 with 17–60 m amplitudes — these are Frangi
+  ring artifacts around the known feature, not 23 separate void
+  candidates. Add note column entry "ring artifact around catalogued
+  pit (r001)" for r002–r008 (HIGH — at least 23 rows mislabelled as
+  "inferred void candidates").
+
+- **N=7/10 SCOPE = PROOF-OF-METHOD, NOT SCIENCE CLAIM** — registry
+  covers 7 of 10 on-disk DTMs of 649 in scope; 8092 km² ≈ 4% of
+  in-scope mare NAC DTM coverage (assuming 649 × ~300 km² ≈ 2e5 km²).
+  Aggregate FP rate generalises to nothing without the 639-DTM held-out
+  set. **G1 gate report MUST label the registry "DEMONSTRATION only —
+  N=7 of 649; generalisation deferred to D2 DTM production"** (HIGH —
+  required for honest G1).
+
+- **IRIDIUMPIT1 IS A MISSED DETECTION (negative evidence)** —
+  `transfer_summary.json.per_dtm.IRIDIUMPIT1`: n_candidates=2, both
+  below-local-floor, n_tp=0 on 1621.7 km². The detector fails to
+  recover the catalogued IRIDIUMPIT1 pit at all. This contradicts any
+  claim of "robust recovery on the transfer set" — add to registry
+  notes / paper as the detector's success varies by site. (MEDIUM.)
+
+- **REGISTRY NUMERICS SPOT-CHECKED ✓** — `LV-INGENIIPIT-0200cm-r001`
+  score 19.3345 matches `transfer_summary.json` top_score 19.3345375;
+  `LV-FECNDITATS2-0400cm-r001` 0.6853 matches 0.68532246;
+  `LV-MARIUSPIT01-0400cm-r001` methods="morphometry|rille" matches
+  tier-B rule; `calibration_transqpit1.json` frozen {slope=45, frac=0.2,
+  F1=0.4, TP=1, FP=3} matches reproduction block. Numerics OK; tier
+  labels ✗ per above. Evidence:
+  `01_WORKSPACE/data/candidate_registry.csv`,
+  `01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json`,
+  `01_WORKSPACE/data/outputs/wp2_sag/transfer/calibration_transqpit1.json`.
+
+## decision 2026-08-22 — multi-illumination azimuth test deferred
+
+Multi-illumination azimuth test (Step 18.2) deferred — pending the
+Task-19 photometric-stereo stack build (P4.2) where azimuth
+variation comes for free as part of multi-illumination stacking.
+This decision is recorded, not abandoned.

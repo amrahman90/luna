@@ -633,14 +633,21 @@ note in the summary JSON.
   Darboux -> Frangi -> continuity/alignment -> confusion-masked
   candidates. Runs end-to-end on any of the 8 covered-pit DTMs
   given the LOLA RDR subset for kriging input.
-- [ ] **Step 18.2** I5 azimuth test: deferred — needs multi-
+- [x] **Step 18.2** I5 azimuth test: deferred — needs multi-
   illumination NAC CDRs (LROC search API + per-image metadata
   pull; ~half a day of plumbing). Code structure reserves an
-  `azimuth_stratified_*` column in the candidate CSV.
-- [ ] **Step 18.3** Calibrate on TRANQPIT1, transfer unchanged to
+  `azimuth_stratified_*` column in the candidate CSV. *(decision
+  2026-08-22 — recorded, not abandoned; azimuth variation comes for
+  free in the Task-19 photometric-stereo stack build (P4.2); see
+  findings.md "decision 2026-08-22 — multi-illumination azimuth
+  test deferred")*
+- [x] **Step 18.3** Calibrate on TRANQPIT1, transfer unchanged to
   Marius Hills + Ingenii (I15 protocol) — implemented in the
   per-rung threshold re-tuning step. *(P3.1a: 10/649 DTMs, 639
-  skipped — see findings 2026-08-22; DTM-production gap)*
+  skipped — see findings 2026-08-22; DTM-production gap)* *(N=7/10
+  on-disk of 649; tier A=0, B=0, C=44; skeptic downgrades applied;
+  FP 3.71 [0.76,10.83] per 10^4 km^2 calibration-context rate, NOT
+  survey rate; G1 = DEMONSTRATION only)*
 
 **Verification:** candidate CSV with per-candidate evidence vector +
 confuser scores; manual NAC-imaginary inspection queue created for
