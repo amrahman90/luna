@@ -205,6 +205,53 @@ rocky ejecta (RA 0.98% vs 0.50% local mare ≈2×) — counter-evidence for
 the tube hypothesis at this site, not void-cooling. See
 `notes/findings.md` 2026-08-22 entry and `data/outputs/wp2_sag/transfer/diviner_summary.json`.
 
+## LROC NAC DTMs (LROC team, PDS)
+
+11 NEW NAC DTMs fetched **2026-08-22** (sessions 21-22) via
+`code/wp8_stereo/fetch_lroc_dtms.py`; the URL pattern
+`https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/<SITE>/NAC_DTM_<SITE>.TIF`
+is a 301-redirect to `https://pds.mcp.nasa.gov/...` (S3-backed, S3
+re-host completed 2024). SHA-256 verified on the redirected content.
+TYCHOPK (1.44 GiB float32) deferred to post-G2 due to memory ceiling.
+Fetch log (with all SHA-256s and per-fetch sha256 verification) is
+preserved at `~/lunarvoid/data/fetch_log_lroc.csv`. Product IDs are
+the on-disk directory + filename (e.g. `FECUNPIT/NAC_DTM_FECUNPIT.TIF`).
+Net change since the prior MANIFEST: +11 NAC DTMs (3.59 GB), +1
+discovery CSV (already committed in `data/lroc_dtm_availability.csv`,
+7860631).
+
+Citation: Robinson et al. 2010, "Lunar Reconnaissance Orbiter Camera
+(LROC) Instrument Overview", Space Science Reviews 150, 81-124 (DOI
+10.1007/s11214-010-9634-2); data product = LROC NAC DTM (PDS3 RDR,
+LRO-L-LROC-5-RDR-V1.0); PDS LROC Node (https://pds.lroc.im-ldi.com/);
+attribution to LROC team (Arizona State University) required for
+redistribution.
+
+Order: alphabetical by site name.
+
+| ID | Product | Source URL | Fetched from | Fetched | Size (bytes) | SHA-256 | Licence | Path |
+|---|---|---|---|---|---|---|---|---|
+| `LROC_NAC_DTM_FECUNPIT` | NAC DTM FECUNPIT (Fecunditatis Pit, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/FECUNPIT/NAC_DTM_FECUNPIT.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 121,761,751 | `ad2afa5f35711c369756198dbbb597ed70e013dd4fc4e6d10e769f627cb7c0f5` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/FECUNPIT/NAC_DTM_FECUNPIT.TIF` |
+| `LROC_NAC_DTM_FRESHMELT` | NAC DTM FRESHMELT (Fresh Impact Melt, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/FRESHMELT/NAC_DTM_FRESHMELT.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 371,180,099 | `7cb166912c1462824a46b6ae17ffe6ac64e44ab7871e8df50b5b095b8b25f258` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/FRESHMELT/NAC_DTM_FRESHMELT.TIF` |
+| `LROC_NAC_DTM_FRESHMELT1` | NAC DTM FRESHMELT1 (Fresh Impact Melt, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/FRESHMELT1/NAC_DTM_FRESHMELT1.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 192,956,231 | `54bf1f905ad85186a671246c63dc7079ea7c2ceff8873d036b734d86c4e45bd6` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/FRESHMELT1/NAC_DTM_FRESHMELT1.TIF` |
+| `LROC_NAC_DTM_KINGCRATER2` | NAC DTM KINGCRATER2 (King Crater Pit Chain, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/KINGCRATER2/NAC_DTM_KINGCRATER2.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 196,415,175 | `708b150dff07a490a679c8749e1390a748b0e394cbc85df16242f8f09995ebef` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/KINGCRATER2/NAC_DTM_KINGCRATER2.TIF` |
+| `LROC_NAC_DTM_KINGCRATER3` | NAC DTM KINGCRATER3 (King Crater Pit Chain, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/KINGCRATER3/NAC_DTM_KINGCRATER3.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 199,862,799 | `d523bc287140640eca04bc7493f47cfe3e221446b13c45ddf6514362493eed17` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/KINGCRATER3/NAC_DTM_KINGCRATER3.TIF` |
+| `LROC_NAC_DTM_KINGCRATER4` | NAC DTM KINGCRATER4 (King Crater Pit Chain, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/KINGCRATER4/NAC_DTM_KINGCRATER4.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 208,599,647 | `124b60f8779a735539706b3cdac4422ce3a6c6c4b47d4d051e1091599888f7a6` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/KINGCRATER4/NAC_DTM_KINGCRATER4.TIF` |
+| `LROC_NAC_DTM_TYCHOPK` | NAC DTM TYCHOPK (Tycho Central Peak, GeoTIFF; 1.44 GiB float32 — DEFERRED post-G2 due to memory ceiling) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/TYCHOPK/NAC_DTM_TYCHOPK.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 1,512,720,127 | `caf67354a13af8d3262aec3f2d82d7ab99a5b827f0fa02784e123e4b7b1cd2e0` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/TYCHOPK/NAC_DTM_TYCHOPK.TIF` |
+| `LROC_NAC_DTM_TYCHOPK02` | NAC DTM TYCHOPK02 (Tycho Central Peak, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/TYCHOPK02/NAC_DTM_TYCHOPK02.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 255,443,183 | `e1fc8bc97c5b2e85e3c1c7c7a259bd589614e0b9b3fc8cf81fcca5a12e9285ef` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/TYCHOPK02/NAC_DTM_TYCHOPK02.TIF` |
+| `LROC_NAC_DTM_TYCHOPK03` | NAC DTM TYCHOPK03 (Tycho Central Peak, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/TYCHOPK03/NAC_DTM_TYCHOPK03.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 206,007,711 | `8f9b368651ba8a511ea42fac3e29728212481475f8a1889109e872539bc30003` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/TYCHOPK03/NAC_DTM_TYCHOPK03.TIF` |
+| `LROC_NAC_DTM_TYCHOPK04` | NAC DTM TYCHOPK04 (Tycho Central Peak, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/TYCHOPK04/NAC_DTM_TYCHOPK04.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 206,997,791 | `0c74ffa3a04591e7693697497fdaf6f760e51c0c13237cdda5199f337434a009` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/TYCHOPK04/NAC_DTM_TYCHOPK04.TIF` |
+| `LROC_NAC_DTM_TYCHOPK07` | NAC DTM TYCHOPK07 (Tycho Central Peak, GeoTIFF) | `https://pds.mcp.nasa.gov/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/SDP/NAC_DTM/TYCHOPK07/NAC_DTM_TYCHOPK07.TIF` | `~/lunarvoid/data/fetch_log_lroc.csv` | 2026-08-22 | 382,426,399 | `edfdbcb6ff53ef255e2e88b4a3927e2908ae70bb00089ac765ae16361cbc1799` | NASA/ASU LROC, PDS public domain | `~/lunarvoid/data/dtms/TYCHOPK07/NAC_DTM_TYCHOPK07.TIF` |
+
+Acquired 2026-08-22 (P3.1c growth cycle, session 22). All 11 SHA-256
+values match `fetch_log_lroc.csv` (status=OK rows) byte-for-byte
+(verified via `sha256sum -c` against the on-disk files). Total
+on-disk: 11 * .TIF = 3,853,270,113 bytes (≈ 3.59 GiB) plus PDS3 .LBL
+labels (not committed; small, regenerable on re-fetch). Net cost: $0
+(PDS public-domain fetch). Not covered by the DTM-production gap (D2
+Task-8 / §8 T1 trigger) because these products exist on PDS — the
+gap is the stereo-rebuild for DTMs that DON'T exist on PDS.
+
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 
 - PDS holdings: public domain, not analysis-ready (raw EDR needs ISIS chain).

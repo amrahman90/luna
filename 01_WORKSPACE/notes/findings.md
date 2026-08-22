@@ -521,3 +521,191 @@ feature-based fusion (Step 21.1 logistic-regression prototype) remains
   FP-rate calibration-context — all acknowledged in-row or in
   traceable notes. No omissions found on that axis.
 option if needed, still $0.
+
+## decision 2026-08-23 — P3.1c N=21 growth: 10 new score rasters, registry 44 → 257
+
+The P3.1c N=19 re-run (2026-08-22) added 12 stub entries for DTMs without
+Frangi score rasters. This cycle generates those rasters for 10 of the
+12 (TYCHOPK at 1.44 GiB float32 deferred to post-G2 due to memory
+ceiling) and re-runs the transfer over 17 DTMs (7 legacy + 10 new),
+growing the registry from 44 to 257 rows.
+
+### What worked
+
+- New `score_raster_gen.py` generator at
+  `01_WORKSPACE/code/wp2_sag/transfer/score_raster_gen.py`. FROZEN
+  recipe (sigmas [30, 60, 100, 150, 200, 300]; PD fill; neigh=5;
+  seed=42). Memory-efficient: rasterio `out_shape=` rebin straight to
+  the smaller array, no full-DTM float64. Ran 10/10 successfully on
+  the largest DTM (TYCHOPK07 365 MB float32) without OOM.
+- Score rasters cached to
+  `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/{score,depth,frangi}_<rung>m.tif`
+  per conventions §1 (derived rasters under `~/lunarvoid/data/`,
+  NOT the repo).
+- `transfer_apply.py` extended:
+  (a) `find_score_path` and `discover_dtms_and_rungs` search both
+      the legacy `01_WORKSPACE/data/outputs/wp2_sag/<sub>/` (7 legacy
+      DTMs) and the new `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/`
+      (10 new DTMs).
+  (b) NaN local_Amin → below-floor by default (terrain-extrapolation
+      honesty; prevents FP inflation at highland/impact-melt sites).
+  (c) Missing per_dtm_floors entry → synthesised NaN row (lets
+      FRESHMELT/FRESHMELT1 process without breaking the schema).
+
+### What didn't work / surprises
+
+- **FECUNPIT 6 FPs at the DTM edge**: top score 155.49 m amplitude,
+  far larger than the catalogued pit's nominal depth (122 m). Cluster
+  at lat ~-0.3° (north end of the FECUNPIT DTM), ~67 km from the
+  catalogued Central Mare Fecunditatis Pit. Two interpretations:
+  edge artifacts where the DTM extends beyond its reliable coverage,
+  or genuine large depressions not in the LROC pit catalog. Cannot
+  resolve at N=21 without visual inspection of the LROC NAC images.
+  Preserved in registry as FPs; tier C. The 6 per-rung FPs are 3 unique
+  depressions × 2 rungs (4m + 5m); same lat/lon and amplitude at both
+  rungs. Three large depressions, not six. Visual inspection still
+  required.
+- **TYCHOPK02 76 candidates** but all below-floor (NaN local_Amin) —
+  this is the only DTM with >50 below-floor candidates. The highland
+  signal is real but the amplitude is too low to confirm with the
+  FROZEN TRANQPIT1 recipe. Preserved as terrain-extrapolation; do not
+  interpret as highland lava-tube detection.
+- **TYCHOPK (1.44 GiB float32) deferred**: memory ceiling.
+  1.44 GiB float32 → 2.88 GiB float64 alone, plus Frangi scratch +
+  scipy = >6 GiB peak, too tight for the 31 GiB RAM / 20 GiB
+  available budget. Documented in transfer_summary.json and findings.md.
+  Needs Tier-1 rental or memory-efficient tile-based processing.
+- **Stub row semantics change**: the existing `transfer_apply.py`
+  used `(not math.isnan(local_Amin)) and (amp < local_Amin)` for the
+  below-floor check. With NaN local_Amin, the negation failed and
+  every peak became above-floor. This would have inflated the FP rate
+  by 100+ FPs at TYCHOPK* and FRESHMELT* sites. Fixed to
+  `math.isnan(local_Amin) or (amp < local_Amin)` (or equivalently,
+  NaN → always below-floor).
+- **per_dtm_floors.csv grew from 19 → 21 rows**: added FRESHMELT and
+  FRESHMELT1 as `skipped_insufficient_panels` stubs (matching TYCHOPK*
+  pattern). This was needed because `transfer_apply.py` does
+  `floors.get(dtm)` and returns None for missing entries — without
+  the stub rows, FRESHMELT/FRESHMELT1 would have been silently
+  skipped despite having valid score rasters.
+
+### Acceptance vs criteria
+
+| Criterion | Result |
+|---|---|
+| Score-raster generation: 11/11 (TYCHOPK deferred) | PASS (10/10 in-scope generated; TYCHOPK 1.44 GiB explicitly deferred) |
+| New registry row count (44 → ?) | PASS (257 rows = 44 + 213 new) |
+| Per-DTM candidate counts documented | PASS (see METHODS.md "Per-DTM results at N=21") |
+| Aggregate FP rate + Wilson CI | PASS (9 FPs / 14840.27 km² = 6.06 [95% CI 2.77, 11.51] FP/10⁴ km²; calibration-context, NOT survey rate) |
+| Highland extrapolation result | PASS (KINGCRATER2/3/4 + TYCHOPK02/03/04/07 + FRESHMELT/FRESHMELT1 = 9 DTMs flagged as extrapolation, 0 FPs counted, candidates preserved with terrain-extrapolation annotation) |
+| Smoke test | PASS (F1 0.392/0/0.800, fusion AUC 0.990) |
+| TYCHOPK deferred flag recorded | PASS (in transfer_summary.json + findings.md + METHODS.md) |
+| File paths touched | PASS (registry + summary + methods + per_dtm_floors.csv + new score rasters dir) |
+
+### Calibration-context framing preserved
+
+The aggregate FP rate of 6.06 [2.77, 11.51] FP / 10⁴ km² is a
+**calibration-context rate, NOT a survey rate, and NOT a random-mare
+estimate**. All 21 on-disk DTMs are either pit-associated (catalogued
+pits in scope) or impact-melt catalogued (FRESHMELT*). Selection bias
+toward catalogued pits is preserved. The growth from 3.71 to 6.06 is
+driven entirely by FECUNPIT's 6 new FPs (top score 155.49, cluster at
+the DTM north end); all other new DTMs contribute 0 FPs because they
+have NaN local_Amin (highland/impact-melt, not counted) or zero
+above-floor candidates (KINGCRATER*, IRIDIUMPIT1).
+
+The TRANQPIT1 per-DTM rate (240.41 [49.58, 702.58] FP / 10⁴ km²; n=4)
+remains the only honest per-DTM rate; the aggregate rate is the
+transfer-set rate for the same calibration-context framing.
+
+### Files modified (repo)
+
+- `01_WORKSPACE/code/wp2_sag/transfer/score_raster_gen.py` (NEW)
+- `01_WORKSPACE/code/wp2_sag/transfer/transfer_apply.py` (extended:
+  new score-raster discovery; NaN-local-Amin below-floor default;
+  missing-floor-row synthesised NaN; aggregate framing fields)
+- `01_WORKSPACE/data/outputs/wp0_kriging/per_dtm_floors.csv` (+2
+  FRESHMELT/FRESHMELT1 stub rows)
+- `01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json`
+  (updated N=21; aggregate 6.06 [2.77, 11.51]; framing fields)
+- `01_WORKSPACE/data/outputs/wp2_sag/transfer/METHODS.md` (appended
+  P3.1c growth section)
+- `01_WORKSPACE/data/candidate_registry.csv` (44 → 257 rows; original
+  44 preserved byte-identical)
+- `01_WORKSPACE/notes/findings.md` (this entry)
+
+### Files created (data, derived rasters — `~/lunarvoid/data/`, not repo)
+
+- `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/score_<rung>m.tif` × 28 files (10 DTMs × 2-3 rungs each)
+- `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/depth_<rung>m.tif` × 28 files
+- `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/frangi_<rung>m.tif` × 28 files
+- `~/lunarvoid/data/outputs/wp2_sag/score_rasters/score_raster_gen_summary.json` (run log)
+
+### Files preserved (FROZEN)
+
+- `01_WORKSPACE/data/outputs/wp2_sag/transfer/calibration_transqpit1.json` (md5 unchanged)
+
+### Files preserved unchanged
+
+- `01_WORKSPACE/data/candidate_registry.csv` (44 original rows; verified via `comm -12`)
+
+### Backups
+
+- `~/lunarvoid/admin_evidence/p3_1c_n19_full_2026_08_22/candidate_registry_pre_growth.csv` (44-row snapshot, pre-growth)
+
+### Cost / resources
+
+- $0 compute cost (all on Tier-0 box; no rentals)
+- Disk: 148 GB free on `/` (≥ 40 GB floor, well above)
+- Memory peak: ~3 GB (FRESHMELT 354 MB float32 + 1 GB scratch + scipy); 12 GB available throughout
+- Wall time: ~45 min (10 score rasters × 2-3 rungs each, ~90 s/rung avg) + ~7 min transfer re-run × 2
+
+
+## correction 2026-08-23 — FECUNPIT distance reference clarified (skeptic, P3.1c review)
+
+- CORRECTION — the 2026-08-23 visual-inspection backlog entry below
+  ("FECUNPIT: 3 unique large depressions… ~67 km from catalogued pit")
+  references the *named* Central Mare Fecunditatis Pit at lat −0.918°;
+  the registry's `dist_pit_m` column shows the cluster is **552.5 m
+  (r001, r002) and 138.1 m (r003) from a DIFFERENT catalogued pit**
+  (the nearest one in the atlas). 67 km and 552 m are not in
+  contradiction — they are distances to different reference pits — but
+  the visual-inspection framing must specify the 138–552 m nearby pit
+  as the primary reference, because the NAC frame at 552 m scale is
+  trivially searchable whereas the 67 km pit requires a different
+  observation. r003 at 138 m is *just outside* the 100 m match radius
+  (138 m > 100 m) and so labelled FP; a small-radius tolerance
+  re-check (e.g. 150 m) would reclassify it as a candidate TP. Flag for
+  visual inspection: compare the 3 cluster features against the
+  NAC frame of the *nearest* catalogued pit, not the named
+  Central Mare Fecunditatis Pit.
+
+## visual-inspection backlog (2026-08-23)
+
+Flagging `requires_visual_inspection` verbally-only (NOT in the registry schema
+— the 15-col invariant must hold; this is a notes-side cross-reference for
+the next session to follow up on LROC NAC images before any science claim).
+
+- **FECUNPIT: 3 unique large depressions at DTM north end (552.5 m for r001+r002 and 138.1 m for r003 from the NEAREST catalogued pit — NOT 67 km from the named Central Mare Fecunditatis Pit; both distances are correct but the visual-inspection target is the 138-552 m nearby pit's NAC frame, not the 67 km named pit); amplitudes 155/140/34 m; rungs 4m + 5m; flag `requires_visual_inspection` (verbal-only; not in registry schema). r003 at 138 m is borderline-TP under a 150 m tolerance — would be reclassified if match-radius were relaxed, but the 100 m calibration is frozen.**
+  Each of the 3 unique depressions appears at both 4 m and 5 m rungs
+  (same lat/lon, same amplitude) → 6 registry rows, 3 unique features.
+  Source rows: LV-FECUNPIT-0400cm-r001/r002/r003 and
+  LV-FECUNPIT-0500cm-r001/r002/r003. Two interpretations: edge
+  artifacts where the FECUNPIT DTM extends beyond its reliable
+  coverage, or genuine large depressions not in the LROC pit catalog.
+  Cannot resolve at N=21 without visual inspection of LROC NAC images.
+- **TRANQPIT1: 3 large-amplitude FPs (12-km scale; r001 95.4 m, r002
+  57.4 m, r003 48.8 m) at lat ~8.75 N, lon ~33.20 E** — registry notes
+  already say "12-km-scale FP from pit; possible floor-fractured crater
+  rim / ejecta / modification — visual inspection required to confirm
+  FP label". Cross-reference rows 73–75 (LV-TRANQPIT1-0500cm-r001/r002/r003).
+  These are LARGE Mare Tranquillitatis features, not noise-spike FPs.
+  Visual inspection REQUIRED before any G2 claim.
+- **INGENIIPIT: ring artifacts r002–r008 at 2/4/5 m rungs (23 rows
+  total, all within ~10 km of r001)** — registry notes already say
+  "ring artifact around catalogued pit r001; not an independent void
+  candidate". Visual inspection of LROC NAC pair at the catalogued
+  pit (lat ~-35.95, lon ~166.05) is required to confirm the ring
+  pattern is detector-induced (Frangi filter artifact) and not a real
+  void cluster. Cross-reference: 23 rows from r002–r008 at all 3 rungs
+  (rows 37–43, 45–51, 53–59 in the registry).

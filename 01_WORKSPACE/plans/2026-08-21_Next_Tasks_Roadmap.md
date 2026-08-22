@@ -66,7 +66,8 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   gap)* *(Phase 3 complete — N=7/10 on-disk of 649; tier A=0, B=0,
   C=44; skeptic downgrades applied; FP 3.71 [0.76,10.83] per 10^4
   km^2 calibration-context rate, NOT survey rate; G1 = DEMONSTRATION
-  only)*
+  only)* *(N=21, 11 new DTMs fetched + Frangi expansion; registry
+  44→257; cost $0; TYCHOPK 1.44 GiB deferred)*
 - [x] **P3.2 = Step 18.2** [decision] Multi-illumination azimuth test —
   confirm deferral pending Phase 4 stack; record decision. S.
   *(decision 2026-08-22 — recorded, not abandoned; azimuth variation

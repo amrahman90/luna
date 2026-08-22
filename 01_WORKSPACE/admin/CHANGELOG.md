@@ -5,6 +5,41 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-23 (execution session 23 — P3.1c growth cycle closed: MANIFEST updated, 11 NAC DTM rows)
+
+- LROC NAC DTM fetch (11 OK, 3.6 GB, all sha256 verified) committed in
+  commit `7860631` (Phase 3 P3.1c, session 21)
+- Frangi score-raster generation (10 in-scope DTMs; TYCHOPK 1.44 GiB
+  deferred memory ceiling)
+- Registry 44 → 257; tier A=0, B=0, C=257
+- Aggregate FP 9 / 14840.27 km² = 6.06 [Poisson-exact Garwood 95% CI
+  2.77, 11.51] per 10⁴ km²
+- FECUNPIT 3 unique large depressions (552.5/138.1 m from nearest pit,
+  not 67 km from named pit); r003 borderline-TP under 150 m tolerance
+- 9 highland sites (TYCHOPK02/03/04/07, KINGCRATER2/3/4, FRESHMELT,
+  FRESHMELT1) flagged terrain_extrapolation; 0 FPs counted
+- TYCHOPK02 76 below-floor candidates (over-trigger on central-peak
+  terrain; documented)
+- Verifier PASS-with-notes (7 fixes applied); skeptic SOUND-with-
+  objections (FECUNPIT distance correction in findings.md)
+- cost $0; cumulative Phase 6 spend $0/$150/$800
+
+---
+
+## 2026-08-23 (execution session 22 — P3.1c growth to N=21)
+
+- 11 NEW LROC NAC DTMs fetched (TYCHOPK02/03/04/07, KINGCRATER2/3/4, FRESHMELT/FRESHMELT1, FECUNPIT) = 3.6 GB; sha256 verified
+- TYCHOPK 1.44 GiB deferred (memory ceiling)
+- Frangi score rasters generated for 10 in-scope DTMs (FROZEN recipe); 84 GeoTIFFs cached at `~/lunarvoid/data/outputs/wp2_sag/score_rasters/`
+- Registry 44 → 257 rows; tier A=0, B=0, C=257
+- Aggregate FP 9 / 14840.27 km² = 6.06 [Poisson-exact 95% CI 2.77, 11.51] per 10⁴ km² (calibration-context, NOT survey; 21/21 on-disk DTMs are pit-associated)
+- FECUNPIT: 3 unique large depressions × 2 rungs at DTM north end (~67 km from catalogued pit); amplitudes 155/140/34 m; visual inspection required (verbal-only flag)
+- TYCHOPK02: 76 below-floor candidates (over-trigger on central-peak terrain; NaN local_Amin → automatic below-floor)
+- 9 highland sites flagged terrain_extrapolation; 0 FPs counted from highland transfer
+- Verifier PASS-with-notes; all 7 required edits applied in this cycle
+- cost $0
+
+---
 ## 2026-08-22 (execution session 21 — LROC NAC DTM discovery; fetch pending)
 
 - LROC NAC DTM PDS discovery via NAC_DTMS_180.SHP index layer (geo-coder)

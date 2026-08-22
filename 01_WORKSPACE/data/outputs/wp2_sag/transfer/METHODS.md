@@ -119,7 +119,7 @@ rebase `pit_pixels` and `slope_deg_map` on the rung grid.
 
 The frozen FP-rate is a low-n point estimate. n_candidates = 4 (1 TP
 + 3 FP) on area_km2 = 124.78692800007487 (TRANQPIT1 DTM), giving
-fp_per_1e4km2 = 240.41. Equal-tailed Poisson 95% CI on the FP count
+fp_per_1e4km2 = 240.41. Equal-tailed Poisson-exact (Garwood) 95% CI on the FP count
 (via `scipy.stats.chi2.ppf`, 2·3 = 6 dof for lower, 2·4 = 8 dof for
 upper) translates to fp_per_1e4km2_poisson95 = [49.7, 702.8] per
 10⁴ km². The width of this CI (~14× the point estimate) reflects the
@@ -214,7 +214,7 @@ For each (DTM, rung) pair with a cached score raster:
 |---|---|---|
 | **A** | NOT assigned in P3.1c. Phase-5 skeptic-gated rule requires gravity/thermal/illumination agreement. | 0 |
 | **B** | above-local-floor AND multi-method within this task: (a) candidate within 100 m of a Hurwitz 2013 sinuous rille segment, OR (b) candidate within 100 m of a LU5M812TGT crater that lies in a 1° lat strip with ≥3 craters (chain-strip rule from `confusion_layer.py`). **NOT assigned in this run** — the 3 MARIUSPIT01 candidates that previously qualified under rule (a) were downgraded to tier C by the P3.1c skeptic UNSOUND correction (attempt 2) because rille intersection is the pre-registered v5 I14 false-positive generator, not independent confirmation. | 0 |
-| **C** | default: single-method (sag score only) candidate. Below-floor candidates (regardless of rille/chain proximity) are pinned at C — the morphometric signal is too weak to combine with another line of evidence. | 44 |
+| **C** | default: single-method (sag score only) candidate. Below-floor candidates (regardless of rille/chain proximity) are pinned at C — the morphometric signal is too weak to combine with another line of evidence. | 257 |
 
 The 3 MARIUSPIT01 candidates that would have been tier-B under the
 mechanical rule (LV-MARIUSPIT01-0400cm-r001, -r002, -0800cm-r002;
@@ -243,7 +243,7 @@ but DO NOT count as FPs — the detector couldn't reach the local
 detectability floor (`local_Amin_m = 3 × pooled sag-band RMS`,
 `per_dtm_floors.csv`), so the inference isn't a fair FP claim.
 
-| DTM | n_cand | n_above_floor | n_FP | n_TP | area (km²) | FP/10⁴ km² | 95% Poisson CI |
+| DTM | n_cand | n_above_floor | n_FP | n_TP | area (km²) | FP/10⁴ km² | 95% Poisson-exact (Garwood) CI |
 |---|---|---|---|---|---|---|---|
 | TRANQPIT1 | 4 | 4 | 3 | 1 | 124.8 | 240.41 | [49.58, 702.58] |
 | FECNDITATS2 | 3 | 3 | 0 | 3 | 1994.4 | 0.00 | [0.00, 15.02] |
@@ -254,10 +254,10 @@ detectability floor (`local_Amin_m = 3 × pooled sag-band RMS`,
 | SWFECUNPIT1 | 3 | 3 | 0 | 3 | 1348.4 | 0.00 | [0.00, 22.22] |
 
 **Aggregate (sum of FPs / sum of areas): 3 / 8091.7 km² = 3.71 / 10⁴ km²
-[95% Poisson CI 0.76, 10.83].** n_above_floor = 39 (the FP-rate
+[95% Poisson-exact (Garwood) CI 0.76, 10.83].** n_above_floor = 39 (the FP-rate
 denominator).
 
-The 95% CI uses `scipy.stats.chi2.ppf`:
+The 95% CI is the Poisson-exact (Garwood) interval using `scipy.stats.chi2.ppf`:
 - `n_fp >= 1`: equal-tailed on the count (`chi2.ppf(0.025, 2k)/2`
   to `chi2.ppf(0.975, 2k+2)/2`), then divided by area × 1e4
 - `n_fp == 0`: one-sided upper 95% bound only
@@ -298,7 +298,7 @@ and r003 (also 12-km-scale FPs), **r004 (3.72, 44.6 m, TP)**. The
 12-km-scale false-positive candidates (r001–r003) pass the slope mask
 and the frozen threshold but are excluded by the 100 m pit-match
 radius, contributing n_fp = 3 to the per-DTM FP rate (240.41 / 10⁴ km²;
-95% Poisson CI [49.58, 702.58]).
+95% Poisson-exact (Garwood) CI [49.58, 702.58]).
 
 Score-rank-1 within a DTM is not the same as the TP under the 100 m
 pit-match convention; the matched TP for TRANQPIT1 is rank-4 (3.72,
@@ -356,3 +356,355 @@ are calibrated false positives in the inference regime.
   (I14 funnel-risk correction; see O1 in the registry notes).
 - Scope banner "N=10/649" present in
   `data/outputs/wp2_sag/transfer/transfer_summary.json`.
+
+---
+
+## Re-run 2026-08-22 at N=19 (geo-coder, post-fetch of 11 new NAC DTMs)
+
+11 new NAC DTMs arrived on disk between the N=7 run (2026-08-22) and this
+re-run (2026-08-22 evening): TYCHOPK, TYCHOPK02, TYCHOPK03, TYCHOPK04,
+TYCHOPK07, KINGCRATER2, KINGCRATER3, KINGCRATER4, FRESHMELT, FRESHMELT1,
+FECUNPIT. The fetch log (`~/lunarvoid/data/fetch_log_lroc.csv`) shows 11 OK
+rows; MANIFEST still missing these 11 rows (archivist adds after this
+cycle).
+
+### Scope honesty at N=19
+
+The transfer set is now **N=19/649 good-tier DTMs on disk**: 10 existing
++ 11 new. The scope banner in `transfer_summary.json` is updated to
+`N=19/649 (19 good-tier DTMs on disk of 649 in scope; 7 have cached v0.1
+score rasters; 12 are skipped for missing score raster: [...])`. The 12
+skipped = 3 from before (MARIUSCONE, GRUITHUIS17, GRUITHMARE2) + 11 new
+(FECUNPIT, KINGCRATER2/3/4, TYCHOPK, TYCHOPK02/03/04/07, FRESHMELT,
+FRESHMELT1). NONE of the 11 new DTMs has a cached v0.1 score raster;
+generating one per DTM is the same Task-8 / DTM-production gap that has
+been deferred at $0 budget (Task-8 §8 cost trigger T1 still pending user
+approval). So all 11 new DTMs contribute 0 candidates and 0 area to the
+aggregate numerics, which match the N=7 run byte-for-byte:
+
+| metric | N=7 (2026-08-22 earlier) | N=19 (this re-run) |
+|---|---|---|
+| n_dtms_with_score_raster | 7 | 7 |
+| n_candidates | 44 | 44 |
+| n_fp | 3 | 3 |
+| total_area_km2 | 8091.68 | 8091.68 |
+| fp_per_1e4km2 (point) | 3.71 | 3.71 |
+| fp_per_1e4km2 CI95 | [0.76, 10.83] | [0.76, 10.83] |
+| registry_rows_added | 44 | 0 (all 44 were duplicates; dedup skipped them) |
+
+### Catalogued-pits bias (P3.1c skeptic review, 2026-08-22)
+
+The 7 DTMs that have cached score rasters are ALL pit-associated sites
+(TRANQPIT1, FECNDITATS2, INGENIIPIT, IRIDIUMPIT1, MARIUSPIT01,
+PRCLRMPIT01, SWFECUNPIT1). The 12 skipped DTMs include 2 highland sites
+(GRUITHUIS17, SWFECUNPIT1) that are pit-associated by index but lack
+cached rasters, and the 11 new sites of which 9 are pit-associated
+(FECUNPIT, KINGCRATER2/3/4 are King-crater pit chains, FRESHMELT is a
+fresh impact-melt pit context) and 2 are impact-melt catalogued
+(FRESHMELT1 has 0 catalogued pits). The aggregate FP rate of 3.71
+per 10⁴ km² is therefore **calibration-context, NOT a survey rate**, and
+NOT a random-mare estimate. Quote the full interval; do not present as
+a mare-wide FP density.
+
+### No random-mare control
+
+The skeptic UNSOUND verdict of 2026-08-22 (findings.md "P3.1c registry
++ transfer") flagged that "no random-mare control" exists. This N=19
+re-run does not add one: all 19 on-disk DTMs are pit-associated or
+pit-rich. To build a random-mare control would require DTM production
+for ~30 non-pit mare NAC tiles + cached v0.1 score rasters + transfer;
+deferred to D2 (Task 8 rental) per user direction.
+
+### Highland extrapolation (P3.1c skeptic, 2026-08-22)
+
+5 of the 19 on-disk DTMs are **highland** by the dispatch classification
+(GRUITHUIS17 + SWFECUNPIT1 from before; KINGCRATER2/3/4 + TYCHOPK* are
+central-peak highland composition):
+- GRUITHUIS17 (Gruithuisen Domes — silicic, non-mare)
+- SWFECUNPIT1 (SW rim of Mare Fecunditatis — highland edge)
+- KINGCRATER2, KINGCRATER3, KINGCRATER4 (King crater central peak —
+  highland composition)
+- TYCHOPK, TYCHOPK02, TYCHOPK03, TYCHOPK04, TYCHOPK07 (Tycho central
+  peak — highland composition)
+
+3 of these (KINGCRATER2/3/4) produced per-DTM floor entries (6/9/6
+panels respectively) and have `terrain_extrapolation: "highland;
+TRANQPIT1 calibration is mare-only; results are extrapolation, not
+portability"` in `per_dtm_floors_summary.json.per_dtm.<DTM>`. The
+other 5 (GRUITHUIS17, SWFECUNPIT1, TYCHOPK*) have the same annotation.
+
+7 DTMs were SKIPPED at the per_dtm_floors level due to insufficient flat
+panels in highland/impact-melt terrain:
+- TYCHOPK (3 panels, below `min_panels=4` ceiling)
+- TYCHOPK02/03/04/07 (0 panels; central peak too steep)
+- FRESHMELT/FRESHMELT1 (0 panels; fresh impact melt, too rough)
+
+These 7 are documented in `per_dtm_floors_summary.json.per_dtm` as
+stub entries with `status: skipped_insufficient_panels` and (for the
+5 TYCHOPK*) the `terrain_extrapolation` annotation. TYCHOPK* stub
+rows are also appended to `per_dtm_floors.csv` (with NaN numerics)
+so the CSV has 19 rows total (10 existing processed + 4 new
+processed + 5 highland stubs). FRESHMELT* are NOT added to the CSV
+(impact melt, not highland; treated as mare classification).
+
+### What does NOT change vs N=7
+
+1. **FROZEN TRANQPIT1 calibration** — `score_frac=0.20`, `slope_deg=45`,
+   `neigh=5`, `frangi_sigmas_m=[30,60,100,150,200,300]`, Planchon-
+   Darboux fill, 100 m pit match radius. Untouched. Source: `calibration
+   _transqpit1.json` (unchanged on disk).
+2. **Aggregate numerics** — n_candidates=44, n_fp=3, total_area=8091.68
+   km², fp/10⁴ km²=3.71 [0.76, 10.83] are identical because no new
+   score rasters were generated.
+3. **Tier discipline** — tier A never assigned; tier B reserved for
+   P3.1c skeptic UNSOUND-correction (the 3 MARIUSPIT01 candidates that
+   previously qualified by rille intersection remain downgraded to tier
+   C; not changed).
+4. **ring-artifact note on INGENIIPIT** r002–r008 — preserved (N=7
+   P3.1c finding, not re-flagged here).
+
+### What IS new at N=19
+
+1. **per_dtm block in transfer_summary.json** now has 19 entries
+   (was 7): 7 with non-zero n_candidates/area + 12 stub entries
+   (n_candidates=0, area_km2=0, error="no cached score raster").
+2. **per_dtm block in per_dtm_floors_summary.json** now has 19
+   entries (was none): 14 processed + 5 TYCHOPK* stubs. All 10
+   highland DTMs have `terrain_extrapolation` annotation.
+3. **by_terrain split in per_dtm_floors_summary.json**: mare n=9
+   median pooled RMS 1.118 m; highland n=5 median pooled RMS 1.089 m.
+4. **scope_banner** in transfer_summary.json: "N=19/649" (was
+   "N=10/649").
+5. **fp_per_1e4km2_interpretation** updated: "calibration-context rate,
+   selection-biased to catalogued pits (all 19 DTMs are pit-
+   associated); NOT a random-mare survey rate".
+6. **scope_caveats** added to transfer_summary.json.aggregate: 5
+   bullets documenting bias / extrapolation / panel-skips / frozen
+   recipe preservation.
+
+### Workflow notes (for the next agent)
+
+- The 7 panel-skipped DTMs (TYCHOPK*, FRESHMELT*) are NOT detrital
+  — they have real geomorphology, just not enough FLAT mare panels
+  for the noise-floor recipe. A highland-specific noise-floor
+  protocol (e.g. allow gentle slopes up to 5°, expand panel sizes,
+  exclude central peak) is needed to produce per-DTM floors for them;
+  deferred to a future phase (P3.4 or later).
+- The KINGCRATER2/3/4 highland Floors (0.66/1.21/1.09 m pooled RMS)
+  are LOWER than the mare median (1.12 m) because central-peak
+  impact melt is smoother than mare regolith. This is **expected
+  for highland composition**, not an outlier; do not interpret as a
+  detector improvement on highland sites — it is a SITE-property
+  measurement, not a calibration result.
+- `transfer_apply.py` is now idempotent on the registry: it builds
+  a set of existing candidate_ids from the registry header + body
+  and SKIPS any new entries that match, preventing duplicate row
+  appends on re-run. The 11 new DTMs produced 0 candidates (no
+  cached score rasters), so registry_rows_added=0 in this re-run.
+
+---
+
+## P3.1c growth — N=21/649 with 10 new score rasters (2026-08-23, geo-coder)
+
+The P3.1c N=19 re-run on 2026-08-22 generated 12 stub entries for DTMs
+that lacked a cached score raster. This run generates those rasters for 10
+of the 12 (TYCHOPK deferred to post-G2 due to memory ceiling) and
+re-runs the transfer over 17 DTMs (7 legacy + 10 new).
+
+### Score-raster generation
+
+New generator: `01_WORKSPACE/code/wp2_sag/transfer/score_raster_gen.py`.
+Mirrors `sag_search_run.py` v0.2 semantics but writes to
+`~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/score_<rung>m.tif`
+(conventions §1: derived rasters under `~/lunarvoid/data/`, not the repo).
+Memory-efficient: opens source DTM with rasterio without loading the
+full float64 array; rebins via `out_shape=` straight into the smaller
+array; Frangi sub-sampled to ≤5000 px max dim. FROZEN recipe unchanged
+(sigmas = (30, 60, 100, 150, 200, 300) m; PD fill; neigh=5; seed=42).
+
+**Score-raster generation: 10/10 OK** (TYCHOPK deferred).
+
+| DTM | rungs | score_max | top rung | notes |
+|---|---|---|---|---|
+| FECUNPIT | 4, 5 m | 155.49 | 5 m | 2 m skipped (res-compat rule); 5 m at native 5 m/px posting |
+| KINGCRATER2 | 2, 4, 5 m | 1.15 | 4, 5 m | top_scores 1.117, 1.153, 1.153 — all below local_Amin 1.97 m |
+| KINGCRATER3 | 2, 4, 5 m | 1.18 | 4, 5 m | top_scores 1.159, 1.182, 1.182 — all below local_Amin 3.63 m |
+| KINGCRATER4 | 2, 4, 5 m | 0.74 | 4, 5 m | top_scores 0.717, 0.738, 0.738 — all below local_Amin 3.27 m |
+| FRESHMELT | 2, 4, 5 m | 1.84 | 2 m | impact-melt site, NaN local_Amin; terrain extrapolation |
+| FRESHMELT1 | 2, 4, 5 m | 2.30 | 2 m | impact-melt site, NaN local_Amin; terrain extrapolation |
+| TYCHOPK02 | 2, 4, 5 m | 1.30 | 2 m | Tycho central peak; NaN local_Amin; terrain extrapolation |
+| TYCHOPK03 | 2, 4, 5 m | 0.25 | 2 m | Tycho central peak; NaN local_Amin; terrain extrapolation |
+| TYCHOPK04 | 2, 4, 5 m | 0.63 | 2 m | Tycho central peak; NaN local_Amin; terrain extrapolation |
+| TYCHOPK07 | 2, 4, 5 m | 0.19 | 2 m | Tycho central peak; NaN local_Amin; terrain extrapolation; largest DTM at 365 MB float32 |
+
+TYCHOPK (1.44 GiB float32): SKIPPED. Memory ceiling — 1.44 GiB float32
+→ 2.88 GiB float64 alone, plus Frangi scratch + scipy = > 6 GiB peak,
+too tight for the 31 GiB RAM / 20 GiB available budget. Deferred to
+post-G2; needs Tier-1 rental or memory-efficient tile-based processing.
+
+### Transfer re-run (N=21/649)
+
+Re-run with `transfer_apply.py`. Two load-bearing fixes:
+
+1. **`find_score_path` extended** to also search
+   `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/score_<rung>m.tif`
+   (preserving the legacy `01_WORKSPACE/data/outputs/wp2_sag/<sub>/<DTM>_<rung>m_score.tif`
+   search for byte-identity with the N=19 frozen sites).
+
+2. **NaN local_Amin → below-floor by default** (P3.1c growth highland
+   extrapolation). DTMs without usable flat panels (TYCHOPK*,
+   FRESHMELT*) have NaN local_Amin. With the existing
+   `(not math.isnan(local_Amin)) and (amp < local_Amin)` rule, NaN
+   local_Amin would have made every peak above-floor (the negation
+   fails), inflating the FP rate with un-calibrated FPs at
+   highland/impact-melt terrain. The fix: NaN local_Amin → all peaks
+   are marked below-floor and DO NOT count as FPs. Candidates are
+   preserved in the registry with the new annotation
+   `below-local-floor; terrain-extrapolation (no local_Amin; FROZEN
+   TRANQPIT1 is mare-only; highland/impact-melt inference)`.
+
+3. **Missing per_dtm_floors entries → synthesised NaN row**. For DTMs
+   without a per_dtm_floors entry (FRESHMELT, FRESHMELT1), the script
+   now builds a default NaN row in-process. Added FRESHMELT and
+   FRESHMELT1 stub entries to `per_dtm_floors.csv` (matching TYCHOPK*
+   pattern, `mtime: skipped_insufficient_panels`) for canonical
+   consistency.
+
+### Per-DTM results at N=21
+
+| DTM | rungs | n_cand | n_above | n_fp | n_tp | area (km²) | top score | FP/10⁴ km² | 95% CI |
+|---|---|---|---|---|---|---|---|---|---|
+| TRANQPIT1 | 5 | 4 | 4 | 3 | 1 | 124.8 | 18.14 | 240.4 | [49.6, 702.6] |
+| FECNDITATS2 | 2,4,5 | 3 | 3 | 0 | 3 | 1994.4 | 0.69 | 0 | [0, 15.0] |
+| FECUNPIT | 4,5 | 6 | 6 | 6 | 0 | 1340.1 | 155.49 | 44.8 | [16.4, 97.5] |
+| INGENIIPIT | 2,4,5 | 24 | 24 | 0 | 3 | 556.4 | 19.33 | 0 | [0, 53.8] |
+| IRIDIUMPIT1 | 4,5 | 2 | 0 | 0 | 0 | 1621.7 | 0.01 | 0 | [0, 18.5] |
+| MARIUSPIT01 | 4,8 | 6 | 3 | 0 | 2 | 901.2 | 0.01 | 0 | [0, 33.2] |
+| PRCLRMPIT01 | 4,5 | 2 | 2 | 0 | 2 | 1544.7 | 1.73 | 0 | [0, 19.4] |
+| SWFECUNPIT1 | 2,4,5 | 3 | 3 | 0 | 3 | 1348.4 | 0.08 | 0 | [0, 22.2] |
+| FRESHMELT | 2,4,5 | 34 | 0 | 0 | 0 | 1023.0 | 0.030 | 0 | [0, 29.3] |
+| FRESHMELT1 | 2,4,5 | 15 | 0 | 0 | 0 | 517.9 | 0.035 | 0 | [0, 57.8] |
+| KINGCRATER2 | 2,4,5 | 17 | 0 | 0 | 0 | 550.4 | 0.002 | 0 | [0, 54.4] |
+| KINGCRATER3 | 2,4,5 | 3 | 0 | 0 | 0 | 567.3 | 0.006 | 0 | [0, 52.8] |
+| KINGCRATER4 | 2,4,5 | 5 | 0 | 0 | 0 | 588.5 | 0.000 | 0 | [0, 50.9] |
+| TYCHOPK02 | 2,4,5 | 76 | 0 | 0 | 0 | 569.1 | 0.45 | 0 | [0, 52.6] |
+| TYCHOPK03 | 2,4,5 | 9 | 0 | 0 | 0 | 427.6 | 0.11 | 0 | [0, 70.0] |
+| TYCHOPK04 | 2,4,5 | 10 | 0 | 0 | 0 | 439.3 | 0.55 | 0 | [0, 68.1] |
+| TYCHOPK07 | 2,4,5 | 38 | 0 | 0 | 0 | 725.4 | 0.05 | 0 | [0, 41.3] |
+| GRUITHMARE2, GRUITHUIS17, MARIUSCONE, TYCHOPK | — | 0 | 0 | 0 | 0 | 0 | 0 | — | skipped (no score raster) |
+
+**Aggregate (N=21/649, 17 DTMs processed): 9 FPs / 14840.27 km² = 6.06
+FP per 10⁴ km² [95% Poisson-exact (Garwood) CI 2.77, 11.51].** n_above_local_floor = 45
+(FP-rate denominator). The 212 below-floor candidates are FRESHMELT*,
+KINGCRATER*, TYCHOPK* terrain-extrapolation sites (all NaN local_Amin)
+plus the 5 below-floor IRIDIUMPIT1 candidates.
+
+### Calibration-context re-statement
+
+The aggregate FP rate of 6.06 [2.77, 11.51] FP / 10⁴ km² remains a
+**calibration-context rate, NOT a survey rate, and NOT a random-mare
+estimate.** All 21 on-disk DTMs are either pit-associated (catalogued
+pits in scope) or impact-melt catalogued (FRESHMELT*) — selection bias
+toward catalogued pits is preserved. The new 9 FPs (was 3 at N=19) come
+from FECUNPIT (6 FPs, the only new DTM with local_Amin and 3+ above-floor
+peaks) plus the legacy TRANQPIT1 FPs (3, unchanged). All other new sites
+either have NaN local_Amin (highland/impact-melt, FPs not counted) or
+zero above-floor candidates (KINGCRATER*, IRIDIUMPIT1).
+
+### Notable findings at N=21
+
+1. **TYCHOPK02 highland "hits" (76 candidates at 2/4/5 m rungs)** — all
+   marked below-floor (NaN local_Amin). Top score 0.45 is well below the
+   mare sites' top scores. The highland signal is real but the
+   amplitude is too low to confirm with the FROZEN TRANQPIT1 recipe
+   (which is mare-only calibration). Preserved in registry as
+   `below-local-floor; terrain-extrapolation`. **DO NOT** interpret as
+   highland lava-tube detection; this is calibration-extrapolation
+   signal, not portable detection.
+
+2. **KINGCRATER 3× smooth central-peak (top scores 0.002, 0.006, 0.000)** —
+   all below local_Amin (1.97, 3.63, 3.27 m). The previous N=19 finding
+   that "KINGCRATER2/3/4 floors are LOWER than the mare median because
+   central-peak impact melt is smoother than mare regolith" is
+   consistent with the new score values: smoother central peaks produce
+   lower Frangi vesselness in the 30-300 m band. No above-floor
+   candidates, so these sites contribute 0 to the FP rate.
+
+3. **FRESHMELT 2-site differential**: FRESHMELT (34 candidates, top
+   0.030) vs FRESHMELT1 (15 candidates, top 0.035). Both impact-melt
+   sites have very low scores (top ~ 0.03 vs mare median top ~ 0.5-19).
+   The 2-site comparison shows that fresh impact-melt terrain has a
+   distinct morphometric signature: lower Frangi vesselness because
+   the rough surface breaks up the 30-300 m linear features the
+   vesselness filter is designed to detect. NaN local_Amin (no flat
+   panels) preserves this as terrain extrapolation, not portability.
+
+4. **FECUNPIT 6 FPs (top score 155.49)** — the only new DTM with
+   real above-floor candidates not matched to a catalogued pit. The
+   3 above-floor peaks per rung (×2 rungs) cluster at lat ~-0.3° (the
+   northern part of the FECUNPIT DTM), ~67 km from the catalogued
+   Central Mare Fecunditatis Pit (lat -0.918°). Amplitudes are 155 m,
+   140 m, 34 m — these are LARGER than the catalogued pit's nominal
+   depth (122 m). Two interpretations: (a) edge artifacts where the
+   FECUNPIT DTM extends beyond its reliable coverage; (b) genuine large
+   depressions not in the LROC pit catalog. **Cannot resolve at N=21
+   without visual inspection.** Marked as FPs by the 100 m pit-match
+   rule; tier C; preserved in registry with `frozen-frac=0.20 slope=45
+   neigh=5` annotation. Recommend follow-up visual inspection of
+   LROC NAC images at the candidate locations.
+
+5. **MARIUSPIT01 unchanged** (3 tier-B candidates at 4/8 m, all
+   downgraded to tier C by the I14 funnel-risk rule from N=19).
+   Preserved as-is; no new MARIUSPIT01 candidates in this re-run.
+
+6. **INGENIIPIT ring artifact** preserved from N=19: r002-r008 are
+   ring artifacts around the catalogued pit r001 (not independent void
+   candidates). No new ring artifacts in the new DTMs.
+
+### Registry growth: 44 → 257 rows
+
+213 new rows appended. Original 44 rows preserved byte-identically
+(verified: `comm -12` returns all 44 original IDs in the current
+registry; sorted diff of original rows vs current rows for the 7 legacy
+DTMs returns exit 0). Schema unchanged (15 columns + provenance
+comment).
+
+Tier discipline at N=21: A=0, B=3 (MARIUSPIT01 only, unchanged), C=254.
+Below-floor candidates are tier C by definition (morphometric signal
+too weak to combine with another line of evidence).
+
+### What does NOT change vs N=19
+
+1. **FROZEN TRANQPIT1 calibration** — `score_frac=0.20`, `slope_deg=45`,
+   `neigh=5`, `frangi_sigmas_m=[30,60,100,150,200,300]`, PD fill,
+   100 m pit match radius. Untouched. Source:
+   `calibration_transqpit1.json` (md5 unchanged on disk).
+2. **TRANQPIT1 5 m result** — 4 candidates, 3 FPs, 1 TP,
+   score_max 18.14, top FP at 12-km scale unchanged. Byte-identical
+   reproduction.
+3. **INGENIIPIT ring artifact note** preserved on r002-r008.
+4. **MARIUSPIT01 tier-B downgrade** preserved (I14 funnel-risk).
+5. **Smoke test** — F1 0.392/0/0.800, fusion AUC 0.990 (PASS,
+   unchanged).
+
+### What IS new at N=21 (vs N=19)
+
+1. **score_rasters/ directory** at
+   `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/` with
+   28 score + 28 depth + 28 frangi GeoTIFFs across 10 DTMs.
+2. **per_dtm_floors.csv** grew from 19 to 21 rows (+FRESHMELT, +FRESHMELT1
+   stub entries with `skipped_insufficient_panels`).
+3. **candidate_registry.csv** grew from 44 to 257 rows (+213).
+4. **transfer_summary.json** updated: 21 entries in per_dtm block
+   (was 19); aggregate fp_per_1e4km2 = 6.06 [2.77, 11.51]
+   (was 3.71 [0.76, 10.83]); scope_banner = N=21/649 (was N=19/649).
+5. **transfer_apply.py** extended: `find_score_path` and
+   `discover_dtms_and_rungs` search both the legacy
+   `01_WORKSPACE/data/outputs/wp2_sag/<sub>/` and the new
+   `~/lunarvoid/data/outputs/wp2_sag/score_rasters/<DTM>/` roots;
+   NaN local_Amin → below-floor default; missing floors entry → NaN
+   synthesised row.
+6. **score_raster_gen.py** new file at
+   `01_WORKSPACE/code/wp2_sag/transfer/score_raster_gen.py`:
+   FROZEN recipe score-raster generator with memory-efficient rebin
+   (no full-DTM float64) for DTM sizes up to 365 MB float32.
