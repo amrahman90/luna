@@ -61,7 +61,9 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   depends P1.5] Calibrate on TRANQPIT1, transfer UNCHANGED to the other
   good-tier mare DTMs (per-DTM noise floors at Z2 scale first — G0′
   deferral row); populate `data/candidate_registry.csv`. L. Skeptic
-  review mandatory (registry writes = candidate-tier claims).
+  review mandatory (registry writes = candidate-tier claims). *(P3.1a:
+  10/649 DTMs, 639 skipped — see findings 2026-08-22; DTM-production
+  gap)*
 - [ ] **P3.2 = Step 18.2** [decision] Multi-illumination azimuth test —
   confirm deferral pending Phase 4 stack; record decision. S.
 

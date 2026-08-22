@@ -29,3 +29,4 @@
 # at least one of gravity/thermal/illumination in addition to
 # morphometry. Morphometry alone can never exceed tier B.
 candidate_id,lon,lat,dtm,span_m,sag_amp_m,score,confusion,methods,tier,status,first_found,updated,evidence,notes
+# provenance: 01_WORKSPACE/data/candidate_registry.csv | creator=geo-coder (LUNARVOID SLICE P3.1a) | status=Phase 3 transfer pending | date=2026-08-22

@@ -213,6 +213,55 @@ draft v0.2 (evidence: `papers/paper1_resolution_limits/main.md`;
   paper relabeled to FP-cell density; the lunar FP per 10^4 km² rate
   is **NOT MEASURED**.
 
+## finding 2026-08-22 — per-DTM noise floors N=10/649 (P3.1a)
+
+Per-DTM Z2-scale noise floors for the Phase-3 transfer set, computed
+at every good-tier NAC DTM that has a source raster on disk under
+`~/lunarvoid/data/(outputs/)`. **Inference language only** — these
+are noise statistics, not detections of any subsurface void.
+
+- **10/649 good-tier DTMs have on-disk NAC DTMs**: 2 used the
+  krigcorr source (TRANQPIT1, MARIUSPIT01 — same inputs as Task 6);
+  8 used the raw NAC DTM fallback. The remaining **639 of 649
+  good-tier DTMs were skipped** because their source NAC DTM (or
+  krigcorr derivative) is **not present on disk** under
+  `~/lunarvoid/data/(outputs/)` (MEDIUM confidence; skip list logged
+  in `per_dtm_floors_summary.json`). **(MEDIUM — CRITICAL GAP)** This
+  is the **DTM-production gap that Task 8 rental was meant to
+  solve** (D2 = deferred per user direction 2026-08-21). Phase-3
+  transfer (P3.1c) will populate the registry from **N=10, not
+  649**; this MUST be reflected in the G1 gate report as a
+  **$0-scope limitation**.
+- Pooled sag-band RMS range across N=10 DTMs: **0.766–1.462 m**;
+  **median 1.147 m**; **local_Amin median 3.44 m** (project
+  convention: `local_Amin = 3 × pooled_rms`). Sites covered:
+  MARIUSCONE, MARIUSPIT01, PRCLRMPIT01, GRUITHUIS17, INGENIIPIT,
+  TRANQPIT1, GRUITHMARE2, FECNDITATS2, IRIDIUMPIT1, SWFECUNPIT1
+  (HIGH — deterministic, seed-42 pipeline, identical to Task 6
+  method).
+- **Sanity exact match vs Task 6 (HIGH):** TRANQPIT1 pooled RMS =
+  **1.245184 m** vs Task-6 TRANQPIT1 = **1.245184 m** (6 dp);
+  MARIUSPIT01 pooled RMS = **1.379200 m** vs Task-6 MARIUSPIT01 =
+  **1.379200 m** (6 dp). Reproduction PASS for both. Caveat: raw
+  floors (N=8 of 10) are systematically higher than krigcorr
+  because I2 long-wavelength distortion is NOT removed (when
+  krigging runs for the remaining 8 raw DTMs, expect pooled RMS
+  to drop by the same factor seen on TRANQPIT1 — which was already
+  well-registered so its raw ≡ krigcorr).
+- **Implication:** P3.1c tiering uses per-DTM `pooled_rms_m` (NOT
+  the convention `local_Amin`) with per-DTM F1 to bucket the
+  transfer set into T1/T2/T3. `local_Amin` is the per-DTM
+  detectability floor that tiering thresholds must clear. No
+  "detection" wording anywhere; inference / FP-rate language only.
+- Evidence: `data/outputs/wp0_kriging/per_dtm_floors.csv` (10
+  rows), `data/outputs/wp0_kriging/per_dtm_floors_summary.json`
+  (medians + skip list of 639 names), and
+  `data/outputs/wp0_kriging/per_dtm_floors_METHODS.md` (panel rules,
+  3× rule labelled as project convention, sanity checks).
+- `data/candidate_registry.csv`: **skeleton preserved** (header +
+  schema + tier-discipline comments + provenance line); **no
+  candidate rows yet** — populating is P3.1c after transfer.
+
 BACKLOG: Kingsbowl per-cell sag stats unrecoverable (source dir
 empty) — optional Phase-3 re-run to repopulate; only F1 0.002/0.043
 corroborated via the v0.4 release notes.

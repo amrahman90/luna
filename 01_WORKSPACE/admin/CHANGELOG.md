@@ -5,6 +5,43 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 14 — P3.1a per-DTM floors)
+
+- **P3.1a (slice of Step 18.3) — per-DTM Z2-scale noise floors:**
+  `code/wp0_kriging/per_dtm_floors.py` driver; reuses Task-6
+  `noise_floor.run_dtm` verbatim (no reimplementation); emits
+  `data/outputs/wp0_kriging/per_dtm_floors.csv` (**10 rows**;
+  pooled sag-band RMS range **0.766–1.462 m**, **median 1.147 m**;
+  `local_Amin` median **3.44 m** per project-convention
+  `3 × pooled_rms`), `per_dtm_floors_summary.json` (medians + full
+  skip list of 639 names), and `per_dtm_floors_METHODS.md` (panel
+  rules, 3×-rule labelling, sanity checks, downstream tiering use).
+- **Verifier PASS-with-notes:** sanity check **exact match to 6 dp**
+  vs Task-6 on TRANQPIT1 (1.245184 m) and MARIUSPIT01 (1.379200 m).
+  Per-line note on Step 18.3 / P3.1 lines of both roadmaps;
+  Step 18.3 itself **NOT ticked** (full P3.1 requires P3.1b
+  calibration + P3.1c transfer + registry population).
+- **`data/candidate_registry.csv` — skeleton preserved** (header +
+  schema + tier-discipline comments + P3.1a provenance line); **no
+  candidate rows yet** — populating is P3.1c after transfer.
+- **CRITICAL GAP:** **639 of 649 good-tier DTMs were skipped**
+  because their source NAC DTM (or krigcorr derivative) is **not
+  present on disk** under `~/lunarvoid/data/(outputs/)`. This is
+  the **DTM-production gap that Task 8 rental was meant to solve**
+  (D2 = deferred per user direction 2026-08-21). **Phase-3
+  transfer (P3.1c) will populate the registry from N=10, not 649**;
+  this MUST be reflected in the G1 gate report as a **$0-scope
+  limitation**.
+- **Stray files NOT committed this cycle:** `wp2_sag/transfer/`
+  (calibrate_transqpit1.py, noise_floors_batch.py,
+  calibration_transqpit1.json) — held by archivist; P3.1b inspect/
+  use or build fresh. **No MANIFEST rows added** (floors + METHODS
+  are derived from already-manifested NAC DTMs). Smoke unchanged.
+- Roadmaps: per-line note appended to ZEROCOST Step 18.3 and
+  Next_Tasks P3.1. Cost: **$0**.
+
+---
+
 ## 2026-08-22 (execution session 13 — Phase 2: Paper 1 draft v0.2)
 
 - **Step 16.3 (P2.1) — Paper 1 draft v0.2:** §4.5 results narration +

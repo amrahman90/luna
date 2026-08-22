@@ -639,7 +639,8 @@ note in the summary JSON.
   `azimuth_stratified_*` column in the candidate CSV.
 - [ ] **Step 18.3** Calibrate on TRANQPIT1, transfer unchanged to
   Marius Hills + Ingenii (I15 protocol) — implemented in the
-  per-rung threshold re-tuning step.
+  per-rung threshold re-tuning step. *(P3.1a: 10/649 DTMs, 639
+  skipped — see findings 2026-08-22; DTM-production gap)*
 
 **Verification:** candidate CSV with per-candidate evidence vector +
 confuser scores; manual NAC-imaginary inspection queue created for
