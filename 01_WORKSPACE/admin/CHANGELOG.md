@@ -5,6 +5,25 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 20 — G1 PASSED; Phase 6 plan + budget open; P6.0 credentials HALT)
+
+- G1 FINAL-PASSED (commit `33cce63`) + `papers/` mirror updated to
+  FINAL-PASSED
+- Lock released (`opencode`); orchestrator available for the next
+  session
+- Phase 6 plan + 9 substeps recorded in both roadmaps
+  (`plans/2026-08-19_ZEROCOST_Roadmap.md`,
+  `plans/2026-08-21_Next_Tasks_Roadmap.md`); P6.0 marked USER GATE
+- Budget ledger opened: `admin/budget.md`; $0/$150 used; ceiling
+  $800/30 months (master plan)
+- VPS guide recommends Hetzner AX52 (~$55/mo); Vast.ai / RunPod /
+  Lambda as alternatives (risk of overrun above $150)
+- **BLOCKER P6.0**: no cloud credentials on local box; no AWS/GCP/Azure/
+  Vast/RunPod/Lambda keys; only SSH key targets the Tier-0 dev box
+- **HALT for user**: provide provider + credentials to launch P6.1
+
+---
+
 ## 2026-08-22 (execution session 19 — G1 FINAL-PASSED; §8 T1 trigger APPROVED)
 
 - G1 status DRAFT-FOR-REVIEW → FINAL-PASSED (human decision 2026-08-22)

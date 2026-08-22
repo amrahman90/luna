@@ -126,3 +126,32 @@ task; $0 spend unless §8 trigger approved; 00_SOURCE_ORIGINALS/
 read-only; outputs in 01_WORKSPACE/ or ~/lunarvoid/data/; disk floor
 40 GB; claim discipline enforced everywhere; T5 = ±5% v0.x
 reproduction failure halts releases.
+
+---
+
+# PHASE 6 — Task 8 Tier-1 rental + G2 *(BLOCKED on P6.0 — credentials)*
+
+> G1 FINAL-PASSED 2026-08-22 (commit `33cce63`); §8 T1 trigger
+> APPROVED; cost ceiling $150 (user-set 2026-08-22). VPS guide primary
+> recommendation: **Hetzner AX52-NVMe** (~$55/mo, 24-core, 128 GB,
+> 2×1 TB NVMe, 20 TB/mo included). Wall-time estimate: 3 days for
+> 308 NAC DTM stereo jobs on 6 concurrent pipelines.
+
+- [ ] **P6.0 — credentials & provider (USER GATE; halt until user
+  provides API key or root password + provider choice)**
+- [ ] **P6.1 — rental provisioning** (Hetzner AX52 or equivalent per
+  v5 §7; spec recorded in `admin/budget.md`)
+- [ ] **P6.2 — ISIS3 + ASP install on rental** (~30 min; snapshot from
+  local install or fresh)
+- [ ] **P6.3 — NAC EDR fetch for top 308 target DTMs** (parallel;
+  reuse `code/wp8_stereo/` if present, else create; ~30 min)
+- [ ] **P6.4 — stereo pipeline run** (ASP parallel, 6 concurrent
+  pipelines; ~3 days wall time; checkpoint + resume)
+- [ ] **P6.5 — DTM quality gate** (≥2/3 must pass RMS < 2 m vs
+  TRANQPIT1/MARIUSPIT01 reference)
+- [ ] **P6.6 — pull DTMs back to local** (`rsync` to
+  `~/lunarvoid/data/outputs/<SITE>/`; 308 × ~100 MB ≈ 30 GB)
+- [ ] **P6.7 — re-run P3.1a (per_dtm_floors) + P3.1c (transfer_apply)
+  at new N** (verify per-DTM floors match N=10 calibration)
+- [ ] **P6.8 — G2 gate report** (paper-writer → verifier → skeptic →
+  **USER GATE** — human G2 decision)

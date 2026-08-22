@@ -804,3 +804,38 @@ by commit.
   method, acceptance criteria instead of fake code.
 - Naming consistency: primitive = `depression_depth.py` throughout;
   quality tiers good/fair/poor as in scope_map.py.
+
+---
+
+# PHASE 6 — Task 8 Tier-1 rental + G2 *(BLOCKED on P6.0 — credentials)*
+
+> G1 FINAL-PASSED 2026-08-22; §8 T1 trigger APPROVED; cost ceiling $150
+> (user-set 2026-08-22). Source: v5 §7 (compute target spec) +
+> `00_SOURCE_ORIGINALS/VPS_Setup_Guide_Lunar_Photogrammetry.txt` (Hetzner
+> AX52 as primary recommendation).
+> **HALT at P6.0 until the user provides either an API key or root
+> password + provider choice.** Do not start P6.1 without credentials.
+
+- [ ] **P6.0 — credentials & provider (USER GATE; halt until user
+  provides API key or root password + provider choice)**
+- [ ] **P6.1 — rental provisioning** (1× Hetzner AX52 or equivalent per
+  v5 §7; record actual spec to `admin/budget.md`)
+- [ ] **P6.2 — ISIS3 + ASP install on rental** (~30 min; use local
+  snapshot from `~/lunarvoid/isis/` + `~/lunarvoid/asp/` or fresh
+  install)
+- [ ] **P6.3 — NAC EDR fetch for top 308 target DTMs** (PDS / LROC WMS;
+  parallel; ~30 min; reuse `code/wp8_stereo/` if it exists, else
+  create)
+- [ ] **P6.4 — stereo pipeline run** (ASP parallel, 6 concurrent
+  pipelines; ~3 days wall time; checkpoint + resume; 30 random mare +
+  278 catalogued pits = 308 total)
+- [ ] **P6.5 — DTM quality gate** (compare new DTMs to existing
+  TRANQPIT1/MARIUSPIT01 reference; ≥2/3 must pass RMS < 2 m vs
+  reference)
+- [ ] **P6.6 — pull DTMs back to local** (`rsync` to
+  `~/lunarvoid/data/outputs/<SITE>/NAC_DTM_<SITE>.TIF`; 308 × ~100 MB
+  ≈ 30 GB)
+- [ ] **P6.7 — re-run P3.1a (per_dtm_floors) + P3.1c (transfer_apply)
+  at new N; verify per-DTM floors match N=10 calibration**
+- [ ] **P6.8 — G2 gate report** (paper-writer; verifier; skeptic;
+  **USER GATE** — human G2 decision)
