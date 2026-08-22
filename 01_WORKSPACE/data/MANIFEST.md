@@ -175,6 +175,36 @@ For comparison, the v0.2 number on IndianTunnel_NorthSurface @ 1m
 was F1 = 0.277 (pre-slope-mask). v0.3 is the productive precision
 lift on top of the v0.1 detector.
 
+## Diviner thermal / rock-abundance grids (Powell 2023 GHRM)
+
+| Product | Version / as-of | Source URL | Local copy | SHA-256 | Licence |
+|---|---|---|---|---|---|
+| Powell 2023 GHRM bolometric nighttime T, monthly mosaic, 128 ppd, 17920x46080 float32 GeoTIFF, equirectangular on R=1737400 m (central meridian 0), lat ±70° (`dghrm_tbol_m_70s70n_tif.tif`) | downloaded prior parallel session; sha256-verified 2026-08-22 | `https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_ghrm/geotiff/dghrm_tbol_m_70s70n_tif.tif` | `~/lunarvoid/data/evidence/diviner/dghrm_tbol_m_70s70n_tif.tif` (3,303,158,255 B) | `b107ed4b3fb08475a83a5235c3f7a16dbd6a508eb3b0ad66de705ba9d8f307df` | PDS public domain |
+| Powell 2023 GHRM rock abundance (areal fraction), seasonally-averaged monthly, same shape (`dghrm_ra_sam_70s70n_tif.tif`) | downloaded prior parallel session; sha256-verified 2026-08-22 | `https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_ghrm/geotiff/dghrm_ra_sam_70s70n_tif.tif` | `~/lunarvoid/data/evidence/diviner/dghrm_ra_sam_70s70n_tif.tif` (3,303,158,255 B) | `bc035e06bd59380a0cd6b598d7b899d9020fdd5a7db1779d359274aa66c6ba7c` | PDS public domain |
+
+Citation: Powell et al. 2023 (LRO Diviner GHRM, PDS Geosciences Node
+urn:nasa:pds:lro_diviner_derived1:data_derived_ghrm); see also Williams
+et al. 2017 Icarus 283, 300-325 (cumulative nighttime T algorithm).
+
+Sampling method (2026-08-22, P4.3): `code/wp4_diviner/sample_diviner_at_candidates.py`
+samples each of the 7 candidate DTMs in `candidate_registry.csv` with a
+1-km inner box (centred on candidate lon/lat) and a 20x20 km mare
+reference (outer box excluding the inner 1 km); delta_T =
+T(candidate) - T(mare-median), 2-sigma anomaly = IQR/1.349 robust
+sigma.
+
+Findings logged (2026-08-22, session 16): Powell 2023 GeoTIFFs encode
+the missing-data sentinel as float32 0.0 (NOT NaN as the PDS4 XML
+claims) — empirical check at equator shows 96% zeros in TBOL/RA
+matching the equatorial coverage gap; 4/7 DTMs sit in the
+equatorial/sub-arctic gap band (TRANQPIT1, MARIUSPIT01, IRIDIUMPIT1,
+PRCLRMPIT01 — all `all_sentinel_or_NaN_in_box`), 1/7 partial
+(SWFECUNPIT1: TBOL ok, RA all sentinel), 2/7 fully usable (INGENIIPIT,
+FECNDITATS2); INGENIIPIT +2.65 K delta-T reframed per skeptic as
+rocky ejecta (RA 0.98% vs 0.50% local mare ≈2×) — counter-evidence for
+the tube hypothesis at this site, not void-cooling. See
+`notes/findings.md` 2026-08-22 entry and `data/outputs/wp2_sag/transfer/diviner_summary.json`.
+
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 
 - PDS holdings: public domain, not analysis-ready (raw EDR needs ISIS chain).

@@ -685,10 +685,10 @@ top candidates; not started.
   `pyshtools.SHGravCoeffs.expand()` + `boule.Moon2015` and
   finite-differences the gradient magnitude. Successful run
   over MTP region (30-35 E, 6-11 N); gr_r 1.62-1.67 m/s^2.
-- [ ] **Step 20.2** Diviner nighttime T + rock abundance (Powell 2023
+- [x] **Step 20.2** Diviner nighttime T + rock abundance (Powell 2023
   derivative) — placeholder metadata emitted by the same module;
   full ingestion deferred (Powell 2023 derivative, needs the PDS
-  Geosciences REST query; ~half a day of plumbing).
+  Geosciences REST query; ~half a day of plumbing). *(N=7 DEMONSTRATION; coverage 2/7 fully usable; INGENIIPIT rocky-ejecta counter-evidence)*
 - [x] **Step 20.3** GRAIL outputs written per region as
   `grail_{gr_r,gr_th,gr_ph,gmag}_<lonW>_<lonE>E_<latS>_<latN>N.tif`
   in `EPSG:4326` for direct SLDEM2015 co-registration. v5 evidence

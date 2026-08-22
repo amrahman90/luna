@@ -348,3 +348,92 @@ Multi-illumination azimuth test (Step 18.2) deferred — pending the
 Task-19 photometric-stereo stack build (P4.2) where azimuth
 variation comes for free as part of multi-illumination stacking.
 This decision is recorded, not abandoned.
+
+## 2026-08-22 — skeptic review, P4.3 Diviner thermal + rock abundance at N=7 (verdict: UNSOUND)
+
+Five real objections (each falsifiable, with resolution); numbers
+spot-checked against `diviner_summary.json` + `diviner_thermal.csv`
++ `code/wp4_diviner/sample_diviner_at_candidates.py`. The honesty
+fix to the 24/44 headline (g1_honesty block) is good but
+INSUFFICIENT — the `interpretation` block still misframes the result.
+
+- **O1 — "no 2σ anomaly except INGENIIPIT" framing is dishonest at
+  2/7 coverage** (HIGH). With 4/7 DTMs in the Powell GHRM
+  equatorial/sub-arctic gap (TRANQPIT1, MARIUSPIT01, IRIDIUMPIT1,
+  PRCLRMPIT01 — all `all_sentinel_or_NaN_in_box`) and 1/7 partial
+  (SWFECUNPIT1: TBOL ok, RA all sentinel), the `interpretation`
+  sentence "Thermal non-detection … IS a RESULT" reads as a global
+  null when it is actually a coverage gap. `g1_honesty.coverage`
+  flags 2/7 fully usable but `interpretation` does not reference it.
+  Resolution: rewrite `interpretation` to "INCONCLUSIVE at N=7 due
+  to 4/7 equatorial coverage gap; the 2/7 fully usable sites show
+  one marginal 2σ anomaly at INGENIIPIT only" — and the G1 gate
+  report must echo this verbatim.
+
+- **O2 — INGENIIPIT +2.65 K is the WRONG SIGN for a void cooling
+  signature** (HIGH). Powell TBOL is *cumulative nighttime
+  bolometric T*. A void should *cool* at night (loss of radiative
+  coupling to regolith); +2.65 K is *warmer* than mare median.
+  Almost certainly a rocky ejecta signature — consistent with
+  `RA_pct_mean = 0.98 %` at INGENIIPIT vs `0.50 %` at FECNDITATS2
+  (≈2× local mare). The summary frames this anomaly as the sole
+  thermal finding; it is in fact evidence *against* the tube
+  hypothesis at this site (rock field, not void). Resolution:
+  reframe INGENIIPIT anomaly as "rocky ejecta, not void cooling;
+  inconsistent with tube hypothesis at this site" and downgrade
+  from "result" to "inconclusive / counter-evidence for the
+  thermal-anomaly leg".
+
+- **O3 — RA 0.0 exclusion biases against bare mare** (MEDIUM).
+  `_valid_mask` uses `arr > 0.0` (line 95 of
+  `sample_diviner_at_candidates.py`). Genuine rock-free mare
+  (0.0 areal fraction) is real signal, not a sentinel. The
+  docstring's "96 % pattern matches TBOL" argument is partly
+  circular — TBOL is missing in the equatorial gap so RA is too,
+  but at sub-arctic latitudes (e.g. INGENIIPIT −36°, IRIDIUMPIT1
+  +46°) where TBOL IS valid, the RA 0.0 density may genuinely
+  include bare mare. At INGENIIPIT the inner box RA (0.98 %) vs
+  the mare-reference RA (computed from the 20×20 km outer box
+  excluding the 1-km inner) may be over-estimated if bare-mare
+  pixels are stripped from the reference. Resolution: log
+  excluded-RA histogram per DTM; document the upper-bound bias;
+  prefer NaN-as-sentinel in P4.4 if Powell product supports it.
+
+- **O4 — Sub-pixel spatial-scale mismatch unacknowledged** (HIGH).
+  Powell 2023 GHRM is 128 ppd: 236.9 m/px at equator, ~150 m/px
+  at INGENIIPIT (−36°), ~81 m/px at IRIDIUMPIT1 (+46°). Inner
+  box is 1×1 km (half_m = 500, line 77). Skylight pits
+  (typically ≤100 m diameter) are sub-pixel at all 7 DTMs and
+  barely resolvable at IRIDIUMPIT1. The "1-km box thermal mean"
+  is therefore averaged over mostly mare pixels with the pit
+  occupying <1 px — i.e. the experiment cannot resolve a tube-
+  scale thermal anomaly at this resolution; it can only resolve
+  site-scale anomaly if the ejecta field is ≥1 px (~237 m).
+  Resolution: add per-DTM pixel size to `per_dtm`; the G1
+  thermal claim must state "site-scale only; tube-scale
+  unresolved at Powell 2023 resolution".
+
+- **O5 — Multi-evidence stacking broken at G1** (HIGH). Only Z2
+  morphometry is active at 7/7 DTMs; thermal at 2/7 fully usable;
+  photometric (P4.2) is deferred. The G1 gate report cannot
+  honestly claim "multi-evidence stacking" when only one of three
+  planned evidence legs has site-wide coverage. Resolution:
+  G1 gate report must state "multi-evidence STACKING
+  DEMONSTRATION is morphometry-only at G1; thermal at 2/7;
+  photometric (P4.2) deferred to post-G1".
+
+- **NUMBERS SPOT-CHECKED ✓** — INGENIIPIT delta_T 2.6484527 K
+  matches `diviner_summary.json.per_dtm.INGENIIPIT.delta_T_K.max`
+  and CSV row 5; 24/44 = 0.5454545454 matches
+  `global_summary.frac_anomaly_2sigma`; INGENIIPIT n_candidates=24
+  = 8 candidate positions × 3 scale tiers (2/4/5 m) — verified by
+  counting CSV rows 5–28; TRANQPIT1 n_candidates=4 = rows 42–45;
+  IRIDIUMPIT1 all-sentinel reason matches rows 29–30. Trace OK;
+  INTERPRETATION not OK.
+
+- **SUGGESTED DOWNGRADE** — P4.3 thermal tier from "G1 result
+  (null)" to "G1 INCONCLUSIVE due to 4/7 coverage gap + 2/7
+  INGENIIPIT anomaly inconsistent with void-cooling hypothesis
+  (rocky-ejecta alternative)". Multi-evidence stacking claim
+  held at DEMONSTRATION-only with morphometry as the sole active
+  leg.

@@ -5,6 +5,18 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 16 — Phase 4 P4.3 Diviner thermal)
+
+- Powell 2023 GHRM grids fetched by prior parallel session, sha256-verified this cycle, 0 new bytes
+- 44 candidates sampled, 14/44 T-NO_DATA, 17/44 RA-NO_DATA (4/7 DTMs in equatorial coverage gap, 1/7 partial)
+- INGENIIPIT +2.65 K → reclassified as rocky ejecta counter-evidence (RA 0.98% vs 0.50% local mare ≈2×)
+- Powell GHRM pixel-size caveat (tube-scale sub-pixel at all 7 DTMs; site-scale only at G1)
+- Multi-evidence stacking at G1 is morphometry-only (thermal 2/7, photometric P4.2 deferred)
+- MANIFEST rows added; 2 MANIFEST rows for Powell grids
+- cost $0; $0 from MANIFEST acquisitions count as $0 (public data)
+
+---
+
 ## 2026-08-22 (execution session 15 — Phase 3 complete: mare transfer + registry)
 
 - **P3.1a**: per-DTM noise floors (N=10/649, 639 skipped —

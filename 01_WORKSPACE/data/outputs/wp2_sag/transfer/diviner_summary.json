@@ -1,0 +1,174 @@
+{
+  "banner": "DEMONSTRATION ONLY; N=7 of 649 good-tier mare DTMs sampled (P4.3 Powell 2023 thermal/rock evidence at G1 scale; Phase-3 G1 banner)",
+  "scope": {
+    "dtms_in_scope": [
+      "TRANQPIT1",
+      "MARIUSPIT01",
+      "INGENIIPIT",
+      "IRIDIUMPIT1",
+      "PRCLRMPIT01",
+      "SWFECUNPIT1",
+      "FECNDITATS2"
+    ],
+    "n_dtms": 7
+  },
+  "data": {
+    "tbol_path": "/home/frostflux/lunarvoid/data/evidence/diviner/dghrm_tbol_m_70s70n_tif.tif",
+    "ra_path": "/home/frostflux/lunarvoid/data/evidence/diviner/dghrm_ra_sam_70s70n_tif.tif",
+    "tbol_size_bytes": 3303158255,
+    "ra_size_bytes": 3303158255,
+    "tbol_sha256": "b107ed4b3fb08475a83a5235c3f7a16dbd6a508eb3b0ad66de705ba9d8f307df",
+    "ra_sha256": "bc035e06bd59380a0cd6b598d7b899d9020fdd5a7db1779d359274aa66c6ba7c",
+    "citation": "Powell et al. 2023 (LRO Diviner GHRM, PDS Geosciences Node urn:nasa:pds:lro_diviner_derived1:data_derived_ghrm); see also Williams et al. 2017 Icarus 283, 300-325 (cumulative nighttime T algorithm).",
+    "licence": "PDS public domain"
+  },
+  "sampling": {
+    "inner_box_half_m": 500.0,
+    "outer_box_half_m": 10000.0,
+    "sigma_threshold": 2.0,
+    "sigma_estimate": "IQR/1.349 (robust Gaussian-equivalent)",
+    "sentinel_handling": "Powell 2023 GHRM GeoTIFFs encode the missing-data sentinel as float32 0.0 (NOT NaN as the PDS4 XML claims; verified empirically at equator: 96% of pixels are 0.0 with the remaining 4% physically realistic). TBOL 0 K is non-physical; RA 0.0 fraction matches the TBOL density pattern so it is treated as the same sentinel, not a valid bare-mare value. Pixels with value <= 0.0 (including NaN/inf) are excluded from all aggregates.",
+    "tbol_valid_min_K": 0.0,
+    "ra_valid_min_frac": 0.0
+  },
+  "global_summary": {
+    "n_candidates": 44,
+    "n_no_data_T": 14,
+    "n_no_data_RA": 17,
+    "n_anomaly_2sigma": 24,
+    "frac_anomaly_2sigma": 0.5454545454545454,
+    "delta_T_K_summary": {
+      "min": 0.6574935913085938,
+      "p25": 2.5310592651367188,
+      "median": 2.5310592651367188,
+      "p75": 2.5310592651367188,
+      "max": 2.6484527587890625,
+      "iqr": 0.0
+    },
+    "sigma_dist_summary": {
+      "min": 1.236720859972554,
+      "p25": 2.5343003510957587,
+      "median": 2.5343003510957587,
+      "p75": 2.5343003510957587,
+      "max": 2.670718721127853
+    }
+  },
+  "per_dtm": {
+    "TRANQPIT1": {
+      "n_candidates": 4,
+      "n_T_no_data": 4,
+      "n_RA_no_data": 4,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "max": null
+      },
+      "pixel_size_m": 234.21
+    },
+    "MARIUSPIT01": {
+      "n_candidates": 6,
+      "n_T_no_data": 6,
+      "n_RA_no_data": 6,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "max": null
+      },
+      "pixel_size_m": 229.45
+    },
+    "INGENIIPIT": {
+      "n_candidates": 24,
+      "n_T_no_data": 0,
+      "n_RA_no_data": 0,
+      "n_anomaly_2sigma": 24,
+      "frac_anomaly_2sigma": 1.0,
+      "delta_T_K": {
+        "min": 2.5310592651367188,
+        "p25": 2.5310592651367188,
+        "median": 2.5310592651367188,
+        "p75": 2.6484527587890625,
+        "max": 2.6484527587890625
+      },
+      "pixel_size_m": 191.78,
+      "tube_interpretation": "WARMER (+2.65 K) than mare-median; RA 0.98% vs 0.50% local mare \u22482\u00d7 \u2192 rocky ejecta, NOT void cooling. Counter-evidence for tube hypothesis at this site; inconclusive / counter-evidence for the thermal-anomaly leg."
+    },
+    "IRIDIUMPIT1": {
+      "n_candidates": 2,
+      "n_T_no_data": 2,
+      "n_RA_no_data": 2,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "max": null
+      },
+      "pixel_size_m": 163.45
+    },
+    "PRCLRMPIT01": {
+      "n_candidates": 2,
+      "n_T_no_data": 2,
+      "n_RA_no_data": 2,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": null,
+        "p25": null,
+        "median": null,
+        "p75": null,
+        "max": null
+      },
+      "pixel_size_m": 193.09
+    },
+    "SWFECUNPIT1": {
+      "n_candidates": 3,
+      "n_T_no_data": 0,
+      "n_RA_no_data": 3,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": 1.19061279296875,
+        "p25": 1.19061279296875,
+        "median": 1.19061279296875,
+        "p75": 1.19061279296875,
+        "max": 1.19061279296875
+      },
+      "pixel_size_m": 235.26
+    },
+    "FECNDITATS2": {
+      "n_candidates": 3,
+      "n_T_no_data": 0,
+      "n_RA_no_data": 0,
+      "n_anomaly_2sigma": 0,
+      "frac_anomaly_2sigma": 0.0,
+      "delta_T_K": {
+        "min": 0.6574935913085938,
+        "p25": 0.6574935913085938,
+        "median": 0.6574935913085938,
+        "p75": 0.6574935913085938,
+        "max": 0.6574935913085938
+      },
+      "pixel_size_m": 236.87
+    },
+    "ra_0pct_exclusion_caveat": true
+  },
+  "interpretation": "INCONCLUSIVE at N=7 due to Powell GHRM equatorial/sub-arctic coverage gap (4/7 DTMs all-sentinel, 1/7 partial, 2/7 fully usable). The 2/7 fully usable sites show one marginal 2\u03c3 anomaly at INGENIIPIT only. See g1_honesty.",
+  "g1_honesty": {
+    "anomaly_count_interpretation": "All 24 anomalies are from N=1 distinct catalogued pit (INGENIIPIT), 13 positions \u00d7 3 scale tiers (2/4/5 m). The 24/44 = 54.5% headline is over a single pit \u2014 NOT 24 independent sites.",
+    "coverage": "4/7 DTMs in Powell GHRM equatorial/sub-arctic gap band (zero usable thermal: TRANQPIT1, MARIUSPIT01, IRIDIUMPIT1, PRCLRMPIT01); 1/7 partial (SWFECUNPIT1: T ok, RA all sentinel); 2/7 fully usable (INGENIIPIT, FECNDITATS2). Only 2/7 catalogued pits have usable thermal data \u2014 a G1 honest coverage flag.",
+    "spatial_scale": "Powell 2023 GHRM is 128 ppd (236.9 m/px at equator; 150 m at INGENIIPIT \u221236\u00b0; 81 m at IRIDIUMPIT1 +46\u00b0). 1-km inner box averages over mostly mare pixels. Tube-scale (\u2264100 m) thermal anomalies are sub-pixel at all 7 DTMs \u2014 G1 thermal leg is site-scale only; tube-scale unresolved at Powell 2023 resolution.",
+    "stacking": "Multi-evidence stacking at G1 is morphometry-only (Z2 active at 7/7 DTMs); thermal at 2/7 fully usable; photometric-stereo (P4.2) deferred to post-G1. G1 cannot claim multi-evidence stacking."
+  },
+  "generated_utc": "2026-08-22T12:06:22+00:00",
+  "seed": 42
+}

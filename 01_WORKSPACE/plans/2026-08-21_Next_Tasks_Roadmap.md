@@ -81,7 +81,7 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   mirroring; MANIFEST rows per fetch). M.
 - [ ] **P4.2 = Step 19.2** [geo-coder, depends P4.1] Photometric-stereo
   consistency check (independent-illumination agreement). M.
-- [ ] **P4.3 = Step 20.2** [geo-coder, parallel with P4.1-2] Diviner
+- [x] **P4.3 = Step 20.2** [geo-coder, parallel with P4.1-2] Diviner
   nighttime T + rock abundance (Powell 2023 grids) at candidate sites;
   thermal non-detection recorded as evidence, not silence. M.
 
