@@ -5,6 +5,29 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-22 (execution session 13 — Phase 2: Paper 1 draft v0.2)
+
+- **Step 16.3 (P2.1) — Paper 1 draft v0.2:** §4.5 results narration +
+  Table 2 + 10-figure index (`papers/paper1_resolution_limits/figs/README.md`).
+- **Verifier FAIL → repair → PASS-with-notes:** caught FP-units
+  mis-presentation (abstract 3.8e10 was per-cell predict-all density,
+  NOT FP/10^4 km² survey rate) + recall overclaims — repaired;
+  lunar FP rate remains NOT MEASURED.
+- **Skeptic SOUND-with-objections ×2 — all resolved/applied:**
+  abstract "specifies"→"bounds" downgrade; i85 recall rung scoping
+  (0.5 m 0.16–0.44; 1 m 0.54; 5 m 0.60 n=8); §4.2 v0.4-freeze
+  declaration; Table-2 5 m footnote; catalog count 278.
+- **Findings corrections logged** (`notes/findings.md`, correction
+  2026-08-22): recall 0.73–0.97 was i=45° 0.5–1 m only (full span
+  0.557–1.00); i85 ceiling is 0.5 m rung; FP 3.8e10 relabeled
+  per-cell.
+- **Kingsbowl backlog:** per-cell sag stats unrecoverable (source dir
+  empty) — optional Phase-3 re-run; only F1 0.002/0.043 corroborated
+  via v0.4 release notes.
+- Roadmaps ticked: ZEROCOST 16.3 + Next_Tasks P2.1. Cost **$0**.
+
+---
+
 ## 2026-08-22 (execution session 12 — Phase 1 complete: Hapke + sensor rungs, LLTB-1 v0.5)
 
 - **Step 13.3 (P1.4) — Hapke synthetic illumination re-rendering:**

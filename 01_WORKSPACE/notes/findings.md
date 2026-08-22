@@ -159,6 +159,30 @@ detector") is accepted ONLY with these qualifications (evidence:
   statistic); claim is a 0.5-2 m phenomenon. Paper 1 must quote the
   per-geometry range (0.051-0.122), not only the 0.10 mean.
 
+## finding 2026-08-22 — skeptic pre-submission review, Paper 1 v0.2 §4.5 + abstract
+
+- CORRECTION — the i=85° recall ceiling "0.16–0.44" (2026-08-22 Hapke
+  entry above; Paper 1 §4.5(b); METHODS.md §Headline) is a **0.5 m-rung
+  statistic quoted without its rung restriction**: `recall_test_slope`
+  at i85 spans 0.16–0.60 across rungs/azimuths (0.5 m: 0.161–0.443;
+  1 m up to 0.539; 5 m up to 0.60 with n_void=8 caveat) — evidence:
+  `data/outputs/wp1_ladder/hapke/hapke_f1_comparison.csv`, col
+  `recall_test_slope`, all 16 i85 rows (HIGH). Paper must quote
+  "(0.5 m rung)" beside the ceiling or it overstates label-voiding
+  severity at 1–5 m. Verifier previously noted; unfixed in v0.2.
+- CAVEAT — abstract's "the curve directly specifies camera and
+  altimeter requirements" overclaims for a 6-site analog benchmark
+  (v0.5 arms on ONE trench-labelled site; n_void=8 at 5 m): downgrade
+  to "bounds/informs". Also: "best honest result F1=0.277" collides
+  with the logged phrase "best honest F1 0.362" (v0.4, same site/rung)
+  — qualify as "under the fixed-calibration protocol" or footnote v0.4.
+- CAVEAT — §4.2/Table 1 is v0.4-free but only §4.5(a) says so;
+  Kingsbowl footnote cites the v0.4 release note for F1 0.002 while
+  that note's Kingsbowl number is 0.043 (history 0.002→0.045→0.043):
+  declare the freeze in §4.2 and point to v0.4 numbers, or reviewers
+  read stale/missing data. Trivial: §1.1 "~281 catalogued" vs log's
+  278.
+
 ## decision 2026-08-22 — vegetation stripping out of scope
 
 Vegetation removal for terrestrial analogs is OUT OF SCOPE for
@@ -170,3 +194,25 @@ the cost buys nothing transferable. Recorded as a limitation for
 Paper 1 (analog-derived rungs may carry small vegetation-biased
 residuals at 0.5–2 m rungs); revisit only if a drone campaign adds a
 vegetated site.
+
+## correction 2026-08-22 — paper v0.1 inherited claims
+
+Three claims inherited by Paper 1 draft v0.1 from earlier log entries
+were mis-scoped; caught by verifier FAIL + skeptic review, repaired in
+draft v0.2 (evidence: `papers/paper1_resolution_limits/main.md`;
+`data/outputs/wp1_ladder/hapke/hapke_f1_comparison.csv`):
+
+- The "recall 0.73–0.97 under Hapke" figure was an **i=45°, 0.5–1 m
+  rungs only** statistic; across the full span of rungs/azimuths
+  recall runs **0.557–1.00**.
+- The i=85° recall ceiling **0.16–0.44 is the 0.5 m rung** (1 m
+  reaches **0.54**; 5 m **0.60**, n_void=8) — quote the rung beside
+  the ceiling or label-voiding severity at 1–5 m is overstated.
+- Abstract FP **3.8e10** was a **per-cell predict-all density** (CSV
+  col `fp_per_1e4km2_test` extrapolation), **NOT FP/10^4 km²** —
+  paper relabeled to FP-cell density; the lunar FP per 10^4 km² rate
+  is **NOT MEASURED**.
+
+BACKLOG: Kingsbowl per-cell sag stats unrecoverable (source dir
+empty) — optional Phase-3 re-run to repopulate; only F1 0.002/0.043
+corroborated via the v0.4 release notes.

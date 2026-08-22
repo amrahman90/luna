@@ -591,8 +591,9 @@ once a real analog .f32 is extracted from a completed RAR.
   intro (base-rate + label-famine framing), related work (from
   Task-1 matrix), LLTB-1 methods, detectability results, camera-spec
   implications, honest limitations. Outline in `outline.md`.
-- [ ] **Step 16.3** Drop in Task-14 figures; write results narration —
+- [x] **Step 16.3** Drop in Task-14 figures; write results narration —
   DEFERRED to the run after LLTB-1 v0.1 numbers land.
+  *(draft v0.2: §4.5 + 10 figs; FP-cell-density relabel + recall rescopes per verifier/skeptic)*
 
 **Verification:** full skeleton with results sections populated from
 actual outputs; no placeholder text. Currently: skeleton with

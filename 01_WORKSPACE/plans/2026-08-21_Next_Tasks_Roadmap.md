@@ -50,7 +50,7 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
 
 ## Phase 2 — Paper 1 figures + narration
 
-- [ ] **P2.1 = Step 16.3** [paper-writer→verifier→skeptic→archivist,
+- [x] **P2.1 = Step 16.3** [paper-writer→verifier→skeptic→archivist,
   depends P1.5] Drop degradation figures into the Paper 1 skeleton;
   results narration with claim discipline (inference language, FP per
   10^4 km^2 only where measured). M.
