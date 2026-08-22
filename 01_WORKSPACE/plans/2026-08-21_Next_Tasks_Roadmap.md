@@ -105,6 +105,14 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   depends P5.4 approval] Full draft, figures, cover letter; LLTB-1
   Zenodo release tag. L.
 
+## Gate G2 — P3.1c N=21 expansion *(DRAFT-FOR-REVIEW 2026-08-23)*
+
+**Location:** `papers/gate_reports/GATE_G2_report_v1.0.md` (working
+copy) and `plans/2026-08-23_GATE_G2_report_v1.0.md` (canonical
+install). **Status:** DRAFT-FOR-REVIEW pending human G2 decision.
+
+- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED)
+
 ## Optional / opportunistic (manual, no dispatch)
 
 - Weekly lit-scan: `~/lunarvoid/venv/bin/python

@@ -611,6 +611,14 @@ human G1 decision.
 
 - [x] **Gate G1** *(FINAL-PASSED 2026-08-22; §8 T1 trigger APPROVED; cost ceiling $150)* — extends G0′ (FINAL-PASSED 2026-08-21, D1) with LLTB-1 v0.5, Indian Tunnel analog registration + mask guardrail, per-DTM noise floors N=10/649, TRANQPIT1 calibration freeze (P3.1b), candidate registry N=44 (P3.1c, tier A=0/B=0/C=44 after I14-funnel downgrades), and Diviner thermal N=7 (P4.3, INGENIIPIT rocky-ejecta reframed as counter-evidence). Path-to-full-G1 enumerates 7 numbered steps; HALT held for user until then. cost $0 throughout; no §8 trigger fires. *(N=21, 11 new DTMs fetched + Frangi expansion; registry 44→257; cost $0; TYCHOPK 1.44 GiB deferred)*
 
+## Gate G2 — P3.1c N=21 expansion *(DRAFT-FOR-REVIEW 2026-08-23)*
+
+**Location:** `papers/gate_reports/GATE_G2_report_v1.0.md` (working
+copy) and `plans/2026-08-23_GATE_G2_report_v1.0.md` (canonical
+install). **Status:** DRAFT-FOR-REVIEW pending human G2 decision.
+
+- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED)
+
 ---
 
 # PHASE Z2 — Lunar roof-sag search on existing DTMs (WP2 zero-cost portion)

@@ -5,6 +5,22 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-23 (execution session 24 — G2 gate report DRAFT-FOR-REVIEW; halt for human decision)
+
+- G2 report v1.0 at 217 lines; verifier PASS-with-notes (3 fixes applied); skeptic SOUND-with-objections (8 fixes applied)
+- Verdict counts: 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED
+- Aggregate FP 9 / 14840.27 km² = 6.06 [Poisson-exact Garwood 95% CI 2.77, 11.51] per 10⁴ km² (calibration-context; 21/21 pit-associated/impact-melt)
+- 17 of 21 actually ran Frangi; 4 deferred (TYCHOPK memory + 3 no-cached-raster)
+- 9 highland sites flagged terrain_extrapolation; 0 FPs counted
+- FECUNPIT 3 unique large depressions (552.5/138.1 m from nearest pit; amplitudes 155/140/34 m); r003 borderline-TP under 150 m tolerance
+- Visual-inspection backlog: FECUNPIT 3 + TRANQPIT1 3 + INGENIIPIT 21 candidates
+- Path to full G2: visual inspection (Step 1, $0) → Tier-1 rental ($55 Hetzner for TYCHOPK + 30 random mare + 5-10 ASP demos) → MGC3 → P5.1 → P5.2 → SLDEM2015 → I12
+- SLDEM2015 + I12 confound deferrals now in G2 §5
+- Status: DRAFT-FOR-REVIEW → HALT for human G2 decision
+- cost $0; cumulative $0/$150/$800
+
+---
+
 ## 2026-08-23 (execution session 23 — P3.1c growth cycle closed: MANIFEST updated, 11 NAC DTM rows)
 
 - LROC NAC DTM fetch (11 OK, 3.6 GB, all sha256 verified) committed in
