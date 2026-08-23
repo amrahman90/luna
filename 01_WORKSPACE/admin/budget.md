@@ -25,6 +25,7 @@
 
 | Date | Item | Cost USD | Provider | Notes |
 |---|---|---|---|---|
+| 2026-08-23 | Sessions 26-31: Cycles 1-2 + 6 + 7 + Rounds 1-13 (local Tier-1 completion) | $0.00 | n/a | TYCHOPK + 3 deferred DTMs processed locally; registry 257 → 278; FP 6.06 → 3.74 per 10⁴ km²; Paper 1 v1.0 committed; G2 PARTIAL applied; vault 100 atomic notes (0 broken links); 5 commits (`f0d43b1`, `64463da`, `d97d9d5`, `7278e45`, `e48b608`, `299dc5a`) |
 | 2026-08-22 | G1 FINAL-PASSED + Phase 6 plan + budget open | $0.00 | n/a | §8 T1 trigger APPROVED; cost ceiling $150 |
 | 2026-08-22 | Session 18: Phase 5 record-only deferrals + G1 gate report | $0.00 | n/a | Phase 5 (21.2/21.3/21.4); verifier + skeptic clean |
 | 2026-08-22 | Session 17: Phase 5 deferrals (PU + physics + MGC3) | $0.00 | n/a | record-only; LLTB-1 n too small for PU physics screen |
