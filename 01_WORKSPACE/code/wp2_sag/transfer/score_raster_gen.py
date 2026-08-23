@@ -138,16 +138,25 @@ def run_one_dtm(dtm_name: str, rungs: list, wbt, out_root: Path,
                   f"{score_path}", flush=True)
             summary_rungs[rung] = {"status": "exists"}
             continue
-        factor = max(1, int(round(rung / res_full)))
+        # Rasterio supports fractional output scales.  Do not round the
+        # requested posting to an integer factor: for a 2 m source, a 5 m
+        # rung is a 2.5x scale factor, not 2x (Python's round(2.5) is 2).
+        scale_factor = max(1.0, float(rung) / res_full)
+        new_h = max(1, int(np.ceil(H_src / scale_factor)))
+        new_w = max(1, int(np.ceil(W_src / scale_factor)))
         # 1. Rebin DTM to rung posting (float32; rasterio out_shape writes
         #    directly into the smaller array, never allocates a full-DTM float64)
         with rasterio.open(dtm_path) as src:
             dtm_r = src.read(
                 1,
-                out_shape=(H_src // factor, W_src // factor),
+                out_shape=(new_h, new_w),
                 resampling=Resampling.average,
             ).astype(np.float32)
-            transform_r = src.transform * src.transform.scale(factor, factor)
+            # Derive the transform from the actual output dimensions so
+            # non-integer rungs retain the requested posting.
+            transform_r = src.transform * src.transform.scale(
+                src.width / new_w, src.height / new_h
+            )
         if nodata is not None:
             dtm_r = np.where(dtm_r == nodata, np.nan, dtm_r).astype(np.float32)
             # f32 sentinel guard: where the sentinel got diluted by averaging
@@ -236,7 +245,10 @@ def run_one_dtm(dtm_name: str, rungs: list, wbt, out_root: Path,
         profile_fr = profile_r.copy()
         profile_fr.update({"height": F.shape[0], "width": F.shape[1],
                           "transform": transform_fr})
-        with rasterio.open(depth_path, "w", **profile_fr) as dst:
+        # Depth is a product at the requested rung grid.  Frangi and score
+        # are written separately on the sub-sampled grid, so do not reuse
+        # profile_fr for depth.
+        with rasterio.open(depth_path, "w", **profile_r) as dst:
             dst.write(np.where(np.isfinite(depth), depth, -9999.0).astype(np.float32), 1)
         with rasterio.open(frangi_path, "w", **profile_fr) as dst:
             dst.write(np.where(np.isfinite(F), F, -9999.0).astype(np.float32), 1)

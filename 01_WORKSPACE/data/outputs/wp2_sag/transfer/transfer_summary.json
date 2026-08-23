@@ -1,6 +1,6 @@
 {
   "generated": "2026-08-23",
-  "scope_banner": "N=21/649 (21 good-tier DTMs on disk of 649 in scope; 20 have cached v0.1 score rasters; 1 are skipped for missing score raster: ['TYCHOPK'])",
+  "scope_banner": "N=21/649 (21 good-tier DTMs on disk of 649 in scope; 21 have cached v0.1 score rasters; 0 are skipped for missing score raster: [])",
   "frozen_calibration": {
     "score_frac": 0.2,
     "slope_deg": 45.0,
@@ -25,40 +25,37 @@
   },
   "per_rung": {
     "2": {
-      "n_candidates": 73,
+      "n_candidates": 74,
       "n_above_local_floor": 10,
       "n_tier_B": 0,
       "n_fp": 0,
       "n_tp": 3,
-      "area_km2": 3102.431590335721,
+      "area_km2": 4108.030111567789,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 9.656078422118615,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 7.292381487463581
     },
     "4": {
-      "n_candidates": 98,
+      "n_candidates": 99,
       "n_above_local_floor": 16,
       "n_tier_B": 2,
       "n_fp": 3,
       "n_tp": 5,
-      "area_km2": 8909.473071575614,
-      "fp_per_1e4km2": 3.367202499967216,
-      "fp_per_1e4km2_ci95_lo": 0.6943981062913646,
-      "fp_per_1e4km2_ci95_hi": 9.840394599443867,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "area_km2": 9915.07159280768,
+      "fp_per_1e4km2": 3.025696760652921,
+      "fp_per_1e4km2_ci95_lo": 0.6239714127171624,
+      "fp_per_1e4km2_ci95_hi": 8.842369908959647
     },
     "5": {
-      "n_candidates": 100,
+      "n_candidates": 101,
       "n_above_local_floor": 18,
       "n_tier_B": 0,
       "n_fp": 6,
       "n_tp": 5,
-      "area_km2": 8583.642273589581,
-      "fp_per_1e4km2": 6.990039669361558,
-      "fp_per_1e4km2_ci95_lo": 2.565221363273383,
-      "fp_per_1e4km2_ci95_hi": 15.214373579733726,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "area_km2": 9589.240794821648,
+      "fp_per_1e4km2": 6.2570125501907325,
+      "fp_per_1e4km2_ci95_lo": 2.2962133297141842,
+      "fp_per_1e4km2_ci95_hi": 13.618882142964877
     },
     "8": {
       "n_candidates": 4,
@@ -69,8 +66,7 @@
       "area_km2": 450.6177259861064,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 66.48056880137811,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 66.48056880137811
     }
   },
   "per_dtm": {
@@ -92,8 +88,7 @@
       "local_3sigma_m": 2.29791,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 15.020830792865873,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 15.020830792865873
     },
     "FECUNPIT": {
       "rungs": [
@@ -113,8 +108,7 @@
       "fp_per_1e4km2": 44.77358297134464,
       "fp_per_1e4km2_ci95_lo": 16.431115842133263,
       "fp_per_1e4km2_ci95_hi": 97.45324061822672,
-      "ci_method": "Poisson-exact (Garwood) 95% CI",
-      "notes": "Distance reference correction (skeptic 2026-08-23): 3 unique depressions are at 552.5 m (r001, r002) and 138.1 m (r003) from the NEAREST catalogued pit in the atlas (NOT 67 km from the named Central Mare Fecunditatis Pit). r003 at 138 m is just outside the calibrated 100 m match radius \u2192 labelled FP per protocol; under 150 m tolerance it would be a candidate TP. Visual inspection of the NAC frame at the nearest catalogued pit is the relevant check."
+      "notes": "Distance reference correction (skeptic 2026-08-23): 3 unique depressions are at 552.5 m (r001, r002) and 138.1 m (r003) from the NEAREST catalogued pit in the atlas (NOT 67 km from the named Central Mare Fecunditatis Pit). r003 at 138 m is just outside the calibrated 100 m match radius -> labelled FP per protocol; under 150 m tolerance it would be a candidate TP. Visual inspection of the NAC frame at the nearest catalogued pit is the relevant check."
     },
     "FRESHMELT": {
       "rungs": [
@@ -134,8 +128,7 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 29.282989426064773,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 29.282989426064773
     },
     "FRESHMELT1": {
       "rungs": [
@@ -155,8 +148,7 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 57.845966310490624,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 57.845966310490624
     },
     "GRUITHMARE2": {
       "rungs": [
@@ -214,8 +206,7 @@
       "local_3sigma_m": 2.959265,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 53.83856634142143,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 53.83856634142143
     },
     "IRIDIUMPIT1": {
       "rungs": [
@@ -234,8 +225,7 @@
       "local_3sigma_m": 2.837609,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 18.47239324296897,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 18.47239324296897
     },
     "KINGCRATER2": {
       "rungs": [
@@ -255,8 +245,7 @@
       "local_3sigma_m": 1.972013,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 54.42576172746802,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 54.42576172746802
     },
     "KINGCRATER3": {
       "rungs": [
@@ -276,8 +265,7 @@
       "local_3sigma_m": 3.630243,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 52.80261881508744,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 52.80261881508744
     },
     "KINGCRATER4": {
       "rungs": [
@@ -297,8 +285,7 @@
       "local_3sigma_m": 3.265668,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 50.90624842155227,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 50.90624842155227
     },
     "MARIUSCONE": {
       "rungs": [
@@ -336,8 +323,7 @@
       "local_3sigma_m": 4.137601,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 33.240284400689056,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 33.240284400689056
     },
     "PRCLRMPIT01": {
       "rungs": [
@@ -356,8 +342,7 @@
       "local_3sigma_m": 3.526279,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 19.393170471549602,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 19.393170471549602
     },
     "SWFECUNPIT1": {
       "rungs": [
@@ -377,8 +362,7 @@
       "local_3sigma_m": 3.231591,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 22.217415199396264,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 22.217415199396264
     },
     "TRANQPIT1": {
       "rungs": [
@@ -396,27 +380,27 @@
       "local_3sigma_m": 3.735551,
       "fp_per_1e4km2": 240.40979676959432,
       "fp_per_1e4km2_ci95_lo": 49.57827977744834,
-      "fp_per_1e4km2_ci95_hi": 702.5794456400964,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 702.5794456400964
     },
     "TYCHOPK": {
       "rungs": [
-        null
+        2.0,
+        4.0,
+        5.0
       ],
-      "n_candidates": 0,
+      "n_candidates": 3,
       "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
+      "n_below_local_floor": 3,
       "n_tier_B": 0,
       "n_fp": 0,
       "n_tp": 0,
-      "area_km2": 0.0,
-      "top_score": 0.0,
+      "area_km2": 3016.795563696204,
+      "top_score": 0.15388759970664978,
       "local_Amin_m": NaN,
       "local_3sigma_m": NaN,
-      "fp_per_1e4km2": NaN,
-      "fp_per_1e4km2_ci95_lo": NaN,
-      "fp_per_1e4km2_ci95_hi": NaN,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2": 0.0,
+      "fp_per_1e4km2_ci95_lo": 0.0,
+      "fp_per_1e4km2_ci95_hi": 9.930179922048124
     },
     "TYCHOPK02": {
       "rungs": [
@@ -436,8 +420,7 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 52.64443359899888,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 52.64443359899888
     },
     "TYCHOPK03": {
       "rungs": [
@@ -457,8 +440,7 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 70.05886367231727,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 70.05886367231727
     },
     "TYCHOPK04": {
       "rungs": [
@@ -478,8 +460,7 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 68.19021089525859,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 68.19021089525859
     },
     "TYCHOPK07": {
       "rungs": [
@@ -499,121 +480,36 @@
       "local_3sigma_m": NaN,
       "fp_per_1e4km2": 0.0,
       "fp_per_1e4km2_ci95_lo": 0.0,
-      "fp_per_1e4km2_ci95_hi": 41.298350557451414,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2_ci95_hi": 41.298350557451414
     }
   },
   "aggregate": {
-    "n_dtms_with_score_raster": 20,
-    "n_dtms_skipped_no_raster": 1,
-    "dtms_skipped": [
-      "TYCHOPK"
-    ],
-    "n_dtm_rung_pairs": 51,
-    "n_candidates": 275,
+    "n_dtms_with_score_raster": 21,
+    "n_dtms_skipped_no_raster": 0,
+    "dtms_skipped": [],
+    "n_dtm_rung_pairs": 54,
+    "n_candidates": 278,
     "n_above_local_floor": 45,
-    "n_below_local_floor": 230,
+    "n_below_local_floor": 233,
     "n_tier_B": 3,
     "n_tier_A": 0,
     "n_fp": 9,
     "n_tp": 14,
-    "total_area_km2": 21046.164661487022,
-    "fp_per_1e4km2": 4.2763135919340955,
-    "fp_per_1e4km2_ci95_lo": 1.9554028791332096,
-    "fp_per_1e4km2_ci95_hi": 8.117775246091815,
+    "total_area_km2": 24062.96022518323,
+    "fp_per_1e4km2": 3.74018820451733,
+    "fp_per_1e4km2_ci95_lo": 1.7102522128891549,
+    "fp_per_1e4km2_ci95_hi": 7.100042260610549,
     "fp_per_1e4km2_n_above_floor": 45,
-    "fp_per_1e4km2_interpretation": "calibration-context rate, selection-biased to catalogued pits (all 21 DTMs on disk are pit-associated or pit-rich); NOT a random-mare survey rate; CIs are Poisson-exact (Garwood) 95%",
-    "highland_extrapolation_note": "9 highland/impact-melt sites (TYCHOPK02/03/04/07, KINGCRATER2/3/4, FRESHMELT, FRESHMELT1) have NaN local_Amin (no usable flat panels); the FROZEN TRANQPIT1 calibration is mare-only. Their peaks are marked below-local-floor by default and DO NOT contribute to FP counting \u2014 but ARE preserved in the registry with the terrain-extrapolation annotation. Any morphometric inference at these sites with the frozen thresholds is extrapolation, not portability.",
+    "fp_per_1e4km2_interpretation": "calibration-context rate, selection-biased to catalogued pits (all 21 DTMs on disk are pit-associated or pit-rich); NOT a random-mare survey rate",
+    "highland_extrapolation_note": "10 highland/impact-melt sites (KINGCRATER2/3/4 central peak, TYCHOPK/02/03/04/07 Tycho central peak) plus 2 impact-melt sites (FRESHMELT, FRESHMELT1) have NaN local_Amin (no usable flat panels); the FROZEN TRANQPIT1 calibration is mare-only. Their peaks are marked below-local-floor by default and DO NOT contribute to FP counting \u2014 but ARE preserved in the registry with the terrain-extrapolation annotation. Any morphometric inference at these sites with the frozen thresholds is extrapolation, not portability.",
     "scope_caveats": [
       "all 21 on-disk DTMs are pit-associated or impact-melt (selection bias toward catalogued pits)",
-      "9 highland/impact-melt sites have NaN local_Amin and are treated as terrain extrapolation, not portability",
+      "10 highland/impact-melt sites have NaN local_Amin and are treated as terrain extrapolation, not portability",
       "no random-mare control; rate is calibration context only",
-      "TYCHOPK (1.44 GiB float32) skipped due to memory ceiling; deferred to post-G2 (needs Tier-1 rental or memory-efficient tile-based processing)",
       "frozen TRANQPIT1 recipe unchanged from P3.1b freeze"
-    ],
-    "ci_method": "Poisson-exact (Garwood) 95% CI",
-    "skeptic_corrections": [
-      {
-        "date": "2026-08-23",
-        "site": "FECUNPIT",
-        "issue": "distance reference was 67 km to named pit; correct reference is 138-552 m to nearest catalogued pit (per dist_pit_m column)",
-        "resolved": true
-      }
     ]
   },
   "pair_results": [
-    {
-      "dtm": "GRUITHMARE2",
-      "rung_m": null,
-      "error": "no cached score raster",
-      "n_candidates": 0,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "area_km2": 0.0,
-      "from_cache": false,
-      "n_pits_in_dtm": 0,
-      "registry_count": 0,
-      "top_score": 0.0,
-      "local_3sigma_m": 3.355474,
-      "local_Amin_m": 3.355474
-    },
-    {
-      "dtm": "GRUITHUIS17",
-      "rung_m": null,
-      "error": "no cached score raster",
-      "n_candidates": 0,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "area_km2": 0.0,
-      "from_cache": false,
-      "n_pits_in_dtm": 0,
-      "registry_count": 0,
-      "top_score": 0.0,
-      "local_3sigma_m": 4.385086,
-      "local_Amin_m": 4.385086
-    },
-    {
-      "dtm": "MARIUSCONE",
-      "rung_m": null,
-      "error": "no cached score raster",
-      "n_candidates": 0,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "area_km2": 0.0,
-      "from_cache": false,
-      "n_pits_in_dtm": 0,
-      "registry_count": 0,
-      "top_score": 0.0,
-      "local_3sigma_m": 3.68877,
-      "local_Amin_m": 3.68877
-    },
-    {
-      "dtm": "TYCHOPK",
-      "rung_m": null,
-      "error": "no cached score raster",
-      "n_candidates": 0,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "area_km2": 0.0,
-      "from_cache": false,
-      "n_pits_in_dtm": 0,
-      "registry_count": 0,
-      "top_score": 0.0,
-      "local_3sigma_m": NaN,
-      "local_Amin_m": NaN
-    },
     {
       "dtm": "FECNDITATS2",
       "rung_m": 2.0,
@@ -638,7 +534,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 13.84
+      "runtime_s": 11.12
     },
     {
       "dtm": "FECNDITATS2",
@@ -664,7 +560,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 10.33
+      "runtime_s": 8.76
     },
     {
       "dtm": "FECNDITATS2",
@@ -690,7 +586,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 10.49
+      "runtime_s": 9.22
     },
     {
       "dtm": "FECUNPIT",
@@ -716,7 +612,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 9.14
+      "runtime_s": 7.19
     },
     {
       "dtm": "FECUNPIT",
@@ -742,7 +638,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 9.25
+      "runtime_s": 7.29
     },
     {
       "dtm": "FRESHMELT",
@@ -768,7 +664,7 @@
       "registry_count": 10,
       "registry_new_appends": 0,
       "registry_dups_skipped": 10,
-      "runtime_s": 11.96
+      "runtime_s": 10.05
     },
     {
       "dtm": "FRESHMELT",
@@ -794,7 +690,7 @@
       "registry_count": 12,
       "registry_new_appends": 0,
       "registry_dups_skipped": 12,
-      "runtime_s": 12.84
+      "runtime_s": 10.51
     },
     {
       "dtm": "FRESHMELT",
@@ -820,7 +716,7 @@
       "registry_count": 12,
       "registry_new_appends": 0,
       "registry_dups_skipped": 12,
-      "runtime_s": 10.99
+      "runtime_s": 10.23
     },
     {
       "dtm": "FRESHMELT1",
@@ -846,7 +742,7 @@
       "registry_count": 5,
       "registry_new_appends": 0,
       "registry_dups_skipped": 5,
-      "runtime_s": 8.8
+      "runtime_s": 7.41
     },
     {
       "dtm": "FRESHMELT1",
@@ -872,7 +768,7 @@
       "registry_count": 5,
       "registry_new_appends": 0,
       "registry_dups_skipped": 5,
-      "runtime_s": 8.95
+      "runtime_s": 7.39
     },
     {
       "dtm": "FRESHMELT1",
@@ -898,7 +794,111 @@
       "registry_count": 5,
       "registry_new_appends": 0,
       "registry_dups_skipped": 5,
-      "runtime_s": 9.18
+      "runtime_s": 7.65
+    },
+    {
+      "dtm": "GRUITHMARE2",
+      "rung_m": 4.0,
+      "eff_m": 15.70040485829928,
+      "shape": [
+        5000,
+        1235
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_4m.tif",
+      "n_candidates": 5,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 5,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0009807288879528642,
+      "local_3sigma_m": 3.355474,
+      "local_Amin_m": 3.355474,
+      "area_km2": 1129.3839771514567,
+      "n_pits_in_dtm": 0,
+      "registry_count": 5,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 5,
+      "runtime_s": 8.49
+    },
+    {
+      "dtm": "GRUITHMARE2",
+      "rung_m": 5.0,
+      "eff_m": 15.70040485829928,
+      "shape": [
+        5000,
+        1235
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_5m.tif",
+      "n_candidates": 5,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 5,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0009807288879528642,
+      "local_3sigma_m": 3.355474,
+      "local_Amin_m": 3.355474,
+      "area_km2": 1129.3839771514567,
+      "n_pits_in_dtm": 0,
+      "registry_count": 5,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 5,
+      "runtime_s": 8.56
+    },
+    {
+      "dtm": "GRUITHUIS17",
+      "rung_m": 4.0,
+      "eff_m": 16.05704697986545,
+      "shape": [
+        5000,
+        1192
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_4m.tif",
+      "n_candidates": 3,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 3,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0008848686120472848,
+      "local_3sigma_m": 4.385086,
+      "local_Amin_m": 4.385086,
+      "area_km2": 1160.4557833605004,
+      "n_pits_in_dtm": 0,
+      "registry_count": 3,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 3,
+      "runtime_s": 8.67
+    },
+    {
+      "dtm": "GRUITHUIS17",
+      "rung_m": 5.0,
+      "eff_m": 16.05704697986545,
+      "shape": [
+        5000,
+        1192
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_5m.tif",
+      "n_candidates": 3,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 3,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0008848686120472848,
+      "local_3sigma_m": 4.385086,
+      "local_Amin_m": 4.385086,
+      "area_km2": 1160.4557833605004,
+      "n_pits_in_dtm": 0,
+      "registry_count": 3,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 3,
+      "runtime_s": 8.79
     },
     {
       "dtm": "INGENIIPIT",
@@ -924,7 +924,7 @@
       "registry_count": 8,
       "registry_new_appends": 0,
       "registry_dups_skipped": 8,
-      "runtime_s": 12.55
+      "runtime_s": 10.1
     },
     {
       "dtm": "INGENIIPIT",
@@ -950,7 +950,7 @@
       "registry_count": 8,
       "registry_new_appends": 0,
       "registry_dups_skipped": 8,
-      "runtime_s": 10.39
+      "runtime_s": 9.23
     },
     {
       "dtm": "INGENIIPIT",
@@ -976,7 +976,7 @@
       "registry_count": 8,
       "registry_new_appends": 0,
       "registry_dups_skipped": 8,
-      "runtime_s": 10.91
+      "runtime_s": 9.54
     },
     {
       "dtm": "IRIDIUMPIT1",
@@ -1002,7 +1002,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 9.55
+      "runtime_s": 8.65
     },
     {
       "dtm": "IRIDIUMPIT1",
@@ -1028,7 +1028,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 9.85
+      "runtime_s": 8.68
     },
     {
       "dtm": "KINGCRATER2",
@@ -1054,7 +1054,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 8.86
+      "runtime_s": 8.02
     },
     {
       "dtm": "KINGCRATER2",
@@ -1080,7 +1080,7 @@
       "registry_count": 8,
       "registry_new_appends": 0,
       "registry_dups_skipped": 8,
-      "runtime_s": 9.94
+      "runtime_s": 7.48
     },
     {
       "dtm": "KINGCRATER2",
@@ -1106,7 +1106,7 @@
       "registry_count": 8,
       "registry_new_appends": 0,
       "registry_dups_skipped": 8,
-      "runtime_s": 9.6
+      "runtime_s": 7.69
     },
     {
       "dtm": "KINGCRATER3",
@@ -1132,7 +1132,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 7.9
+      "runtime_s": 7.21
     },
     {
       "dtm": "KINGCRATER3",
@@ -1158,7 +1158,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 7.99
+      "runtime_s": 7.23
     },
     {
       "dtm": "KINGCRATER3",
@@ -1184,7 +1184,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 8.25
+      "runtime_s": 7.37
     },
     {
       "dtm": "KINGCRATER4",
@@ -1210,7 +1210,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 8.51
+      "runtime_s": 7.86
     },
     {
       "dtm": "KINGCRATER4",
@@ -1236,7 +1236,7 @@
       "registry_count": 2,
       "registry_new_appends": 0,
       "registry_dups_skipped": 2,
-      "runtime_s": 8.84
+      "runtime_s": 7.24
     },
     {
       "dtm": "KINGCRATER4",
@@ -1262,7 +1262,59 @@
       "registry_count": 2,
       "registry_new_appends": 0,
       "registry_dups_skipped": 2,
-      "runtime_s": 8.87
+      "runtime_s": 6.91
+    },
+    {
+      "dtm": "MARIUSCONE",
+      "rung_m": 4.0,
+      "eff_m": 10.200551977917312,
+      "shape": [
+        5000,
+        2174
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_4m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.018652373924851418,
+      "local_3sigma_m": 3.68877,
+      "local_Amin_m": 3.68877,
+      "area_km2": 813.10545484437,
+      "n_pits_in_dtm": 1,
+      "registry_count": 1,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 1,
+      "runtime_s": 8.72
+    },
+    {
+      "dtm": "MARIUSCONE",
+      "rung_m": 5.0,
+      "eff_m": 10.200551977917312,
+      "shape": [
+        5000,
+        2174
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_5m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.018652373924851418,
+      "local_3sigma_m": 3.68877,
+      "local_Amin_m": 3.68877,
+      "area_km2": 813.10545484437,
+      "n_pits_in_dtm": 1,
+      "registry_count": 1,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 1,
+      "runtime_s": 8.72
     },
     {
       "dtm": "MARIUSPIT01",
@@ -1288,7 +1340,7 @@
       "registry_count": 2,
       "registry_new_appends": 0,
       "registry_dups_skipped": 2,
-      "runtime_s": 9.77
+      "runtime_s": 9.39
     },
     {
       "dtm": "MARIUSPIT01",
@@ -1314,7 +1366,7 @@
       "registry_count": 4,
       "registry_new_appends": 0,
       "registry_dups_skipped": 4,
-      "runtime_s": 10.03
+      "runtime_s": 8.98
     },
     {
       "dtm": "PRCLRMPIT01",
@@ -1340,7 +1392,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 9.86
+      "runtime_s": 8.25
     },
     {
       "dtm": "PRCLRMPIT01",
@@ -1366,7 +1418,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 10.21
+      "runtime_s": 8.27
     },
     {
       "dtm": "SWFECUNPIT1",
@@ -1392,7 +1444,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 11.12
+      "runtime_s": 9.66
     },
     {
       "dtm": "SWFECUNPIT1",
@@ -1418,7 +1470,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 11.49
+      "runtime_s": 9.51
     },
     {
       "dtm": "SWFECUNPIT1",
@@ -1444,7 +1496,7 @@
       "registry_count": 1,
       "registry_new_appends": 0,
       "registry_dups_skipped": 1,
-      "runtime_s": 9.18
+      "runtime_s": 8.83
     },
     {
       "dtm": "TRANQPIT1",
@@ -1470,7 +1522,85 @@
       "registry_count": 4,
       "registry_new_appends": 0,
       "registry_dups_skipped": 4,
-      "runtime_s": 10.37
+      "runtime_s": 9.22
+    },
+    {
+      "dtm": "TYCHOPK",
+      "rung_m": 2.0,
+      "eff_m": 12.357395254921757,
+      "shape": [
+        5000,
+        1981
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/TYCHOPK/score_2m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.14384058117866516,
+      "local_3sigma_m": NaN,
+      "local_Amin_m": NaN,
+      "area_km2": 1005.598521232068,
+      "n_pits_in_dtm": 0,
+      "registry_count": 1,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 1,
+      "runtime_s": 9.43
+    },
+    {
+      "dtm": "TYCHOPK",
+      "rung_m": 4.0,
+      "eff_m": 12.357395254921757,
+      "shape": [
+        5000,
+        1981
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/TYCHOPK/score_4m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.15227395296096802,
+      "local_3sigma_m": NaN,
+      "local_Amin_m": NaN,
+      "area_km2": 1005.598521232068,
+      "n_pits_in_dtm": 0,
+      "registry_count": 1,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 1,
+      "runtime_s": 9.74
+    },
+    {
+      "dtm": "TYCHOPK",
+      "rung_m": 5.0,
+      "eff_m": 12.357395254921757,
+      "shape": [
+        5000,
+        1981
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/TYCHOPK/score_5m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.15388759970664978,
+      "local_3sigma_m": NaN,
+      "local_Amin_m": NaN,
+      "area_km2": 1005.598521232068,
+      "n_pits_in_dtm": 0,
+      "registry_count": 1,
+      "registry_new_appends": 0,
+      "registry_dups_skipped": 1,
+      "runtime_s": 10.18
     },
     {
       "dtm": "TYCHOPK02",
@@ -1496,7 +1626,7 @@
       "registry_count": 24,
       "registry_new_appends": 0,
       "registry_dups_skipped": 24,
-      "runtime_s": 12.16
+      "runtime_s": 11.17
     },
     {
       "dtm": "TYCHOPK02",
@@ -1522,7 +1652,7 @@
       "registry_count": 26,
       "registry_new_appends": 0,
       "registry_dups_skipped": 26,
-      "runtime_s": 12.79
+      "runtime_s": 9.96
     },
     {
       "dtm": "TYCHOPK02",
@@ -1548,7 +1678,7 @@
       "registry_count": 26,
       "registry_new_appends": 0,
       "registry_dups_skipped": 26,
-      "runtime_s": 13.49
+      "runtime_s": 10.31
     },
     {
       "dtm": "TYCHOPK03",
@@ -1574,7 +1704,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 8.95
+      "runtime_s": 7.92
     },
     {
       "dtm": "TYCHOPK03",
@@ -1600,7 +1730,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 8.56
+      "runtime_s": 7.86
     },
     {
       "dtm": "TYCHOPK03",
@@ -1626,7 +1756,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 8.82
+      "runtime_s": 8.15
     },
     {
       "dtm": "TYCHOPK04",
@@ -1652,7 +1782,7 @@
       "registry_count": 4,
       "registry_new_appends": 0,
       "registry_dups_skipped": 4,
-      "runtime_s": 9.21
+      "runtime_s": 7.97
     },
     {
       "dtm": "TYCHOPK04",
@@ -1678,7 +1808,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 9.28
+      "runtime_s": 7.26
     },
     {
       "dtm": "TYCHOPK04",
@@ -1704,7 +1834,7 @@
       "registry_count": 3,
       "registry_new_appends": 0,
       "registry_dups_skipped": 3,
-      "runtime_s": 9.56
+      "runtime_s": 7.57
     },
     {
       "dtm": "TYCHOPK07",
@@ -1730,7 +1860,7 @@
       "registry_count": 14,
       "registry_new_appends": 0,
       "registry_dups_skipped": 14,
-      "runtime_s": 10.5
+      "runtime_s": 10.03
     },
     {
       "dtm": "TYCHOPK07",
@@ -1756,7 +1886,7 @@
       "registry_count": 12,
       "registry_new_appends": 0,
       "registry_dups_skipped": 12,
-      "runtime_s": 10.14
+      "runtime_s": 9.62
     },
     {
       "dtm": "TYCHOPK07",
@@ -1782,167 +1912,11 @@
       "registry_count": 12,
       "registry_new_appends": 0,
       "registry_dups_skipped": 12,
-      "runtime_s": 10.42
-    },
-    {
-      "dtm": "GRUITHMARE2",
-      "rung_m": 4.0,
-      "eff_m": 15.70040485829928,
-      "shape": [
-        5000,
-        1235
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_4m.tif",
-      "n_candidates": 5,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 5,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.0009807288879528642,
-      "local_3sigma_m": 3.355474,
-      "local_Amin_m": 3.355474,
-      "area_km2": 1129.3839771514567,
-      "n_pits_in_dtm": 0,
-      "registry_count": 5,
-      "registry_new_appends": 5,
-      "registry_dups_skipped": 0,
-      "runtime_s": 12.14
-    },
-    {
-      "dtm": "GRUITHMARE2",
-      "rung_m": 5.0,
-      "eff_m": 15.70040485829928,
-      "shape": [
-        5000,
-        1235
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_5m.tif",
-      "n_candidates": 5,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 5,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.0009807288879528642,
-      "local_3sigma_m": 3.355474,
-      "local_Amin_m": 3.355474,
-      "area_km2": 1129.3839771514567,
-      "n_pits_in_dtm": 0,
-      "registry_count": 5,
-      "registry_new_appends": 5,
-      "registry_dups_skipped": 0,
-      "runtime_s": 12.08
-    },
-    {
-      "dtm": "GRUITHUIS17",
-      "rung_m": 4.0,
-      "eff_m": 16.05704697986545,
-      "shape": [
-        5000,
-        1192
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_4m.tif",
-      "n_candidates": 3,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 3,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.0008848686120472848,
-      "local_3sigma_m": 4.385086,
-      "local_Amin_m": 4.385086,
-      "area_km2": 1160.4557833605004,
-      "n_pits_in_dtm": 0,
-      "registry_count": 3,
-      "registry_new_appends": 3,
-      "registry_dups_skipped": 0,
-      "runtime_s": 9.56
-    },
-    {
-      "dtm": "GRUITHUIS17",
-      "rung_m": 5.0,
-      "eff_m": 16.05704697986545,
-      "shape": [
-        5000,
-        1192
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_5m.tif",
-      "n_candidates": 3,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 3,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.0008848686120472848,
-      "local_3sigma_m": 4.385086,
-      "local_Amin_m": 4.385086,
-      "area_km2": 1160.4557833605004,
-      "n_pits_in_dtm": 0,
-      "registry_count": 3,
-      "registry_new_appends": 3,
-      "registry_dups_skipped": 0,
-      "runtime_s": 12.87
-    },
-    {
-      "dtm": "MARIUSCONE",
-      "rung_m": 4.0,
-      "eff_m": 10.200551977917312,
-      "shape": [
-        5000,
-        2174
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_4m.tif",
-      "n_candidates": 1,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 1,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.018652373924851418,
-      "local_3sigma_m": 3.68877,
-      "local_Amin_m": 3.68877,
-      "area_km2": 813.10545484437,
-      "n_pits_in_dtm": 1,
-      "registry_count": 1,
-      "registry_new_appends": 1,
-      "registry_dups_skipped": 0,
-      "runtime_s": 14.27
-    },
-    {
-      "dtm": "MARIUSCONE",
-      "rung_m": 5.0,
-      "eff_m": 10.200551977917312,
-      "shape": [
-        5000,
-        2174
-      ],
-      "from_cache": true,
-      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_5m.tif",
-      "n_candidates": 1,
-      "n_above_local_floor": 0,
-      "n_below_local_floor": 1,
-      "n_tier_B": 0,
-      "n_fp": 0,
-      "n_tp": 0,
-      "top_score": 0.018652373924851418,
-      "local_3sigma_m": 3.68877,
-      "local_Amin_m": 3.68877,
-      "area_km2": 813.10545484437,
-      "n_pits_in_dtm": 1,
-      "registry_count": 1,
-      "registry_new_appends": 1,
-      "registry_dups_skipped": 0,
-      "runtime_s": 13.78
+      "runtime_s": 9.8
     }
   ],
-  "registry_rows_added": 18,
-  "runtime_s": 453.9,
+  "registry_rows_added": 0,
+  "runtime_s": 471.3,
   "cycle_notes": {
     "cycle1_close_2026-08-23": [
       "Added 3 newly-Frangi-scored NAC DTMs: GRUITHUIS17, GRUITHMARE2, MARIUSCONE",
@@ -1970,7 +1944,21 @@
         "depth_at_score_max_m": 619.3,
         "annotate": true,
         "reason": "frangi@score < 0.02 AND depth@score >= 100 m \u2014 deep-pit low-vesselness"
+      },
+      "TYCHOPK": {
+        "frangi_at_score_max": 0.0185,
+        "depth_at_score_max_m": 18.35,
+        "annotate": false,
+        "reason": "frangi@score=0.0185 is < 0.02 nominal threshold but depth@score=18.35 m is NOT >= 100 m -> NOT deep-pit low-vesselness. Terrain context (Tycho central peak) + shallow depth = central-peak-relief terrain_extrapolation risk (matches TYCHOPK02/03/04/07 precedent); all 3 peaks marked below-local-floor with terrain-extrapolation annotation. Note: 0.0185 is 7.5% below the 0.02 nominal threshold; defensible because depth is clearly shallow."
       }
-    }
+    },
+    "cycle2_close_2026-08-23": [
+      "Added 1 newly-Frangi-scored NAC DTM: TYCHOPK (Tycho central peak, 1.51 GB float32, 30892x12240 @ 2 m)",
+      "Added 3 below-local-floor candidates to registry (1 per rung at 2/4/5 m)",
+      "All 3 new candidates are below-local-floor (no_local_floor=True; Tycho central peak highland/impact-melt; FROZEN TRANQPIT1 is mare-only -> terrain-extrapolation by default)",
+      "0 new FPs (above-floor count: 0; FPs require above-floor)",
+      "Skeptic fall-back rule evaluated: frangi@score=0.0185 (< 0.02 by 7.5%, borderline) BUT depth@score=18.35 m (NOT >= 100 m) -> NOT deep-pit low-vesselness; classified as terrain_extrapolation risk (Tycho central peak relief, similar to TYCHOPK02/03/04/07). All 3 new LV-TYCHOPK-* rows annotated.",
+      "n_fp delta: 0 (was 9, still 9); area delta: +3016.80 km^2 (was 21046.16, now 24062.96); FP rate 4.28 -> 3.74/1e4km2 [1.71, 7.10] (denominator grew with no numerator change)"
+    ]
   }
 }

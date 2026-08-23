@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-08-23 (execution session 27 — Cycle 2 close: TYCHOPK)
+
+- TYCHOPK Frangi score rasters generated at 2+4+5 m (no tile-based fallback needed;
+  6.8 GiB Python peak on 2 m rung, well within 31 GB RAM)
+- Wall time: 478.9 s = 8.0 min total (2 m: 260.3 s, 4 m: 119.9 s, 5 m: 98.7 s)
+- depth_max 234 m (similar to TYCHOPK02/03/04/07; Tycho central peak relief)
+- frangi_max 0.53 (global); score_max 0.34
+- Output: ~/lunarvoid/data/outputs/wp2_sag/score_rasters/TYCHOPK/{score,depth,frangi}_{2,4,5}m.tif (296 MiB total)
+- Source: PDS LROLRC_2001 (sha256 caf67354...); no MANIFEST change
+- Two bug fixes applied to score_raster_gen.py:
+  - true fractional rasterio rebin for 2 m → 5 m (2.5× rather than incorrectly rounded 2×)
+  - depth output uses requested rung grid instead of 5000-pixel Frangi grid
+- Registry: 275 → 275+3 (TYCHOPK only); TYCHOPK per-DTM entry added to transfer_summary.json
+- Skeptic fall-back rule applied: NO (NOT deep-pit; terrain_extrapolation risk — frangi@score=0.0185
+  is borderline < 0.02 by 7.5% but depth@score=18.35 m is shallow, NOT ≥ 100 m; matches TYCHOPK02/03/04/07
+  central-peak-relief precedent; 3 LV-TYCHOPK-* rows annotated with
+  "; terrain_extrapolation risk (central-peak relief, similar to TYCHOPK02/03/04/07); below-local-floor;
+  not an independent void candidate")
+- Aggregate n_fp unchanged at 9; area +3016.80 km² (was 21046.16, now 24062.96); FP rate
+  4.28 → 3.74 per 10⁴ km² [95% CI 1.71, 7.10] (denominator grew, numerator did not —
+  all 3 TYCHOPK peaks below-local-floor, contribute 0 FPs per protocol)
+- 21/21 DTMs with score rasters (was 20/21; TYCHOPK no longer skipped)
+- Smoke test PASS (F1 0.392/0/0.800; AUC 0.990)
+- Cost: $0
+- Cycle 3: NAC EDR fetch for top-10 priority sites
+
 ---
 
 ## 2026-08-23 (execution session 25 — Obsidian vault bootstrap)
