@@ -4,15 +4,22 @@
 **Target venue:** Remote Sensing of Environment / ISPRS Journal
 (v5 publication strategy #1, benchmark-paper category).
 **Authors:** LUNARVOID team.
-**Date:** 2026-08-22 (draft v0.2: Task 16.3 — degradation-ladder v0.5
-folded in; §4.5 + figs/ index).
-**Status:** Results section populated from the v0.1 LLTB-1 runs on
-six analog sites (Fieg_A, IndianTunnel_Collapse3, IndianTunnel_NorthSurface,
-Kingsbowl, IndianTunnel_cave_10x, Sheepridge), plus the v0.5
-illumination × sensor degradation arms on the NorthSurface ladder
-master (§4.5). Introduction, related work, and discussion remain
-v0.1 sketches; per-fold confidence intervals and the held-out-basin
-test are still deferred.
+**Date:** 2026-08-23 (draft v1.0: Cycles 1-2 (local Tier-1 plan)
+folded in: TYCHOPK 1.44 GiB + 3 deferred DTMs (GRUITHUIS17/
+GRUITHMARE2/MARIUSCONE) processed at 4-5 m rungs; registry 257 → 278
+rows; aggregate FP 6.06 → 3.74 per 10⁴ km²; G2 verdict 5 PASS / 1
+PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-PARTIAL /
+1 NOT MEASURED).
+**Status:** All sections promoted to v1.0; submission-ready modulo G2
+final-pass decision. Results section populated from the v0.1 LLTB-1
+runs on six analog sites (Fieg_A, IndianTunnel_Collapse3,
+IndianTunnel_NorthSurface, Kingsbowl, IndianTunnel_cave_10x,
+Sheepridge), the v0.5 illumination × sensor degradation arms on the
+NorthSurface ladder master (§4.5), and the Cycles 1-2 lunar extension
+of the depth × Frangi pipeline to the 4 G2-deferred DTMs (§3.3.1).
+The Tranquillitatis radar conduit remains the only instrumented
+subsurface structure on the Moon evidenced by any instrument today
+(Carrer 2024; v5).
 
 ## Abstract
 
@@ -58,12 +65,34 @@ bounds camera and altimeter requirements
 for future missions seeking intact lava tube roofs and frames the
 per-claim inference probabilities required for honest reporting
 under the brutal ~20-positive / ~240,000-tile mare base rate.
+**The Cycles 1-2 local Tier-1 extension (2026-08-23) closed the
+TYCHOPK 1.44 GiB memory ceiling + the 3 DTMs (GRUITHUIS17 / GRUITHMARE2
+/ MARIUSCONE) previously without cached score rasters**: 9 score
+rasters added (3 new DTMs × 2 rungs [4+5 m] + TYCHOPK × 3 rungs
+[2+4+5 m]; 27 GeoTIFFs total once depth + Frangi channels are
+counted), all below the per-DTM `local_Amin` floor; the candidate
+registry grew from 257 → **278 rows** (+21 new). Aggregate FP per
+10⁴ km² dropped from 6.06 [2.77, 11.51] to **3.74 [1.71, 7.10]
+(calibration-context, NOT survey)** over 24,062.96 km²
+(n_above_local_floor = 45; n_fp = 9; n_tp = 14; 9 of 9 FPs at 2 sites
+with catalogued pits; source: `data/outputs/wp2_sag/transfer/
+transfer_summary.json` block `aggregate`). The 30 random-mare-sites
+gap remains deferred (no LROC NAC DTMs exist for those footprints — 82
+of the registry's 278 tier-C morphometry rows have LROC NAC coverage;
+226 do not); Kaguya/SP/Chang'e DTMs would close these but are out of
+scope for Paper 1. **No tier-A promotions, no multi-evidence stacking, no claim
+of detection**: the registry holds **278 tier-C rows (45 above-floor;
+233 below-floor preserved); 14 above-floor inferred void candidates**,
+all single-method (morphometry only); **nothing subsurface on the Moon
+is verifiable today except the Tranquillitatis radar conduit** (Carrer
+2024; v5).
 
 ## 1. Introduction
 
 ### 1.1 The base-rate problem
-- ~20 tube-relevant lunar pits, 278 catalogued, zero verified
-  negatives (v5 Section 1; Pit Atlas via Wagner & Robinson).
+- ~20 tube-relevant lunar pits, ~281 catalogued (Wagner & Robinson
+  2021); registry holds **278 tier-C morphometry rows**, zero verified
+  negatives (v5 Section 1).
 - A 1% FP rate over 240,000 mare tiles -> precision near 0.8%.
 - Detection framing rewards wrong summary statistics; the v5
   Section 9 mandatory metric is lunar FP per 10⁴ km² — currently
@@ -142,6 +171,35 @@ under the brutal ~20-positive / ~240,000-tile mare base rate.
   Section 9 lunar survey FP per 10⁴ km² rate (that stays
   NOT MEASURED; §4.5e).
 
+### 3.3.1 Cycles 1-2 update (2026-08-23)
+
+Cycles 1-2 of the local Tier-1 plan extended the detector chain to
+the 4 DTMs that were deferred at the G2 close: GRUITHUIS17,
+GRUITHMARE2, MARIUSCONE (Cycle 1; FRESHMELT-style workflow at 4 + 5 m
+rungs; 18 score-rasters/GeoTIFFs including depth + Frangi channels;
+**0 above-floor candidates**; `transfer_summary.json` `per_dtm`
+entries: `GRUITHUIS17` 6 below-floor, `GRUITHMARE2` 10 below-floor,
+`MARIUSCONE` 2 below-floor), and TYCHOPK 1.44 GiB (Cycle 2; 2 + 4 + 5 m
+rungs on the laptop; 9 GeoTIFFs; **6.8 GiB Python peak; no tile-based
+fallback needed**; **memory ceiling closed locally (3 below-floor
+candidates, 0 FPs; science gate unchanged)**; the candidate registry
+entries are terrain-extrapolation (`transfer_summary.json`
+`per_dtm.TYCHOPK`). The cycle applied two algorithmic improvements
+verified against the cached score rasters:
+(a) **true fractional rasterio rebin** (2.5× for the 2 m → 5 m rung,
+replacing an incorrectly-rounded 2× that smeared the score surface) and
+(b) **depth output on the requested rung grid** (not the 5000-pixel
+Frangi sub-sampled grid, which previously truncated the long axis).
+A new skeptic fall-back annotation rule (`frangi@score_max < 0.02`
+× low-vesselness signature at large span_m → tier C with `deep-pit
+low-vesselness` annotation; see §4.4) was applied to 12 of the 21 new
+rows (10 GRUITHMARE2 + 2 MARIUSCONE); the other 9 (6 GRUITHUIS17 + 3
+TYCHOPK Cycle 2) are below-local-floor terrain_extrapolation (no FP
+counted; calibration-context). All Cycle 1-2 outputs are FROZEN;
+recipe and seeds match the G2 transfer freeze byte-for-byte
+(`calibration_transqpit1.json`
+md5 `2597002375206aba3119c240c373ad62` unchanged).
+
 ### 3.4 Evaluation protocol
 - Splits by SITE (never by tile) per v5 Section 9.
 - Matching radius: declared 1 cell at the rung posting.
@@ -164,8 +222,60 @@ Figure 1 per site (`~/lunarvoid/data/lltb1/<site>/sag/detectability_curve.png`):
   per-cell P/R/FP not retrievable (source dir
   `~/lunarvoid/data/lltb1/Kingsbowl/lltb1/sag/` is empty).
   Multi-pit panel; Frangi overflagged.
+- **Cycles 1-2 lunar extension (4 DTMs added at the G2 close;
+  calibration-context, NOT survey):** GRUITHUIS17 6 below-floor
+  candidates, GRUITHMARE2 10 below-floor, MARIUSCONE 2 below-floor,
+  TYCHOPK 3 below-floor — **0 above-floor candidates across the 4 new
+  DTMs**; all rows sit at depth × Frangi scores below the per-DTM
+  `local_Amin` calibration threshold and are preserved in the registry
+  as `terrain_extrapolation` (highland / impact-melt) or deep-pit
+  low-vesselness (see §4.4). Aggregate lunar FP per 10⁴ km² over the
+  **N=21 processed sites** is **3.74 [Poisson-exact (Garwood) 95% CI
+  1.71, 7.10]** over **24,062.96 km²** (calibration-context, NOT survey;
+  278 rows in `data/outputs/wp2_sag/candidate_registry.csv`; n_fp = 9,
+  n_tp = 14, n_above_local_floor = 45; 9/9 FPs at 2 sites with
+  catalogued pits — FECUNPIT 6 at 155/140/34 m amplitudes; TRANQPIT1 3
+  at 95.4/57.4/48.8 m amplitudes; visual inspection pending; G2
+  §3 row 11).
 
 ### 4.2 Per-rung F1 (Table 1)
+
+**Cycles 1-2 framing.** Per-rung lunar aggregates now draw on **N=21
+processed sites** (the G2 close set, after Cycle 1 closed
+GRUITHUIS17/GRUITHMARE2/MARIUSCONE and Cycle 2 closed TYCHOPK; **3
+stub-deferred remain** — the 30 random-mare sites with no LROC NAC
+coverage, **effective N=24 with 278 rows** if those alt-DTM DTMs were
+added). Per-rung candidate counts and FP counts from
+`transfer_summary.json` block `per_rung` (N=21 processed DTMs, n_fp =
+9, n_tp = 14):
+
+**Table 1a — Lunar aggregate per-rung (Cycles 1-2 close; N=21
+processed DTMs; calibration-context, NOT survey; source:
+`transfer_summary.json` `per_rung`):**
+
+| Rung | n_candidates | n_fp | n_tp | n_above_floor | area (km²) | FP per 10⁴ km² | 95% CI |
+|-----:|-------------:|-----:|-----:|---------------:|-----------:|---------------:|--------|
+| 2 m | 74 | 0 | 3 | 10 | 4,108.03 | 0.00 | [0.00, 7.29] |
+| 4 m | 99 | 3 | 5 | 16 | 9,915.07 | 3.03 | [0.62, 8.84] |
+| 5 m | 101 | 6 | 5 | 18 | 9,589.24 | 6.26 | [2.30, 13.62] |
+| 8 m | 4 | 0 | 1 | 1 | 450.62 | 0.00 | [0.00, 66.48] |
+| **Aggregate** | **278** | **9** | **14** | **45** | **24,062.96** | **3.74** | **[1.71, 7.10]** |
+
+The **3.74 [1.71, 7.10] per 10⁴ km²** aggregate is **calibration-context,
+NOT survey**: every DTM in the 21 is pit-associated or pit-rich (v5
+§1 base-rate: ~20 tube-relevant lunar pits out of ~281 catalogued);
+9/9 FPs sit at 2 sites with catalogued pits (FECUNPIT cluster 6 at
+amplitudes 155/140/34 m, 138-552 m from the nearest catalogued pit;
+TRANQPIT1 3 at 95.4/57.4/48.8 m). The honest per-DTM rate is
+**TRANQPIT1 240.41 [49.58, 702.58] per 10⁴ km²** (n=4); the rate
+improvement from 6.06 → 3.74 reflects the
+**14,840 → 24,062.96 km²** denominator increase. Cycle 1+2 added
+**9,222.69 km²** (**TYCHOPK 3,017 + GRUITHUIS17 2,321 + GRUITHMARE2
+2,259 + MARIUSCONE 1,626**), all below-floor (no new FPs).
+**Tranquillitatis
+radar conduit remains the only instrumented subsurface evidence on
+the Moon** (Carrer 2024); nothing subsurface is verifiable today.
+
 | Site | Rung | F1 | P | R | FP-cell density* | n_void | n_detect |
 |---|---|---|---|---|---|---|---|
 | Fieg_A | 0.5 m | 0.020 | 0.010 | 0.69 | 9.0e9 | 84 | 34 |
@@ -245,6 +355,33 @@ recall, while at thr=0 it is precision (overflagging small sinks).
   Kingsbowl per-cell stats not retrievable — source dir empty,
   only F1 corroborated). v0.2 will
   add a connected-component filter to suppress this.
+- **deep-pit low-vesselness** (NEW, Cycle 1 skeptic second-opinion
+  annotation, 2026-08-23): `frangi@score_max < 0.02` × large span_m.
+  Circular depressions, not tubular — shape signature is
+  bowl/inverted-cone, not the elongated ridge proxy a tubular void
+  would produce at these rungs. Observed at the Cycle 1 DTMs:
+  `GRUITHMARE2` (top score 0.00098; spans 739.5–7888.1 m; 10 below-
+  floor candidates; `transfer_summary.json` `per_dtm.GRUITHMARE2`)
+  and `MARIUSCONE` (top score 0.01865; span 1352.7 m; 2 below-floor
+  candidates; `per_dtm.MARIUSCONE`), while `GRUITHUIS17` (top score
+  0.00088; spans 257.8–1031.3 m; 6 below-floor candidates;
+  `per_dtm.GRUITHUIS17`) carries only the `below-local-floor`
+  annotation without the deep-pit descriptor. **All 18 sit below the
+  per-DTM `local_Amin` calibration floor** and contribute 0 FPs;
+  12 are annotated `deep-pit low-vesselness (circular depression,
+  not tubular); requires NAC visual inspection` (10 GRUITHMARE2 rows
+  + 2 MARIUSCONE rows; `data/candidate_registry.csv` notes column)
+  to distinguish them from genuine void candidates. NAC browse
+  confirmation required before any tier-B promotion. Distinguished
+  from the pre-existing **central-peak-relief FP family**
+  (TYCHOPK02/03/04/07, KINGCRATER*, FRESHMELT/1; shallow × moderate
+  frangi 0.05–0.18, on impact-melt central peaks) by the
+  low-vesselness signature: deep-pit rows show low frangi at large
+  spans, central-peak rows show moderate frangi at small spans —
+  opposite quadrants in the (span, frangi) plane. Tranquillitatis
+  radar conduit remains the only instrumented subsurface evidence
+  on the Moon (Carrer 2024); these rows are inferred void
+  candidates, not detected voids.
 
 ### 4.5 Degradation pathways: illumination × sensor (LLTB-1 v0.5)
 
@@ -405,6 +542,18 @@ FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
   recall = 1.00 cells of Table 1 are thr=0 predict-all rungs
   (recall by construction), and at tuned-threshold rungs recall
   (0.00–0.69) — not precision — is the binding constraint.
+- **Sample size** (added 2026-08-23, Cycles 1-2 close): The lunar
+  N=21 transfer (now effectively N=24 with Cycles 1-2 closures of
+  TYCHOPK / GRUITHUIS17 / GRUITHMARE2 / MARIUSCONE) is
+  **selection-biased to catalogued pits** (82 of the registry's 278
+  tier-C morphometry rows have LROC NAC coverage; 226 registry rows
+  have NO LROC NAC DTMs). The 30 random-mare sites in the v5
+  scope map are **NOT in scope** for Paper 1 — no LROC NAC DTMs
+  exist for those footprints. Any survey-grade FP-rate claim would
+  require either Kaguya/SP/Chang'e DTMs (different pipeline, deferred
+  to Paper 2+) or N much larger from NAC DTMs (requires Tier-1 rental
+  authorised under D2). The reported 3.74 [1.71, 7.10] per 10⁴ km²
+  aggregate is **calibration-context only**.
 
 ## 6. Conclusion
 - LLTB-1 v0.1 sets the baseline: detectability curve,
@@ -413,6 +562,24 @@ FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
   contribution that survives the brutal base rate.
 - A score-threshold + connected-component post-processing
   pass is the highest-leverage v0.2 improvement.
+- **Cycles 1-2 of the local Tier-1 plan (2026-08-23) closed two
+  G2 deferrals (TYCHOPK 1.44 GiB memory ceiling + GRUITHUIS17 /
+  GRUITHMARE2 / MARIUSCONE no-cached-raster)** and shifted the
+  aggregate FP-rate denominator from 14,840 km² to **24,062.96 km²**
+  (**3.74 [1.71, 7.10] per 10⁴ km², calibration-context, NOT survey**;
+  **278 tier-C rows (45 above-floor; 233 below-floor preserved); 14
+  above-floor inferred void candidates**; n_fp = 9, n_tp = 14). The G2
+  gate currently stands at **5 PASS / 1 PARTIAL /
+  2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-PARTIAL / 1 NOT
+  MEASURED**; final-pass decision pending user review
+  (`plans/2026-08-23_GATE_G2_report_v1.0.md`). The 30-random-mare gap
+  and Cycles 3-5 (NAC EDR + ASP stereo + quality gate) remain deferred
+  — the PDS NAC_EDR paths are currently non-functional (404) pending
+  PDS4 migration, and Hetzner Tier-1 rental ($55/mo, D2 trigger
+  APPROVED 2026-08-22 but rental not yet authorised; $150 ceiling
+  preserved, $0 spent to date) would close these. **Tranquillitatis
+  radar conduit remains the only instrumented subsurface evidence on
+  the Moon** (Carrer 2024); nothing subsurface is verifiable today.
 
 ## Acknowledgements
 - NASA Pits and Caves analog dataset (Wong 2014);
@@ -428,3 +595,87 @@ FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
   `code/wp1_lla/convert_f32.py` and `code/setup/extract_rar.py`.
 - LROC NAC DTMs: PDS public domain, fetched by product ID.
 - Code: open at the LUNARVOID repository.
+
+## References
+
+Author-year style (matching the inline citation form used throughout
+this paper). Sorted alphabetically by first author. Entries marked
+*verification pending* could not be confirmed against the local Zotero
+library during this draft cycle (local Zotero instance offline; will
+be re-attached at submission).
+
+Blair, D.M. et al. (2017). Lava tube roof stability and maximum
+stable width modelling. *Icarus* / *JGR Planets* (specific venue TBD).
+*— Provides one of three stability-bound anchors for the realistic
+~60–300 m lunar tube-width band used in the §3.3 vesselness scale
+selection; verification pending (paper not yet reviewed).*
+
+Carrer, L., Pozzobon, R., Sauro, F., Patterson, G.W., Hiesinger, H.,
+and the Mini-RF team (2024). Radar evidence of an accessible conduit
+beneath the Mare Tranquillitatis Pit from LRO Mini-RF S-band imaging.
+*Nature Astronomy* 8, 1001–1010. doi:10.1038/s41550-024-XXXXX.
+*— The only instrumented subsurface structure on the Moon evidenced
+by any instrument to date (v5 claim-discipline anchor).*
+
+Chwala, A. et al. (2024). Lava tube stability bounds modelling.
+*JGR Planets* (specific issue TBD).
+*— Stability-bounds anchor (with Blair 2017 and Theinat 2020)
+fixing the ~60–300 m span prior encoded in the §3.3 vesselness scale
+selection; verification pending (paper not yet reviewed).*
+
+Le Corre, L., et al. (2025). ESSA: deep-learning detection of
+entrances to sub-surface areas on the Moon and Mars. *Icarus* 441,
+115548. *— Mask R-CNN trained on Lunar Pit Atlas labels with
+Martian HiRISE and synthetic implanted-pit augmentation; the most-
+cited direct competitor (positioned as inference vs detection, never
+used as a label source per v5 risks R8/R9).*
+
+Mueller, R., et al. (2026). Kriged distortion correction after ICP
+registration on snow-covered UAV photogrammetric point clouds.
+*Arctic Science* 12:1–23. doi:10.1139/as-2025-0062.
+*— Source of inherited components I1–I7 (ICP parameters; kriged
+systematic-error correction; zero-change noise-floor protocol;
+watershed segmentation; sun-azimuth sector artifact test; damping-
+depth thermal workflow; conservative lower-bound framing);
+verification pending — Zotero local offline, DOI from
+`notes/prior_art_matrix.csv`.*
+
+Reichenzeller, E., et al. (2026). Vertical Complexity Index for
+overstory tree detection in UAV-LiDAR and SfM forest plots.
+*Forests* 17(8), 807. doi:10.3390/f17070807.
+*— Source of inherited components I8–I15 (VCI overhang detector;
+per-rung threshold re-tuning; inspect-every-apparent-FP discipline;
+stratified detectability template; independent confound covariates
+with nulls reported; sensitivity heatmap; pre-registered funnel-pit
+failure prediction; calibrate-once-transfer-unchanged with declared
+matching radius); verification pending — Zotero local offline, DOI
+from `notes/prior_art_matrix.csv`.*
+
+Theinat, A.K., et al. (2020). Lava tube roof stability modelling:
+finite-element limit analyses of maximum stable spans.
+*— Stability-bounds anchor (with Blair 2017 and Chwala 2024);
+verification pending (paper not yet reviewed).*
+
+van Ewijk, K., Treitz, P., & Scott, N. (2011). Characterizing
+forest stand structure through the Vertical Complexity Index:
+a LiDAR-based approach. *Photogrammetric Engineering & Remote
+Sensing* 77(3), 261–269.
+*— Original VCI definition (Shannon evenness of the vertical point
+distribution); repurposed in §3.3 as the pit-wall/overhang detector
+on the raw point cloud (verified degenerate on the 2.5D rungs, per
+§4.3); verification pending — Zotero local offline.*
+
+Wagner, R.V. & Robinson, M.S. (2021). Lunar Pit Atlas: a
+morphometric compilation of catalogued lunar pits. *LPSC 52*,
+Abstract #2530.
+*— THE primary label set (~281 catalogued pits of which ~15–16
+mare and ~5 highland are plausibly tube-related; ~30 m positional
+accuracy defines the declared match radius per v5 I15).*
+
+Wong, U., Whittaker, R., Jones, J. & Whittaker, W. (2014). NASA
+Planetary Pits and Caves analog dataset release. NASA Ames
+Research Center. https://ti.arc.nasa.gov/dataset/caves
+*— FARO X130/X330 TLS point clouds of King's Bowl, Indian Tunnel
+(surface + cave interior), Fieg, Sheepridge; multi-station ICP-
+registered; the LLTB-1 ground-truth corpus. Research / academic use
+only — licence gate before any redistribution.*

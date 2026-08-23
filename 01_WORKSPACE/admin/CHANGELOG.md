@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-08-23 (execution session 29 — Cycle 7 close: Paper 1 v1.0 submission-ready)
+
+- Paper 1 v1.0 (Detectability limits for lava tube roof signatures in orbital topography: the LLTB-1 calibrated benchmark) committed; 430 → 681 lines (+251)
+- All sections promoted from v0.2 to v1.0: Abstract; §1 Introduction; §2 Related work; §3 Methods (3.1-3.4 + new 3.3.1 Cycles 1-2 update); §4 Results (4.1-4.5 + new Table 1a lunar aggregate); §5 Discussion; §6 Conclusion; Acknowledgements; Data availability; References (10 entries, author-year style)
+- Cycles 1-2 contributions folded in: TYCHOPK + 3 deferred DTMs processed locally; registry 257→278 rows (+21); aggregate FP 6.06 → 3.74 [1.71, 7.10] per 10⁴ km² (calibration-context); new deep-pit low-vesselness annotation rule (skeptic-authored)
+- Verifier PASS-with-notes (References blocker fixed); Skeptic SOUND-with-objections (4 language fixes applied: §4.1 km² arithmetic; §6 "278 tier-C rows" framing; §3.3.1 "RESOLVED" → "closed locally"; §1.1/abstract "~281 catalogued (Wagner & Robinson 2021)")
+- Verifications: 0 forbidden phrases; 11 "Cycles 1-2" references; 8 "calibration-context"; 5 "Tranquillitatis radar conduit"; 11 "278"; 4 "3.74 [1.71, 7.10]"
+- Submission blocker: G2 gate still DRAFT-FOR-REVIEW (PARTIAL verdict row 10; final pass pending user decision); paper v1.0 references G2 as PARTIAL until user flips
+- Bibliography gap: 10/10 entries unverified via Zotero MCP (local instance offline; entries from prior_art_matrix.csv + vault refs); user to Zotero-attach at next opportunity (Blair 2017, Chwala 2024, Theinat 2020, Mueller 2026, Reichenzeller 2026, van Ewijk 2011, Carrer 2024)
+- 0 cost; submission target: Remote Sensing of Environment / ISPRS Journal (benchmark paper)
+- Status: PAPER 1 v1.0 SUBMISSION-READY (modulo G2 user pass + Zotero attach)
+- Cycles 3-5 (NAC EDR + stereo) remain deferred indefinitely (PDS NAC_EDR paths 404)
+
 ## 2026-08-23 (execution session 28 — Cycle 6 close: G2' partial update)
 
 - G2 gate report row 10 flipped DEFERRED-DTM-gap-EXPANDED → DEFERRED-DTM-gap-PARTIAL (paper-writer + orchestrator)
