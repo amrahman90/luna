@@ -8,6 +8,8 @@ permission:
     "01_WORKSPACE/data/MANIFEST.md": allow
     "01_WORKSPACE/plans/**": allow
     "01_WORKSPACE/notes/**": allow
+    "01_WORKSPACE/knowledge/atomic/**": allow
+    "01_WORKSPACE/.obsidian/**": allow
     ".gitignore": allow
   bash:
     "*": deny

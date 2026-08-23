@@ -6,6 +6,7 @@ permission:
     "*": deny
     "01_WORKSPACE/papers/**": allow
     "01_WORKSPACE/notes/**": allow
+    "01_WORKSPACE/knowledge/atomic/**": allow
   bash:
     "*": allow
     "rm *00_SOURCE_ORIGINALS*": deny

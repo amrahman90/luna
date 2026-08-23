@@ -64,3 +64,10 @@ Thumbs.db
 01_WORKSPACE/data/outputs/wp2_sag/*/[A-Z]*_[0-9]m_slope_ok.tif
 
 # Working/scratch directories (none in repo right now, just being safe)
+
+# Obsidian vault config (per-machine; not source-controlled)
+01_WORKSPACE/.obsidian/
+# Obsidian trash (per-vault, regenerable)
+01_WORKSPACE/knowledge/atomic/.trash/
+# Obsidian vault content (per-user choice 2026-08-23; local-only knowledge layer)
+01_WORKSPACE/Lunar Lavatube knowledge/

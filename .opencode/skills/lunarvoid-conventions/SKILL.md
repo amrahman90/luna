@@ -196,3 +196,88 @@ PRCLRMPIT01 8.09, MARIUSPIT01 5.04, SWFECUNPIT1 1.60.
 | projError Moon vs Earth | explicit +R=1737400 proj4 |
 | 403 on bsdtar install | 4-mirror fallback (bug 1) |
 | "no .f32 files in dir" | re-run; v0.2 auto-discovers the f32 dir |
+
+## 9. Obsidian knowledge layer (vault at `01_WORKSPACE/`, atomic notes in `01_WORKSPACE/Lunar Lavatube knowledge/`)
+
+The whole workspace `01_WORKSPACE/` is the Obsidian vault (canonical
+markdown in `notes/`, `plans/`, `papers/`, `admin/` becomes graph
+nodes automatically). The curated atomic-notes layer lives at
+`01_WORKSPACE/Lunar Lavatube knowledge/` (the user's chosen folder).
+Obsidian's `.obsidian/` config lives at `01_WORKSPACE/.obsidian/` (gitignored;
+per-machine).
+
+### Folder layout (atomic layer)
+
+```
+01_WORKSPACE/Lunar Lavatube knowledge/
+├── 00_HOME.md                     # entry MOC: project state, current gate, blockers
+├── mocs/                          # Maps of Content (5)
+│   ├── MOC Gates & Decisions.md
+│   ├── MOC Sites & Candidates.md
+│   ├── MOC Data & Code.md
+│   ├── MOC Concepts & Methods.md
+│   └── MOC Sessions & Ops.md
+├── gates/    G0prime.md, G1.md, G2.md
+├── decisions/  D1.md, D2.md, ...
+├── sites/    TRANQPIT1.md, ... TYCHOPK.md (21 site notes)
+├── backlog/  FECUNPIT cluster, TRANQPIT1 12-km FPs, INGENIIPIT rings, deferred items
+├── artifacts/ LLTB-1 v0.5, calibration freeze, registry, MANIFEST, smoke test, ...
+├── concepts/  calibration-context FP, terrain extrapolation, I14 funnel, claim discipline, ...
+├── refs/     Powell 2023, Williams 2017, Robinson 2010, Hurwitz 2013, ...
+└── sessions/ session_<NN>.md (one per CHANGELOG entry)
+```
+
+### Wikilink conventions
+
+- Within the atomic layer: `[[sites/TRANQPIT1]]` or `[[sites/TRANQPIT1|TRANQPIT1]]` (alias for readability).
+- To canonical files in `01_WORKSPACE/`: use Obsidian's relative-path wikilinks — `[[../notes/findings|Findings log]]`, `[[../plans/2026-08-23_GATE_G2_report_v1.0|G2 report]]`. These resolve as graph edges to the canonical node.
+- Spaces in filenames are OK in wikilinks: `[[../plans/2026-08-23_GATE_G2_report_v1.0|G2]]`.
+
+### Tag taxonomy (use liberally — color-codes the graph)
+
+- Domain: `#gate`, `#decision`, `#site`, `#artifact`, `#backlog`, `#concept`, `#ref`, `#session`
+- Evidence: `#fp`, `#tp`, `#below-floor`, `#visual-inspection`
+- Terrain: `#mare`, `#highland`, `#impact-melt`, `#catalogued-pit`, `#random-mare`
+- Status: `#deferred`, `#frozen`, `#calibration-context`, `#calibration-context-fp`, `#inconclusive`
+- Cycle: `#g0prime`, `#g1`, `#g2`, `#phase-6`
+
+Use hierarchical prefixes for grouping in tag-pane: `#gate/g2`, `#site/mare`, etc.
+
+### Append-only discipline (preserved)
+
+Never retro-add wikilinks to `notes/findings.md` historical entries — the
+file is append-only. Atomic notes link OUT to canonical notes;
+Obsidian's backlinks pane surfaces all incoming edges (this is the
+most useful view for canonical notes anyway).
+
+### Anti-drift generator
+
+`code/tools/regen_site_notes.py` rebuilds `Lunar Lavatube knowledge/sites/*.md`
+from `data/candidate_registry.csv` + `data/outputs/wp2_sag/transfer/transfer_summary.json`.
+Mechanical regeneration = the vault never hand-drifts from data.
+Site-note bodies are short tables + flag annotations + wikilinks to
+backlog/gates/concepts. Geo-coder owns this script.
+
+### File-tree hygiene (`.obsidian/ignore`)
+
+Vault's `.obsidian/ignore` excludes non-markdown from the file tree
+(graph and search unaffected). Required entries:
+
+```
+**/*.csv
+**/*.json
+**/*.py
+**/*.pyc
+**/*.tif
+**/*.tiff
+**/*.npz
+**/*.npy
+**/__pycache__/**
+```
+
+### Cost / tracking
+
+Vault is untracked by user instruction (2026-08-23) — like the R1
+roadmap draft. `.gitignore` lines for `.obsidian/` and `knowledge/atomic/.trash/`
+added 2026-08-23. No git history on the vault; re-runnable from
+canonical sources if corrupted.
