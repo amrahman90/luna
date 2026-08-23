@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-08-23 (execution session 28 — Cycle 6 close: G2' partial update)
+
+- G2 gate report row 10 flipped DEFERRED-DTM-gap-EXPANDED → DEFERRED-DTM-gap-PARTIAL (paper-writer + orchestrator)
+- §3 verdict table, §5 risk list, §6 Step 2 (a)/(c) annotations updated
+- Both papers/gate_reports/... and plans/2026-08-23_... mirrors are byte-identical (verified via diff, no output)
+- Cycles 3-5 (NAC EDR fetch + ASP stereo + quality gate) deferred indefinitely:
+  - Cycle 3 blocked on PDS NAC_EDR 404s (PDS S3 bucket has NAC_DTM RDR but not NAC_EDR at legacy paths; LROC WMS/QuickMap/Wayback all non-functional)
+  - Cycle 4 depends on Cycle 3 EDRs
+  - Cycle 5 depends on Cycle 4 DTMs
+  - All three can resume if PDS URL pattern is found or Hetzner rental authorised
+- §4 (claims/evidence section) NOT updated — stays as G2 close snapshot (44→257, FP 6.06, 21 DTMs); the substantive update flows into Paper 1 v1.0 (Cycle 7)
+- Gate status: still DRAFT-FOR-REVIEW for G2' partial close; final pass pending user decision
+- Vault updates pending (out of scope for this commit, queued for orchestrator): G2 atomic note, site notes for TYCHOPK + MARIUSCONE/GRUITHMARE2/GRUITHUIS17, registry atomic note (257→278), calibration-context FP rate (6.06→3.74)
+- Cost: $0
+- Next: Cycle 7 — Paper 1 v1.0 commit + submission prep
+
 ## 2026-08-23 (execution session 27 — Cycle 2 close: TYCHOPK)
 
 - TYCHOPK Frangi score rasters generated at 2+4+5 m (no tile-based fallback needed;
