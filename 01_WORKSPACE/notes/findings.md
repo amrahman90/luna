@@ -709,3 +709,15 @@ the next session to follow up on LROC NAC images before any science claim).
   pattern is detector-induced (Frangi filter artifact) and not a real
   void cluster. Cross-reference: 23 rows from r002–r008 at all 3 rungs
   (rows 37–43, 45–51, 53–59 in the registry).
+
+## 2026-08-23 Skeptic Cycle 1 second-opinion (Cycle 1 close — GRUITHMARE2 + MARIUSCONE + GRUITHUIS17 Frangi)
+
+Cycle-1 second-opinion on GRUITHMARE2 and MARIUSCONE score_max clusters (verifier PASS-with-notes). Both findings re-classify to `terrain_extrapolation` risk / `deep-pit low-vesselness` — NOT tier-A/B void candidates.
+
+(a) GRUITHMARE2 score_max (33.3943°N, -43.3329°W, depth 604 m, frangi@score 0.015; global frangi_max 0.864 sits 1141 px away, i.e. NOT tubular) and MARIUSCONE score_max (13.6250°N, -56.3975°W, depth 619 m, frangi@score 0.011; global frangi_max 0.794 sits 612 px away) are deep circular depressions with very low Frangi vesselness. Not the central-peak-relief FP class (TYCHOPK02 frangi@score 0.054, KINGCRATER 0.09–0.18 are shallow × moderate). This is a distinct cousin: deep × low-vesselness. Both sit in geologically high-risk terrain (highland near Gruithuisen Domes; volcanic cone province near Marius Cone); catalogued Marius Hills Pit is 17.9 km from MARIUSCONE score_max (correctly NOT flagged at score 0.059). 0 catalogued pits inside GRUITHMARE2 frame.
+
+(b) New fall-back rule (suggested): `frangi@score_max < 0.02` AND `depth@score_max ≥ 100 m` → label tier C with annotation `deep-pit low-vesselness (circular depression, not tubular)`; require NAC visual inspection before any tier-B promotion. At threshold 0.02 it captures only MARIUSCONE (0.011) and GRUITHMARE2 (0.015); at threshold 0.05 it would also wrongly flag TYCHOPK02 (0.054).
+
+(c) Calibration-context caveat: both findings are single-method sag-score candidates; tier-A requires two-independent-methods agreement (morphometry + gravity/thermal/illumination) per candidate_registry schema; tier-B requires rille or crater-chain intersection within 100 m (Hurwitz 2013; LU5M812TGT) — none of which is present here. No "detected a lava tube" wording; only "morphometrically similar to void signature, warrants NAC browse confirmation". Anti-drift regenerator must NOT overwrite the `requires_visual_inspection` flag — site notes currently read "Candidates 0".
+
+Claim discipline re-stated: never write "is a void", "represents a tube", "indicates subsurface" for these two — write "morphometrically similar to void signature" or "warrants NAC browse confirmation". Evidence: `~/lunarvoid/data/outputs/wp2_sag/score_rasters/{GRUITHMARE2,MARIUSCONE}/{score,depth,frangi}_5m.tif` + `01_WORKSPACE/data/outputs/wp2_sag/transfer/score_raster_gen_summary.json`.

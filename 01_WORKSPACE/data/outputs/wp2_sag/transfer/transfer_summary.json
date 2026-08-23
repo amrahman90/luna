@@ -1,6 +1,6 @@
 {
   "generated": "2026-08-23",
-  "scope_banner": "N=21/649 (21 good-tier DTMs on disk of 649 in scope; 17 have cached v0.1 score rasters; 4 are skipped for missing score raster: ['GRUITHMARE2', 'GRUITHUIS17', 'MARIUSCONE', 'TYCHOPK'])",
+  "scope_banner": "N=21/649 (21 good-tier DTMs on disk of 649 in scope; 20 have cached v0.1 score rasters; 1 are skipped for missing score raster: ['TYCHOPK'])",
   "frozen_calibration": {
     "score_frac": 0.2,
     "slope_deg": 45.0,
@@ -37,27 +37,27 @@
       "ci_method": "Poisson-exact (Garwood) 95% CI"
     },
     "4": {
-      "n_candidates": 89,
+      "n_candidates": 98,
       "n_above_local_floor": 16,
       "n_tier_B": 2,
       "n_fp": 3,
       "n_tp": 5,
-      "area_km2": 5806.527856219286,
-      "fp_per_1e4km2": 5.166598825125319,
-      "fp_per_1e4km2_ci95_lo": 1.0654768877634004,
-      "fp_per_1e4km2_ci95_hi": 15.098994247227846,
+      "area_km2": 8909.473071575614,
+      "fp_per_1e4km2": 3.367202499967216,
+      "fp_per_1e4km2_ci95_lo": 0.6943981062913646,
+      "fp_per_1e4km2_ci95_hi": 9.840394599443867,
       "ci_method": "Poisson-exact (Garwood) 95% CI"
     },
     "5": {
-      "n_candidates": 91,
+      "n_candidates": 100,
       "n_above_local_floor": 18,
       "n_tier_B": 0,
       "n_fp": 6,
       "n_tp": 5,
-      "area_km2": 5480.697058233254,
-      "fp_per_1e4km2": 10.947512581427274,
-      "fp_per_1e4km2_ci95_lo": 4.017544173843917,
-      "fp_per_1e4km2_ci95_hi": 23.82812602805766,
+      "area_km2": 8583.642273589581,
+      "fp_per_1e4km2": 6.990039669361558,
+      "fp_per_1e4km2_ci95_lo": 2.565221363273383,
+      "fp_per_1e4km2_ci95_hi": 15.214373579733726,
       "ci_method": "Poisson-exact (Garwood) 95% CI"
     },
     "8": {
@@ -114,7 +114,7 @@
       "fp_per_1e4km2_ci95_lo": 16.431115842133263,
       "fp_per_1e4km2_ci95_hi": 97.45324061822672,
       "ci_method": "Poisson-exact (Garwood) 95% CI",
-      "notes": "Distance reference correction (skeptic 2026-08-23): 3 unique depressions are at 552.5 m (r001, r002) and 138.1 m (r003) from the NEAREST catalogued pit in the atlas (NOT 67 km from the named Central Mare Fecunditatis Pit). r003 at 138 m is just outside the calibrated 100 m match radius → labelled FP per protocol; under 150 m tolerance it would be a candidate TP. Visual inspection of the NAC frame at the nearest catalogued pit is the relevant check."
+      "notes": "Distance reference correction (skeptic 2026-08-23): 3 unique depressions are at 552.5 m (r001, r002) and 138.1 m (r003) from the NEAREST catalogued pit in the atlas (NOT 67 km from the named Central Mare Fecunditatis Pit). r003 at 138 m is just outside the calibrated 100 m match radius \u2192 labelled FP per protocol; under 150 m tolerance it would be a candidate TP. Visual inspection of the NAC frame at the nearest catalogued pit is the relevant check."
     },
     "FRESHMELT": {
       "rungs": [
@@ -160,41 +160,41 @@
     },
     "GRUITHMARE2": {
       "rungs": [
-        null
+        4.0,
+        5.0
       ],
-      "n_candidates": 0,
+      "n_candidates": 10,
       "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
+      "n_below_local_floor": 10,
       "n_tier_B": 0,
       "n_fp": 0,
       "n_tp": 0,
-      "area_km2": 0.0,
-      "top_score": 0.0,
+      "area_km2": 2258.7679543029135,
+      "top_score": 0.0009807288879528642,
       "local_Amin_m": 3.355474,
       "local_3sigma_m": 3.355474,
-      "fp_per_1e4km2": NaN,
-      "fp_per_1e4km2_ci95_lo": NaN,
-      "fp_per_1e4km2_ci95_hi": NaN,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2": 0.0,
+      "fp_per_1e4km2_ci95_lo": 0.0,
+      "fp_per_1e4km2_ci95_hi": 13.262682728640504
     },
     "GRUITHUIS17": {
       "rungs": [
-        null
+        4.0,
+        5.0
       ],
-      "n_candidates": 0,
+      "n_candidates": 6,
       "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
+      "n_below_local_floor": 6,
       "n_tier_B": 0,
       "n_fp": 0,
       "n_tp": 0,
-      "area_km2": 0.0,
-      "top_score": 0.0,
+      "area_km2": 2320.911566721001,
+      "top_score": 0.0008848686120472848,
       "local_Amin_m": 4.385086,
       "local_3sigma_m": 4.385086,
-      "fp_per_1e4km2": NaN,
-      "fp_per_1e4km2_ci95_lo": NaN,
-      "fp_per_1e4km2_ci95_hi": NaN,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2": 0.0,
+      "fp_per_1e4km2_ci95_lo": 0.0,
+      "fp_per_1e4km2_ci95_hi": 12.907567511442842
     },
     "INGENIIPIT": {
       "rungs": [
@@ -302,22 +302,22 @@
     },
     "MARIUSCONE": {
       "rungs": [
-        null
+        4.0,
+        5.0
       ],
-      "n_candidates": 0,
+      "n_candidates": 2,
       "n_above_local_floor": 0,
-      "n_below_local_floor": 0,
+      "n_below_local_floor": 2,
       "n_tier_B": 0,
       "n_fp": 0,
       "n_tp": 0,
-      "area_km2": 0.0,
-      "top_score": 0.0,
+      "area_km2": 1626.21090968874,
+      "top_score": 0.018652373924851418,
       "local_Amin_m": 3.68877,
       "local_3sigma_m": 3.68877,
-      "fp_per_1e4km2": NaN,
-      "fp_per_1e4km2_ci95_lo": NaN,
-      "fp_per_1e4km2_ci95_hi": NaN,
-      "ci_method": "Poisson-exact (Garwood) 95% CI"
+      "fp_per_1e4km2": 0.0,
+      "fp_per_1e4km2_ci95_lo": 0.0,
+      "fp_per_1e4km2_ci95_hi": 18.421548248790057
     },
     "MARIUSPIT01": {
       "rungs": [
@@ -504,26 +504,23 @@
     }
   },
   "aggregate": {
-    "n_dtms_with_score_raster": 17,
-    "n_dtms_skipped_no_raster": 4,
+    "n_dtms_with_score_raster": 20,
+    "n_dtms_skipped_no_raster": 1,
     "dtms_skipped": [
-      "GRUITHMARE2",
-      "GRUITHUIS17",
-      "MARIUSCONE",
       "TYCHOPK"
     ],
-    "n_dtm_rung_pairs": 49,
-    "n_candidates": 257,
+    "n_dtm_rung_pairs": 51,
+    "n_candidates": 275,
     "n_above_local_floor": 45,
-    "n_below_local_floor": 212,
+    "n_below_local_floor": 230,
     "n_tier_B": 3,
     "n_tier_A": 0,
     "n_fp": 9,
     "n_tp": 14,
-    "total_area_km2": 14840.274230774368,
-    "fp_per_1e4km2": 6.064577958631415,
-    "fp_per_1e4km2_ci95_lo": 2.7731112197672596,
-    "fp_per_1e4km2_ci95_hi": 11.512458048780733,
+    "total_area_km2": 21046.164661487022,
+    "fp_per_1e4km2": 4.2763135919340955,
+    "fp_per_1e4km2_ci95_lo": 1.9554028791332096,
+    "fp_per_1e4km2_ci95_hi": 8.117775246091815,
     "fp_per_1e4km2_n_above_floor": 45,
     "fp_per_1e4km2_interpretation": "calibration-context rate, selection-biased to catalogued pits (all 21 DTMs on disk are pit-associated or pit-rich); NOT a random-mare survey rate; CIs are Poisson-exact (Garwood) 95%",
     "highland_extrapolation_note": "9 highland/impact-melt sites (TYCHOPK02/03/04/07, KINGCRATER2/3/4, FRESHMELT, FRESHMELT1) have NaN local_Amin (no usable flat panels); the FROZEN TRANQPIT1 calibration is mare-only. Their peaks are marked below-local-floor by default and DO NOT contribute to FP counting \u2014 but ARE preserved in the registry with the terrain-extrapolation annotation. Any morphometric inference at these sites with the frozen thresholds is extrapolation, not portability.",
@@ -1786,8 +1783,194 @@
       "registry_new_appends": 0,
       "registry_dups_skipped": 12,
       "runtime_s": 10.42
+    },
+    {
+      "dtm": "GRUITHMARE2",
+      "rung_m": 4.0,
+      "eff_m": 15.70040485829928,
+      "shape": [
+        5000,
+        1235
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_4m.tif",
+      "n_candidates": 5,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 5,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0009807288879528642,
+      "local_3sigma_m": 3.355474,
+      "local_Amin_m": 3.355474,
+      "area_km2": 1129.3839771514567,
+      "n_pits_in_dtm": 0,
+      "registry_count": 5,
+      "registry_new_appends": 5,
+      "registry_dups_skipped": 0,
+      "runtime_s": 12.14
+    },
+    {
+      "dtm": "GRUITHMARE2",
+      "rung_m": 5.0,
+      "eff_m": 15.70040485829928,
+      "shape": [
+        5000,
+        1235
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHMARE2/score_5m.tif",
+      "n_candidates": 5,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 5,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0009807288879528642,
+      "local_3sigma_m": 3.355474,
+      "local_Amin_m": 3.355474,
+      "area_km2": 1129.3839771514567,
+      "n_pits_in_dtm": 0,
+      "registry_count": 5,
+      "registry_new_appends": 5,
+      "registry_dups_skipped": 0,
+      "runtime_s": 12.08
+    },
+    {
+      "dtm": "GRUITHUIS17",
+      "rung_m": 4.0,
+      "eff_m": 16.05704697986545,
+      "shape": [
+        5000,
+        1192
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_4m.tif",
+      "n_candidates": 3,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 3,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0008848686120472848,
+      "local_3sigma_m": 4.385086,
+      "local_Amin_m": 4.385086,
+      "area_km2": 1160.4557833605004,
+      "n_pits_in_dtm": 0,
+      "registry_count": 3,
+      "registry_new_appends": 3,
+      "registry_dups_skipped": 0,
+      "runtime_s": 9.56
+    },
+    {
+      "dtm": "GRUITHUIS17",
+      "rung_m": 5.0,
+      "eff_m": 16.05704697986545,
+      "shape": [
+        5000,
+        1192
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/GRUITHUIS17/score_5m.tif",
+      "n_candidates": 3,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 3,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.0008848686120472848,
+      "local_3sigma_m": 4.385086,
+      "local_Amin_m": 4.385086,
+      "area_km2": 1160.4557833605004,
+      "n_pits_in_dtm": 0,
+      "registry_count": 3,
+      "registry_new_appends": 3,
+      "registry_dups_skipped": 0,
+      "runtime_s": 12.87
+    },
+    {
+      "dtm": "MARIUSCONE",
+      "rung_m": 4.0,
+      "eff_m": 10.200551977917312,
+      "shape": [
+        5000,
+        2174
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_4m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.018652373924851418,
+      "local_3sigma_m": 3.68877,
+      "local_Amin_m": 3.68877,
+      "area_km2": 813.10545484437,
+      "n_pits_in_dtm": 1,
+      "registry_count": 1,
+      "registry_new_appends": 1,
+      "registry_dups_skipped": 0,
+      "runtime_s": 14.27
+    },
+    {
+      "dtm": "MARIUSCONE",
+      "rung_m": 5.0,
+      "eff_m": 10.200551977917312,
+      "shape": [
+        5000,
+        2174
+      ],
+      "from_cache": true,
+      "source_score_tif": "/home/frostflux/lunarvoid/data/outputs/wp2_sag/score_rasters/MARIUSCONE/score_5m.tif",
+      "n_candidates": 1,
+      "n_above_local_floor": 0,
+      "n_below_local_floor": 1,
+      "n_tier_B": 0,
+      "n_fp": 0,
+      "n_tp": 0,
+      "top_score": 0.018652373924851418,
+      "local_3sigma_m": 3.68877,
+      "local_Amin_m": 3.68877,
+      "area_km2": 813.10545484437,
+      "n_pits_in_dtm": 1,
+      "registry_count": 1,
+      "registry_new_appends": 1,
+      "registry_dups_skipped": 0,
+      "runtime_s": 13.78
     }
   ],
-  "registry_rows_added": 0,
-  "runtime_s": 453.9
+  "registry_rows_added": 18,
+  "runtime_s": 453.9,
+  "cycle_notes": {
+    "cycle1_close_2026-08-23": [
+      "Added 3 newly-Frangi-scored NAC DTMs: GRUITHUIS17, GRUITHMARE2, MARIUSCONE",
+      "Added 18 below-local-floor candidates to registry (10 GRUITHMARE2 + 6 GRUITHUIS17 + 2 MARIUSCONE)",
+      "All 18 new candidates are below-local-floor (sag_amp < local_Amin at peak; local_Amin exists at all 3 sites \u2014 NOT terrain-extrapolation)",
+      "0 new FPs (above-floor count: 0; FPs require above-floor)",
+      "Skeptic fall-back annotation (Cycle 1 second-opinion rule) applied to GRUITHMARE2 and MARIUSCONE new rows; GRUITHUIS17 NOT annotated (frangi@score=0.0424 \u2265 0.02 threshold)",
+      "n_fp delta: 0 (was 9, still 9); area delta: +6205.89 km^2 (was 14840.27, now 21046.16)"
+    ],
+    "frangi_at_score_check": {
+      "GRUITHUIS17": {
+        "frangi_at_score_max": 0.0424,
+        "depth_at_score_max_m": 8.1,
+        "annotate": false,
+        "reason": "frangi@score >= 0.02; pit passes vesselness threshold"
+      },
+      "GRUITHMARE2": {
+        "frangi_at_score_max": 0.015,
+        "depth_at_score_max_m": 604.3,
+        "annotate": true,
+        "reason": "frangi@score < 0.02 AND depth@score >= 100 m \u2014 deep-pit low-vesselness"
+      },
+      "MARIUSCONE": {
+        "frangi_at_score_max": 0.0107,
+        "depth_at_score_max_m": 619.3,
+        "annotate": true,
+        "reason": "frangi@score < 0.02 AND depth@score >= 100 m \u2014 deep-pit low-vesselness"
+      }
+    }
+  }
 }

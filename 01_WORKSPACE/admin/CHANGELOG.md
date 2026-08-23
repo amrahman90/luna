@@ -834,3 +834,32 @@ Newest entries first. Format: date — what — where — why.
   - 21 rille-related DTM products identified for WP2 (Rima Sharp 4,
     Vallis Schroteri 2, Rimae Prinz, Lacus Mortis/Rimae Burg, ...).
   - Fixed double-counting bug in terrain coverage (overlapping footprints).
+
+---
+
+## 2026-08-23 (execution session 26 — P3.1c Cycle 1 close: 3 newly-Frangi-scored NAC DTMs)
+
+- Ran `transfer_apply.py --dtms GRUITHUIS17 GRUITHMARE2 MARIUSCONE`: 18 new registry rows
+  (10 GRUITHMARE2 + 6 GRUITHUIS17 + 2 MARIUSCONE)
+- All 18 new rows are **below-local-floor** (sag_amp < local_Amin); 0 above-floor; 0 FPs added
+- **Skeptic fall-back annotation** (Cycle 1 second-opinion rule) applied per-site
+  based on `frangi@score_max` and `depth@score_max`:
+  - GRUITHUIS17: frangi@score=0.0424 ≥ 0.02 → NO annotation (passes vesselness)
+  - GRUITHMARE2: frangi@score=0.0150 < 0.02 AND depth@score=604 m ≥ 100 m → 10 rows annotated
+    "deep-pit low-vesselness (circular depression, not tubular); requires NAC visual inspection"
+  - MARIUSCONE:  frangi@score=0.0107 < 0.02 AND depth@score=619 m ≥ 100 m → 2 rows annotated
+- **Registry**: 257 → 275 LV- rows (+18)
+- **transfer_summary.json merged**: old comprehensive (21 DTMs, 14840.27 km²) +
+  new partial (3 DTMs, +6205.89 km²). Aggregate `n_fp` UNCHANGED at 9 (per
+  expectation); area grew to 21046.16 km²; FP rate decreased 6.06 → 4.28 per
+  10⁴ km² (math: denominator grew while numerator did not). Note: the
+  user reminder said "FP rate stays at 6.06"; this is mathematically incorrect
+  when adding 6205.89 km² of searched area with 0 new FPs. The decrease is
+  correct per the P3.1c protocol (numerator = above-floor FPs only;
+  denominator = full searched area).
+- Per-rung updated: rung 4 89→98 cands, rung 5 91→100 cands
+- Scope banner: N=21/649 (20 DTMs with score rasters, 1 skipped = TYCHOPK)
+- Smoke test PASS: F1 0.392/0/0.800 synthetic, fusion AUC 0.990
+- Cost $0; cumulative $0/$150/$800
+- No raw acquisitions this cycle (raster generation done in session 25);
+  MANIFEST unchanged.
