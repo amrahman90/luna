@@ -708,3 +708,94 @@ too weak to combine with another line of evidence).
    `01_WORKSPACE/code/wp2_sag/transfer/score_raster_gen.py`:
    FROZEN recipe score-raster generator with memory-efficient rebin
    (no full-DTM float64) for DTM sizes up to 365 MB float32.
+
+## Cycles 1-2 — local Tier-1 plan (2026-08-23, geo-coder)
+
+### Scope
+
+Cycles 1-2 closed two G2 deferrals locally on the laptop (8 GB-class
+DTMs that were beyond the G2 close-out compute envelope):
+
+- **Cycle 1:** GRUITHUIS17, GRUITHMARE2, MARIUSCONE (the 3 DTMs that
+  were without cached score rasters at G2 close). Rungs: 4+5 m
+  (FRESHMELT-style workflow; 2 m rung skipped per v0.6 res-compatibility
+  guard — source res 5 m cannot upsample). 18 score rasters (3 DTMs × 2
+  rungs × 3 channels) generated in 7.75 min wall time, $0 cost.
+- **Cycle 2:** TYCHOPK 1.51 GiB (the memory-ceiling-deferred Tycho
+  central peak DTM, 30892 × 12240 px @ 2 m/pixel). Rungs: 2+4+5 m;
+  processed on the laptop in 478.9 s = 8.0 min total. Float64 peak
+  6.8 GiB Python / 6.1 GiB Whitebox (2 m rung); no tile-based
+  fallback needed. 9 score rasters (3 rungs × 3 channels).
+
+### Two algorithmic improvements
+
+1. **True fractional rasterio rebin** for non-integer rebin factors
+   (2 m → 5 m rung is a 2.5× factor; previous implementation rounded
+   to 2× which would alias). Now uses rasterio's `Resampling.average`
+   with the exact ratio.
+2. **Depth output on the requested rung grid** (not the 5000-pixel
+   Frangi sub-sampled grid). The 2 m rung depth grid is the full DTM
+   extent (30892 × 12240), not the sub-sampled (5000 × 1981) array.
+
+### Skeptic fall-back annotation rule (NEW)
+
+Per skeptic Cycle 1 second-opinion (2026-08-23):
+
+> A candidate is classified `deep-pit low-vesselness` iff:
+>
+> 1. `frangi@score_max < 0.02` (Frangi vesselness at the score-maximum
+>    pixel is very low — NOT tubular)
+> 2. `depth@score_max ≥ 100 m` (the depression is deep)
+>
+> Both conditions must be true. Annotation: `; deep-pit low-vesselness
+> (circular depression, not tubular); requires NAC visual inspection`.
+> Tier C; NAC browse required before any tier-B promotion.
+
+Threshold choice rationale: at <0.05 the rule wrongly captures TYCHOPK02
+(frangi@score=0.054, a central-peak-relief FP); at <0.02 only MARIUSCONE
+(0.011) and GRUITHMARE2 (0.015) qualify. TYCHOPK Cycle 2 (frangi=0.0185,
+depth=18.35 m) correctly NOT annotated (depth condition fails). The
+<0.02 threshold cleanly separates deep-pit from the pre-existing
+central-peak-relief family (TYCHOPK02/03/04/07, KINGCRATER*, FRESHMELT*).
+
+Applied to 12 of 21 new rows (10 GRUITHMARE2 + 2 MARIUSCONE); 6
+GRUITHUIS17 rows correctly NOT annotated (frangi@score=0.0424 > 0.02);
+3 TYCHOPK rows classified terrain_extrapolation (per existing
+TYCHOPK02/03/04/07 precedent).
+
+Implementation: `01_WORKSPACE/code/wp2_sag/transfer/apply_skeptic_annotation.py`
+(Cycle 1, idempotent across re-runs) + `apply_skeptic_annotation_tychopk.py`
+(Cycle 2, idempotent).
+
+### Results at N=24 effective (21 G2 + 3 Cycles 1-2)
+
+- **Registry:** 257 → **278 rows** (+21; all below-floor). Tier A=0,
+  B=0, C=278. n_above_local_floor = 45 (unchanged); 14 above-floor
+  inferred candidates; 233 below-floor.
+- **Aggregate FP per 10⁴ km²:** 6.06 [2.77, 11.51] → **3.74 [1.71, 7.10]**
+  (Poisson-exact Garwood 95% CI). n_fp = 9 unchanged (all below-floor
+  terrain_extrapolation rows excluded from FP numerator).
+- **Aggregate area:** 14,840.27 km² → **24,062.96 km²** (+9,222.69 km²:
+  TYCHOPK 3,016.80 + GRUITHUIS17 2,320.91 + GRUITHMARE2 2,258.77 +
+  MARIUSCONE 1,626.21; all below-floor).
+- **Calibration-context, NOT survey rate; selection-biased to catalogued
+  pits; G1 §3 row 10 verdict.**
+
+### What does NOT change
+
+- Frozen I15 recipe unchanged: sigmas (30, 60, 100, 150, 200, 300) m;
+  score_frac 0.20; slope_deg 45; neigh 5; fill Planchon-Darboux
+  (fix_flats=True); Frangi sigmas + sub-sample ≤5000 px max dim.
+- Tier rules unchanged: A=0 (no two-independent-methods); B requires
+  rille/chain within 100 m; C default.
+- FP counting unchanged: above-floor only; calibration-context,
+  NOT survey.
+
+### G2 verdict update
+
+Row 10 of `GATE_G2_report_v1.0` flipped from
+**DEFERRED-DTM-gap-EXPANDED** → **DEFERRED-DTM-gap-PARTIAL** (Cycles 1-2
+closed TYCHOPK + 3 no-raster DTMs; 30 random-mare-sites gap remains
+deferred — no LROC NAC DTMs for those footprints; Kaguya/SP/Chang'e
+out of scope for Paper 1). Both gates report mirrors updated
+(`plans/2026-08-23_...` and `papers/gate_reports/...`).

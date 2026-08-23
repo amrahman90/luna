@@ -918,3 +918,24 @@ Newest entries first. Format: date — what — where — why.
 - Cost $0; cumulative $0/$150/$800
 - No raw acquisitions this cycle (raster generation done in session 25);
   MANIFEST unchanged.
+
+## 2026-08-23 (execution session 30 — Rounds 1-6 housekeeping)
+
+Post-Cycle 6 housekeeping. Vault atomic notes updated, methodology back-port,
+outline + roadmap ticks, claim-discipline audit clean, smoke test PASS.
+
+- Round 1 — vault atomic notes (untracked, local-only):
+  - gates/G2.md flipped row 10 DEFERRED-DTM-gap-EXPANDED → -PARTIAL; Cycles 1-2 contributions + deep-pit rule folded in
+  - concepts/Calibration-context FP rate.md: 6.06 → 3.74 [1.71, 7.10] over 24,063 km² (post-Cycles 1-2)
+  - concepts/Deep-pit low-vesselness.md: NEW concept note; frangi<0.02 + depth≥100 m rule (skeptic Cycle 1)
+  - artifacts/Candidate registry.md: 257 → 278 rows; Cycles 1-2 +21 rows (+18 GRUITHUIS17/GRUITHMARE2/MARIUSCONE + 3 TYCHOPK); 12 deep-pit annotations
+  - sites/{TYCHOPK, MARIUSCONE, GRUITHUIS17, GRUITHMARE2}.md: visual-inspection backlog text updated via BACKLOG_SITE_HINTS dict extension
+- Round 2 — back-port deep-pit rule to METHODS.md (710 → 801 lines; new section "## Cycles 1-2 — local Tier-1 plan")
+- Round 3 — outline.md + roadmap ticks:
+  - papers/paper1_resolution_limits/outline.md: v1.0 additions section added (new §3.3.1, Table 1a, deep-pit failure-mode entry, References section)
+  - plans/2026-08-21_Next_Tasks_Roadmap.md: P5.5 ticked (Paper 1 v1.0); Cycles 1-2/6/3-5 (blocked) noted
+- Round 4 — bibliography: Zotero MCP still offline (connection refused); 10/10 References remain "verification pending"; web search inconclusive for van Ewijk 2011 / Blair 2017 / Chwala 2024 / Theinat 2020
+- Round 5 — NAC browse thumbnails BLOCKED: PDS S3 bucket has NAC_DTM RDR only; NAC_EDR / NAC browse products (CDR / .png / .jp2) 404 on all PDS endpoints (legacy + IM-2); LROC QuickMap UI works (now hosted at Intuitive Machines) but lacks API access for scripted downloads. Visual-inspection backlog notes updated with manual LROC QuickMap procedure (new URL: https://quickmap.lroc.im-ldi.com/)
+- Round 6 — smoke test PASS (F1 0.392/0/0.800 synthetic; FUSION AUC 0.990); claim-discipline audit clean (137 .md files, 0 actual violations; 3 false positives in meta-discussion of forbidden phrases); $0 spent; 21 G2 + 24 effective sites; 278 tier-C registry rows
+- Cost: $0
+- Net new tracked-code commits: this is the 5th commit of the local Tier-1 plan (Cycles 1, 2, 6, 7 + this housekeeping)

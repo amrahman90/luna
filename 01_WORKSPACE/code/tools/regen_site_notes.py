@@ -111,6 +111,39 @@ BACKLOG_SITE_HINTS = {
         "pattern is detector-induced (Frangi filter artifact) and not "
         "a real void cluster."
     ),
+    # Cycles 1-2 closures (2026-08-23, local Tier-1 plan)
+    "TYCHOPK": (
+        "Memory ceiling closed locally 2026-08-23 by Cycle 2: processed at "
+        "2+4+5 m rungs (6.8 GiB Python peak, no tile fallback). 3 below-floor "
+        "candidates (1 per rung); all classified terrain_extrapolation per "
+        "TYCHOPK02/03/04/07 precedent (frangi@score=0.0185 at 18.35 m depth). "
+        "0 FPs. NAC browse at lat ~-43.3° (Tycho central peak) recommended "
+        "before any tier-B promotion. Science gate unchanged."
+    ),
+    "GRUITHUIS17": (
+        "Cycle 1 close (2026-08-23): processed at 4+5 m rungs "
+        "(FRESHMELT-style workflow; 2 m rung skipped per v0.6 res-compatibility "
+        "guard — source res 5 m can't upsample). 6 below-floor candidates; "
+        "all terrain_extrapolation (frangi@score=0.0424 > 0.02, NOT annotated "
+        "deep-pit). 0 FPs."
+    ),
+    "GRUITHMARE2": (
+        "Cycle 1 close (2026-08-23): processed at 4+5 m rungs. 10 below-floor "
+        "candidates; all classified deep-pit low-vesselness (skeptic new rule: "
+        "frangi@score=0.015 < 0.02 AND depth@score=604 m ≥ 100 m → circular "
+        "depression, not tubular). NAC browse at 33.3943°N, -43.3329°W required "
+        "before any tier-B promotion. See [[backlog/GRUITHMARE2 + MARIUSCONE "
+        "deep-pit]] for browse targets. 0 FPs."
+    ),
+    "MARIUSCONE": (
+        "Cycle 1 close (2026-08-23): processed at 4+5 m rungs. 2 below-floor "
+        "candidates; both classified deep-pit low-vesselness (frangi@score=0.011 "
+        "< 0.02 AND depth@score=619 m ≥ 100 m → circular depression, not "
+        "tubular). Catalogued Marius Hills Pit is 17.9 km N (correctly NOT "
+        "flagged, score 0.059). NAC browse at 13.6250°N, -56.3975°W required "
+        "before any tier-B promotion. See [[backlog/GRUITHMARE2 + MARIUSCONE "
+        "deep-pit]]. 0 FPs."
+    ),
 }
 
 

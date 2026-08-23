@@ -101,17 +101,22 @@ points. When a step completes, tick it HERE and in the ZEROCOST roadmap.
   Compile G1 report (v0.5 benchmark, transfer results, stacked
   candidates, PU calibration, honest Marius/funnel failures).
   **HALT for human G1 decision.** M. *(FINAL-PASSED 2026-08-22; §8 T1 trigger APPROVED; cost ceiling $150)*
-- [ ] **P5.5 — Paper 1 v1.0** [paper-writer→verifier→skeptic→archivist,
+- [x] **P5.5 — Paper 1 v1.0** [paper-writer→verifier→skeptic→archivist,
   depends P5.4 approval] Full draft, figures, cover letter; LLTB-1
-  Zenodo release tag. L.
+  Zenodo release tag. L. *(v1.0 committed 2026-08-23 commit `7278e45`; 430→681 lines; Cycles 1-2 folded in; References added; Skeptic 4 fixes applied; submission-ready modulo G2 user pass + Zotero attach)*
 
-## Gate G2 — P3.1c N=21 expansion *(DRAFT-FOR-REVIEW 2026-08-23)*
+## Gate G2 — P3.1c N=21 expansion *(DRAFT-FOR-REVIEW 2026-08-23 with row 10 PARTIAL update)*
 
 **Location:** `papers/gate_reports/GATE_G2_report_v1.0.md` (working
 copy) and `plans/2026-08-23_GATE_G2_report_v1.0.md` (canonical
-install). **Status:** DRAFT-FOR-REVIEW pending human G2 decision.
+install). **Status:** DRAFT-FOR-REVIEW pending human G2 decision
+(row 10 flipped DEFERRED-DTM-gap-EXPANDED → DEFERRED-DTM-gap-PARTIAL
+by Cycle 6 close 2026-08-23).
 
-- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED)
+- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-**PARTIAL** / 1 NOT MEASURED)
+- [x] **Cycles 1-2** *(committed `f0d43b1`, `64463da`)* — local Tier-1 plan: GRUITHUIS17 + GRUITHMARE2 + MARIUSCONE + TYCHOPK 1.44 GiB processed locally; registry 257 → 278 rows (+21; all below-floor); aggregate FP 6.06 → **3.74 [1.71, 7.10]** per 10⁴ km² (calibration-context); new `deep-pit low-vesselness` fall-back annotation rule (skeptic Cycle 1).
+- [x] **Cycle 6** *(committed `d97d9d5`)* — G2' partial update applied; row 10 -EXPANDED → -PARTIAL.
+- [ ] **Cycles 3-5 (NAC EDR + stereo + quality gate)** — *BLOCKED indefinitely*: PDS NAC_EDR paths 404 (S3 bucket has NAC_DTM RDR but not NAC_EDR; LROC WMS / QuickMap / Wayback all non-functional). Resume if PDS URL pattern found or Hetzner rental authorised.
 
 ## Optional / opportunistic (manual, no dispatch)
 
