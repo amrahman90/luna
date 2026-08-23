@@ -307,6 +307,40 @@ def main():
         rms = df["pooled_rms_m"].to_numpy()
         med = float(np.median(rms))
         amin = df["local_Amin_m"].to_numpy()
+
+        # Terrain split (mare vs highland) per dispatch 2026-08-22.
+        # Highland sites = central peaks (TYCHO, KING) and Gruithuisen
+        # domes (silicic, non-mare composition). SWFECUNPIT1 sits on
+        # the SW highland edge of Mare Fecunditatis (findings.md
+        # 2026-08-21 identifies it as the only highland site of the
+        # original 8 covered DTMs). The mare subset excludes all
+        # highland sites.
+        HIGHLAND = {"GRUITHUIS17", "SWFECUNPIT1",
+                    "TYCHOPK", "TYCHOPK02", "TYCHOPK03",
+                    "TYCHOPK04", "TYCHOPK07",
+                    "KINGCRATER2", "KINGCRATER3", "KINGCRATER4"}
+        is_highland = df["dtm_name"].isin(HIGHLAND).to_numpy()
+        mare_rms = rms[~is_highland]
+        highland_rms = rms[is_highland]
+
+        def _stats(arr):
+            if len(arr) == 0:
+                return {"n": 0,
+                        "median_pooled_rms_m": None,
+                        "min_pooled_rms_m": None,
+                        "max_pooled_rms_m": None,
+                        "median_local_Amin_m": None,
+                        "sites": []}
+            return {"n": int(len(arr)),
+                    "median_pooled_rms_m": round(float(np.median(arr)), 6),
+                    "min_pooled_rms_m": round(float(arr.min()), 6),
+                    "max_pooled_rms_m": round(float(arr.max()), 6),
+                    "median_local_Amin_m": round(float(np.median(amin[~is_highland])), 6)
+                            if arr is mare_rms
+                            else round(float(np.median(amin[is_highland])), 6),
+                    "sites": sorted(df.loc[~is_highland if arr is mare_rms
+                                           else is_highland, "dtm_name"].tolist())}
+
         summary = {
             "generated": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
             "n_processed": int(len(df)),
@@ -320,6 +354,18 @@ def main():
             "elapsed_s": round(elapsed, 1),
             "csv": str(args_root.out),
             "sources_used": df.apply(lambda r: _find_source(r["dtm_name"], args_root.dtm_root, args_root.out_root)[1], axis=1).tolist(),
+            "by_terrain": {
+                "mare": _stats(mare_rms),
+                "highland": _stats(highland_rms),
+                "highland_sites_set": sorted(HIGHLAND),
+                "highland_classification_note": (
+                    "highland = Gruithuisen domes (silicic, non-mare), "
+                    "SW Fecunditatis pit (SW rim of Mare Fecunditatis, "
+                    "highland edge per findings.md 2026-08-21), and all "
+                    "TYCHOPK* (Tycho central peak — highland composition) "
+                    "+ KINGCRATER* (King crater peak — highland composition) "
+                    "sites. Mare subset excludes these."),
+            },
         }
     else:
         summary = {
