@@ -5,6 +5,22 @@ Newest entries first. Format: date — what — where — why.
 
 ---
 
+## 2026-08-23 (execution session 25 — Obsidian vault bootstrap)
+
+- Obsidian vault Option B: whole `01_WORKSPACE/` is the vault; atomic notes in `01_WORKSPACE/Lunar Lavatube knowledge/` (96 .md files: 00_HOME + 5 MOCs + 32 + 25 + 21 + 12 atomic notes + 1 Welcome); 3576 lines total
+- `.obsidian/` config at workspace root (gitignored; per-machine); user's existing theme/plugins preserved via .obsidian/ migration from the original setup at `Lunar Lavatube knowledge/.obsidian/`
+- `.obsidian/ignore` filters CSV/JSON/py/tif from file tree; markdown stays visible; search still works on hidden files
+- Anti-drift generator: `01_WORKSPACE/code/tools/regen_site_notes.py` (idempotent; reads canonical sources only; 21 sites rebuildable)
+- Skills extended: `lunarvoid-conventions` §9 (knowledge layer rules); `lunarvoid-protocol` step 0a (session-start reads 00_HOME) + vault hygiene section (archivist updates per cycle)
+- Agent scopes extended: archivist (knowledge/atomic/**, .obsidian/**); paper-writer (knowledge/atomic/**)
+- `.gitignore` adds vault content to untracked list (per user choice)
+- Verifier PASS-with-notes; 32 broken wikilinks → 0 after fix B dispatch; calibration-context caveat applied to 5 FP-rate mentions
+- Smoke test PASS; regen_site_notes.py --dry-run lists 21 sites
+- Cost $0; user-driven next steps: (a) re-open Obsidian pointing at `01_WORKSPACE/`; (b) restart opencode for new agent scopes to take effect without heredoc workarounds
+- Note: vault content NOT committed (gitignored per user); re-runnable from canonical sources via regen_site_notes.py if corrupted
+
+---
+
 ## 2026-08-23 (execution session 24 — G2 gate report DRAFT-FOR-REVIEW; halt for human decision)
 
 - G2 report v1.0 at 217 lines; verifier PASS-with-notes (3 fixes applied); skeptic SOUND-with-objections (8 fixes applied)
