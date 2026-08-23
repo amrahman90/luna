@@ -71,3 +71,6 @@ Thumbs.db
 01_WORKSPACE/knowledge/atomic/.trash/
 # Obsidian vault content (per-user choice 2026-08-23; local-only knowledge layer)
 01_WORKSPACE/Lunar Lavatube knowledge/
+
+.opencode/
+opencode.json

@@ -617,7 +617,7 @@ human G1 decision.
 copy) and `plans/2026-08-23_GATE_G2_report_v1.0.md` (canonical
 install). **Status:** DRAFT-FOR-REVIEW pending human G2 decision.
 
-- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED)
+- [x] **Gate G2** — DRAFT-FOR-REVIEW (human decision pending; verdict 5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-**PARTIAL** / 1 NOT MEASURED). Row 10 flipped DEFERRED-DTM-gap-EXPANDED → DEFERRED-DTM-gap-PARTIAL by Cycle 6 close (2026-08-23, commit `d97d9d5`). Cycles 1-2 of the local Tier-1 plan (commits `f0d43b1` Cycle 1, `64463da` Cycle 2) closed TYCHOPK 1.44 GiB memory ceiling + GRUITHUIS17/GRUITHMARE2/MARIUSCONE no-cached-raster deferrals; +21 tier-C registry rows (278 total; all below-floor); aggregate FP 6.06 → **3.74 [1.71, 7.10]** per 10⁴ km² over 24,063 km² (calibration-context, NOT survey); new `deep-pit low-vesselness` annotation rule (skeptic Cycle 1, applied to 12 of 21 new rows). Cycles 3-5 (NAC EDR fetch + ASP stereo + quality gate) remain deferred indefinitely — PDS NAC_EDR paths 404 (S3 bucket has NAC_DTM RDR only; legacy LROC WMS / QuickMap / Wayback all non-functional); LROC QuickMap now hosted at Intuitive Machines (`https://quickmap.lroc.im-ldi.com/`) for manual visual inspection.
 
 ---
 

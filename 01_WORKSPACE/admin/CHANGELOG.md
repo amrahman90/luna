@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-08-23 (execution session 31 — Rounds 7-10 housekeeping)
+
+Rounds 7-10 housekeeping + Paper 1 v1.0 release note. All committed at $0.
+
+- Round 7: ZEROCOST roadmap updated (Gate G2 row with PARTIAL note + Cycles 1-2 outcomes + Cycles 3-5 BLOCKED note)
+- Round 9: PDS NAC_EDR URL research backlog note (vault, untracked) — preserves context for future sessions
+- Round 10: Paper 1 v1.0 release note (`01_WORKSPACE/notes/2026-08-23_Paper1_v1.0_release_note.md`; ~150 lines; comprehensive summary of cycles 1-2 + paper state + pending actions + cost)
+- Vault (Round 9): backlog/PDS NAC_EDR URL research.md (new atomic note; options A-E for resuming Cycles 3-5)
+- Cost: $0
+- Next: standing by; user-driven G2 pass + visual inspection + Zotero attach + Paper 1 submission prep
+
 ## 2026-08-23 (execution session 29 — Cycle 7 close: Paper 1 v1.0 submission-ready)
 
 - Paper 1 v1.0 (Detectability limits for lava tube roof signatures in orbital topography: the LLTB-1 calibrated benchmark) committed; 430 → 681 lines (+251)
