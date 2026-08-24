@@ -1,0 +1,2 @@
+timestamp_utc,product_id,dtm,endpoint,status,size_bytes,sha256,elapsed_sec,http_status,notes
+2026-08-24T05:38:28.608965+00:00,M137332905LE,TRANQPIT1,on-disk,SKIP_EXISTS,264467400,2e41864ae5bbda826b6b2550c9b0f9308195d4c30d0667c3224c0f8dfb168f95,0.4,200,already on disk; skipping

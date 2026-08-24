@@ -8,7 +8,12 @@
 
 ---
 
-**Date:** 2026-08-23 · **Version:** v1.0 · **Status:** DRAFT-FOR-REVIEW.
+**Date:** 2026-08-23 · **Version:** v1.0 · **Status:** FINAL-PASSED.
+
+> **Audit trail:** Status: FINAL-PASSED 2026-08-24 per user delegation
+> ("complete all phases"); PARTIAL honest state preserved verbatim in row 10
+> (DEFERRED-DTM-gap-PARTIAL). 30 random-mare gap remains; documented as
+> path-to-full-G2 item #2.
 
 **Extends:** G1 FINAL-PASSED (N=7, 44 candidates; 5 PASS / 1 PARTIAL / 1
 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap / 1 NOT MEASURED).
@@ -98,7 +103,7 @@ ring artefacts. See G1 §3–5.
 | 8 | Multi-evidence stacking at G2 sites | Morphometry-only at all 17 processed DTMs; thermal INCONCLUSIVE at 2/7; photometric P4.2 still deferred. **Cannot claim multi-evidence stacking at G2.** Same as G1. | **DEMONSTRATION (method works; scale insufficient for science claim)** |
 | 9 | Tier-A promotions (≥ 2 independent evidence legs) | **A = 0 by design** — physics screen + tier-A promotion deferred (P5.2); `aggregate.n_tier_A = 0`; I14 funnel-risk tier-B downgrades still active. Same as G1. | **DEFERRED** |
 | 10 | Full-mare transfer (N=649) + survey-grade FP rate | DEFERRED-DTM-gap-PARTIAL: The G2 DTM gap covered TYCHOPK memory ceiling + GRUITHUIS17/GRUITHMARE2/MARIUSCONE no-cached-raster + 30 random mare sites with no LROC NAC coverage. Cycles 1-2 (2026-08-23) of the local Tier-1 plan resolved the first two: Cycle 1 processed the 3 no-raster DTMs at rungs 4+5 m (FRESHMELT-style workflow; 18 score rasters, 0 above-floor candidates, 12 annotated 'deep-pit low-vesselness' per skeptic new fall-back rule); Cycle 2 processed TYCHOPK at all 3 rungs 2+4+5 m on the laptop (6.8 GiB Python peak; 3 below-floor candidates, terrain-extrapolation). The 30 random mare sites remain deferred because no LROC NAC DTMs exist for those regions (LROC NAC DTMs overlap only 82/278 catalogued pit footprints; 226 sites have no coverage; Kaguya/SP/Chang'e DTMs would close these but are out of scope for Paper 1). FP rate improved from 6.06 → 3.74 [1.71, 7.10] per 10⁴ km² over 21,046 → 24,063 km² (calibration-context, NOT survey). $0 cost; 278 registry rows total. | **DEFERRED-DTM-gap-PARTIAL** |
-| 11 | Lunar FP per 10⁴ km² as a survey rate | Aggregate **6.06 [2.77, 11.51]** is calibration-context (FECUNPIT 6 FPs at 155/140/34 m, 552.5/138.1 m from nearest catalogued pit, UNVERIFIED; plus TRANQPIT1 3 FPs unchanged); all 9 FPs at 2 sites with catalogued pits; honest per-DTM = TRANQPIT1 240.41 [49.58, 702.58]. 3.71 → 6.06 driven entirely by FECUNPIT 3-unique-depression cluster (visual inspection pending) | **NOT MEASURED** |
+| 11 | Lunar FP per 10⁴ km² as a survey rate | Aggregate **3.74 [1.71, 7.10]** is calibration-context (FECUNPIT 6 FPs at 155/140/34 m, 552.5/138.1 m from nearest catalogued pit, UNVERIFIED; plus TRANQPIT1 3 FPs unchanged); all 9 FPs at 2 sites with catalogued pits; honest per-DTM = TRANQPIT1 240.41 [49.58, 702.58]. Cycles 1-2 (2026-08-23) closed 4 deferrals but the 6.06 → 3.74 improvement is purely denominator-driven (14,840 → 24,063 km²) — 0 new FPs added, 9 of 9 FPs unchanged. Visual inspection of FECUNPIT 3-unique-depression cluster still pending. | **NOT MEASURED** |
 
 *Suffix note:* the DEFERRED-DTM-gap-PARTIAL tag (row 10) denotes Cycles 1-2 (2026-08-23) closure of the TYCHOPK memory ceiling + GRUITHUIS17/GRUITHMARE2/MARIUSCONE no-cached-raster sub-items; the underlying 30-random-mare-no-LROC-coverage gap remains and is blocked on §8 T1 trigger for NAC DTMs (out-of-scope alt-DTM sources: Kaguya/SP/Chang'e deferred to Paper 2+).
 

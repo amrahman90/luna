@@ -1,0 +1,11 @@
+product_id,dtm,expected_size_bytes,notes
+M137332905LE,TRANQPIT1,450000000,LE; NAC stereo pair; primary EDR for TRANQPIT1 DTM
+M137332905RE,TRANQPIT1,450000000,RE; NAC stereo pair companion
+M152655237LE,TRANQPIT1,420000000,LE; second observation; used for multi-frame DTM
+M152655237RE,TRANQPIT1,420000000,RE; second observation companion
+M152662021LE,TRANQPIT1,420000000,LE; high-incidence geometry; LTIP-quality check
+M152662021RE,TRANQPIT1,420000000,RE; high-incidence geometry companion
+M131509326RE,INGENIIPIT,400000000,RE; retrieved 2026-08-21; candidate for v0.6 retry queue
+M131509335LE,INGENIIPIT,400000000,LE; companion
+M130908476LE,MARIUSPIT01,400000000,LE; Marius Hills pit; known rille funnel site
+M130908476RE,MARIUSPIT01,400000000,RE; companion
