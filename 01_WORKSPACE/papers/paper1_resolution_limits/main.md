@@ -554,6 +554,41 @@ FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
   to Paper 2+) or N much larger from NAC DTMs (requires Tier-1 rental
   authorised under D2). The reported 3.74 [1.71, 7.10] per 10⁴ km²
   aggregate is **calibration-context only**.
+- **I12 confound covariates not exercised** (added v1.0 polish,
+  2026-08-24): the inherited Reichenzeller 2026 I12 component
+  (independent confound covariates with nulls reported; reference
+  list line 648) is acknowledged but is not run as an explicit
+  protocol arm. Slope and illumination are partially addressed via
+  the +10° slope mask (§3.2 line 149) and the 12-geometry Hapke grid
+  (§4.5(b) lines 406–446), but a formal I12-style null test
+  (e.g. slope × aspect × illumination × DTM noise σ) is not.
+  Sequenced into the LLTB-1 v0.2 backlog.
+- **No SLDEM2015 absolute-elevation cross-validation** (added
+  v1.0 polish, 2026-08-24): the I2 kriging correction is
+  self-validated at TRANQPIT1 (RMSE 0.373 → 0.327 m; §4.5(e)
+  line 506) but is not cross-checked against an independent
+  SLDEM2015 absolute-elevation reference (Kaguya TC ~59 m
+  posting; mentioned in §5.1 line 527 only as a detectability-
+  curve data point — below the curve for 60–300 m sag features,
+  so cannot directly cross-validate). Closing this gap requires
+  careful georeferencing under the Moon eqc CRS and is deferred.
+- **INGENIIPIT ring-artefact annotation** (added v1.0 polish,
+  2026-08-24): the candidate registry carries 24 INGENIIPIT
+  rows annotated as ring artefacts around catalogued pit r001
+  (not 23 separate void candidates; `notes/findings.md`
+  lines 310–315, 504, 704–706). This bookkeeping is a known
+  data-hygiene feature, not a bug, and INGENIIPIT is reframed
+  as rocky-ejecta counter-evidence (RA_pct_mean 0.98 % vs
+  0.50 % local mare ≈2×; `notes/2026-08-23_Paper1_v1.0_release_note.md`
+  line 152).
+- **Sample-size power calculation not run** (added v1.0 polish,
+  2026-08-24): the aggregate 3.74 [1.71, 7.10] per 10⁴ km² figure
+  (n_fp = 9) is reported with a Poisson-exact (Garwood) 95% CI
+  but without a formal a-priori sample-size power calculation;
+  the appropriate denominator for a ±50 % precision target on a
+  1 % FP-rate estimate is ≈16,000 FP trials — roughly 40× the
+  current budget. A formal power analysis is sequenced for Paper 2
+  once the 30 random-mare sites (Q10 above) close.
 
 ## 6. Conclusion
 - LLTB-1 v0.1 sets the baseline: detectability curve,
@@ -588,6 +623,19 @@ FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
   v5 primitive is validated on.
 - DLR Institute of Data Science for the open Mueller
   2026 / Reichenzeller 2026 papers and code.
+
+## Author contributions (CRediT taxonomy)
+Single-author manuscript. All CRediT roles
+(Contributor Roles Taxonomy,
+<https://credit.niso.org/>) assigned to the
+**LUNARVOID team**: conceptualisation, methodology,
+software, validation, formal analysis, investigation,
+data curation, writing — original draft, writing —
+review & editing, visualisation, supervision, project
+administration, funding acquisition.
+
+## Conflict of interest
+The authors declare no competing interests.
 
 ## Data and code availability
 - LLTB-1 v0.1: derived rasters only.
