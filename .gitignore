@@ -72,5 +72,9 @@ Thumbs.db
 # Obsidian vault content (per-user choice 2026-08-23; local-only knowledge layer)
 01_WORKSPACE/Lunar Lavatube knowledge/
 
+# Personal learning workspace (per-user choice 2026-08-26; local-only; lessons,
+# reference cards, learning records, NOTES.md). NOT shared on GitHub.
+01_WORKSPACE/learning/
+
 .opencode/
 opencode.json
