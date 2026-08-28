@@ -1035,3 +1035,48 @@ User said "complete all" — interpreted as full delegation of autonomous surfac
 
 **Cost: $0** (no new acquisitions, no paid compute, no new files outside `01_WORKSPACE/`).
 **Net commits this session-31 work: 0** (the opencode.json patch is on-disk only; vault session 25 is gitignored; CHANGELOG + findings.md updates below are bookkeeping for session 31 itself, not new research deliverables).
+
+## 2026-08-28 (execution session 33 — Paper 1 v1.2 references + Phase 4 curriculum)
+
+User verified all 6 Zotero-attached references; orchestrator audited for DOI errors + inconsistencies in the paper's References section and applied systematic corrections.
+
+**Reference audit findings:**
+- van Ewijk 2011 DOI `10.14358/PERS.77.3.261` resolves to a DIFFERENT 2011 PE&RS paper ("Forest Succession in Central Ontario"), not the VCI paper. User chose option A: drop van Ewijk, use Reichenzeller 2026 as sole VCI anchor.
+- Carrer 2024 placeholder DOI `10.1038/s41550-024-XXXXX` → real DOI `10.1038/s41550-024-02302-y` (Nat Astron 8(9), 1119-1126); title corrected.
+- Blair 2017 venue ambiguous ("Icarus / JGR Planets (TBD)") → Icarus 282, 47-55, doi:10.1016/j.icarus.2016.10.008.
+- Theinat cited as 2020 / JGR Planets (TBD) → actual is 2018 AIAA SciTech paper 2018-5185, doi:10.2514/6.2018-5185.
+- Le Corre 2025 first initial wrong (L → D); article # wrong (115548 → 116675); DOI added (10.1016/j.icarus.2025.116675); title corrected.
+- Chwala 2024 not in Crossref / arXiv / Google Scholar; user chose option A: drop from References. Stability-bounds anchor now Blair 2017 + Theinat 2018 only.
+
+**Paper 1 → v1.2 (commit `5596c62`):**
+- 8 References (was 10); all 8 with confirmed DOIs
+- Header note: "8 references verified ... DOIs confirmed in Crossref" (was "10 references ... verification pending")
+- Mueller + Reichenzeller entries: "verification pending — Zotero local offline" removed (now in Zotero)
+- In-text Chwala mentions: 0 (was 2)
+- Companion docs (outline.md, cover_letter.md, referee_response_template.md) updated to mirror
+- Blair+Theinat stability-bounds claim now "two stability-bound anchors" (was "three")
+
+**Zotero state:**
+- 6 items attached in user's local library (Mueller 2026, Reichenzeller 2026, Van Ewijk 2011 — wrong paper — but kept for reference; Carrer 2024, Blair 2017, Theinat 2018)
+- Zotero local API confirmed working (HTTP 200 after user enabled "Allow other applications to communicate with Zotero" in Settings → Advanced)
+
+**Phase 4 curriculum (`01_WORKSPACE/learning/`, gitignored):**
+- 5 lessons built (0020-0024):
+  - 0020: Evidence hierarchy (v5 §3; scale-bridging problem)
+  - 0021: Diviner thermal workflow (I6; INGENIIPIT rocky-ejecta reframing; Powell 2023 GHRM)
+  - 0022: Mini-RF / radar sounder (Carrer 2024 carve-out; the ONLY instrumented subsurface void)
+  - 0023: GRAIL gravity (10-30 km effective; "ABSOLUTELY NOT a 60-300 m tube")
+  - 0024: SELENE LRS + Tier-D integration (Marius Hills walked under all 4 streams)
+- 1 reference card: `reference/geophysics-confirmation-cheatsheet.html`
+- 1 learning record: `learning-records/0004-phase-4-complete.md`
+- RESOURCES.md Topic F added (Powell 2023, Carrer 2024, Kaku 2017, Horvath 2022)
+
+**Curriculum status: 24/35 lessons complete (69%); 4 of 7 phases done (Phases 1-4).** Remaining: Phase 5 (photogrammetry, gated on rental), Phase 6 (writing & publication), Phase 7 (project operations).
+
+**Commits this session-33 work:**
+- `1310d3c` — Paper v1.1 (van Ewijk drop + Carrer/Blair/Theinat fixes)
+- `5596c62` — Paper v1.2 (Chwala drop + Le Corre fix + cover letter + referee template)
+
+**Working tree:** clean except R1 roadmap draft (kept untracked per user instruction).
+
+**Tooling:** Zotero MCP confirmed working (1 user action: Settings → Advanced → "Allow other applications to communicate with Zotero" checkbox).
