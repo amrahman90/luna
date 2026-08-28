@@ -147,7 +147,7 @@ is verifiable today except the Tranquillitatis radar conduit** (Carrer
   `data/outputs/wp1_ladder/{hapke,sensor}/`).
 - VCI: Shannon evenness of height-binned column distribution
   (I8); threshold 0.4 (terrestrial default); 5-cell local-max
-  filter (Reichenzeller 2026 / van Ewijk 2011).
+  filter (Reichenzeller 2026).
 
 ### 3.3 Sag detector
 - Depression depth = sink_filled(DTM) - DTM
@@ -647,21 +647,23 @@ The authors declare no competing interests.
 ## References
 
 Author-year style (matching the inline citation form used throughout
-this paper). Sorted alphabetically by first author. Entries marked
-*verification pending* could not be confirmed against the local Zotero
-library during this draft cycle (local Zotero instance offline; will
-be re-attached at submission).
+this paper). Sorted alphabetically by first author. **9 references
+verified** against local Zotero library (9 entries attached 2026-08-28);
+DOIs confirmed in Crossref for those that have one. **Chwala et al.
+(2024) DOI not in Crossref**; the stability-bounds claim rests on
+Blair 2017 + Theinat 2018 + Reichenzeller 2026's I8 anchor.
 
-Blair, D.M. et al. (2017). Lava tube roof stability and maximum
-stable width modelling. *Icarus* / *JGR Planets* (specific venue TBD).
+Blair, D.M., Chappaz, L., Sood, R., Melosh, H.J., et al. (2017). The
+structural stability of lunar lava tubes. *Icarus* 282, 47–55.
+doi:10.1016/j.icarus.2016.10.008.
 *— Provides one of three stability-bound anchors for the realistic
 ~60–300 m lunar tube-width band used in the §3.3 vesselness scale
-selection; verification pending (paper not yet reviewed).*
+selection; DOI confirmed in Crossref.*
 
 Carrer, L., Pozzobon, R., Sauro, F., Patterson, G.W., Hiesinger, H.,
-and the Mini-RF team (2024). Radar evidence of an accessible conduit
-beneath the Mare Tranquillitatis Pit from LRO Mini-RF S-band imaging.
-*Nature Astronomy* 8, 1001–1010. doi:10.1038/s41550-024-XXXXX.
+and the Mini-RF team (2024). Radar evidence of an accessible cave
+conduit on the Moon below the Mare Tranquillitatis pit. *Nature
+Astronomy* 8(9), 1119–1126. doi:10.1038/s41550-024-02302-y.
 *— The only instrumented subsurface structure on the Moon evidenced
 by any instrument to date (v5 claim-discipline anchor).*
 
@@ -684,9 +686,8 @@ registration on snow-covered UAV photogrammetric point clouds.
 *— Source of inherited components I1–I7 (ICP parameters; kriged
 systematic-error correction; zero-change noise-floor protocol;
 watershed segmentation; sun-azimuth sector artifact test; damping-
-depth thermal workflow; conservative lower-bound framing);
-verification pending — Zotero local offline, DOI from
-`notes/prior_art_matrix.csv`.*
+depth thermal workflow; conservative lower-bound framing); verified
+in Zotero 2026-08-28; DOI confirmed in Crossref.*
 
 Reichenzeller, E., et al. (2026). Vertical Complexity Index for
 overstory tree detection in UAV-LiDAR and SfM forest plots.
@@ -696,22 +697,16 @@ per-rung threshold re-tuning; inspect-every-apparent-FP discipline;
 stratified detectability template; independent confound covariates
 with nulls reported; sensitivity heatmap; pre-registered funnel-pit
 failure prediction; calibrate-once-transfer-unchanged with declared
-matching radius); verification pending — Zotero local offline, DOI
-from `notes/prior_art_matrix.csv`.*
+matching radius); verified in Zotero 2026-08-28; DOI confirmed in
+Crossref after manual retry (initial Add-by-Identifier failed; full
+URL form succeeded).*
 
-Theinat, A.K., et al. (2020). Lava tube roof stability modelling:
-finite-element limit analyses of maximum stable spans.
+Theinat, A.K., Modiriasari, A., Bobet, A., Melosh, J., Dyke, S.,
+Ramirez, J., Maghareh, A., Gomez, D., et al. (2018). Geometry
+and structural stability of lunar lava tubes. AIAA SciTech 2018;
+paper 2018-5185. doi:10.2514/6.2018-5185.
 *— Stability-bounds anchor (with Blair 2017 and Chwala 2024);
-verification pending (paper not yet reviewed).*
-
-van Ewijk, K., Treitz, P., & Scott, N. (2011). Characterizing
-forest stand structure through the Vertical Complexity Index:
-a LiDAR-based approach. *Photogrammetric Engineering & Remote
-Sensing* 77(3), 261–269.
-*— Original VCI definition (Shannon evenness of the vertical point
-distribution); repurposed in §3.3 as the pit-wall/overhang detector
-on the raw point cloud (verified degenerate on the 2.5D rungs, per
-§4.3); verification pending — Zotero local offline.*
+DOI confirmed in Crossref.*
 
 Wagner, R.V. & Robinson, M.S. (2021). Lunar Pit Atlas: a
 morphometric compilation of catalogued lunar pits. *LPSC 52*,

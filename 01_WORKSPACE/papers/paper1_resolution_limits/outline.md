@@ -41,8 +41,9 @@
   preserved); Cycles 1-2 + G2 PARTIAL closure narrative.
 - References section added: 10 entries, author-year style, alphabetical
   by first author (Blair 2017, Carrer 2024, Chwala 2024, Le Corre 2025,
-  Mueller 2026, Reichenzeller 2026, Theinat 2020, van Ewijk 2011,
-  Wagner & Robinson 2021, Wong 2014). Zotero attach pending.
+  Mueller 2026, Reichenzeller 2026, Theinat 2018,
+  Wagner & Robinson 2021, Wong 2014). 9 verified in Zotero
+  2026-08-28; Chwala DOI not in Crossref.
 
 ## v1.0 submission status
 
