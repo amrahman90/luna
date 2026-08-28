@@ -156,7 +156,7 @@ is verifiable today except the Tranquillitatis radar conduit** (Carrer
   the NoData-floor failure mode on lunar shadows).
 - Frangi vesselness at physical scales 30, 60, 100, 150,
   200, 300 m (the realistic lunar tube-width band per
-  Blair / Theinat / Chwala). black_ridges=True.
+  Blair / Theinat). black_ridges=True.
 - Per-cell score = depth * vesselness; local-maxima at
   5-cell neighbourhood.
 - Per-rung threshold re-tuning on a 50% split (I9 —
@@ -647,18 +647,19 @@ The authors declare no competing interests.
 ## References
 
 Author-year style (matching the inline citation form used throughout
-this paper). Sorted alphabetically by first author. **9 references
-verified** against local Zotero library (9 entries attached 2026-08-28);
-DOIs confirmed in Crossref for those that have one. **Chwala et al.
-(2024) DOI not in Crossref**; the stability-bounds claim rests on
-Blair 2017 + Theinat 2018 + Reichenzeller 2026's I8 anchor.
+this paper). Sorted alphabetically by first author. **8 references
+verified** against local Zotero library (8 entries attached 2026-08-28);
+DOIs confirmed in Crossref for all 8. The stability-bounds anchor is
+Blair 2017 + Theinat 2018 + Reichenzeller 2026's I8 (Chwala 2024
+was dropped: no DOI found in Crossref, arXiv, or Google Scholar
+during reference verification).
 
 Blair, D.M., Chappaz, L., Sood, R., Melosh, H.J., et al. (2017). The
 structural stability of lunar lava tubes. *Icarus* 282, 47–55.
 doi:10.1016/j.icarus.2016.10.008.
-*— Provides one of three stability-bound anchors for the realistic
+*— Provides one of two stability-bound anchors for the realistic
 ~60–300 m lunar tube-width band used in the §3.3 vesselness scale
-selection; DOI confirmed in Crossref.*
+selection (paired with Theinat 2018); DOI confirmed in Crossref.*
 
 Carrer, L., Pozzobon, R., Sauro, F., Patterson, G.W., Hiesinger, H.,
 and the Mini-RF team (2024). Radar evidence of an accessible cave
@@ -667,18 +668,13 @@ Astronomy* 8(9), 1119–1126. doi:10.1038/s41550-024-02302-y.
 *— The only instrumented subsurface structure on the Moon evidenced
 by any instrument to date (v5 claim-discipline anchor).*
 
-Chwala, A. et al. (2024). Lava tube stability bounds modelling.
-*JGR Planets* (specific issue TBD).
-*— Stability-bounds anchor (with Blair 2017 and Theinat 2020)
-fixing the ~60–300 m span prior encoded in the §3.3 vesselness scale
-selection; verification pending (paper not yet reviewed).*
-
-Le Corre, L., et al. (2025). ESSA: deep-learning detection of
-entrances to sub-surface areas on the Moon and Mars. *Icarus* 441,
-115548. *— Mask R-CNN trained on Lunar Pit Atlas labels with
-Martian HiRISE and synthetic implanted-pit augmentation; the most-
-cited direct competitor (positioned as inference vs detection, never
-used as a label source per v5 risks R8/R9).*
+Le Corre, D., Mason, N., Bernard-Salas, J., Mary, D., & Cox, N.
+(2025). New candidate cave entrances on the Moon found using deep
+learning. *Icarus* 441, 116675. doi:10.1016/j.icarus.2025.116675.
+*— ESSA: Mask R-CNN trained on Lunar Pit Atlas labels with Martian
+HiRISE and synthetic implanted-pit augmentation; the most-cited
+direct competitor (positioned as inference vs detection, never used
+as a label source per v5 risks R8/R9). DOI confirmed in Crossref.*
 
 Mueller, R., et al. (2026). Kriged distortion correction after ICP
 registration on snow-covered UAV photogrammetric point clouds.
@@ -705,7 +701,7 @@ Theinat, A.K., Modiriasari, A., Bobet, A., Melosh, J., Dyke, S.,
 Ramirez, J., Maghareh, A., Gomez, D., et al. (2018). Geometry
 and structural stability of lunar lava tubes. AIAA SciTech 2018;
 paper 2018-5185. doi:10.2514/6.2018-5185.
-*— Stability-bounds anchor (with Blair 2017 and Chwala 2024);
+*— Stability-bounds anchor (with Blair 2017);
 DOI confirmed in Crossref.*
 
 Wagner, R.V. & Robinson, M.S. (2021). Lunar Pit Atlas: a

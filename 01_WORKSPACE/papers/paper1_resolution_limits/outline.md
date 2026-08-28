@@ -39,11 +39,12 @@
 - §1.1, §5.2, §6: updated to ~281 catalogued pits (Wagner & Robinson
   2021), 278 tier-C registry rows (45 above-floor; 233 below-floor
   preserved); Cycles 1-2 + G2 PARTIAL closure narrative.
-- References section added: 10 entries, author-year style, alphabetical
-  by first author (Blair 2017, Carrer 2024, Chwala 2024, Le Corre 2025,
-  Mueller 2026, Reichenzeller 2026, Theinat 2018,
-  Wagner & Robinson 2021, Wong 2014). 9 verified in Zotero
-  2026-08-28; Chwala DOI not in Crossref.
+- References section added: 8 entries, author-year style, alphabetical
+  by first author (Blair 2017, Carrer 2024, Le Corre 2025, Mueller 2026,
+  Reichenzeller 2026, Theinat 2018, Wagner & Robinson 2021, Wong 2014).
+  8 verified in Zotero 2026-08-28; all DOIs confirmed in Crossref.
+  Chwala 2024 was dropped: no DOI found in Crossref, arXiv, or Google
+  Scholar during reference verification.
 
 ## v1.0 submission status
 
