@@ -1,0 +1,112 @@
+{
+  "date": "2026-08-28",
+  "n_total_rows": 278,
+  "n_positives_TP": 34,
+  "n_unlabeled": 244,
+  "n_features": 5,
+  "feature_names": [
+    "span_m",
+    "sag_amp_m",
+    "score",
+    "conf_dist_rille_m",
+    "conf_dist_chain_m"
+  ],
+  "column_mapping_report": {
+    "prompt_expected_columns": [
+      "depth_max_m",
+      "frangi_at_score_max",
+      "span_m",
+      "dist_pit_m",
+      "area_km2",
+      "above_floor"
+    ],
+    "columns_present_in_registry": [
+      "span_m"
+    ],
+    "columns_missing_from_registry": [
+      "depth_max_m",
+      "frangi_at_score_max",
+      "dist_pit_m",
+      "area_km2",
+      "above_floor"
+    ],
+    "registry_native_numeric_features_used": [
+      "span_m",
+      "sag_amp_m",
+      "score"
+    ],
+    "derived_features": [
+      "conf_dist_rille_m",
+      "conf_dist_chain_m"
+    ],
+    "final_feature_names": [
+      "span_m",
+      "sag_amp_m",
+      "score",
+      "conf_dist_rille_m",
+      "conf_dist_chain_m"
+    ],
+    "imputation": "median per feature",
+    "feature_medians": {
+      "span_m": 2210.5,
+      "sag_amp_m": 0.093,
+      "score": 0.0503,
+      "conf_dist_rille_m": 325061.0,
+      "conf_dist_chain_m": 4652.0
+    },
+    "n_rows_with_nan_pre_imputation": 0
+  },
+  "positive_class_mapping": {
+    "prompt_intended_definition": "(tier_reclass == 'TP') OR (catalogued_pit_source AND above_floor)",
+    "column_mismatches": [
+      "'tier_reclass' column not present (registry only has 'tier' with values A=0/B=0/C=278 by design)",
+      "'above_floor' column not present (must derive from notes 'below-local-floor' annotation)",
+      "'depth_max_m' not present (use 'sag_amp_m' as analog)",
+      "'frangi_at_score_max' not present (use 'score' as analog)",
+      "'dist_pit_m' not present (catalogued-pit proximity is implicit via 'dtm' membership in CATALOGUED_PIT_DTMS)",
+      "'area_km2' not present (no per-candidate searched area; the calibration baseline uses per-DTM area at the transport level)"
+    ],
+    "actual_positive_definition": "positive \u2190 (dtm \u2208 CATALOGUED_PIT_DTMS) AND (candidate_id matches '-r001$') OR (notes contain 'ring artifact') AND row is NOT flagged 'below-local-floor'",
+    "catalogued_pit_dtms": [
+      "FECNDITATS2",
+      "INGENIIPIT",
+      "IRIDIUMPIT1",
+      "MARIUSPIT01",
+      "PRCLRMPIT01",
+      "SWFECUNPIT1",
+      "TRANQPIT1"
+    ],
+    "n_positive_candidates": 34,
+    "n_unlabeled": 244,
+    "n_below_local_floor_excluded": 233
+  },
+  "n_train_total": 193,
+  "n_train_positives": 23,
+  "n_train_unlabeled": 170,
+  "n_test_total": 85,
+  "n_test_positives": 11,
+  "n_test_unlabeled": 74,
+  "metrics": {
+    "f1_test": 0.8571428571428571,
+    "precision_test": 0.9,
+    "recall_test": 0.8181818181818182,
+    "roc_auc_test": 0.8968058968058967,
+    "n_test_predicted_positive": 10,
+    "pulearn_base_estimator": "LogisticRegression(max_iter=500, C=1.0)",
+    "pulearn_hold_out_ratio": 0.1,
+    "pulearn_random_state": 42,
+    "test_size_fraction": 0.3
+  },
+  "calibration_baseline": {
+    "n_fp": 9,
+    "n_tp": 14,
+    "expected_fp_rate_per_10k_km2": 3.74,
+    "expected_per_10k_km2_ci95": [
+      1.71,
+      7.1
+    ],
+    "source": "01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json"
+  },
+  "sklearn_warnings": [],
+  "wall_time_seconds": 0.18246706900026766
+}
