@@ -1,0 +1,45 @@
+{
+  "date": "2026-08-30",
+  "synthetic_smoke_test": {
+    "passed": true,
+    "components_area1": 96,
+    "components_area10": 5,
+    "components_area50": 1,
+    "note": "matches skeleton spec at 01_WORKSPACE/code/wp1_detector/connected_component_filter.py"
+  },
+  "real_data_test": {
+    "dtm": "TRANQPIT1",
+    "rung_m": 5.0,
+    "score_raster": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp2_sag/MTP/TRANQPIT1_5m_score.tif",
+    "score_raster_shape": [
+      7194,
+      1186
+    ],
+    "score_raster_dtype": "float64",
+    "score_raster_nodata": -9999.0,
+    "score_raster_nan_cells": 0,
+    "score_raster_finite_cells": 8532084,
+    "score_raster_max_score": 21.060531616210938,
+    "score_raster_pct_positive": 33.958,
+    "local_Amin_m": 3.735551,
+    "area_min_rung_5m": 3,
+    "before_components": 5,
+    "after_components_area_min_3": 5,
+    "components_removed": 0,
+    "catalogued_pit_row": 887,
+    "catalogued_pit_col": 608,
+    "catalogued_pit_score_in": 21.060531616210938,
+    "catalogued_pit_score_out": 21.060531616210938,
+    "catalogued_pit_survived": true,
+    "fp_uplift_estimate": "thr=local_Amin mode: filter is a no-op at area_min=3 (0 components removed; the 4 candidate peaks are 8-215 cells and all clear the rung-5m floor of 3). thr=0 mode: kill ratio = 0.421 (23134 components -> 13391); the v0.2 headline precision lift lives here, NOT in the post-threshold path. Confirms V0.2_PLAN.md \u00a74.1 / \u00a74.2 expectation that thr=local_Amin is the v0.4/v0.5 ceiling (a no-op) and thr=0 is the v0.2 lift.",
+    "diagnostic_thr0_mode": {
+      "before_components": 23134,
+      "after_components": 13391,
+      "kill_ratio": 0.4212,
+      "above_zero_cell_count": 2897354
+    }
+  },
+  "skeleton_status": "clean",
+  "wall_time_seconds": 0.603,
+  "recommendation": "v0.2 ready (caveat). The skeleton round-trips a real WP2 score raster (TRANQPIT1 @ 5 m, 7194x1186 float32, no NaN; -9999 sentinel handled by load_score_raster). The catalogued pit survives at thr=local_Amin + area_min=3. The post-threshold filter is a NO-OP for this DTM/rung (4 small FP-blob components are 8-215 cells and all clear the 3-cell rung-5m floor). The v0.2 headline lift comes from thr=0 mode, which kills 42.1% of the 23134 predict-all noise components. v0.2 should be invoked via --cc-threshold 0 (predict-all mode), not the post-threshold mode."
+}

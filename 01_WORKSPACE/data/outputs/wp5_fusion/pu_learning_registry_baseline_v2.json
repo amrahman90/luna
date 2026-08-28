@@ -1,0 +1,273 @@
+{
+  "date": "2026-08-28",
+  "version": "v2_extended",
+  "n_total_rows": 278,
+  "n_positives_TP": 34,
+  "n_unlabeled": 244,
+  "n_features": 19,
+  "feature_names": [
+    "span_m",
+    "sag_amp_m",
+    "score",
+    "conf_dist_rille_m",
+    "conf_dist_chain_m",
+    "log_span_m",
+    "log_sag_amp_m",
+    "log_score",
+    "log_conf_dist_rille_m",
+    "log_conf_dist_chain_m",
+    "sag_per_span",
+    "log_sag_x_score",
+    "rung_cm",
+    "has_terrain_extrap",
+    "has_deep_pit_low_vesselness",
+    "has_funnel_risk",
+    "has_12km_FP",
+    "is_single_method_morphometry",
+    "n_confusion_keys_present"
+  ],
+  "numeric_column_audit": {
+    "all_numeric_columns": [
+      "lon",
+      "lat",
+      "span_m",
+      "sag_amp_m",
+      "score"
+    ],
+    "per_column": [
+      {
+        "name": "lon",
+        "dtype": "float64",
+        "n_total": 278,
+        "n_non_null": 278,
+        "pct_non_null": 100.0,
+        "min": -56.931829,
+        "max": 177.225204,
+        "median": -11.2705305
+      },
+      {
+        "name": "lat",
+        "dtype": "float64",
+        "n_total": 278,
+        "n_non_null": 278,
+        "pct_non_null": 100.0,
+        "min": -43.755919,
+        "max": 46.373071,
+        "median": -35.950915
+      },
+      {
+        "name": "span_m",
+        "dtype": "float64",
+        "n_total": 278,
+        "n_non_null": 278,
+        "pct_non_null": 100.0,
+        "min": 40.4,
+        "max": 19933.0,
+        "median": 2210.5
+      },
+      {
+        "name": "sag_amp_m",
+        "dtype": "float64",
+        "n_total": 278,
+        "n_non_null": 278,
+        "pct_non_null": 100.0,
+        "min": 0.0,
+        "max": 155.488,
+        "median": 0.093
+      },
+      {
+        "name": "score",
+        "dtype": "float64",
+        "n_total": 278,
+        "n_non_null": 278,
+        "pct_non_null": 100.0,
+        "min": 0.0,
+        "max": 155.4883,
+        "median": 0.0503
+      }
+    ],
+    "note": "lon/lat and dtm are excluded from the feature matrix because they trivially identify the catalogued-pit DTMs used in the positive-class definition. candidate_id, methods, tier, status, notes, confusion are object/string columns that we parse or one-hot encode below."
+  },
+  "feature_audit": {
+    "n_features_v2": 19,
+    "n_features_v1": 5,
+    "n_new_features": 14,
+    "new_feature_names": [
+      "log_span_m",
+      "log_sag_amp_m",
+      "log_score",
+      "log_conf_dist_rille_m",
+      "log_conf_dist_chain_m",
+      "sag_per_span",
+      "log_sag_x_score",
+      "rung_cm",
+      "has_terrain_extrap",
+      "has_deep_pit_low_vesselness",
+      "has_funnel_risk",
+      "has_12km_FP",
+      "is_single_method_morphometry",
+      "n_confusion_keys_present"
+    ],
+    "excluded_to_avoid_leakage": [
+      "dtm (used in positive def: CATALOGUED_PIT_DTMS membership)",
+      "lon, lat (would identify DTM)",
+      "has_ring_artifact (in positive def: notes contain 'ring artifact')",
+      "has_below_local_floor (every positive is above_floor=True by the construction filter; feature would be tautological)",
+      "is_rank1 / rank_n (in positive def: candidate_id ends in '-r001')"
+    ],
+    "imputation": "median per feature",
+    "feature_medians": {
+      "span_m": 2210.5,
+      "sag_amp_m": 0.093,
+      "score": 0.0503,
+      "conf_dist_rille_m": 325061.0,
+      "conf_dist_chain_m": 4652.0,
+      "log_span_m": 7.701426297308381,
+      "log_sag_amp_m": 0.08892620919440151,
+      "log_score": 0.04907561555125081,
+      "log_conf_dist_rille_m": 12.691771212348508,
+      "log_conf_dist_chain_m": 8.445255234836118,
+      "sag_per_span": 4.5474687479130534e-05,
+      "log_sag_x_score": 0.006703048606626358,
+      "rung_cm": 400.0,
+      "has_terrain_extrap": 1.0,
+      "has_deep_pit_low_vesselness": 0.0,
+      "has_funnel_risk": 0.0,
+      "has_12km_FP": 0.0,
+      "is_single_method_morphometry": 1.0,
+      "n_confusion_keys_present": 2.0
+    },
+    "n_rows_with_nan_pre_imputation": 0
+  },
+  "positive_class_mapping": {
+    "definition": "positive \u2190 (dtm \u2208 CATALOGUED_PIT_DTMS AND candidate_id matches '-r001') OR (notes contain 'ring artifact'); AND NOT below-local-floor",
+    "n_positive_candidates": 34,
+    "n_unlabeled": 244
+  },
+  "metrics": {
+    "f1_test": 0.9090909090909091,
+    "precision_test": 0.9090909090909091,
+    "recall_test": 0.9090909090909091,
+    "roc_auc_test": 0.9312039312039312,
+    "n_test_predicted_positive": 11,
+    "n_test_total": 85,
+    "n_test_positives": 11,
+    "n_test_unlabeled": 74,
+    "n_train_total": 193,
+    "n_train_positives": 23,
+    "n_train_unlabeled": 170,
+    "pulearn_base_estimator": "LogisticRegression(C=1.0, max_iter=1000)",
+    "pulearn_hold_out_ratio": 0.1,
+    "pulearn_random_state": 42,
+    "test_size_fraction": 0.3,
+    "scaler": "StandardScaler (zero-mean, unit-variance; train-set stats)",
+    "sklearn_warnings": []
+  },
+  "top_5_features_by_abs_coef": [
+    [
+      "log_sag_amp_m",
+      1.391947001004278
+    ],
+    [
+      "has_12km_FP",
+      -0.7338340933614277
+    ],
+    [
+      "log_sag_x_score",
+      0.6724872348027977
+    ],
+    [
+      "sag_per_span",
+      -0.6442632012845538
+    ],
+    [
+      "log_span_m",
+      0.6122429560518216
+    ]
+  ],
+  "all_feature_coefficients": [
+    {
+      "feature": "log_sag_amp_m",
+      "coef": 1.391947001004278
+    },
+    {
+      "feature": "has_12km_FP",
+      "coef": -0.7338340933614277
+    },
+    {
+      "feature": "log_sag_x_score",
+      "coef": 0.6724872348027977
+    },
+    {
+      "feature": "sag_per_span",
+      "coef": -0.6442632012845538
+    },
+    {
+      "feature": "log_span_m",
+      "coef": 0.6122429560518216
+    },
+    {
+      "feature": "has_terrain_extrap",
+      "coef": -0.6044521923153294
+    },
+    {
+      "feature": "log_conf_dist_chain_m",
+      "coef": -0.5873187153719107
+    },
+    {
+      "feature": "score",
+      "coef": -0.5594002697540791
+    },
+    {
+      "feature": "rung_cm",
+      "coef": -0.366284446913871
+    },
+    {
+      "feature": "span_m",
+      "coef": 0.33423063078151216
+    },
+    {
+      "feature": "sag_amp_m",
+      "coef": 0.3237634163661069
+    },
+    {
+      "feature": "log_score",
+      "coef": 0.24731597344273018
+    },
+    {
+      "feature": "conf_dist_rille_m",
+      "coef": -0.18651698641531989
+    },
+    {
+      "feature": "log_conf_dist_rille_m",
+      "coef": 0.1804773509764929
+    },
+    {
+      "feature": "has_deep_pit_low_vesselness",
+      "coef": -0.15445501006226853
+    },
+    {
+      "feature": "conf_dist_chain_m",
+      "coef": -0.03448330787196107
+    },
+    {
+      "feature": "is_single_method_morphometry",
+      "coef": 0.018804982866990245
+    },
+    {
+      "feature": "n_confusion_keys_present",
+      "coef": 0.018804982866990245
+    },
+    {
+      "feature": "has_funnel_risk",
+      "coef": -0.0188049828669902
+    }
+  ],
+  "calibration_baseline": {
+    "n_fp": 9,
+    "n_tp": 14,
+    "source": "01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json"
+  },
+  "wall_time_seconds": 0.04038079199381173,
+  "claim_discipline": "PU-learning produces a RANKING of inferred void candidates, NOT a detection. The 34 positives are a defensible proxy for catalogued-pit local-max hits; the 244 unlabeled are ML-detected sags whose true nature is unknown. Calibrated inference only."
+}
