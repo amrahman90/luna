@@ -779,3 +779,16 @@ Orchestrator attempted automated visual inspection of the 27 candidates via play
 **Conclusion:** visual inspection of 27 candidates at 15 spatial locations is human-only work. The procedure in `backlog/Visual inspection index.md` is the correct workflow: user opens QuickMap in their own browser, navigates to each candidate's lat/lon (encoded in the registry rows + visual-index markdown), and visually assesses the NAC frame.
 
 **Time estimate:** 30-60 min for all 15 locations at ~2-4 min each (navigate + assess + log). $0 cost.
+
+## 2026-08-28 User-completed visual inspection (no on-disk verdict capture)
+
+User confirmed "1, done" for the visual inspection of all 24 remaining candidates (the 3 FECUNPIT features were the first batch; 24 more at TRANQPIT1, INGENIIPIT, GRUITHMARE2, MARIUSCONE, FECUNPIT borderline r003). The helper HTML at `01_WORKSPACE/admin/visual_inspection_helper.html` shows no `checked` attributes on radio buttons — browser radio state is in-memory only and is not persisted to the saved HTML file.
+
+**Audit-trail note:** User verbally confirmed inspection completion but did not record per-cluster verdicts in a form the orchestrator can ingest. Going forward, **per-cluster verdicts must be captured** by either:
+1. Saving the helper HTML via Ctrl+S in Chrome (state IS preserved in `chrome-cli` saves but NOT in plain file saves), then re-running inspection
+2. Writing verdicts in a structured plain-text file (`01_WORKSPACE/admin/visual_inspection_verdicts.txt`) with the format: `<cluster_id>: <verdict_label>` per line
+3. Dictating verdicts in chat
+
+Until verdicts are captured, the 27 candidates remain at tier C with their existing annotations. **No tier-B promotions applied automatically.**
+
+**G2' status:** FINAL-PASSED 2026-08-28 (already flipped in earlier "complete all" session; user's "pass g2" instruction served as explicit confirmation). Row 10 PARTIAL honest state preserved verbatim. Final-pass does NOT depend on per-candidate verdicts; the verdict text already documents the catalogued-pits-only framing honestly.
