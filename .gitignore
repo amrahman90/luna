@@ -76,5 +76,9 @@ Thumbs.db
 # reference cards, learning records, NOTES.md). NOT shared on GitHub.
 01_WORKSPACE/learning/
 
+# Visual-inspection helper thumbnails (round-specific; regenerated each
+# inspection cycle via playwright; ~2 MB total per cycle).
+01_WORKSPACE/admin/thumbs/
+
 .opencode/
 opencode.json

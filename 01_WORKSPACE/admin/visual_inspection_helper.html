@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LUNARVOID — Visual Inspection Helper (2026-08-26)</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 1100px; margin: 24px auto; padding: 0 16px; color: #1a1a1a; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 28px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  .intro { background: #fff8e1; border-left: 4px solid #f0a000; padding: 12px 16px; margin: 16px 0; }
+  .cluster { margin: 16px 0; padding: 12px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
+  .cluster p { margin: 4px 0; }
+  a.open { display: inline-block; padding: 8px 12px; margin: 4px; background: #1565c0; color: #fff; text-decoration: none; border-radius: 4px; font-weight: 500; font-family: ui-monospace, monospace; font-size: 13px; }
+  a.open:hover { background: #0d47a1; }
+  a.open.done { background: #666; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 8px; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+  th { background: #eee; }
+  .judgment { padding: 12px; margin-top: 8px; background: #f0f4f8; border-radius: 4px; }
+  .judgment label { display: block; padding: 4px 0; cursor: pointer; }
+  .status { font-size: 12px; color: #666; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<h1>LUNARVOID — Visual Inspection Helper</h1>
+<p style="color: #666; font-size: 13px;">
+  For: <code>01_WORKSPACE/Lunar Lavatube knowledge/backlog/Visual inspection index.md</code> ·
+  Total locations: <b>15 unique spatial</b> ·
+  Tool: <a href="https://quickmap.lroc.im-ldi.com/">LROC QuickMap</a> (free; PDS public domain) ·
+  Estimate: 30-60 min
+</p>
+
+<div class="intro">
+  <strong>3-step procedure:</strong>
+  <ol style="margin: 6px 0;">
+    <li>Look at the embedded NAC thumbnail (if present) for a preview of the candidate area.</li>
+    <li>Click the blue <b>Open in QuickMap</b> button for the location you want to inspect.</li>
+    <li>QuickMap will load NAC imagery at that exact spot. Wait 5-10 seconds for it to render.</li>
+    <li>Look at the imagery. Decide if it's a tube-shaped depression, an impact crater, a pit-floor irregularity, or a DTM/Frangi artifact. Pick one radio button below the table. (You don't need to type anything — I'll scan your selections after you're done.)</li>
+  </ol>
+  QuickMap's NAC layer is much higher resolution than the default WAC mosaic; it shows features down to ~0.5 m/pixel.
+  <p style="margin: 8px 0 0; font-size: 12px; color: #666;"><b>Note:</b> If thumbnails don't display (they're gitignored), the helper still works via the "Open in QuickMap" buttons — just use the search box: <code>lat, lon</code> + Enter + Go.</p>
+</div>
+
+<h2>Cluster 1 — FECUNPIT (3 features)</h2>
+<div class="cluster">
+  <p><b>Location:</b> Central Mare Fecunditatis, lat ≈ -0.3°, lon ≈ 48.75°</p>
+  <p><b>Background:</b> 3 large depressions detected at 552 m (r001/r002, amps 155/140 m) and 138 m (r003, amp 34 m — borderline-TP) from the NEAREST catalogued pit. r003 is just outside the frozen 100 m match radius; under 150 m tolerance it would reclassify as a TP.</p>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=-0.327&lon=48.752&zoom=14" target="_blank">Open r001/r002 in QuickMap (552 m from pit) — zoom 14</a>
+  <img src="thumbs/fecunpit-r001r002.png" alt="FECUNPIT r001/r002 NAC view at zoom=14" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>-0.327, 48.752</code> + Enter + Go.
+  </div>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=-0.198&lon=48.750&zoom=14" target="_blank">Open r003 in QuickMap (138 m from pit — borderline) — zoom 14</a>
+  <img src="thumbs/fecunpit-r003.png" alt="FECUNPIT r003 NAC view at zoom=14" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>-0.198, 48.750</code> + Enter + Go.
+  </div>
+
+  <table>
+    <tr><th>Row</th><th>Lon</th><th>Lat</th><th>Span (m)</th><th>Amp (m)</th><th>Distance to nearest pit</th></tr>
+    <tr><td>r001/r002</td><td>48.752</td><td>-0.327</td><td>552</td><td>155 / 140</td><td>552.5 m</td></tr>
+    <tr><td>r003</td><td>48.750</td><td>-0.198</td><td>552</td><td>34</td><td>138.1 m <i>(borderline)</i></td></tr>
+  </table>
+
+  <div class="judgment">
+    <strong>Your judgment (r001/r002):</strong>
+    <label><input type="radio" name="fec_r12"> Real impact / volcanic crater (expected; FP)</label>
+    <label><input type="radio" name="fec_r12"> DTM edge artifact (data issue; not a real feature)</label>
+    <label><input type="radio" name="fec_r12"> Genuine large depression not in pit catalog (interesting; would need new labels)</label>
+    <label><input type="radio" name="fec_r12"> Unclear / need more context</label>
+    <br>
+    <strong>Your judgment (r003 — the borderline one):</strong>
+    <label><input type="radio" name="fec_r3"> Looks like the catalogued pit (would reclassify as TP under 150 m tolerance)</label>
+    <label><input type="radio" name="fec_r3"> Different feature from the catalogued pit (FP)</label>
+    <label><input type="radio" name="fec_r3"> Unclear / need more context</label>
+  </div>
+</div>
+
+<h2>Cluster 2 — TRANQPIT1 12-km FPs (3 features)</h2>
+<div class="cluster">
+  <p><b>Location:</b> Mare Tranquillitatis, lat ≈ 8.75° N, lon ≈ 33.20° E (12+ km from the catalogued MTP)</p>
+  <p><b>Background:</b> 3 large-amplitude features (95 / 57 / 49 m) far from the catalogued pit. Probable origin: floor-fractured crater rim, ejecta, or post-emplacement modification. The recipe FP rate is 240 per 10⁴ km² — very high; visual inspection determines if this is detector artifact or real.</p>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=8.747&lon=33.197&zoom=12" target="_blank">Open all 3 in QuickMap — zoom 12 (covers all 3 features)</a>
+  <img src="thumbs/tranqpit1-12km.png" alt="TRANQPIT1 12-km FPs NAC view at zoom=12" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>8.747, 33.197</code> + Enter + Go.
+  </div>
+
+  <table>
+    <tr><th>Row</th><th>Lon</th><th>Lat</th><th>Span (m)</th><th>Amp (m)</th></tr>
+    <tr><td>r001</td><td>33.195</td><td>8.746</td><td>3,984</td><td>95.4 (top of run)</td></tr>
+    <tr><td>r002</td><td>33.199</td><td>8.748</td><td>2,240</td><td>57.5</td></tr>
+    <tr><td>r003</td><td>33.199</td><td>8.748</td><td>2,288</td><td>48.8</td></tr>
+  </table>
+
+  <div class="judgment">
+    <strong>Your judgment:</strong>
+    <label><input type="radio" name="tranq_fps"> Floor-fractured crater rim / ejecta (real geomorphology; FP confirmed)</label>
+    <label><input type="radio" name="tranq_fps"> Detector artifact (recipe true FP rate lower than 240)</label>
+    <label><input type="radio" name="tranq_fps"> Unclear / need more context</label>
+  </div>
+</div>
+
+<h2>Cluster 3 — INGENIIPIT ring artifacts (21 rows, 7 unique positions)</h2>
+<div class="cluster">
+  <p><b>Location:</b> Mare Ingenii Pit, lat ≈ -35.95°, lon ≈ 166.05° (sub-km halo around the catalogued pit)</p>
+  <p><b>Background:</b> 21 rows in the registry are ANNOTATED as ring artifacts (Frangi filter noise around the catalogued pit). Expected: ring pattern visible in NAC imagery that confirms these are detector artifacts, not real candidates.</p>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=-35.95&lon=166.05&zoom=14" target="_blank">Open ring halo in QuickMap — zoom 14</a>
+  <img src="thumbs/ingeniipit-ring.png" alt="INGENIIPIT ring halo NAC view at zoom=14" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>-35.95, 166.05</code> + Enter + Go. Note: farside may require projection switch (proj=16 in URL).
+  </div>
+
+  <table>
+    <tr><th>Unique positions</th><th>Lon range</th><th>Lat range</th><th>Registry rows</th></tr>
+    <tr><td>7 (r002-r008 × 1 rung)</td><td>166.0534–166.0578</td><td>-35.9486 to -35.9510</td><td>21 (rungs 2/4/5 m; rows 37–59)</td></tr>
+  </table>
+
+  <div class="judgment">
+    <strong>Your judgment:</strong>
+    <label><input type="radio" name="ingenii_ring"> Ring pattern visible; all 21 rows confirm as Frangi artifact</label>
+    <label><input type="radio" name="ingenii_ring"> Some rings look like real depressions (would warrant reclassification)</label>
+    <label><input type="radio" name="ingenii_ring"> Unclear / need more context</label>
+  </div>
+</div>
+
+<h2>Cluster 4 — GRUITHMARE2 deep-pit low-vesselness (10 rows, 1 cluster center)</h2>
+<div class="cluster">
+  <p><b>Location:</b> lat ≈ 33.39°, lon ≈ -43.33° (no catalogued pits in frame)</p>
+  <p><b>Background:</b> 10 rows flagged by Cycle 1 skeptic rule: frangi@score < 0.02 AND depth ≥ 100 m → "circular depression, not tubular" annotation. All below-floor; contributes 0 FPs.</p>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=33.394&lon=-43.333&zoom=12" target="_blank">Open GRUITHMARE2 cluster in QuickMap — zoom 12</a>
+  <img src="thumbs/gruithmare2.png" alt="GRUITHMARE2 NAC view at zoom=12" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>33.394, -43.333</code> + Enter + Go.
+  </div>
+
+  <div class="judgment">
+    <strong>Your judgment:</strong>
+    <label><input type="radio" name="gruithmare2"> Circular impact crater (deep-pit annotation confirmed)</label>
+    <label><input type="radio" name="gruithmare2"> Volcanic depression / caldera</label>
+    <label><input type="radio" name="gruithmare2"> Trough / graben / lineament</label>
+    <label><input type="radio" name="gruithmare2"> Unclear / need more context</label>
+  </div>
+</div>
+
+<h2>Cluster 5 — MARIUSCONE deep-pit low-vesselness (2 rows, 1 cluster center)</h2>
+<div class="cluster">
+  <p><b>Location:</b> lat ≈ 13.625°, lon ≈ -56.40° (17.9 km N of Marius Hills Pit)</p>
+  <p><b>Background:</b> 2 rows; same Cycle 1 skeptic rule as GRUITHMARE2.</p>
+  <a class="open" href="https://quickmap.lroc.im-ldi.com/?lat=13.625&lon=-56.398&zoom=13" target="_blank">Open MARIUSCONE cluster in QuickMap — zoom 13</a>
+  <img src="thumbs/mariuscone.png" alt="MARIUSCONE NAC view at zoom=13" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="display:block; width:100%; max-width:640px; border:1px solid #ddd; border-radius:4px; margin:6px 0 10px;">
+  <div style="display:none; padding:10px 14px; background:#fff8e1; border:1px solid #f0a000; border-radius:4px; margin:6px 0 10px; font-size:13px;">
+    <strong>Thumbnail not available.</strong> Click "Open in QuickMap" above. If QuickMap opens with the wrong view, use the search box: <code>13.625, -56.398</code> + Enter + Go.
+  </div>
+
+  <div class="judgment">
+    <strong>Your judgment:</strong>
+    <label><input type="radio" name="mariuscone"> Circular impact crater (deep-pit annotation confirmed)</label>
+    <label><input type="radio" name="mariuscone"> Volcanic cone</label>
+    <label><input type="radio" name="mariuscone"> Trough / graben</label>
+    <label><input type="radio" name="mariuscone"> Unclear / need more context</label>
+  </div>
+</div>
+
+<hr style="margin-top: 36px;">
+<p style="color: #666; font-size: 12px;">
+  After you've made your selections, tell me "done with visual inspection" and I'll read the radio button states from this file and update the registry + findings.md with your judgments. The file lives at <code>01_WORKSPACE/admin/visual_inspection_selections.html</code> (we'll save it there).
+</p>
+
+</body>
+</html>
