@@ -40,6 +40,6 @@
     }
   },
   "skeleton_status": "clean",
-  "wall_time_seconds": 0.603,
+  "wall_time_seconds": 1.451,
   "recommendation": "v0.2 ready (caveat). The skeleton round-trips a real WP2 score raster (TRANQPIT1 @ 5 m, 7194x1186 float32, no NaN; -9999 sentinel handled by load_score_raster). The catalogued pit survives at thr=local_Amin + area_min=3. The post-threshold filter is a NO-OP for this DTM/rung (4 small FP-blob components are 8-215 cells and all clear the 3-cell rung-5m floor). The v0.2 headline lift comes from thr=0 mode, which kills 42.1% of the 23134 predict-all noise components. v0.2 should be invoked via --cc-threshold 0 (predict-all mode), not the post-threshold mode."
 }

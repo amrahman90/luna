@@ -1080,3 +1080,55 @@ User verified all 6 Zotero-attached references; orchestrator audited for DOI err
 **Working tree:** clean except R1 roadmap draft (kept untracked per user instruction).
 
 **Tooling:** Zotero MCP confirmed working (1 user action: Settings → Advanced → "Allow other applications to communicate with Zotero" checkbox).
+
+## 2026-09-04 (execution session 34 — Curriculum 35/35 + Paper 2 draft + LLTB-1 v0.2 + submission package)
+
+Final autonomous local-only batch completed. Curriculum COMPLETE at 35/35 lessons across 7 phases; submission package now has all assets except user-only actions.
+
+**Curriculum completion (all gitignored at `01_WORKSPACE/learning/`):**
+- **Phase 5** (photogrammetry): 5 lessons (0025-0029: NAC+SPICE / ISIS3 / ASP stereo / pair selection / DTM end-to-end) + ref card + LR + RESOURCES (Topic G); anchored to VPS_Setup_Guide v5 §7 and project code
+- **Phase 6** (writing & publication): 4 lessons (0030-0033: publication strategy / cover letter / referee template / tier decisions) + ref card + LR + RESOURCES (Topic H); anchored to v5 §12 + actual `01_WORKSPACE/papers/paper1_resolution_limits/` files
+- **Phase 7** (project operations): 2 lessons (0034-0035: orchestrator loop / verifier-skeptic cycles) + ref card + LR + RESOURCES (Topic I); anchored to lunarvoid-protocol skill + admin/CHANGELOG.md + hetzner_rental_kit/launch.sh
+- **Curriculum totals**: 35/35 lessons, 7 reference cards, 7 learning records, 2 shared assets (lesson.css 251 lines; quiz.js 44 lines); ~54 files; ~25K lines of educational content; entirely gitignored
+
+**Paper 2 draft (`01_WORKSPACE/papers/paper2_inference_main.md`):**
+- 945 lines; structured outline with anchored numbers + verbatim quotes
+- Title: "Calibrated inference of lunar void candidates from LROC NAC morphometry: LLTB-1 catalogue, PU-learning baseline, and I10 apparent-FP inspection rules across 21 on-disk NAC DTMs"
+- 14 references (Paper 1's 8 + 6 new for WP3/MGC3)
+- Target venue: Icarus / Planetary and Space Science per v5 §12
+
+**WP3 PU-learning v2 (`01_WORKSPACE/code/wp5_fusion/pu_learning_extended.py` + 2 JSONs):**
+- 19 features (5 v1 + 14 new: log transforms, depth/diameter ratios, notes-flags, candidate_id-derived rung)
+- **F1 0.857 → 0.909 (+0.052)**; **AUC 0.897 → 0.931 (+0.034)**; wall time 0.04 s
+- Top-5 importances: log_sag_amp_m (+1.39), has_12km_FP (−0.73), log_sag_x_score (+0.67), sag_per_span (−0.64), log_span_m (+0.61)
+- v1 baseline preserved (mtime unchanged); comparison JSON saved
+
+**LLTB-1 v0.2 release note (`01_WORKSPACE/notes/2026-08-30_LLTB1_v0.2_release_note.md`):**
+- 253 lines; matches v0.4 release-note template format
+- Documents connected-component filter integration test
+- Honest findings: synthetic PASSED 96/5/1; real-data TRANSPIT1@5m at `thr=local_Amin` = 5→5 (no-op), at `thr=0` = 23134→13311 (42.1% kill); catalogued pit survives
+
+**NAC EDR re-test 2026-08-30 + UA-bypass probe 2026-09-04:**
+- Re-test: 6 SKIP_EXISTS, 4 URL_NOT_FOUND; **PDS still NO recovery**; mcp.nasa.gov 403 stable 24+ h
+- **UA-bypass hypothesis FALSIFIED**: Mozilla UA + Referer returns identical 403 — NOT a WAF/UA block
+- **Deeper diagnosis**: PDS is mid-migration; old path returns 403 (S3 bucket policy lock), new path returns 404 (volume LROLRC_2001 not migrated to `pds-img-archive-prod` bucket); early volumes (0001-0035) ARE migrated and accessible via new path
+- Recommendation: add new S3 path to retry script; re-probe weekly
+
+**Submission package finalization (`01_WORKSPACE/papers/paper1_resolution_limits/`):**
+- Graphical abstract: `figs/fig_graphical_abstract.png` (1280×720, 166 KB) + generator script `01_WORKSPACE/code/wp1_paper/generate_graphical_abstract.py` (579 lines)
+- 4-panel grid: detector chain / lunar application / headline number (F1 0.277, FP 3.74 [1.71, 7.10] per 10⁴ km²) / honest limitations
+- Suggested reviewers: `suggested_reviewers.md` POPULATED with real names (Bickel, Hemmi, Walker, Su, Kang, Orosei); 6 slots filled; cited-reference exclusion enforced; email/affiliation [verify] placeholders remain for user confirmation
+- All submission package assets complete: main.md / cover_letter.md / highlights.md / referee_response_template.md / graphical_abstract_plan.md + generated PNG / suggested_reviewers.md
+
+**Commits this session-34 work:**
+- `96bd53a` — Curriculum Phases 5/6/7 (35/35 complete) + Paper 2 draft + WP3 v2 PU-learning + LLTB-1 v0.2 integration + NAC retry 2026-08-30
+- (this CHANGELOG update)
+
+**Autonomous surface status**: **fully exhausted.** Remaining user actions:
+1. Submit Paper 1 to RSE / ISPRS Journal portal (~15 min)
+2. Hetzner rental launch via `bash 01_WORKSPACE/admin/hetzner_rental_kit/launch.sh` (5 min, unblocks Cycles 3-5 + MGC3 + 30 random-mare)
+3. Visual inspection verdicts (your eyes; ~30 min)
+4. Verify suggested reviewer emails + affiliations (~15 min)
+5. (Optional) Graphical abstract tweaks if you want different layout
+
+**Working tree at session end:** R1 roadmap draft untracked (per user instruction); all other changes staged.
