@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-04T07:16:02Z",
+  "release": "Phase 0 + Phase C + Phase B (session 36)",
+  "script": "admin/verification_evidence/scripts/verify_phase0_2026-09-04.py",
+  "checks": [
+    {
+      "status": "PASS",
+      "check": "1. smoke_test.py (HIGH-2/0.6 canary): f1 per rung=[0.392, 0.0, 0.8]; FUSION: AUC=0.990 line in stdout"
+    },
+    {
+      "status": "PASS",
+      "check": "2. _rebin.py self-test (HIGH-3 canary): PASS: 2 m -> 5 m gives (80, 120) @ 5.00 m/px (fractional 2.5x, not integer 2x)"
+    },
+    {
+      "status": "PASS",
+      "check": "3. _crs.py Moon+Analog CRSes (C9 canary): Moon: +proj=longlat +R=1737400 +no_defs +type=crs... | Analog: +proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +R=63781..."
+    },
+    {
+      "status": "PASS",
+      "check": "4. shared UA round-trip (C10 canary): UA 'lunarvoid/0.1 (+contact: muhammad.ahnaf.sarker@gma...' reached httpbin"
+    },
+    {
+      "status": "PASS",
+      "check": "5. registry_io + LEAK (C13 canary): 278 rows | LEAK_FEATURES=7 | parse_confusion+parse_rung_cm+count_confusion_keys verified"
+    },
+    {
+      "status": "PASS",
+      "check": "6. v0_2_integration_test.json (0.5 canary): date=2026-09-04 | pit=(887,608) survived=True | synthetic MEASURED 66/4/2 (was hardcoded 96/5/1)"
+    },
+    {
+      "status": "PASS",
+      "check": "7. commit-msg hook (C12 canary): 5 of 5 cases correct"
+    },
+    {
+      "status": "PASS",
+      "check": "8. requirements.txt + supply-chain pin (0.1/C8 canary): deb sha matches pin; pulearn+scikit-image pinned; install-quirk documented"
+    },
+    {
+      "status": "PASS",
+      "check": "9. Paper 2 citation fix (A6 canary): Paper 2 citation fixed (baseline_v2.py -> extended.py); the 1 remaining backtick reference is the intentional A6 historical note"
+    }
+  ],
+  "n_pass": 9,
+  "n_fail": 0,
+  "rc": 0,
+  "verdict": "PASS",
+  "status": "OK",
+  "stdout_tail": "egration_test.json (0.5 canary): date=2026-09-04 | pit=(887,608) survived=True | synthetic MEASURED 66/4/2 (was hardcoded 96/5/1)\n[PASS] 7. commit-msg hook (C12 canary): 5 of 5 cases correct\n[PASS] 8. requirements.txt + supply-chain pin (0.1/C8 canary): deb sha matches pin; pulearn+scikit-image pinned; install-quirk documented\n[PASS] 9. Paper 2 citation fix (A6 canary): Paper 2 citation fixed (baseline_v2.py -> extended.py); the 1 remaining backtick reference is the intentional A6 historical note\n========================================================================\nALL 9 AD-HOC CHECKS PASS\n",
+  "note": "Ad-hoc verification (NOT suite green \u2014 per lunarvoid-conventions \u00a77: \"no tests/ directory is by-design\"). The project has no canonical test/lint/build command; this script is the audit-time verification for the Phase 0 + Phase C + Phase B changeset committed in session 36. Each check canaries a specific HIGH/MED fix per the Next-Level Plan v2."
+}
