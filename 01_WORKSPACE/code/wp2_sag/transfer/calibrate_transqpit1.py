@@ -117,9 +117,14 @@ def existing_or_rebuild_surface(dtm_name: str, rung: float, workdir: Path, wbt):
         with rasterio.open(path) as src:
             res_full = float(src.res[0])
             H_src, W_src = src.height, src.width
-        factor = max(1, int(round(rung / res_full)))
+        # fractional scale (Phase 0.3 — integer round() silently produced a
+        # 4 m grid for the 5 m rung on 2 m sources; keep the TRUE factor so
+        # pit row/col mapping below stays on the actual grid)
+        factor = max(1.0, float(rung) / res_full)
+        new_h = max(1, int(np.ceil(H_src / factor)))
+        new_w = max(1, int(np.ceil(W_src / factor)))
         with rasterio.open(path) as src:
-            dtm_r = src.read(1, out_shape=(H_src // factor, W_src // factor),
+            dtm_r = src.read(1, out_shape=(new_h, new_w),
                              resampling=Resampling.average).astype(np.float64)
             if src.nodata is not None:
                 dtm_r = np.where(dtm_r == src.nodata, np.nan, dtm_r)

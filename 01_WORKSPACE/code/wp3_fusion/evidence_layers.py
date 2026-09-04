@@ -141,10 +141,12 @@ def main():
         transform = from_origin(args.lon_min - args.res_deg / 2,
                                 args.lat_max + args.res_deg / 2,
                                 args.res_deg, args.res_deg)
+        # C9: shared Moon lon/lat CRS (was: hardcoded EPSG:4326, an Earth WGS84 ellipsoid)
+        from _crs import MOON_CRS_WKT
         profile = {
             "driver": "GTiff", "dtype": "float32", "nodata": -9999.0,
             "width": LON.shape[1], "height": LAT.shape[0], "count": 1,
-            "transform": transform, "crs": "EPSG:4326",
+            "transform": transform, "crs": MOON_CRS_WKT,
             "compress": "deflate", "BIGTIFF": "IF_SAFER",
         }
         with rasterio.open(path, "w", **profile) as dst:

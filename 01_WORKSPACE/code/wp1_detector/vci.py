@@ -128,14 +128,15 @@ def main():
     plt.close(fig)
     print(f"[out ] figure -> {fig_path}", flush=True)
 
-    # VCI raster GeoTIFF (using a local metric CRS, epsg:32631 by convention)
+    # VCI raster GeoTIFF (C9: shared ANALOG_CRS_WKT — was: hardcoded EPSG:32631)
     import rasterio
     from rasterio.transform import Affine
     transform = Affine(px, 0.0, x_min, 0.0, px, y_min)
+    from _crs import ANALOG_CRS_WKT  # 2 levels up: wp1_detector -> code
     profile = {
         "driver": "GTiff", "dtype": "float32", "nodata": -1.0,
         "width": nx, "height": ny, "count": 1,
-        "transform": transform, "crs": "EPSG:32631",
+        "transform": transform, "crs": ANALOG_CRS_WKT,
         "compress": "deflate", "BIGTIFF": "IF_SAFER",
     }
     out_tif = args.outdir / "vci.tif"

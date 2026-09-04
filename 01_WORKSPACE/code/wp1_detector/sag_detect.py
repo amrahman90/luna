@@ -84,8 +84,14 @@ def frangi_vesselness(Z: np.ndarray, res: float, sigmas=(30, 60, 100, 150, 200, 
     """Frangi vesselness at a list of physical-scale sigmas (m)."""
     # skimage expects sigma in PIXELS, not metres
     sigmas_px = tuple(max(0.5, s / res) for s in sigmas)
-    Zf = np.where(np.isfinite(Z), Z, float(np.nanmean(Z[np.isfinite(Z)])) if np.isfinite(Z).any() else 0.0)
+    finite = np.isfinite(Z)
+    Zf = np.where(finite, Z, float(np.nanmean(Z[finite])) if finite.any() else 0.0)
+    Zf = Zf.astype(np.float64)  # float32 overflow on large sigmas (conventions §8.3)
     V = frangi(Zf, sigmas=sigmas_px, black_ridges=True)  # black_ridges: tube = dark = low Z
+    # Phase 0.6: zero vesselness at original-NoData cells so the fill
+    # cannot fabricate phantom responses inside NoData regions (the
+    # score was already 0 there via depth; this makes V itself honest).
+    V = np.where(finite, V, 0.0)
     return V.astype(np.float32)
 
 
@@ -97,7 +103,11 @@ def sink_fill_planchon(wbt: WhiteboxTools, dem_path: Path, out_path: Path) -> Pa
     return out_path
 
 
-def write_geotiff(arr: np.ndarray, transform: Affine, path: Path, crs: str = "EPSG:32631", nodata=np.nan):
+def write_geotiff(arr: np.ndarray, transform: Affine, path: Path, crs: str = None, nodata=np.nan):
+    # C9: default to the shared local-metric CRS (was: hardcoded "EPSG:32631")
+    if crs is None:
+        from _crs import ANALOG_CRS_WKT
+        crs = ANALOG_CRS_WKT
     profile = {
         "driver": "GTiff", "dtype": "float32", "nodata": float(nodata) if np.isfinite(nodata) else -9999.0,
         "width": arr.shape[1], "height": arr.shape[0], "count": 1,

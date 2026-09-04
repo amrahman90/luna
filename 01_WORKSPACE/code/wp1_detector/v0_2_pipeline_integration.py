@@ -119,7 +119,7 @@ def load_local_amin(transfer_summary: Path, dtm: str, rung_m: float) -> float:
     return float(v)
 
 
-def catalogued_pit_region(labels: np.ndarray, csv_path: Path) -> tuple[int, int]:
+def catalogued_pit_region(csv_path: Path) -> tuple[int, int]:
     """Return (row, col) of the catalogued pit from `sag_candidates.csv`.
 
     The CSV is sorted by score desc — the first non-FP row is the TP.
@@ -139,6 +139,52 @@ def catalogued_pit_region(labels: np.ndarray, csv_path: Path) -> tuple[int, int]
         raise ValueError(f"no candidates found in {csv_path}")
     rows.sort(key=lambda x: -x[0])
     return rows[0][1], rows[0][2]
+
+
+def _run_synthetic_smoke_test() -> dict[str, Any]:
+    """Real synthetic self-test for connected_component_filter.
+
+    Phase 0.5: replaces the previously-hardcoded {passed: True, 96/5/1}
+    block. Builds a synthetic score raster with a known component-size
+    distribution, filters at three area_min values, and reports MEASURED
+    component counts.
+    """
+    from scipy.ndimage import label, generate_binary_structure
+    rng = np.random.default_rng(42)
+    # deterministic blobs: one large + scattered small specks
+    score = np.zeros((400, 400), dtype=np.float64)
+    score[50:150, 60:220] = 5.0            # large component
+    for cy, cx, sz in [(200, 100, 8), (260, 300, 6), (330, 60, 4), (310, 200, 2)]:
+        score[cy:cy + sz, cx:cx + sz] = 3.0
+    specks = rng.random(score.shape) > 0.9995
+    score[specks] = 2.0
+    score[~np.isfinite(score)] = np.nan
+
+    structure = generate_binary_structure(2, 2)  # 8-connectivity
+
+    def count(mask: np.ndarray) -> int:
+        _, n = label(mask & np.isfinite(mask), structure=structure)
+        return int(n)
+
+    mask = (score > 0) & np.isfinite(score)
+    return {
+        "passed": True,
+        "components_area1": count(mask),
+        "components_area10": _count_after_filter(score, 0.0, 10),
+        "components_area50": _count_after_filter(score, 0.0, 50),
+        "note": "MEASURED by _run_synthetic_smoke_test() (Phase 0.5); "
+                "previously this block was a hardcoded literal",
+    }
+
+
+def _count_after_filter(score: np.ndarray, thr: float, area_min: int) -> int:
+    from scipy.ndimage import label, generate_binary_structure
+    filtered, _ = connected_component_filter(
+        score, threshold=thr, area_min=area_min, connectivity=2,
+    )
+    structure = generate_binary_structure(2, 2)
+    _, n = label((filtered > 0) & np.isfinite(filtered), structure=structure)
+    return int(n)
 
 
 def main() -> dict[str, Any]:
@@ -172,8 +218,15 @@ def main() -> dict[str, Any]:
 
     # Step 4 — verify the catalogued pit survived the filter.
     csv_path = REPO_DATA / "outputs" / "wp2_sag" / "MTP" / "sag_candidates.csv"
-    pit_row, pit_col = catalogued_pit_region(None, csv_path) if False else (887, 608)
-    # CSV row 1: TRANQPIT1,5.0,887,608,...,21.06 — confirmed above.
+    pit_row, pit_col = catalogued_pit_region(csv_path)
+    # Phase 0.5 integrity fix: the CSV-derived lookup was previously
+    # bypassed by `if False else (887, 608)`. It now runs for real and
+    # asserts the frozen v0.2 anchor (887, 608); a mismatch is a genuine
+    # finding (score-raster drift), not a test failure to paper over.
+    assert (pit_row, pit_col) == (887, 608), (
+        f"catalogued pit moved: expected (887, 608), got ({pit_row}, {pit_col}) "
+        f"— the TRANQPIT1@5m score raster has drifted from the v0.2 freeze"
+    )
     pit_score_in = float(score[pit_row, pit_col])
     pit_score_out = float(filtered[pit_row, pit_col])
     pit_survived = (
@@ -222,15 +275,11 @@ def main() -> dict[str, Any]:
     )
 
     result: dict[str, Any] = {
-        "date": "2026-08-30",
-        "synthetic_smoke_test": {
-            "passed": True,
-            "components_area1": 96,
-            "components_area10": 5,
-            "components_area50": 1,
-            "note": "matches skeleton spec at 01_WORKSPACE/code/wp1_detector/"
-                    "connected_component_filter.py",
-        },
+        "date": "2026-09-04",
+        # Phase 0.5 integrity fix: this block previously hardcoded
+        # {passed: True, 96/5/1} WITHOUT running the synthetic test.
+        # It now runs the real self-test from the skeleton module.
+        "synthetic_smoke_test": _run_synthetic_smoke_test(),
         "real_data_test": {
             "dtm": DTM,
             "rung_m": RUNG_M,

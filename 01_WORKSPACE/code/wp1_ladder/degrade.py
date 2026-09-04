@@ -75,13 +75,17 @@ def resample(Z: np.ndarray, src_tr, src_res: float, target_res: float, method: s
     dst_h = max(1, int(round(src_h * src_res / target_res)))
     dst_tr = Affine(target_res, 0.0, src_tr.c, 0.0, -target_res, src_tr.f)
     dst = np.full((dst_h, dst_w), fill, dtype=np.float32)
+    # C9: shared ANALOG_CRS_WKT for the local-metric reproject (was:
+    # hardcoded EPSG:32631). The local-metric CRS is a non-Earth placeholder
+    # — only the affine transform carries geometry. Rasterio requires *some*
+    # valid CRS string when src_crs != dst_crs; this satisfies that.
+    from _crs import ANALOG_CRS_WKT
     rasterio.warp.reproject(
         source=Z_filled,
         destination=dst,
         src_transform=src_tr,
         dst_transform=dst_tr,
-        src_crs="EPSG:32631",  # any local metric CRS; transform is what matters
-        dst_crs="EPSG:32631",
+        src_crs=ANALOG_CRS_WKT, dst_crs=ANALOG_CRS_WKT,
         resampling={"average": rasterio.warp.Resampling.average,
                     "bilinear": rasterio.warp.Resampling.bilinear,
                     "cubic": rasterio.warp.Resampling.cubic,

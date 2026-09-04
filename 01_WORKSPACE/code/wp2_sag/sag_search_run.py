@@ -66,11 +66,13 @@ def existing_or_run_kriging(dtm_name, lola_dir):
 
 
 def frangi_vesselness(Z, sigmas):
-    Zf = np.where(np.isfinite(Z), Z, float(np.nanmean(Z[np.isfinite(Z)])) if np.isfinite(Z).any() else 0.0)
+    finite = np.isfinite(Z)
+    Zf = np.where(finite, Z, float(np.nanmean(Z[finite])) if finite.any() else 0.0)
     Zf = Zf.astype(np.float64)  # avoid float32 overflow
     V = frangi(Zf, sigmas=sigmas, black_ridges=True)
-    V = np.where(np.isfinite(V), V, 0).astype(np.float32)
-    return V
+    V = np.where(np.isfinite(V), V, 0)
+    V = np.where(finite, V, 0)  # Phase 0.6: no phantom vesselness in NoData
+    return V.astype(np.float32)
 
 
 def find_peaks(score, threshold_frac=0.10, neigh=5):
@@ -108,23 +110,19 @@ def run_one_dtm(dtm_name, outdir, args, wbt):
 
     summary = {"res_m_source": res_full, "rungs": {}}
     all_rows = []
+    # fractional-rebin helper (Phase 0.3 — replaces integer-factor bug)
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "transfer"))
+    from _rebin import rebin_to_rung
     for rung in args.rungs:
         # skip rungs too far from source res (we resample, not reproject)
         if abs(res_full - rung) / rung > 0.6:
             print(f"  rung {rung} m: skipped (source res too different)", flush=True)
             continue
-        factor = max(1, int(round(rung / res_full)))
-        if factor == 1:
+        if rung <= res_full:
             dtm_r = dtm_full
             transform_r = transform_full
         else:
-            dtm_r = None
-            transform_r = None
-        if factor > 1:
-            with rasterio.open(dtm_path) as s:
-                dtm_r = s.read(1, out_shape=(s.height // factor, s.width // factor),
-                              resampling=Resampling.average).astype(np.float64)
-                transform_r = s.transform * s.transform.scale(factor, factor)
+            dtm_r, transform_r = rebin_to_rung(dtm_path, rung)
             if nodata is not None:
                 dtm_r = np.where(dtm_r == nodata, np.nan, dtm_r)
         # For rungs >= source_res*2 (factor 1), the pixel count can be

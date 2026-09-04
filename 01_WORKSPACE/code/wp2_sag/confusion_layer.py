@@ -125,26 +125,22 @@ def main():
                     confusion = np.where(chain_mask == 2, 2, confusion)
         n_chain_cells = int((confusion == 2).sum())
 
-        # class 4: graben — placeholder; flag as derived, not curated
-        # 50 m at 0 deg lat is ~5e-5 deg; we use a 0-1 km buffer on the
-        # footprint to mark "candidate graben zone" with a thin
-        # pseudo-line; for v0.1 we set the class everywhere inside a
-        # small fraction of the footprint as a placeholder
-        # (1% of cells in a deterministic pattern) so the encoding is
-        # complete but the cells are clearly marked as derived
-        graben_mask = np.zeros((ny, nx), dtype=np.uint8)
-        # pick every 41st cell on the diagonal as a marker
-        for i in range(0, ny, 41):
-            j = (i * 3) % nx
-            graben_mask[i, j] = 1
-        confusion = np.where(graben_mask == 1, 4, confusion)
-        n_graben_cells = int((confusion == 4).sum())
+        # class 4: graben — DROPPED (C15-3). The v0.1 deterministic
+        # placeholder (`graben_mask[i, j] = 1` every 41st row) was
+        # never consumed by tier-B logic, but it WAS emitted into the
+        # confusion raster and the JSON summary — a quiet source of
+        # future drift if a tier-B gate adds "non-graben" filtering.
+        # Real graben support is deferred to a SLDEM-hillshade detector
+        # (matches the docstring note in confusion_layer.py).
+        n_graben_cells = 0
 
         out = args.outdir / f"confusion_{name}.tif"
+        # C9: shared Moon lon/lat CRS (was: hardcoded EPSG:4326, an Earth WGS84 ellipsoid)
+        from _crs import MOON_CRS_WKT
         profile = {
             "driver": "GTiff", "dtype": "uint8", "nodata": 255,
             "width": nx, "height": ny, "count": 1,
-            "transform": transform, "crs": "EPSG:4326",
+            "transform": transform, "crs": MOON_CRS_WKT,
             "compress": "deflate", "BIGTIFF": "IF_SAFER",
         }
         with rasterio.open(out, "w", **profile) as dst:

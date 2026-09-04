@@ -76,17 +76,18 @@ def load_rung(dtm_name: str, rung: float):
     krig = RAW / "outputs" / dtm_name / f"NAC_DTM_{dtm_name}_krigcorr.tif"
     raw = RAW / "dtms" / dtm_name / f"NAC_DTM_{dtm_name}.TIF"
     path = krig if krig.exists() else raw
+    # fractional rebin (Phase 0.3 — replaces integer-factor bug)
+    from _rebin import rebin_to_rung
     with rasterio.open(path) as src:
         res_full = float(src.res[0])
-        factor = max(1, int(round(rung / res_full)))
-        if factor == 1:
+        bounds, crs, nodata = src.bounds, src.crs, src.nodata
+    if rung <= res_full:
+        with rasterio.open(path) as src:
             z = src.read(1).astype(np.float64)
             transform = src.transform
-        else:
-            z = src.read(1, out_shape=(src.height // factor, src.width // factor),
-                         resampling=Resampling.average).astype(np.float64)
-            transform = src.transform * src.transform.scale(factor, factor)
-        bounds, crs, nodata = src.bounds, src.crs, src.nodata
+    else:
+        z32, transform = rebin_to_rung(path, rung)
+        z = z32.astype(np.float64)
     if nodata is not None:
         z = np.where(z == nodata, np.nan, z)
     z = np.where(np.abs(z) > 1000.0, np.nan, z)  # f32 sentinel guard (conventions §8.4)

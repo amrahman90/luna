@@ -168,7 +168,9 @@ def load_score_and_dtm(dtm_name: str, rung: float):
         res_full = float(src.res[0])
         H_src, W_src = src.height, src.width
         # The score raster's factor relative to the source DTM
-        factor = max(1, int(round(H_src / shape[0])))
+        # (fractional — Phase 0.3; metadata only, the read below uses
+        # the score's exact shape)
+        factor = max(1.0, H_src / shape[0])
     with rasterio.open(path) as src:
         dtm_r = src.read(1, out_shape=shape,
                          resampling=Resampling.average).astype(np.float64)

@@ -79,13 +79,17 @@ def dtm_source(dtm_name: str) -> Path:
 
 def frangi_vesselness(Z, sigmas_px):
     """Frangi vesselness, float64-masked to avoid the v0.1 float32 overflow
-    (conventions §8.3). NaN replaced with mean of finite values."""
-    Zf = np.where(np.isfinite(Z), Z,
-                  float(np.nanmean(Z[np.isfinite(Z)])) if np.isfinite(Z).any() else 0.0)
+    (conventions §8.3). NaN replaced with mean of finite values for the
+    filter's finite-input requirement, then the OUTPUT is zeroed at the
+    original-NoData cells (Phase 0.6 — no phantom vesselness in NoData)."""
+    finite = np.isfinite(Z)
+    Zf = np.where(finite, Z,
+                  float(np.nanmean(Z[finite])) if finite.any() else 0.0)
     Zf = Zf.astype(np.float64)  # avoid float32 overflow on large sigmas
     V = frangi(Zf, sigmas=sigmas_px, black_ridges=True)
-    V = np.where(np.isfinite(V), V, 0).astype(np.float32)
-    return V
+    V = np.where(np.isfinite(V), V, 0)
+    V = np.where(finite, V, 0)
+    return V.astype(np.float32)
 
 
 def run_one_dtm(dtm_name: str, rungs: list, wbt, out_root: Path,
@@ -162,28 +166,28 @@ def run_one_dtm(dtm_name: str, rungs: list, wbt, out_root: Path,
             # f32 sentinel guard: where the sentinel got diluted by averaging
             # below exact match, |val| > 1e30 is still sentinel
             dtm_r = np.where(np.abs(dtm_r) > 1e30, np.nan, dtm_r).astype(np.float32)
-        # 2. Frangi sub-sample to <= 5000 px max dim (conventions §8.3)
+        # 2. Frangi sub-sample to <= 5000 px max dim (conventions §8.3).
+        #    Phase 0.4 fix: sub-sample the RUNG-GRID dtm_r (not the source
+        #    DTM) so Frangi sigmas scale by the rung posting — the FROZEN
+        #    recipe's sigma list is defined at the rung. The old code
+        #    re-opened the source DTM, making effective_rung the
+        #    source-equivalent posting and mixing two grids via zoom.
         H_r, W_r = dtm_r.shape
         if max(H_r, W_r) > FRANGI_MAX_DIM:
             frangi_scale = max(H_r, W_r) / float(FRANGI_MAX_DIM)
             new_h = int(round(H_r / frangi_scale))
             new_w = int(round(W_r / frangi_scale))
-            with rasterio.open(dtm_path) as src:
-                dtm_fr = src.read(
-                    1,
-                    out_shape=(new_h, new_w),
-                    resampling=Resampling.average,
-                ).astype(np.float32)
-                # transform for the sub-sampled grid
-                transform_fr = src.transform * src.transform.scale(
-                    src.width / new_w, src.height / new_h
-                )
-            if nodata is not None:
-                dtm_fr = np.where(dtm_fr == nodata, np.nan, dtm_fr).astype(np.float32)
-                dtm_fr = np.where(np.abs(dtm_fr) > 1e30, np.nan, dtm_fr).astype(np.float32)
-            effective_rung = res_full * (src.width / new_w)
+            from scipy.ndimage import zoom as ndizoom
+            dtm_fr = ndizoom(
+                np.where(np.isfinite(dtm_r), dtm_r, float(np.nanmean(dtm_r[np.isfinite(dtm_r)]))),
+                (new_h / H_r, new_w / W_r), order=1,
+            ).astype(np.float32)
+            transform_fr = transform_r * transform_r.scale(
+                W_r / new_w, H_r / new_h
+            )
+            effective_rung = rung * (W_r / new_w)
             print(f"  rung {rung:g} m: shape {dtm_r.shape} -> Frangi sub-sample "
-                  f"{dtm_fr.shape} @ ~{effective_rung:.2f} m", flush=True)
+                  f"{dtm_fr.shape} @ ~{effective_rung:.2f} m (rung-grid)", flush=True)
         else:
             dtm_fr = dtm_r
             transform_fr = transform_r

@@ -140,8 +140,11 @@ def existing_or_run_kriging(dtm_name: str, lola_dir: Path, force: bool = False) 
 
 def frangi_vesselness(Z, res, sigmas=(30, 60, 100, 150, 200, 300)):
     sigmas_px = tuple(max(0.5, s / res) for s in sigmas)
-    Zf = np.where(np.isfinite(Z), Z, float(np.nanmean(Z[np.isfinite(Z)])) if np.isfinite(Z).any() else 0.0)
+    finite = np.isfinite(Z)
+    Zf = np.where(finite, Z, float(np.nanmean(Z[finite])) if finite.any() else 0.0)
+    Zf = Zf.astype(np.float64)  # float32 overflow on large sigmas (conventions §8.3)
     V = frangi(Zf, sigmas=sigmas_px, black_ridges=True)
+    V = np.where(finite, V, 0.0)  # Phase 0.6: no phantom vesselness in NoData
     return V.astype(np.float32)
 
 
