@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# C12 commit-msg cost guard (Next-Level Plan v2).
+# Prevents re-introduction of the forbidden cost phrases into commit
+# messages. The archive rewrite of 2026-08-24 stripped 12 commits
+# via git filter-branch; this hook is the regression guard.
+#
+# Install:
+#   cp admin/git-hooks/commit-msg .git/hooks/commit-msg
+#   chmod +x .git/hooks/commit-msg
+#
+# Bypass intentionally requires --no-verify (matches the AGENTS.md
+# convention that humans may override the gate with explicit intent).
+set -e
+
+# Read the commit message from $1 (the .git/COMMIT_EDITMSG temp file)
+MSG_FILE="$1"
+MSG=$(cat "$MSG_FILE")
+
+# Forbidden patterns: dollar amounts, "cost", "ZEROCOST", "spent",
+# "ceiling", etc. Each is a regex matched case-insensitively. Tight
+# enough to catch a literal slip; loose enough that scientific
+# language about "cost function", "computation cost", etc. is allowed.
+FORBIDDEN='(\$[0-9]+|ZEROCOST|zero.cost|cost ceiling|spent|tier.1 (rental|authorize|spent))'
+
+if echo "$MSG" | grep -i -E "$FORBIDDEN" >/dev/null 2>&1; then
+  echo "❌ COMMIT-MSG COST GUARD: forbidden cost phrase detected." >&2
+  echo "   Pattern: $FORBIDDEN" >&2
+  echo "   If intentional, bypass with: git commit --no-verify" >&2
+  echo "   See admin/orchestrator/lunarvoid_protocol.md (commit conventions)" >&2
+  exit 1
+fi
+exit 0

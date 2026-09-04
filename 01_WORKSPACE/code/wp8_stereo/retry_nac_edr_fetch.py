@@ -77,7 +77,11 @@ logger = logging.getLogger(__name__)
 QUEUE_CSV = Path("01_WORKSPACE/data/wp8_stereo/nac_edr_retry_queue.csv")
 LOG_CSV = Path("01_WORKSPACE/data/wp8_stereo/nac_edr_retry_log.csv")
 FETCH_LOG = Path.home() / "lunarvoid/data/fetch_log_lroc.csv"
-EDR_DEST_ROOT = Path.home() / "lunarvoid/data/edr"
+EDR_DEST_ROOT = Path.home() / "lunarvoid" / "data" / "edr"
+# C10: standardise on the shared UA across all fetchers (SEC-01 fix)
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "code" / "setup"))
+from _http import HEADERS  # noqa: E402
 
 # Endpoint templates. Each is a (name, url_template) tuple. The template
 # uses {product_id} as the substitution.
@@ -126,7 +130,7 @@ def _head_request(url: str, timeout: float = TIMEOUT_SECONDS) -> tuple[int, Opti
     a tiny range GET. urllib does not support method="HEAD" natively
     but Request does.
     """
-    req = urllib.request.Request(url, method="HEAD")
+    req = urllib.request.Request(url, method="HEAD", headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             cl = resp.headers.get("Content-Length")
@@ -141,7 +145,7 @@ def _head_request(url: str, timeout: float = TIMEOUT_SECONDS) -> tuple[int, Opti
 def _download(url: str, dest: Path, timeout: float = TIMEOUT_SECONDS) -> tuple[int, int]:
     """Download url -> dest. Returns (http_status, bytes_written)."""
     dest.parent.mkdir(parents=True, exist_ok=True)
-    req = urllib.request.Request(url)
+    req = urllib.request.Request(url, headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp, dest.open("wb") as f:
             written = 0
@@ -158,16 +162,15 @@ def _download(url: str, dest: Path, timeout: float = TIMEOUT_SECONDS) -> tuple[i
         logger.debug("GET %s failed: %s", url, e)
         return -1, 0
 
-
 def _wayback_lookup(product_id: str) -> Optional[str]:
     """Look up the product in the Wayback CDX API. Returns the most
-    recent snapshot URL or None."""
-    # Wayback CDX expects a URL (not just a path). Build a candidate
-    # URL from the legacy endpoint template.
+    recent snapshot URL or None.
+    """
     candidate = ENDPOINTS[0][1].format(product_id=product_id)
     cdx = WAYBACK_CDX.format(url=candidate)
     try:
-        with urllib.request.urlopen(cdx, timeout=TIMEOUT_SECONDS) as resp:
+        req = urllib.request.Request(cdx, headers=HEADERS)
+        with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         # CDX returns a JSON array of arrays: first row is the header.
         if not data or len(data) < 2:
@@ -191,14 +194,11 @@ def _already_fetched(product_id: str) -> Optional[str]:
     """
     if not FETCH_LOG.exists():
         return None
+    import csv
     with FETCH_LOG.open() as f:
-        for line in f:
-            parts = line.strip().split(",")
-            if len(parts) < 7:
-                continue
-            # schema: timestamp,site,product_id,url,status,size_bytes,sha256,...
-            if parts[2] == product_id and parts[4] in ("OK", "SKIP_EXISTS"):
-                return parts[6]
+        for row in csv.DictReader(f):
+            if row.get("product_id") == product_id and row.get("status") in ("OK", "SKIP_EXISTS"):
+                return row.get("sha256")
     return None
 
 
@@ -261,8 +261,11 @@ def retry_one(product_id: str, dtm: str, expected_size_bytes: int) -> dict:
                     "elapsed_sec": round(time.monotonic() - t0, 2),
                     "http_status": 200, "notes": "downloaded",
                 }
-        # Polite sleep before next endpoint.
-        time.sleep(RATE_LIMIT_SECONDS)
+        # C15-4: only sleep on a non-200 (skipping a successful endpoint
+        # back to the next endpoint is wasteful; on the happy path this
+        # halves the per-row sleep budget).
+        if status != 200:
+            time.sleep(RATE_LIMIT_SECONDS)
 
     # Stage 4: Wayback fallback.
     wayback_url = _wayback_lookup(product_id)

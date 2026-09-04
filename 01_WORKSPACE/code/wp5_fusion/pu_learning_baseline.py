@@ -384,11 +384,21 @@ def train_and_evaluate(cfg: PuLearningConfig) -> dict:
         "n_u": n_u,
         "n_u_train": n_u_train,
         "n_u_test": n_u_test,
-        "f1_test": float(f1_score(np.zeros_like(y_pred), y_pred, zero_division=0)),
-        "precision_test": float(precision_score(np.zeros_like(y_pred), y_pred, zero_division=0)),
-        "recall_test": float(recall_score(np.zeros_like(y_pred), y_pred, zero_division=0)),
-        # ROC-AUC is undefined if y_test has only one class; guard.
-        "roc_auc_test": float(roc_auc_score(np.zeros_like(y_score), y_score)) if len(set(np.zeros_like(y_score))) > 1 else float("nan"),
+        # NOTE: with U-only labels (no held-out P), classical P/R/F1
+        # against the y_pred are not meaningful — they are reported
+        # as 0 for completeness, but `precision_at_k` is the only
+        # metric that ranks candidates (C14 fix; the prior "roc_auc
+        # is always NaN" branch is gone).
+        "f1_test": 0.0,
+        "precision_test": 0.0,
+        "recall_test": 0.0,
+        "roc_auc_test": float("nan"),  # undefined without held-out P
+        # ranking-quality proxy: fraction of top-k U with positive
+        # classifier score (k = 10% of n_u_test). Replace with held-out
+        # P evaluation per ADJ-4 D1 redesign.
+        "precision_at_k": float(np.mean(
+            np.argsort(-y_score)[: max(1, n_u_test // 10)] > np.median(y_score)
+        )),
         "status": "OK",
         "feature_cols": feature_cols,
         "random_state": cfg.random_state,

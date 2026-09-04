@@ -2,10 +2,19 @@
 """Parallel HTTP range-download script for PDS Geosciences files.
 
 Usage: parallel_range_download.py URL OUTPUT [--chunks N]
+
+Concurrency note (C15-2): each chunk is written via
+`os.pwrite(fd, buf, offset)` which is POSIX-atomic per call
+(up to filesystem limits), avoiding the seek/write interleaving
+that the earlier `fh.seek + fh.write` pattern allowed on
+NFS / shared storage. Sequential runs of the chunks
+still work fine; this only matters under real parallelism
+on NFS-class storage.
 """
 from __future__ import annotations
 import argparse
 import hashlib
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -13,21 +22,30 @@ from pathlib import Path
 from urllib.request import urlopen, Request
 
 
-def fetch_range_to_file(url: str, start: int, end: int, fh, retries: int = 5) -> int:
-    """Stream bytes [start, end] inclusive to file handle fh, returns bytes written."""
+def fetch_range_to_file(url: str, start: int, end: int, fd: int, retries: int = 5) -> int:
+    """Stream bytes [start, end] inclusive to file descriptor fd at offset `start`.
+    Returns bytes written.
+
+    Uses os.pwrite for atomic per-call writes at the given offset;
+    no seek, no interleaving window for concurrent threads.
+    """
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "setup"))
+    from _http import HEADERS as _HDRS  # C10: shared UA
     last_err = None
     for attempt in range(retries):
         try:
-            req = Request(url, headers={"Range": f"bytes={start}-{end}"})
+            req = Request(url, headers=_HDRS)
+            req.add_header("Range", f"bytes={start}-{end}")
             with urlopen(req, timeout=300) as resp:
-                fh.seek(start)
                 written = 0
                 while written < end - start + 1:
                     chunk = resp.read(1 << 20)  # 1 MB
                     if not chunk:
                         break
-                    fh.write(chunk)
-                    written += len(chunk)
+                    n = os.pwrite(fd, chunk, start + written)
+                    written += n
                 if written != end - start + 1:
                     raise RuntimeError(
                         f"short read: {written} of {end - start + 1} bytes"
@@ -40,7 +58,11 @@ def fetch_range_to_file(url: str, start: int, end: int, fh, retries: int = 5) ->
 
 
 def head_size(url: str) -> int:
-    req = Request(url, method="HEAD")
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "setup"))
+    from _http import HEADERS as _HDRS  # C10: shared UA
+    req = Request(url, method="HEAD", headers=_HDRS)
     with urlopen(req, timeout=60) as resp:
         return int(resp.headers["Content-Length"])
 
@@ -69,7 +91,7 @@ def main():
             break
         ranges.append((i, s, e))
 
-    # Use sparse file: preallocate
+    # Pre-allocate sparse file
     with open(out, "wb") as f:
         f.truncate(size)
 
@@ -78,8 +100,12 @@ def main():
 
     def worker(idx_s_e):
         idx, s, e = idx_s_e
-        with open(out, "r+b") as fh:
-            n = fetch_range_to_file(args.url, s, e, fh)
+        # Open with O_WRONLY; pwrite positions per call (no seek)
+        fd = os.open(str(out), os.O_WRONLY)
+        try:
+            n = fetch_range_to_file(args.url, s, e, fd)
+        finally:
+            os.close(fd)
         return idx, s, n
 
     with ThreadPoolExecutor(max_workers=args.max_workers) as ex:
