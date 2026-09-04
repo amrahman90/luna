@@ -71,3 +71,29 @@ acknowledgement not yet triggered).*
 
 *Evidence/traceability: verifier Z2 pit-distance table recorded at
 `admin/verification_evidence/2026-08-21_z2_pit_distance_verification.md`.*
+
+---
+
+## Erratum (2026-09-04, Phase 0.7 — Next-Level Plan v2)
+
+**Reproducibility claim corrected.** This report's environment claim —
+"Tier-0 environment is reproducible from `requirements.txt`" — was
+**false as originally filed**: the manifest was a stale freeze missing
+8 imported packages, including `scikit-image` (the Frangi detector
+core, imported by 4 modules) plus `pulearn`, `boule`, `pyshtools`,
+`rarfile`/`pyunpack`. A fresh venv built from the filed manifest
+could not run the detector (ImportError on `skimage.filters.frangi`).
+
+**Resolution:** `code/setup/requirements.txt` regenerated 2026-09-04
+as a complete `pip freeze --local` (53 packages), verified by building
+a fresh Python 3.12 venv from it and importing
+`skimage.filters.frangi`, `pulearn`, `rasterio`, `geopandas`,
+`whitebox`, `pykrige`, `sklearn` end-to-end. A known resolver quirk
+(pulearn 0.2.0 metadata pins numpy<2.5 while the working environment
+runs numpy 2.5.2) is documented in the manifest header with the
+verified install procedure.
+
+**Status of gate verdicts: unchanged.** All G0' verdicts were earned
+against the *live* venv, which always contained the packages; only
+the manifest was incomplete. The reproducibility claim is now true
+as of 2026-09-04.

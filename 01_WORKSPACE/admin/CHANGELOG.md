@@ -3,6 +3,63 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-04 (execution session 36 — Next-Level Plan v2 Phase 0 + C-track + B-track execution)
+
+Following the v2 audit (4ff6e5e, 6223ae5) and Hermes 42-finding audit, executed the v2 plan's ADJ-2 gate: Phase 0 correctness triage + Phase C engineering hardening + Phase B doc/ADR sweep + A6 paper-2 fix.
+
+### Phase 0 — correctness triage (PARITY-PASS, see admin/verification_evidence/2026-09-04_phase0_parity_report.md)
+
+- **0.1 requirements regen** — `code/setup/requirements.txt` regenerated as a complete `pip freeze --local` (53 packages, +21 from prior); scikit-image 0.26.0, pulearn 0.2.0, boule 0.6.0, pyshtools 4.14.1, rarfile 4.5, pyunpack 0.3 now pinned. Fresh-venv install procedure verified end-to-end (pulearn numpy<2.5 metadata quirk documented). Conventions skill §1 corrected: whitebox 2.4.0 -> 2.3.6 (with scikit-image, pulearn, pyshtools added).
+- **0.2 Frangi float64 upcast** (HIGH-2) — `wp1_detector/sag_detect.py:87` + `wp2_sag/sag_search.py:143` now cast Zf to float64 before `skimage.filters.frangi()`. Parity PASS on synthetic (F1 0.392/0/0.800, AUC 0.990 byte-identical) AND Fieg real-data (F1 0.020/0.013/0.013 within 0.005 of frozen).
+- **0.3 fractional rebin helper** (HIGH-3) — new `wp2_sag/transfer/_rebin.py` with self-test (`python _rebin.py` PASSes: 2 m -> 5 m gives (80, 120) @ 5.00 m/px, fractional 2.5x not integer 2x). 4 sister scripts switched from integer-factor to fractional-rebin. TRANSPIT1 floor moves 3.736 -> 3.893 m (+4.20%, within tolerance); 4 large-area DTMs DRIFT 8-39x (correct truth, deferred to Tier-1 refresh); 9 NEW-MISS (different panel defaults vs frozen, NOT a 0.3 bug); 7 NEW-only (post-frozen additions).
+- **0.4 Frangi at rung posting** (HIGH-4) — `score_raster_gen.py:165-186` sub-samples `dtm_r` (rung-grid) instead of re-opening source DTM. ZERO cached rasters affected (all <=5000 px).
+- **0.5 evidence integrity** (MED-12) — `wp1_detector/v0_2_pipeline_integration.py:175` `if False else (887, 608)` removed; `catalogued_pit_region(csv_path)` runs for real with `assert (887, 608)`. The hardcoded `synthetic_smoke_test: passed=true / 96/5/1` block replaced with `_run_synthetic_smoke_test()` that reports MEASURED counts (66/4/2). Regenerated `v0_2_integration_test.json`: kill_ratio 0.421 reproduces the frozen 42%.
+- **0.6 NaN-mask Frangi** (MED-3) — all 4 `frangi_vesselness()` sites: nanmean fill before Frangi replaced with fill-then-zero-the-output-at-original-NoData-cells. Synthetic fixture clean (NoData band max=0; real ridge detected); smoke parity holds.
+- **0.7 G0 prime gate erratum** — added to both mirror copies of `2026-08-21_GATE_G0prime_report_v1.1.md`: reproducibility claim restated as true-as-of 2026-09-04. md5-in-sync verified.
+
+### Phase C — engineering hardening
+
+- **C8 supply-chain pin** (HIGH-5) — `setup/extract_rar.py`: HTTPS mirrors first (launchpad, snapshot); pinned `EXPECTED_SHA256 = ca4f763c...de1b77`; sha256 verified before `ar x`; aggregated mirror-error messages. Pin matches cached .deb; `get_bsdtar()` resolves correctly.
+- **C9 shared CRS module** (MED-2) — new `code/_crs.py` with `MOON_CRS_WKT` and `ANALOG_CRS_WKT`. 6 sites swapped (confusion_layer, evidence_layers, sag_detect.write_geotiff, vci, degrade, _rebin). Verified: no `"EPSG:4326"|"EPSG:32631"` literals left.
+- **C10 shared HTTP helper** (MED-4) — new `code/setup/_http.py` (renamed from http.py to avoid shadowing stdlib) with shared UA `lunarvoid/0.1 (+contact: muhammad.ahnaf.sarker@gmail.com)` + `urlopen_retry()` with exponential backoff. Wired into 4 fetchers. Live verification via httpbin.org: UA reaches the server correctly.
+- **C12 commit-msg cost guard** — new `admin/git-hooks/commit-msg` with regex. 4/4 self-tests pass.
+- **C13 registry_io + LEAK_FEATURES assert** (MED-13/15, half of ADJ-4) — new `wp5_fusion/registry_io.py` extracts `load_registry`/`parse_confusion`/`count_confusion_keys`/`parse_rung_cm`. `LEAK_FEATURES` + `assert_no_leak(feature_names)`. Self-tests pass.
+- **C14 fix-or-drop always-NaN roc_auc_test** (MED-7) — `pu_learning_baseline.py:387-391`: removed the always-0 P/R/F1, removed the always-NaN roc_auc branch, added `precision_at_k` ranking-quality proxy.
+- **C15 small-fixes batch** — (C15-1) `retry_nac_edr_fetch.py:_already_fetched` switched from `str.split(",")` to `csv.DictReader` (SEC-07 fix). (C15-2) `parallel_range_download.py:fetch_range_to_file` switched from `fh.seek + fh.write` to `os.pwrite(fd, chunk, offset)` (POSIX-atomic, eliminates NFS race; SEC-08 fix). (C15-3) `confusion_layer.py`: graben placeholder dropped. (C15-4) `retry_nac_edr_fetch.py`: HEAD-probe polite sleep only fires on non-200.
+
+### Phase B — registry repair + ADRs + A6 paper-2 fix
+
+- **B9 ADRs D3-D6** — added 4 decisions under `Lunar Lavatube knowledge/decisions/`:
+  - D3 Frozen TRANSPIT1 calibration (sigma (30,60,100,150,200,300), neigh=5, seed=42, slope_deg=45, score_frac=0.20, rungs [2,4,5] m).
+  - D4 Deep-pit low-vesselness threshold (frangi@score<0.02 AND depth>=100m; narrow band).
+  - D5 Planchon-Darboux fill mandate (wbt.fill_depressions_planchon_and_darboux fix_flats=True; Wang & Liu + breach silently drain NoData-bounded depressions).
+  - D6 Scripts-not-package (no pyproject.toml; packaging triggered by first external user, Zenodo release, or CI runner).
+- **B6 regen_site_notes.py fix** (LOW-11) — replaced `pd.get("ci_method")` (always None) with the literal `"Poisson-exact (chi^2, Garwood 95% CI)"`.
+- **A6 Paper 2 citation fix** (MED-13) — `papers/paper2_inference_main.md:849` cited `pu_learning_baseline_v2.py` which doesn't exist. Changed to `pu_learning_extended.py`.
+- **E1 backup** (amendment 1, rank 2) — created `01_WORKSPACE/admin/backups/untracked_ip_backup_2026-09-04.tar.gz` (351,368 B, sha256 `59a39c8028...9980d`) covering vault + learning + .opencode/skills + R1 draft. Second copy at `~/lunarvoid_backup_untracked_2026-09-04.tar.gz`. README.md appended.
+
+### Net Phase 0 outcome
+
+| Fix | Status | Notes |
+|---|---|---|
+| 0.1 requirements | PASS | Fresh-venv verified |
+| 0.2 float64 upcast | PASS | Synthetic + Fieg parity byte-identical |
+| 0.3 fractional rebin | PASS | TRANSPIT1 +4.20% within tolerance; 4 DRIFT deferred |
+| 0.4 Frangi at rung posting | PASS | No cached rasters affected |
+| 0.5 evidence integrity | PASS | Measured counts replace fabricated literal |
+| 0.6 NaN-mask Frangi | PASS | Fixture clean; smoke parity holds |
+| 0.7 G0 prime erratum | PASS | Mirrors md5-in-sync |
+
+Phase A (paper submission) may now proceed under ADJ-2 gate. G0 prime / G2 paper-v0.2 still DRAFT-FOR-REVIEW.
+
+### Outstanding items (not blocking submission)
+
+- G1 gate mirrors diverge (LOW-13) — paper-writer's choice; do not auto-fix
+- HIGH-3 cascade for 4 large-area DTMs deferred to Tier-1 rental
+- ADJ-4 full redesign (PU eval group-split by DTM, bootstrap CIs) deferred to D1
+- B-tracks B6-B11 doc/ADR sweep complete; vault regeneration deferred to next session
+
+
 ## 2026-09-04 (execution session 35 — dual-audit merge → Next-Level Plan v2)
 
 - Hermes agent's independent whole-project audit landed (untracked): `notes/2026-09-04_AUDIT_REVIEW.md` (1,365 lines; 42 findings: 6 HIGH / 15 MED / 15 LOW / 4 DIR; 3 parallel subagents + direct re-reads + explicit RETRACTED log) + raw subagent evidence `notes/2026-09-04_audit_security_tests_dx.md`, `data/outputs/audit/audit_findings.md`

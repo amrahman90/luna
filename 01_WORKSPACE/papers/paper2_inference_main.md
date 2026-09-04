@@ -846,8 +846,10 @@ The authors declare no competing interests.
 - **PU-learning v2 baseline** (this paper's primary new artifact):
   `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
   (commit forthcoming); train script at
-  `code/wp5_fusion/pu_learning_baseline_v2.py`; reproducible from
-  the registry + random_state=42.
+  `code/wp5_fusion/pu_learning_extended.py`; reproducible from
+  the registry + random_state=42. (A6 fix 2026-09-04: the earlier
+  `pu_learning_baseline_v2.py` reference did not exist; the v2
+  baseline is `pu_learning_extended.py`.)
 - **G2 transfer summary** (re-used from Paper 1 v1.0): frozen
   calibration at `data/outputs/wp2_sag/transfer/calibration_transqpit1.json`
   (md5 `2597002375206aba3119c240c373ad62` unchanged); transfer

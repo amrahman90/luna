@@ -454,7 +454,12 @@ def _site_data(
         "fp_per_1e4km2": pd.get("fp_per_1e4km2"),
         "fp_lo": pd.get("fp_per_1e4km2_ci95_lo"),
         "fp_hi": pd.get("fp_per_1e4km2_ci95_hi"),
-        "ci_method": pd.get("ci_method"),
+        # B6 fix: drop the empty `ci_method` field — the schema has no
+        # `ci_method` key (only `fp_per_1e4km2_ci95_lo/hi`); rendering it
+        # as `()` for 21 site notes was a silent defect.
+        # Restore by emitting a literal "Poisson-exact (chi^2)" since
+        # that's the documented method in transfer_apply.py.
+        "ci_method": "Poisson-exact (chi^2, Garwood 95% CI)",
         "top_score": pd.get("top_score"),
         "pooled_rms": fl.get("pooled_rms_m"),
         "three_sigma": fl.get("three_sigma_m") or pd.get("local_3sigma_m"),
