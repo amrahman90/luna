@@ -1,5 +1,12 @@
 # LUNARVOID Full-Project Audit — "Next Level" Improvement Plan
 
+> **SUPERSEDED** by `plans/2026-09-04_Project_Audit_Next_Level_v2.md`
+> (same day). v2 merges this audit with the Hermes agent's independent
+> audit (`notes/2026-09-04_AUDIT_REVIEW.md`, 42 findings incl. 4 verified
+> detector-correctness bugs this v1 missed), adjudicates the conflicts
+> (packaging, sequencing), and adds Phase 0 (correctness triage before
+> paper submission). Retained for the audit trail.
+
 **Date:** 2026-09-04
 **Auditors:** skeptic (papers), explore ×2 (code, data), orchestrator (ops)
 **Method:** 4 parallel read-only sweeps + ground-truth recomputation (Garwood CI

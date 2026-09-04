@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-04 (execution session 35 — dual-audit merge → Next-Level Plan v2)
+
+- Hermes agent's independent whole-project audit landed (untracked): `notes/2026-09-04_AUDIT_REVIEW.md` (1,365 lines; 42 findings: 6 HIGH / 15 MED / 15 LOW / 4 DIR; 3 parallel subagents + direct re-reads + explicit RETRACTED log) + raw subagent evidence `notes/2026-09-04_audit_security_tests_dx.md`, `data/outputs/audit/audit_findings.md`
+- Hermes HIGHs (all independently spot-verified by orchestrator via grep this session, 4/4 confirmed): Frangi float64 upcast missing in `sag_detect.py`+`sag_search.py` (present only in `score_raster_gen.py:85`); integer-factor rebin in 4 sister scripts (5 m rung silently becomes 4 m grid); Frangi at source posting in `score_raster_gen.py` for >5000-px DTMs; supply-chain TOFU in `extract_rar.py` (HTTP-first, no SHA-256); requirements.txt missing 8 imported packages incl. scikit-image (falsifies G0' "Tier-0 reproducible" claim); no commit-msg guard
+- Evidence-integrity: `v0_2_integration_test.json` contains a hardcoded `synthetic_smoke_test: passed` literal never executed by its script (`v0_2_pipeline_integration.py:226` + `if False` at :175) — cited in session 34; regeneration queued as Phase 0.5
+- Paper 2:849 cites non-existent `pu_learning_baseline_v2.py` → fix queued (A6)
+- **Next-Level Plan v2** written: `plans/2026-09-04_Project_Audit_Next_Level_v2.md` — merges v1 audit (papers/data/ops) with Hermes audit (code correctness/security/docs); 5 adjudications logged (packaging → scripts-not-package ADR w/ Zenodo trigger; sequencing → new Phase 0 correctness-parity gate before Paper 1 submission; registry defects are two distinct bugs; PU fix = quick guard + statistical redesign; tests = pytest + real-data E2E fixture + CI); v1 plan marked SUPERSEDED with banner
+- Phase 0 (new, blocks submission): requirements regen → float64/rebin/posting fixes with parity tables vs frozen evidence (T5 ±5%) → evidence regen → G0' erratum
+- Known doc-hygiene: sessions 32-34 entries sit at file bottom vs stated newest-first convention — fold into v2 Phase B10 roadmap/doc sync sweep
+
 ## 2026-08-23 (execution session 31 — Rounds 7-10 housekeeping)
 
 Rounds 7-10 housekeeping + Paper 1 v1.0 release note. All committed at $0.
