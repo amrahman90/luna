@@ -10,6 +10,63 @@
 
 **Complementarity:** Hermes deep-audited code correctness/security/docs and explicitly did NOT audit paper claims or data accounting; v1 deep-audited papers/data/ops and flagged code only at architecture level. The two audits overlap on exactly one finding (missing `scikit-image`) and otherwise interlock. Neither alone is sufficient; this plan is the union with conflicts adjudicated.
 
+## Execution status (2026-09-06)
+
+Re-evaluation after discovering a parallel (Hermes-side) session executed most of Phase 0 + parts of B/C/E on 2026-09-04 (commits c7a7820, 6ec4be4, d80039e, 2b10a98, 1d5d8e3 — after this plan landed in 4ff6e5e). Verifier evidence: `admin/verification_evidence/2026-09-04_phase0_parity_report.md` (313 lines, 7/7 PARITY-PASS) + `2026-09-04_phase0_ad_hoc_verification.json` (9/9 PASS). Session 37 (2026-09-06) added a redundant-but-passing Phase 0.1 requirements refresh.
+
+**Done:**
+
+- [x] 0.1 requirements regen (c7a7820; redundantly refreshed 2026-09-06 session 37 — verifier PASS, 59 lines, fresh-venv smoke F1 0.392/0/0.800 AUC 0.990 exact; HIGH-6 was true at 7fd9fd7, remediated c7a7820)
+- [x] 0.2 Frangi float64 upcast (c7a7820)
+- [x] 0.3 fractional rebin helper (c7a7820; TRANQPIT1 +4.20% in-tolerance; 4 DRIFT DTMs = GRUITHUIS17/KINGCRATER2/3/4 random-mare, outside frozen calibration, deferred to Tier-1 refresh)
+- [x] 0.4 Frangi at rung posting (c7a7820)
+- [x] 0.5 evidence-integrity regen (c7a7820)
+- [x] 0.6 NaN-mask Frangi (c7a7820)
+- [x] 0.7 G0' erratum (c7a7820) + both mirror copies (6ec4be4, md5-in-sync)
+- [x] A6 Paper-2:849 citation fix (6ec4be4)
+- [x] B6 regen_site_notes ci_method fix (6ec4be4)
+- [x] B9 ADRs D3-D6 (6ec4be4; in gitignored vault, covered by E1 backup; MOC cross-links pending under B7/B10)
+- [x] C8 supply-chain pin (d80039e)
+- [x] C9 shared CRS module (d80039e)
+- [x] C10 shared HTTP helper (d80039e)
+- [x] C12 commit-msg cost guard (d80039e; verified by 1d5d8e3 check 7, 5/5)
+- [x] C13 registry_io + LEAK assert (d80039e; integration into pu_learning_extended.py = follow-up)
+- [x] C14 roc_auc fix-or-drop (d80039e)
+- [x] C15 small-fixes batch — partial: C15-1..4 done (d80039e)
+- [x] E1 untracked-IP backup (2b10a98)
+
+**Open:**
+
+- [ ] A1 IMRaD rewrite — dispatched to paper-writer (session 37)
+- [ ] A2 unique-feature FP re-accounting
+- [ ] A3 re-detection honesty sentence
+- [ ] A4 4-sites-not-6 honesty + LOO criterion
+- [ ] A5 cover-letter/metadata reconcile
+- [ ] A7 Paper 2 text-recycling pass
+- [ ] B1-B5 registry repair cluster (quoted-CSV writer, schema validation, row fixes + dedupe, MANIFEST/provenance, METHODS.md) — B1 dispatched to geo-coder (session 37)
+- [ ] B7 vault 00_HOME refresh (278 count, superseded banners)
+- [ ] B8 gate-mirror hygiene (canonical = `plans/`, G1 wording divergence)
+- [ ] B10 roadmap/doc sync sweep (owned by the separate ordering-sweep task; R1 draft commit pending)
+- [ ] B11 findings-log entries (Diviner 0.0-sentinel, pooled-RMS citations)
+- [ ] C-io_common shared IO module (v1-retained)
+- [ ] C3 CC-filter wiring into sag_detect (AREA_MIN table)
+- [ ] C4 pytest scaffold + CI
+- [ ] C5 archive superseded code (v1-retained)
+- [ ] C6 run_cycle.py one-command chain
+- [ ] C7 silent-except audit
+- [ ] C11 real-data E2E fixture test
+- [ ] C15 remainder (sentinel constant + per-chunk warning)
+- [ ] D1 PU eval redesign (group-split by DTM + bootstrap CIs)
+- [ ] D2 inspection-verdict capture (user eyes)
+- [ ] D3 LOO cross-validation
+- [ ] D4 Paper 2 benchmark/protocol reframe
+- [ ] D5 rental decision (user authorization required)
+- [ ] E2 conventions-skill exposure decision (user approval required)
+- [ ] E3 Zenodo release prep
+- [ ] E4 CI workflow
+
+*Note (2026-09-06): the session-37 dispatch initially listed C12/C14/B9 among open items; repo evidence (d80039e diff, 1d5d8e3 verification JSON, session-36 CHANGELOG + ADR files in vault) shows them done — recorded done here.*
+
 ---
 
 ## 0. Adjudication log (v1 vs Hermes conflicts — rulings)

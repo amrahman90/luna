@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-06 (execution session 37 — v2 re-evaluation + Phase 0.1 refresh)
+
+- **Parallel-session discovery**: a 2026-09-04 Hermes-side session had already executed most of Plan v2 Phase 0 + parts of B/C/E after the plan landed (4ff6e5e) — **c7a7820** (Phase 0.1-0.7 correctness triage + parity report), **6ec4be4** (B6 regen_site_notes ci_method fix, A6 Paper-2 citation fix, 0.7 gate-erratum mirrors, CHANGELOG session 36), **d80039e** (C8 supply-chain pin, C9 shared CRS, C10 shared HTTP, C12 commit-msg guard, C13 registry_io + LEAK assert, C14 roc_auc fix, C15-1..4), **2b10a98** (E1 untracked-IP backup tarball + README row), **1d5d8e3** (ad-hoc verification script + JSON record, 9/9 PASS).
+- **Parity report verdict** (`admin/verification_evidence/2026-09-04_phase0_parity_report.md`, 313 lines): **7/7 checks PARITY-PASS**; TRANQPIT1 floor 3.736 → 3.893 m (+4.20%, in tolerance).
+- The 4 DRIFT DTMs (GRUITHUIS17, KINGCRATER2/3/4) are **random-mare sites outside the frozen TRANQPIT1 calibration set** → headline FP rate unaffected; HIGH-3 cascade deferred to Tier-1 refresh.
+- **Phase 0.1 redundant refresh (this session)** — geo-coder + verifier PASS: `code/setup/requirements.txt` regenerated 2026-09-06 (59 lines); fresh-venv imports PASS with documented pulearn/numpy<2.5 metadata-quirk workaround; smoke F1 0.392/0/0.800, AUC 0.990 — **exact** match to frozen.
+- HIGH-6 (requirements missing 8 imported packages incl. scikit-image) was true at initial commit 7fd9fd7 and already remediated by c7a7820; the 2026-09-06 file is a refresh only, not a new defect.
+- Execution-status checkbox block added to `plans/2026-09-04_Project_Audit_Next_Level_v2.md` (Phase 0 complete; B/C/E partials with commit refs).
+- **Reconciliation gotcha**: the session-37 dispatch listed C12/C14/B9 among "remaining open", but repo evidence (d80039e diff, 1d5d8e3 check #7 "commit-msg hook 5/5 PASS", session-36 CHANGELOG + ADR files D3-D6 in the gitignored vault) records them done — recorded done here. C13's integration into `pu_learning_extended.py` remains a follow-up edit.
+- **Remaining open v2 items**: A1, A2, A3-A5, A7 (A6 done); B1-B5, B7, B8, B11 (B6/B9 done); C-io_common, C3, C4, C11, C15-remainder, C6, C7 (C8-C10/C12-C14 done or partial); D1-D5; E3, E4 (E2 user-blocked; B10 owned by the separate doc-ordering sweep task).
+- **Next dispatches this session**: A1 → paper-writer (IMRaD rewrite), B1 → geo-coder (registry schema + quoted-CSV writer).
+
 ## 2026-09-04 (execution session 36 — Next-Level Plan v2 Phase 0 + C-track + B-track execution)
 
 Following the v2 audit (4ff6e5e, 6223ae5) and Hermes 42-finding audit, executed the v2 plan's ADJ-2 gate: Phase 0 correctness triage + Phase C engineering hardening + Phase B doc/ADR sweep + A6 paper-2 fix.

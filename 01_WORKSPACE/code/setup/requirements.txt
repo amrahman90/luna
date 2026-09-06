@@ -1,15 +1,9 @@
-# LUNARVOID venv freeze — generated 2026-09-04 from ~/lunarvoid/venv (Python 3.12) via `pip freeze --local`.
-# Complete manifest: includes scikit-image (Frangi detector), pulearn,
-# boule + pyshtools (WP3 gravity), openpyxl (Hurwitz tables). Regenerate after ANY install.
-#
-# KNOWN INSTALL QUIRK (verified 2026-09-04): pulearn==0.2.0 metadata pins numpy<2.5,
-# but the working environment runs numpy==2.5.2 (pulearn works correctly with it in
-# practice). Strict resolvers (uv/pip with metadata enforcement) reject the pair.
-# Fresh-venv install procedure (verified end-to-end):
-#   uv venv .venv --python 3.12
-#   grep -v '^pulearn' requirements.txt | uv pip install -r /dev/stdin --python .venv/bin/python
-#   uv pip install --no-deps pulearn==0.2.0 --python .venv/bin/python
-# Then verify: python -c "from skimage.filters import frangi; from pulearn import ElkanotoPuClassifier"
+# LUNARVOID venv freeze — generated 2026-09-06 from ~/lunarvoid/venv (Python 3.12.3)
+# via `~/lunarvoid/venv/bin/python -m pip freeze --local` (pip/setuptools/wheel self-pins filtered).
+# Lockfile-style: full venv freeze. No direct-URL entries (all PyPI pins).
+# KNOWN QUIRK (still true 2026-09-06): pulearn==0.2.0 metadata pins numpy<2.5 while this
+# freeze has numpy==2.5.2; strict resolvers may reject — if so, install freeze sans pulearn,
+# then `pip install --no-deps pulearn==0.2.0`. Pair verified working in practice.
 EasyProcess==1.1
 ImageIO==2.37.4
 PyKrige==1.7.3
