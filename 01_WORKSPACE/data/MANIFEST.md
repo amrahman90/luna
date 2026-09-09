@@ -252,6 +252,12 @@ labels (not committed; small, regenerable on re-fetch). Net cost: $0
 Task-8 / §8 T1 trigger) because these products exist on PDS — the
 gap is the stereo-rebuild for DTMs that DON'T exist on PDS.
 
+## Derived registry backups
+
+| Product | Source | Local path | SHA-256 | Size (bytes) | Date | Licence | Note |
+|---|---|---|---|---|---|---|---|
+| Pre-B1 registry snapshot | derived: `data/candidate_registry.csv` immediately before the B1 repair run | `01_WORKSPACE/data/candidate_registry_backup_2026-09-06.csv` | `87c8822c2a7f93858db0460ba1767f53b69e8d25b736e8d23e5fa4df285da520` | 101,061 | 2026-09-06 | n/a (internal derived) | one-shot backup; md5 `d38d63fb4bd2536952dfd2fc99e6c327`; repair evidence in `data/outputs/wp2_sag/registry_repair_2026-09-06.json` |
+
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 
 - PDS holdings: public domain, not analysis-ready (raw EDR needs ISIS chain).
