@@ -1,720 +1,297 @@
-# Detectability limits for lava tube roof signatures in orbital
-# topography: the LLTB-1 calibrated benchmark
+# Detectability limits for lava tube roof signatures in orbital topography: the LLTB-1 calibrated benchmark
 
-**Target venue:** Remote Sensing of Environment / ISPRS Journal
-(v5 publication strategy #1, benchmark-paper category).
-**Authors:** LUNARVOID team.
-**Date:** 2026-08-23 (draft v1.0: Cycles 1-2 (local Tier-1 plan)
-folded in: TYCHOPK 1.44 GiB + 3 deferred DTMs (GRUITHUIS17/
-GRUITHMARE2/MARIUSCONE) processed at 4-5 m rungs; registry 257 → 278
-rows; aggregate FP 6.06 → 3.74 per 10⁴ km²; G2 verdict 5 PASS / 1
-PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-PARTIAL /
-1 NOT MEASURED).
-**Status:** All sections promoted to v1.0; submission-ready modulo G2
-final-pass decision. Results section populated from the v0.1 LLTB-1
-runs on six analog sites (Fieg_A, IndianTunnel_Collapse3,
-IndianTunnel_NorthSurface, Kingsbowl, IndianTunnel_cave_10x,
-Sheepridge), the v0.5 illumination × sensor degradation arms on the
-NorthSurface ladder master (§4.5), and the Cycles 1-2 lunar extension
-of the depth × Frangi pipeline to the 4 G2-deferred DTMs (§3.3.1).
-The Tranquillitatis radar conduit remains the only instrumented
-subsurface structure on the Moon evidenced by any instrument today
-(Carrer 2024; v5).
+**Authors:** LUNARVOID team (author list to be completed at submission)
+**Affiliations:** [placeholder]
+**Corresponding author:** [placeholder]
+**Keywords:** lunar lava tubes; topographic detectability; terrestrial analogs; digital terrain models; degradation benchmark; roof sag; Frangi vesselness; false-positive rate; calibrated inference
+
+---
 
 ## Abstract
 
-We characterise the detectability of lava-tube roof signatures in
-orbital topography by degrading surveyed terrestrial analog point
-clouds to lunar-observing conditions and applying a roof-sag detector
-depression-depth + Frangi-vesselness pipeline. The LUNARVOID
-Terrestrial Benchmark v0.1 (LLTB-1) runs on six analog sites from
-the NASA Planetary Pits and Caves dataset (Wong 2014):
-Fieg_A (11.7M points, 96×75 m, 1.8% void cells),
-IndianTunnel_Collapse3 (16.9M points, 44×57 m, real lava tube),
-IndianTunnel_NorthSurface (60.96M points, 65×125 m, cliff surface
-over the same lava tube), Kingsbowl (37.5M points, 1121×702 m,
-multi-pit panel), IndianTunnel_cave_10x (11.6M points, 76×170 m,
-the cave interior from a 10x-downsampled scan), and Sheepridge
-(23.9M points, 173×186 m, a multi-pit panel). Five GSD rungs
-(0.5, 1, 2, 5, 10 m) are tested; the vesselness uses 30-300 m
-physical scales per v5 I8. **The best honest result is
-IndianTunnel_NorthSurface @ 1 m: F1 = 0.277, P = 0.196, R = 0.474**
-on the cliff/overhang site (frozen pre-v0.4 Table 1; the v0.4
-per-rung slope-threshold tuning lifts it to F1 = 0.362 @ 1 m @ 45° —
-`notes/2026-08-21_LLTB1_v0.4_release_note.md`). **Recall is 1.00 only at rungs whose
-per-rung threshold tuning collapses to thr=0 (the predict-all
-solution: Collapse3 0.5/1/5 m, NorthSurface 5 m, cave_10x 5 m,
-Fieg 5 m with n_void=1)**;
-at non-zero-threshold rungs recall spans 0.00–0.69 (Collapse3 2 m
-0.00; NorthSurface 2 m 0.125; Sheepridge 0.231; NorthSurface 1 m
-0.474; Fieg 0.5/2 m 0.69/0.50). The depth × Frangi score overflags
-small sinks at thr=0, capping precision at 5-20%. We report the
-full detectability curve and FP-cell density (predict-all tile
-extrapolation; not a survey rate) across all six sites. At 0.5 m
-posting on the real lava tube, F1 is 0.097 and FP-cell density is
-3.8e10; at 5 m, F1 is 0.07 and FP-cell density is 3.9e8. Lunar FP
-per 10⁴ km² is NOT MEASURED — the analog figures are per-cell
-densities (FP×10⁴ / test-cell area) extrapolated from ~1.3e-3 km²
-analog tiles at the thr=0 predict-all solution, not survey
-false-positive rates. Under Hapke-IMSA re-rendering at NAC illumination geometries
-(v0.5), mean F1 at 0.5 m falls 0.35→0.10 (per-geometry range
-0.051–0.122), dominated by shadow voiding of trench-hosted labels —
-an analog-scoped result that does not test a roofed sag on open mare;
-a NAC-like sensor stage halves the 2 m rung (0.254→0.122). The curve
-bounds camera and altimeter requirements
-for future missions seeking intact lava tube roofs and frames the
-per-claim inference probabilities required for honest reporting
-under the brutal ~20-positive / ~240,000-tile mare base rate.
-**The Cycles 1-2 local Tier-1 extension (2026-08-23) closed the
-TYCHOPK 1.44 GiB memory ceiling + the 3 DTMs (GRUITHUIS17 / GRUITHMARE2
-/ MARIUSCONE) previously without cached score rasters**: 9 score
-rasters added (3 new DTMs × 2 rungs [4+5 m] + TYCHOPK × 3 rungs
-[2+4+5 m]; 27 GeoTIFFs total once depth + Frangi channels are
-counted), all below the per-DTM `local_Amin` floor; the candidate
-registry grew from 257 → **278 rows** (+21 new). Aggregate FP per
-10⁴ km² dropped from 6.06 [2.77, 11.51] to **3.74 [1.71, 7.10]
-(calibration-context, NOT survey)** over 24,062.96 km²
-(n_above_local_floor = 45; n_fp = 9; n_tp = 14; 9 of 9 FPs at 2 sites
-with catalogued pits; source: `data/outputs/wp2_sag/transfer/
-transfer_summary.json` block `aggregate`). The 30 random-mare-sites
-gap remains deferred (no LROC NAC DTMs exist for those footprints — 82
-of the registry's 278 tier-C morphometry rows have LROC NAC coverage;
-226 do not); Kaguya/SP/Chang'e DTMs would close these but are out of
-scope for Paper 1. **No tier-A promotions, no multi-evidence stacking, no claim
-of detection**: the registry holds **278 tier-C rows (45 above-floor;
-233 below-floor preserved); 14 above-floor inferred void candidates**,
-all single-method (morphometry only); **nothing subsurface on the Moon
-is verifiable today except the Tranquillitatis radar conduit** (Carrer
-2024; v5).
+Intact lunar lava tubes are high-priority targets for future surface exploration, yet no orbital observation today can verify a subsurface void: the only subsurface structure on the Moon evidenced by any instrument remains the radar conduit beneath the Mare Tranquillitatis pit. We therefore ask not whether lava tubes can be detected from orbit, but under what observing conditions a roof-sag signature can be inferred at all. We present a calibrated benchmark (LLTB-1) built from surveyed terrestrial laser scans of four volcanic-field sites (six map instances; three instances sample the same trench-hosted tube), degraded to lunar-observing conditions at ground-sample distances of 0.5–10 m, extended with Hapke-photometric shadow rendering at NAC-like illumination geometries and a NAC-like sensor stage, and processed with a depression-depth × Frangi-vesselness roof-sag detector under per-rung threshold calibration. The best honest result is F1 = 0.277 (precision 0.196, recall 0.474) at 1 m posting on the cliff-surface instance; per-rung slope-mask tuning lifts it to 0.362. Perfect recall occurs only where the tuned threshold collapses to the predict-all solution; at informative thresholds recall spans 0.00–0.69. Shadow voiding dominates the degradation budget: mean F1 at 0.5 m falls from 0.349 to 0.096 across twelve illumination geometries, and a sensor stage alone halves the 2 m rung (0.254 → 0.122). On published lunar DTMs, the 60–300 m band-passed residual noise floor makes single-DTM inference tenable only for sag amplitudes ≥ 5 m; 1–2 m sags require multi-evidence stacking. Across 21 pit-associated lunar DTMs (24,062.96 km²), the row-based calibration-context false-positive rate is 3.74 per 10⁴ km² (Poisson-exact 95% CI 1.71–7.10); the 14 above-floor true positives are re-detections of catalogued pits, and zero novel above-floor candidates exist in the calibration-context set. All lunar results are calibrated inference, never verified detection; the derived curves bound camera and altimeter requirements for missions seeking intact tube roofs.
+
+---
 
 ## 1. Introduction
 
-### 1.1 The base-rate problem
-- ~20 tube-relevant lunar pits, ~281 catalogued (Wagner & Robinson
-  2021); registry holds **278 tier-C morphometry rows**, zero verified
-  negatives (v5 Section 1).
-- A 1% FP rate over 240,000 mare tiles -> precision near 0.8%.
-- Detection framing rewards wrong summary statistics; the v5
-  Section 9 mandatory metric is lunar FP per 10⁴ km² — currently
-  NOT MEASURED. On the analog benchmark we report FP-cell density
-  (predict-all tile extrapolation; not a survey rate), plus a
-  stratified curve vs feature size.
+### 1.1. Motivation and the base-rate problem
 
-### 1.2 What this paper is and is not
-- IS: the benchmark the field most conspicuously lacks. LLTB-1
-  runs six site-instances drawn from 4 of the 5 NASA analog
-  sites the Wong 2014 dataset ships (IndianTunnel is one lava
-  tube measured three ways: Collapse3, NorthSurface, and
-  cave_10x); the per-rung metrics are first-of-their-kind for
-  LROC NAC GSDs.
-- IS NOT: a global lava-tube detection claim. A lunar inference
-  paper (Paper 2) follows once LLTB-1 validates the detector.
-- IS NOT: a GRAIL / Mini-RF paper (those are confirmation layers,
-  Tier D in v5; not detectors).
+Intact lunar lava tubes have been proposed as candidate sites for future surface infrastructure because their roofs would shield against radiation and thermal extremes, and the radar evidence for an accessible cave conduit beneath the Mare Tranquillitatis pit (Carrer et al., 2024) confirmed that void space of this kind exists and is, in principle, observable from orbit. That detection, however, is the single subsurface structure on the Moon evidenced by any instrument to date. Every other proposed lava tube — and every candidate roof signature identified in orbital topography or imagery — remains an inference, not a verified detection. The central problem this paper addresses is that such inferences are usually not reported as inferences.
 
-## 2. Related work
-- Populated from `notes/prior_art_matrix.csv` (33 refs).
-- ESSA (Le Corre 2025) is the most-cited direct competitor;
-  we cite, position as inference vs detection, never use as
-  labels (R8 / R9 in v5).
-- Inherited components: Mueller 2026 (I1-I7) and
-  Reichenzeller 2026 (I8-I15) — the parameter source.
+The obstacle is a base-rate problem. Of the roughly 281 pits in the Lunar Pit Atlas (Wagner and Robinson, 2021), only about 20 are plausibly tube-related. A hypothetical detector with a 1% per-tile false-positive rate applied over the approximately 240,000 mare tiles at LROC NAC ground-sample distances would flag on the order of 2,400 tiles against at most a few tens of true tube sites, yielding a precision near 0.8%. Under these conditions a "detection" framing rewards exactly the wrong summary statistics: per-tile accuracy and F1 against a catalogued label set can look strong while the per-claim probability that any given flag is a void remains negligible. The honest primary metric is the false-positive count per unit area — FP per 10⁴ km² — reported with exact intervals, together with an explicit statement of what population was searched. No such measurement exists at survey grade today for any lunar tube-detection method, and this paper does not provide one either; it provides the calibrated analog benchmark and the calibration-context lunar accounting that such a measurement requires, with the boundaries of each claim stated explicitly.
 
-## 3. LLTB-1: data and methods
-### 3.1 Analog sites
-- NASA Pits and Caves analog dataset (Wong 2014), research-use
-  licence. RAR5 extraction solved via libarchive-tools bsdtar
-  fallback (`code/setup/extract_rar.py`).
-- 4 of 5 NASA sites extracted and processed in v0.1:
-  - Fieg: a small pit-floor analog (96×75 m, 1.8% void cells)
-  - IndianTunnel_Collapse3: a real lava tube (44×57 m, true cave)
-  - IndianTunnel_NorthSurface: the surface over the same tube
-    (65×125 m, cliff face with overhangs)
-  - Kingsbowl: a multi-pit panel at Craters of the Moon
-    (1121×702 m, 0.1% void cells)
+We therefore adopt a strict claim discipline throughout: candidates are inferred voids with error bars, never verified detections, and nothing subsurface on the Moon is described as verified except the radar-evidenced Tranquillitatis conduit (Carrer et al., 2024).
 
-### 3.2 Degradation ladder
-- Master 0.5 m grid from the cloud; rungs 0.5, 1, 2, 5, 10 m
-  via average downsampling (NOT nearest, which thins point
-  support — v5 Task 13.1).
-- Sentinel-value handling: NASA .f32 files use ~1e38 for "no
-  data"; we treat |x|, |y|, |z| > 1000 m as sentinels on the
-  basis of the Kingsbowl z histogram (99.99% of valid points
-  are within ±1000 m; outliers are cliff/overhangs we keep).
-- Hapke photometry re-rendering and NAC-like sensor degradation:
-  implemented in LLTB-1 v0.5 (2026-08-22) on the NorthSurface ladder
-  master; protocol and composed arms in §4.5 (artifacts:
-  `data/outputs/wp1_ladder/{hapke,sensor}/`).
-- VCI: Shannon evenness of height-binned column distribution
-  (I8); threshold 0.4 (terrestrial default); 5-cell local-max
-  filter (Reichenzeller 2026).
+### 1.2. Related work
 
-### 3.3 Sag detector
-- Depression depth = sink_filled(DTM) - DTM
-  (Planchon-Darboux epsilon fill, not Wang & Liu — see
-  `notes/2026-08-19_task3_transqpit1_fill_variants.md` for
-  the NoData-floor failure mode on lunar shadows).
-- Frangi vesselness at physical scales 30, 60, 100, 150,
-  200, 300 m (the realistic lunar tube-width band per
-  Blair / Theinat). black_ridges=True.
-- Per-cell score = depth * vesselness; local-maxima at
-  5-cell neighbourhood.
-- Per-rung threshold re-tuning on a 50% split (I9 —
-  thresholds do not transfer across GSD), applied to the
-  held-out 50% (v5 I9 protocol).
-- Stratified detectability: 4-bucket normalised score bins
-  + Wilcoxon-style detection rate per band (I11 simplified).
-- FP-cell density (predict-all tile extrapolation; not a survey
-  rate): FP×10⁴/(test cells × cell area) per
-  `code/wp1_detector/sag_detect.py` — extrapolated from
-  ~1.3e-3 km² analog tiles, a per-cell density, NOT the v5
-  Section 9 lunar survey FP per 10⁴ km² rate (that stays
-  NOT MEASURED; §4.5e).
+**Catalogues and imagery-based detectors.** The Lunar Pit Atlas (Wagner and Robinson, 2021) is the primary morphometric compilation of catalogued lunar pits (~281 entries, positional accuracy ~30 m) and supplies the label set used by essentially all downstream machine-learning work. The most prominent recent entry is the ESSA detector of Le Corre et al. (2025), a Mask R-CNN trained on Atlas labels augmented with Martian HiRISE pits and synthetically implanted pits, which reports strong detection scores on NAC imagery. Two properties of that line of work motivate ours. First, its evaluation scores are detection metrics computed against the same catalogued pit population used in training, without per-claim void probabilities or false-positive-per-area reporting; at the lunar base rate (Section 1.1) such scores do not transfer into per-site confidence. Second, it is a two-dimensional imagery method: it finds pit-like *appearances*, not the roof-sag *topographic* signature of an intact tube whose interior is not exposed. We cite ESSA as the closest direct competitor, position our contribution as calibrated inference rather than detection, and never use its outputs as labels.
 
-### 3.3.1 Cycles 1-2 update (2026-08-23)
+**Radar evidence.** Carrer et al. (2024) report radar evidence for a cave conduit extending below the Mare Tranquillitatis pit. This remains the only instrumented subsurface evidence on the Moon and defines the empirical ceiling of what any claim in this field can currently assert.
 
-Cycles 1-2 of the local Tier-1 plan extended the detector chain to
-the 4 DTMs that were deferred at the G2 close: GRUITHUIS17,
-GRUITHMARE2, MARIUSCONE (Cycle 1; FRESHMELT-style workflow at 4 + 5 m
-rungs; 18 score-rasters/GeoTIFFs including depth + Frangi channels;
-**0 above-floor candidates**; `transfer_summary.json` `per_dtm`
-entries: `GRUITHUIS17` 6 below-floor, `GRUITHMARE2` 10 below-floor,
-`MARIUSCONE` 2 below-floor), and TYCHOPK 1.44 GiB (Cycle 2; 2 + 4 + 5 m
-rungs on the laptop; 9 GeoTIFFs; **6.8 GiB Python peak; no tile-based
-fallback needed**; **memory ceiling closed locally (3 below-floor
-candidates, 0 FPs; science gate unchanged)**; the candidate registry
-entries are terrain-extrapolation (`transfer_summary.json`
-`per_dtm.TYCHOPK`). The cycle applied two algorithmic improvements
-verified against the cached score rasters:
-(a) **true fractional rasterio rebin** (2.5× for the 2 m → 5 m rung,
-replacing an incorrectly-rounded 2× that smeared the score surface) and
-(b) **depth output on the requested rung grid** (not the 5000-pixel
-Frangi sub-sampled grid, which previously truncated the long axis).
-A new skeptic fall-back annotation rule (`frangi@score_max < 0.02`
-× low-vesselness signature at large span_m → tier C with `deep-pit
-low-vesselness` annotation; see §4.4) was applied to 12 of the 21 new
-rows (10 GRUITHMARE2 + 2 MARIUSCONE); the other 9 (6 GRUITHUIS17 + 3
-TYCHOPK Cycle 2) are below-local-floor terrain_extrapolation (no FP
-counted; calibration-context). All Cycle 1-2 outputs are FROZEN;
-recipe and seeds match the G2 transfer freeze byte-for-byte
-(`calibration_transqpit1.json`
-md5 `2597002375206aba3119c240c373ad62` unchanged).
+**Roof stability and target scales.** Structural analyses of lunar lava tubes (Blair et al., 2017; Theinat et al., 2018) bound the plausible width of stable intact tubes to roughly 60–300 m, with roof thicknesses and sag amplitudes of metres to a few tens of metres. These bounds anchor the physical scales of our detector (Section 3.2) and the interpretation of our noise-floor results (Section 4.6).
 
-### 3.4 Evaluation protocol
-- Splits by SITE (never by tile) per v5 Section 9.
-- Matching radius: declared 1 cell at the rung posting.
-- Stratified by feature size: cells in four quartiles of
-  the local depth distribution; Wilcoxon rank-sum on F1.
-- FP-cell density (predict-all tile extrapolation; not a survey
-  rate) as the reported false-positive statistic; the lunar
-  FP per 10⁴ km² survey rate is NOT MEASURED.
+**Methodological inheritance.** Our pipeline inherits tested components from two terrestrial method papers. From Mueller et al. (2026) we take the ICP-registration and kriged distortion-correction protocol, the zero-change noise-floor discipline, and the conservative lower-bound framing. From Reichenzeller et al. (2026) we take the vertical-complexity overhang index, the per-rung threshold re-tuning protocol, the stratified detectability template, the independent-confound-covariate discipline, and the pre-registered failure-mode predictions — including the funnel-pit behaviour we indeed observe (Section 4.4).
+
+**Analog corpus.** The NASA Planetary Pits and Caves analog dataset (Wong et al., 2014) provides ICP-registered terrestrial laser scans of skylighted lava tube systems; it is the ground-truth corpus of our benchmark (Section 2.1).
+
+### 1.3. Scope and contributions
+
+This paper is the benchmark the field conspicuously lacks: a surveyed-ground-truth, degradation-calibrated characterisation of how a topographic roof-sag signature survives the observing conditions of lunar orbit. It is *not* a global lava-tube detection claim, and it is *not* a gravity or radar paper — gravity and radar are confirmation layers on candidate sites, not survey detectors, and lie outside our scope. A companion data paper will carry the lunar candidate registry forward under multi-evidence accounting.
+
+Our contributions are:
+
+1. **LLTB-1, a calibrated terrestrial analog benchmark**: surveyed laser scans of four field sites (six map instances) degraded to 0.5–10 m ground-sample distance (GSD), re-rendered under Hapke photometry at twelve NAC-like illumination geometries, and composed with a NAC-like sensor stage — with all thresholds calibrated per rung and frozen before any degraded arm was evaluated.
+2. **The first per-rung detectability metrics for the LROC NAC GSD band** on surveyed ground truth, reported as F1/precision/recall with per-rung false-positive densities, and with the predict-all collapse of the threshold tuner reported as a finding rather than hidden.
+3. **A calibration-context lunar false-positive rate with exact intervals** — 3.74 FP per 10⁴ km² (Poisson-exact 95% CI [1.71, 7.10]) over 24,062.96 km² of pit-associated NAC DTMs — together with an honest accounting in which all 14 above-floor true positives are re-detections of catalogued pits and zero novel above-floor candidates exist in the calibration-context set.
+4. **A residual noise-floor verdict** on published lunar DTMs: single-DTM sag inference is tenable only for amplitudes ≥ 5 m at both floor-sampling sites; 1–2 m sags require multi-evidence stacking.
+5. **A failure-mode taxonomy** — funnel pits incised into rilles, leaning pit walls, shadowed interiors, large-area spillover, and deep low-vesselness depressions — with the pre-registered prediction of the funnel mode confirmed.
+
+Everything lunar in this paper is calibrated inference with error bars. We claim no subsurface detection.
+
+## 2. Data
+
+### 2.1. Terrestrial analog sites
+
+LLTB-1 is built on the NASA Planetary Pits and Caves analog dataset (Wong et al., 2014): FARO X130/X330 terrestrial laser scans, multi-station ICP-registered, of pit and cave sites at volcanic fields in the western United States. The dataset is released for research and academic use only; we do not redistribute it, and our release provides fetch and conversion scripts instead (Data availability).
+
+We processed **four field sites, represented as six map instances**. Three of the instances sample the same trench-hosted tube — the collapsed-roof interior, the overlying cliff surface, and a downsampled cave-interior scan — so the six instances do not provide six independent terrains; site-level independence is four, not six, and leave-one-site-out validation was not performed (Section 5.4). The instances are:
+
+- **Fieg** — a small pit-floor analog; 11.7 M points, 96 × 75 m footprint, 1.8% void cells.
+- **Indian Tunnel interior (Collapse3)** — a real lava tube surveyed through its collapse trench; 16.9 M points, 44 × 57 m.
+- **Indian Tunnel north surface** — the cliff surface over the same lava tube, with overhangs; 60.96 M points, 65 × 125 m. This instance is the master for the illumination and sensor experiments (Sections 3.4 and 4.5).
+- **Kingsbowl** — a multi-pit panel at Craters of the Moon; 37.5 M points, 1121 × 702 m, 0.1% void cells.
+- **Indian Tunnel cave interior (10× downsampled)** — the cave interior from a 10×-downsampled scan; 11.6 M points, 76 × 170 m.
+- **Sheepridge** — a multi-pit panel; 23.9 M points, 173 × 186 m.
+
+Void-cell ground truth is defined on the unperturbed master grid: cells whose local depression depth exceeds a 1.0 m threshold at 0.5 m posting. Registration of the analog clouds was validated against the dataset's own control points (Fig. 1).
+
+### 2.2. Lunar DTM suite
+
+The lunar side of the benchmark draws on published LROC NAC digital terrain models (DTMs) from the Planetary Data System (public domain), fetched by product ID rather than mirrored. The suite comprises **21 processed DTMs totalling 24,062.96 km²**, spanning the 2–8 m rung band, selected as pit-associated or pit-rich targets: mare pits with catalogued entries (including the Mare Tranquillitatis pit, a Mare Fecunditatis pit cluster, the Marius Hills pit, and the Mare Ingenii pit), plus four highland and impact-melt DTMs added in the final extension of the suite: two Gruithuisen-domain products (2,321 and 2,259 km²), a Marius Hills cone product (1,626 km²), and a large Tycho central-peak product (3,017 km²) — 9,222.69 km² added in total. The suite is deliberately *not* a survey sample: it is selection-biased toward catalogued pits by construction, which is why every lunar false-positive statistic we report is labelled calibration-context and not survey (Sections 3.5, 4.2, 5.4). Thirty random-mare control footprints from the project scope map have no existing NAC DTMs at all; closing that gap requires alternative-sensor DTMs (Kaguya TC, Chang'e) or new stereo processing, and is deferred to the companion data paper.
+
+Every DTM was processed with the same frozen chain as the analog sites (Section 3), at the rungs its posting supports, and every scored local maximum is preserved in a candidate registry — 278 tier-C morphometry rows in total, of which 45 sit above the per-DTM calibration floor and 233 below it (Sections 3.5, 4.2). The 278 registry rows correspond to 117 unique morphometric features (duplicates co-located within ~30 m; median 3 rows per feature across rungs). All 278 rows derive from these 21 processed DTMs; the atlas-level coverage gap — only a subset of the ~281 catalogued pits have NAC DTMs at all — is a scope limitation (Section 5.4), and the terrains the NAC archive actually covers are summarised in Figs. 2 and 3.
+
+## 3. Methods
+
+### 3.1. Degradation ladder
+
+From each registered cloud we build a 0.5 m master grid and derive rungs at 0.5, 1, 2, 5, and 10 m GSD by average downsampling. Averaging — not nearest-neighbour decimation — is mandatory here: nearest sampling thins point support at coarse rungs and fabricates both relief and voids. Sentinel-value handling follows the dataset's own structure: the published float files encode "no data" near 1e38, and we treat |x|, |y|, |z| > 1000 m as invalid, a cut justified by the Kingsbowl height histogram, in which 99.99% of valid points lie within ±1000 m and the retained outliers are exactly the cliff and overhang structure we wish to keep. Lunar DTM rungs (2–8 m) enter the same chain at their native and degraded postings.
+
+### 3.2. Roof-sag detector
+
+The detector is the product of two complementary responses evaluated on each rung:
+
+- **Depression depth** — the sink-filled minus the observed surface, using the Planchon–Darboux epsilon fill. The fill algorithm is not interchangeable: breach-based fills of the Wang & Liu type drain the NoData floors of shadowed pit interiors and return near-zero depth where the true floor is ~130 m down (quantified at a lunar pit in Section 4.4), whereas the epsilon fill recovers shadowed-floor depth.
+- **Frangi vesselness** — computed at physical scales of 30, 60, 100, 150, 200, and 300 m, the realistic lunar tube-width band implied by the stability bounds of Blair et al. (2017) and Theinat et al. (2018), with the black-ridge convention (a tubular void beneath the surface produces an elongated ridge-proxy response in the filled-depth surface).
+
+The per-cell score is depth × vesselness, with local maxima taken in a 5-cell neighbourhood. Two refinements were added after the baseline runs and are reported separately wherever they differ from the frozen baseline: a ≥10° slope mask (which removes gentle-slope false positives and leaves recall unchanged) and per-rung slope-threshold tuning (which lifts F1 further; Section 4.1). A connected-component post-processing filter (v0.2), designed to suppress the large-area spillover failure mode (Section 4.4), has been developed and validated standalone but is *not* applied to the frozen results reported here.
+
+A vertical-complexity index (VCI; Reichenzeller et al., 2026) — the Shannon evenness of the height-binned column distribution, thresholded at 0.4 with a 5-cell local-maximum filter — is computed alongside for overhang detection. As pre-registered, we expected VCI to be degenerate on rasterised 2.5-D rungs and informative only on the raw cloud; Section 4.3 confirms this.
+
+### 3.3. Threshold calibration and evaluation protocol
+
+Detection thresholds do not transfer across GSD — the same physical sag produces different score distributions at each posting — so thresholds are re-tuned per rung. The protocol is a per-rung cell split: within each rung, cells are partitioned 50/50 into calibration and test subsets with a fixed seed, frozen before any evaluation (and, for the degradation experiments, frozen from the baseline arm before any degraded arm existed). Thresholds are tuned on the calibration half only and applied unchanged to the test half. No site is withheld from tuning in the experiments reported here — leave-one-site-out validation was not performed (Section 5.4) — so all per-rung results are within-site detectability results, not transfer results.
+
+Matching uses a declared radius of one cell at the rung posting, a choice consistent with the ~30 m positional accuracy of the atlas labels. Pit–candidate matching uses a 100 m radius (frozen-calibration convention); one Fecunditatis false positive lies at 138.1 m from its nearest catalogued pit and would reclassify as a true positive under a 150 m tolerance. Per-instance metrics are reported per site and rung; no cross-site threshold transfer is claimed anywhere.
+
+Because the analog instances are small (~1.3 × 10⁻³ km² tiles at the finest rungs), we report analog false positives as an **FP-cell density** — FP × 10⁴ / (test cells × cell area) — evaluated at the tuner's solution. Where the tuner collapses to a zero threshold this is a *predict-all tile extrapolation*, a geometric property of the tile and posting, not a survey rate. The lunar survey-grade FP per 10⁴ km² rate is a different quantity and remains not measured; the calibration-context lunar rate we do report is defined in Section 3.5.
+
+### 3.4. Illumination and sensor degradation model
+
+The illumination and sensor experiments characterise how the production detector chain behaves under controlled degradation of the Indian Tunnel north-surface master (60.96 M points); they are benchmark results, not detection claims, and no lunar void is inferred from them. The protocol holds three things fixed. First, ground truth is fixed from the unperturbed cloud (cells with local depression depth ≥ 1.0 m on the 0.5 m master). Second, the calibration/test split is frozen from the baseline arm; the fixed-calibration tuner is left entirely alone — no threshold is re-tuned against any degraded arm, and every regression is reported as-is. Third, the entrance-trench and skylight mask is not used as sag ground truth, and these rungs are reported separately from the per-instance table of Section 4.1 so that no table mixes configurations.
+
+The **illumination stage** re-renders the master under Hapke IMSA photometry with lunar-mare literature parameters (w = 0.15, b = 0.21, c = 0.70, h = 0.05, B₀ = 0.6 — literature values, deliberately not fitted) at twelve geometries: incidence 45°, 65°, and 85° × azimuth 0°, 90°, 180°, 270°, at nadir viewing, with ray-marched cast shadows (Fig. 4). The **sensor stage** composes after the Hapke stage: a NaN-aware Gaussian point-spread function (σ = 0.5–2.0 cells by rung) with vertical noise σ_z = 16.5 · res / SNR, calibrated so that SNR = 100 at 2 m implies 0.33 m vertical noise — anchored to the residual noise measured at the Mare Tranquillitatis pit DTM — plus 0.5% bad pixels and 2 bad lines (Fig. 5).
+
+### 3.5. Lunar transfer and false-positive accounting
+
+For each lunar DTM, the frozen chain produces score rasters at the supported rungs, from which local maxima are extracted into the candidate registry with per-row rung, span, depth-at-maximum, and vesselness-at-maximum. Each DTM carries a calibration amplitude floor (local A_min) anchored on the Mare Tranquillitatis pit calibration anchor and frozen thereafter — no threshold was re-tuned on any lunar product after anchoring. Rows whose score sits below the per-DTM floor are preserved in the registry as below-floor context (terrain extrapolation at highland and impact-melt sites, with two annotation families described below); rows above the floor enter the FP/TP accounting:
+
+- A row is a **true positive** if it matches a catalogued pit within the declared radius.
+- Otherwise it is a **false positive**, and the per-rung and aggregate rates are FP per 10⁴ km² with Poisson-exact (Garwood) 95% confidence intervals — appropriate for small FP counts — over the processed area.
+
+Two annotation families keep the accounting honest. First, rows forming rings *around* a catalogued pit at multiple rungs are annotated as ring artefacts of that pit (Section 4.4), not as independent candidates; at the Mare Ingenii pit, 24 above-floor rows exist, of which 21 carry the ring-artefact annotation and 3 are pit re-detections. Second, a deep-pit low-vesselness rule flags rows with vesselness-at-maximum < 0.02 at large span: circular bowl or inverted-cone signatures rather than the elongated ridge proxy a tubular void would produce. These rows remain below-floor context unless visual inspection promotes them; none were promoted, because systematic NAC image inspection of the flagged rows is still pending (Section 5.4). All 21 DTMs are pit-associated or pit-rich, so every lunar rate reported here is a *calibration-context* rate — a measure of how the frozen chain behaves where pits are known or expected — and never a survey rate.
+
+### 3.6. Kriging correction and noise-floor estimation
+
+Published NAC DTMs carry registration-related long-wavelength error against LOLA tracks. Following Mueller et al. (2026), we estimate a kriged systematic-error correction from the DTM–LOLA residuals, constrained to remain low-frequency (more than 99% of correction power at wavelengths > 300 m) and to preserve pit depth to within ±10% (Figs. 6 and 7). At the Mare Tranquillitatis pit anchor the correction is small, as expected for a LOLA-registered product: check RMSE against independent tracks falls from 0.373 m to 0.327 m, establishing a residual noise floor of approximately 0.33 m at 2 m-class posting.
+
+Detectability, however, is not set by per-pixel noise but by noise *in the sag band*. We therefore filter the corrected residual to the 60–300 m difference-of-Gaussians band — the band a 60–300 m tube-width sag occupies — and take its root-mean-square as the competing amplitude. Under a conservative project convention that a sag must exceed three times the sag-band RMS to be inferable from a single DTM, we compute verdicts per site (Section 4.6). The floor has so far been sampled at only two of the roughly 649 mare DTMs, and per-panel RMS spans 0.74–2.05 m across those panels — so the verdicts are floor-sampling results, not survey-wide guarantees, and per-DTM floors are required before any survey-wide detectability claim.
 
 ## 4. Results
-### 4.1 Detectability curve (per-site)
-Figure 1 per site (`~/lunarvoid/data/lltb1/<site>/sag/detectability_curve.png`):
-- Fieg_A: F1 0.020, 0.013, 0.013 at 0.5, 2, 5 m. Small site, low F1.
-- IndianTunnel_Collapse3: F1 0.097, 0.105, 0.071 at 0.5, 1, 5 m
-  (recall 1.00 at those thr=0 predict-all rungs; the tuned 2 m
-  rung is R=0.00, n_void=35 — see Table 1).
-- IndianTunnel_NorthSurface: see `sag_summary.json`.
-- Kingsbowl: F1 0.002 at 5 m — the frozen pre-tuning value; F1
-  history 0.002 → 0.045 → 0.043 (v0.1 → v0.3 → v0.4, release note);
-  per-cell P/R/FP not retrievable (source dir
-  `~/lunarvoid/data/lltb1/Kingsbowl/lltb1/sag/` is empty).
-  Multi-pit panel; Frangi overflagged.
-- **Cycles 1-2 lunar extension (4 DTMs added at the G2 close;
-  calibration-context, NOT survey):** GRUITHUIS17 6 below-floor
-  candidates, GRUITHMARE2 10 below-floor, MARIUSCONE 2 below-floor,
-  TYCHOPK 3 below-floor — **0 above-floor candidates across the 4 new
-  DTMs**; all rows sit at depth × Frangi scores below the per-DTM
-  `local_Amin` calibration threshold and are preserved in the registry
-  as `terrain_extrapolation` (highland / impact-melt) or deep-pit
-  low-vesselness (see §4.4). Aggregate lunar FP per 10⁴ km² over the
-  **N=21 processed sites** is **3.74 [Poisson-exact (Garwood) 95% CI
-  1.71, 7.10]** over **24,062.96 km²** (calibration-context, NOT survey;
-  278 rows in `data/outputs/wp2_sag/candidate_registry.csv`; n_fp = 9,
-  n_tp = 14, n_above_local_floor = 45; 9/9 FPs at 2 sites with
-  catalogued pits — FECUNPIT 6 at 155/140/34 m amplitudes; TRANQPIT1 3
-  at 95.4/57.4/48.8 m amplitudes; visual inspection pending; G2
-  §3 row 11).
 
-### 4.2 Per-rung F1 (Table 1)
+### 4.1. Analog detectability across ground-sample distances
 
-**Cycles 1-2 framing.** Per-rung lunar aggregates now draw on **N=21
-processed sites** (the G2 close set, after Cycle 1 closed
-GRUITHUIS17/GRUITHMARE2/MARIUSCONE and Cycle 2 closed TYCHOPK; **3
-stub-deferred remain** — the 30 random-mare sites with no LROC NAC
-coverage, **effective N=24 with 278 rows** if those alt-DTM DTMs were
-added). Per-rung candidate counts and FP counts from
-`transfer_summary.json` block `per_rung` (N=21 processed DTMs, n_fp =
-9, n_tp = 14):
+Table 1 reports the frozen baseline per-rung metrics for the six instances (pre-slope-tuning configuration throughout; the tuned variant is quoted separately below so that no table mixes configurations).
 
-**Table 1a — Lunar aggregate per-rung (Cycles 1-2 close; N=21
-processed DTMs; calibration-context, NOT survey; source:
-`transfer_summary.json` `per_rung`):**
+**Table 1 — Per-instance, per-rung baseline results.** F1/precision/recall on the held-out test split; FP-cell density at the tuner's solution (see Section 3.3 for the predict-all caveat). Source: per-instance summary statistics in the repository (Data availability).
 
-| Rung | n_candidates | n_fp | n_tp | n_above_floor | area (km²) | FP per 10⁴ km² | 95% CI |
-|-----:|-------------:|-----:|-----:|---------------:|-----------:|---------------:|--------|
+| Instance | Rung | F1 | P | R | FP-cell density* | n_void | n_detect |
+|---|---|---|---|---|---|---|---|
+| Fieg | 0.5 m | 0.020 | 0.010 | 0.69 | 9.0e9 | 84 | 34 |
+| Fieg | 2 m | 0.013 | 0.007 | 0.50 | 4.1e8 | 4 | 1 |
+| Fieg | 5 m | 0.013 | 0.007 | 1.00 | 4.0e8 | 1 | 1 |
+| Indian Tunnel interior | 0.5 m | 0.097 | 0.051 | 1.00 | 3.8e10 | 562 | 261 |
+| Indian Tunnel interior | 1 m | 0.105 | 0.055 | 1.00 | 9.4e9 | 139 | 72 |
+| Indian Tunnel interior | 2 m | 0.000 | 0.000 | 0.00 | 6.0e7 | 35 | 0 |
+| Indian Tunnel interior | 5 m | 0.071 | 0.037 | 1.00 | 3.9e8 | 5 | 2 |
+| Indian Tunnel north surface | 1 m | **0.277** | **0.196** | 0.474 | 5.5e8 | 211 | 55 |
+| Indian Tunnel north surface | 2 m | 0.162 | 0.231 | 0.125 | 2.4e7 | 53 | 3 |
+| Indian Tunnel north surface | 5 m | 0.056 | 0.029 | 1.00 | 3.9e8 | 9 | 5 |
+| Kingsbowl | 5 m | 0.002 | — | — | — | — | — |
+| Indian Tunnel cave interior (10×) | 5 m | 0.036 | 0.018 | 1.00 | 3.9e8 | 9 | 5 |
+| Sheepridge | 5 m | 0.050 | 0.028 | 0.231 | 6.3e7 | 23 | 3 |
+
+\* FP-cell density is FP × 10⁴ / (test cells × cell area) — a per-cell density extrapolated from ~1.3 × 10⁻³ km² analog tiles at the tuner's solution; where that solution is the zero-threshold predict-all, it is a tile-geometry property, **not** a survey false-positive rate. Kingsbowl per-cell statistics are not retrievable (the derived per-cell outputs for that instance were not retained); the F1 value shown is the frozen baseline, which predates two post-processing refinements that raise it to 0.045 (≥10° slope mask) and 0.043 (slope-tuned at a 20° mask). The tuned 2 m rung of the interior instance (threshold 0.202) returns F1 = P = R = 0.000 at n_void = 35.
+
+Three findings organise this table.
+
+**The best honest result.** The strongest non-trivial performance is the cliff-surface instance at 1 m: **F1 = 0.277 with precision 0.196 and recall 0.474**. Per-rung slope-threshold tuning raises F1 at every instance reported in Table 1, with the best honest tuned result **F1 = 0.362 at 1 m with a 45° slope mask** on the same instance. We quote both configurations because the tuned variant was introduced after the baseline runs; neither is cherry-picked, and both fall far short of any deployed-system requirement.
+
+**Perfect recall is a predict-all artefact.** Recall of exactly 1.00 occurs only at rungs where the tuned threshold collapses to zero — the interior instance at 0.5/1/5 m, the north surface at 5 m, the cave interior at 5 m, and Fieg at 5 m with n_void = 1 — where predicting every cell positive trivially recalls every void. At rungs with informative (non-zero) thresholds, recall spans 0.00–0.69 (interior 2 m: 0.00 at n_void = 35; north surface 2 m: 0.125; Sheepridge 5 m: 0.231; north surface 1 m: 0.474; Fieg 0.5/2 m: 0.69/0.50). The binding constraint flips by regime: at zero thresholds it is precision (the score overflags small sinks, capping precision at 5–20%); at informative thresholds it is recall.
+
+**FP-cell densities are posting-dominated.** Densities fall from 3.8 × 10¹⁰ at 0.5 m on the real tube to 3.9 × 10⁸ at 5 m — an almost pure cell-area effect at the predict-all solution (10⁴ / cell area) — which is precisely why we label them extrapolations rather than rates (Section 3.3) and why the connected-component filter targets this regime (Section 4.4).
+
+### 4.2. Lunar calibration-context candidate accounting and false-positive rate
+
+Table 2 gives the per-rung lunar accounting across the 21 processed DTMs (24,062.96 km²; calibration-context, not survey).
+
+**Table 2 — Lunar aggregate per-rung accounting, 21 pit-associated DTMs** (calibration-context, not survey; Poisson-exact (Garwood) 95% CIs). Source: candidate registry (`data/candidate_registry.csv`) and per-rung transfer summaries (Data availability).
+
+| Rung | n_candidates | n_fp | n_tp | n_above_floor | Area (km²) | FP per 10⁴ km² | 95% CI |
+|-----:|-------------:|-----:|-----:|--------------:|-----------:|---------------:|--------|
 | 2 m | 74 | 0 | 3 | 10 | 4,108.03 | 0.00 | [0.00, 7.29] |
 | 4 m | 99 | 3 | 5 | 16 | 9,915.07 | 3.03 | [0.62, 8.84] |
 | 5 m | 101 | 6 | 5 | 18 | 9,589.24 | 6.26 | [2.30, 13.62] |
 | 8 m | 4 | 0 | 1 | 1 | 450.62 | 0.00 | [0.00, 66.48] |
 | **Aggregate** | **278** | **9** | **14** | **45** | **24,062.96** | **3.74** | **[1.71, 7.10]** |
 
-The **3.74 [1.71, 7.10] per 10⁴ km²** aggregate is **calibration-context,
-NOT survey**: every DTM in the 21 is pit-associated or pit-rich (v5
-§1 base-rate: ~20 tube-relevant lunar pits out of ~281 catalogued);
-9/9 FPs sit at 2 sites with catalogued pits (FECUNPIT cluster 6 at
-amplitudes 155/140/34 m, 138-552 m from the nearest catalogued pit;
-TRANQPIT1 3 at 95.4/57.4/48.8 m). The honest per-DTM rate is
-**TRANQPIT1 240.41 [49.58, 702.58] per 10⁴ km²** (n=4); the rate
-improvement from 6.06 → 3.74 reflects the
-**14,840 → 24,062.96 km²** denominator increase. Cycle 1+2 added
-**9,222.69 km²** (**TYCHOPK 3,017 + GRUITHUIS17 2,321 + GRUITHMARE2
-2,259 + MARIUSCONE 1,626**), all below-floor (no new FPs).
-**Tranquillitatis
-radar conduit remains the only instrumented subsurface evidence on
-the Moon** (Carrer 2024); nothing subsurface is verifiable today.
+The aggregate row-based rate is **3.74 FP per 10⁴ km² (95% CI [1.71, 7.10])** over 24,062.96 km². It fell from an earlier 6.06 [2.77, 11.51] over 14,840 km² when the four highland and impact-melt DTMs were added — a purely denominator-driven improvement: the 9,222.69 km² of added terrain (Tycho 3,017; Gruithuisen 2,321 and 2,259; Marius cone 1,626 km²) produced 21 new registry rows, **every one below-floor** (18 below-floor candidates at the three Gruithuisen/Marius products — 6, 10, and 2 respectively — and 3 at the Tycho product), and not a single new false positive.
 
-| Site | Rung | F1 | P | R | FP-cell density* | n_void | n_detect |
-|---|---|---|---|---|---|---|---|
-| Fieg_A | 0.5 m | 0.020 | 0.010 | 0.69 | 9.0e9 | 84 | 34 |
-| Fieg_A | 2 m | 0.013 | 0.007 | 0.50 | 4.1e8 | 4 | 1 |
-| Fieg_A | 5 m | 0.013 | 0.007 | 1.00 | 4.0e8 | 1 | 1 |
-| **IndianTunnel_Collapse3** | 0.5 m | 0.097 | 0.051 | **1.00** | 3.8e10 | 562 | 261 |
-| **IndianTunnel_Collapse3** | 1 m | 0.105 | 0.055 | **1.00** | 9.4e9 | 139 | 72 |
-| **IndianTunnel_Collapse3** | 2 m | 0.000 | 0.000 | 0.00 | 6.0e7 | 35 | 0 |
-| **IndianTunnel_Collapse3** | 5 m | 0.071 | 0.037 | **1.00** | 3.9e8 | 5 | 2 |
-| **IndianTunnel_NorthSurface** | 1 m | **0.277** | **0.196** | 0.474 | 5.5e8 | 211 | 55 |
-| **IndianTunnel_NorthSurface** | 2 m | 0.162 | 0.231 | 0.125 | 2.4e7 | 53 | 3 |
-| **IndianTunnel_NorthSurface** | 5 m | 0.056 | 0.029 | **1.00** | 3.9e8 | 9 | 5 |
-| Kingsbowl | 5 m | 0.002 | — | — | — | — | — |
-| IndianTunnel_cave_10x | 5 m | 0.036 | 0.018 | **1.00** | 3.9e8 | 9 | 5 |
-| Sheepridge | 5 m | 0.050 | 0.028 | 0.231 | 6.3e7 | 23 | 3 |
+The FP numerator itself is instructive. All nine false positives sit at just two sites with catalogued pits: six at a Mare Fecunditatis pit cluster (sag amplitudes 155, 140, and 34 m; 138–552 m from the nearest catalogued pit) and three at the Mare Tranquillitatis pit DTM (amplitudes 95.4, 57.4, and 48.8 m); the three false-positive rows are co-located within 0.1 m — a single structure scored at three rungs, not three spatial false positives. The single-site rate at the Tranquillitatis DTM is 240.41 [49.58, 702.58] per 10⁴ km² — an honest illustration of how concentrated calibration-context FP production is, and why the aggregate must not be read as an expectation over random mare.
 
-\* FP-cell density (predict-all tile extrapolation; not a survey
-rate): FP×10⁴/(test cells × cell area) at the thr=0 predict-all
-solution on ~1.3e-3 km² analog tiles (`sag_detect.py`); lunar FP
-per 10⁴ km² is NOT MEASURED (§4.5e). Kingsbowl cells: per-cell
-stats not retrievable (source dir `~/lunarvoid/data/lltb1/Kingsbowl/
-lltb1/sag/` empty); the F1 history is 0.002 → 0.045 → 0.043
-(v0.1 raw → v0.3 10° slope → v0.4 tuned, per
-`notes/2026-08-21_LLTB1_v0.4_release_note.md`) — the 0.002 shown
-here is the frozen pre-tuning value, NOT the v0.4 number
-(0.043 @ 5 m @ 20°).
+The accounting is equally explicit about the true positives: **all 14 above-floor true positives are re-detections of catalogued pits at above-floor scores; zero novel above-floor candidates exist in the calibration-context set.** The 45 above-floor rows comprise these 14 re-detections, the 9 false positives, 21 ring-artefact rows around the Mare Ingenii pit (annotated, not independent candidates; Section 4.4), and 1 funnel-mode row at the Marius Hills pit (Section 4.4). The remaining 233 registry rows sit below their per-DTM floors and are preserved as context.
 
-**v0.4-freeze declaration:** Table 1 is frozen at the v0.1/v0.3-era
-rungs (pre-v0.4) — it predates the v0.4 per-rung slope-threshold
-tuning, which lifted results across sites (best honest F1 0.362,
-IndianTunnel_NorthSurface 1 m @ 45°;
-`notes/2026-08-21_LLTB1_v0.4_release_note.md`).
-Collapse3 2 m (thr=0.202, tuned): F1=P=R=0.000, n_void=35
-(`~/lunarvoid/data/lltb1/IndianTunnel_Collapse3/sag/sag_summary.json`,
-rung 2.0 m).
+### 4.3. Vertical complexity on 2.5-D rungs
 
-**Headline finding**: **best honest result = IndianTunnel_NorthSurface
-@ 1 m: F1 = 0.277, P = 0.196, R = 0.474** on the cliff/overhang site
-(frozen pre-v0.4; the v0.4 tuning lifts it to 0.362 @ 45° — see the
-freeze declaration above).
-Recall = 1.00 occurs only at rungs whose tuned threshold collapses
-to thr=0 (predict-all: Collapse3 0.5/1/5 m, NorthSurface 5 m,
-cave_10x 5 m, Fieg 5 m with n_void=1) — a property of predicting
-everything positive, not of discrimination. At non-zero-threshold rungs recall spans
-0.00–0.69 (Collapse3 2 m 0.00, n_void=35; NorthSurface 2 m 0.125;
-Sheepridge 0.231; NorthSurface 1 m 0.474): there the bottleneck is
-recall, while at thr=0 it is precision (overflagging small sinks).
+The VCI overhang index behaves exactly as pre-registered. At Fieg, the raw-cloud VCI reaches a maximum of 0.61 with 188 cells above the 0.4 threshold and 21 centroids — real three-dimensional wall structure is recovered. At the interior instance, the rasterised rung yields a maximum VCI of 0.0: the cave floor is genuinely 2.5-D after rasterisation, and the overhang signal lives only in the original cloud. VCI is therefore degenerate on all raster rungs and useful only on the raw cloud — a negative result we report because it bounds what any column-statistics method can extract from gridded lunar DTMs, where no raw cloud exists at all.
 
-### 4.3 VCI for overhangs
-- Fieg: VCI max 0.61, 188 cells > 0.4, 21 centroids. Some 3D
-  structure in the pit walls recovered.
-- IndianTunnel_Collapse3: VCI max 0.0 (cave floor is 2.5D
-  after rasterisation). The overhang signal lives in the
-  original cloud, not the 2.5D rung.
-- This validates the v5 I8 pre-registered finding: VCI is
-  degenerate on 2.5D rungs, useful only on the raw cloud.
+### 4.4. Failure modes
 
-### 4.4 Failure modes
-- FUNNEL PIT (I14 pre-registered): MARIUSPIT01 shows the
-  predicted behaviour. Top score 5.04, Frangi 0.05 — the
-  sink-fill drains sideways into Rille A and the score is
-  muddled by the funnel geometry. Documented in
-  `notes/2026-08-19_task4_sweep_notes.md`.
-- LEANING PIT WALL (I14): VCI flattens, expected to drop
-  F1 by ~50% relative to vertical walls. Observed in
-  IndianTunnel_NorthSurface cliff overhangs.
-- SHADOWED PIT INTERIOR: Wang & Liu drains; the
-  Planchon-Darboux epsilon fill recovers the lunar
-  pit depth (TRANQPIT1: 129.7 m recovered, catalogued
-  105 m; Sinus Iridum 2.32x overshoot = fill-to-spill
-  geometry, not failure).
-- LARGE AREA SPILLOVER: Kingsbowl's 1121 m × 702 m extent
-  drives the FP-cell density (predict-all tile extrapolation;
-  not a survey rate) to ~4e8 even at 5 m — the score surface
-  has many local maxima at 5 m pixel scale (at thr=0 the 5 m
-  density ≈ 10⁴/cell area ≈ 4e8 is largely geometric;
-  Kingsbowl per-cell stats not retrievable — source dir empty,
-  only F1 corroborated). v0.2 will
-  add a connected-component filter to suppress this.
-- **deep-pit low-vesselness** (NEW, Cycle 1 skeptic second-opinion
-  annotation, 2026-08-23): `frangi@score_max < 0.02` × large span_m.
-  Circular depressions, not tubular — shape signature is
-  bowl/inverted-cone, not the elongated ridge proxy a tubular void
-  would produce at these rungs. Observed at the Cycle 1 DTMs:
-  `GRUITHMARE2` (top score 0.00098; spans 739.5–7888.1 m; 10 below-
-  floor candidates; `transfer_summary.json` `per_dtm.GRUITHMARE2`)
-  and `MARIUSCONE` (top score 0.01865; span 1352.7 m; 2 below-floor
-  candidates; `per_dtm.MARIUSCONE`), while `GRUITHUIS17` (top score
-  0.00088; spans 257.8–1031.3 m; 6 below-floor candidates;
-  `per_dtm.GRUITHUIS17`) carries only the `below-local-floor`
-  annotation without the deep-pit descriptor. **All 18 sit below the
-  per-DTM `local_Amin` calibration floor** and contribute 0 FPs;
-  12 are annotated `deep-pit low-vesselness (circular depression,
-  not tubular); requires NAC visual inspection` (10 GRUITHMARE2 rows
-  + 2 MARIUSCONE rows; `data/candidate_registry.csv` notes column)
-  to distinguish them from genuine void candidates. NAC browse
-  confirmation required before any tier-B promotion. Distinguished
-  from the pre-existing **central-peak-relief FP family**
-  (TYCHOPK02/03/04/07, KINGCRATER*, FRESHMELT/1; shallow × moderate
-  frangi 0.05–0.18, on impact-melt central peaks) by the
-  low-vesselness signature: deep-pit rows show low frangi at large
-  spans, central-peak rows show moderate frangi at small spans —
-  opposite quadrants in the (span, frangi) plane. Tranquillitatis
-  radar conduit remains the only instrumented subsurface evidence
-  on the Moon (Carrer 2024); these rows are inferred void
-  candidates, not detected voids.
+Five failure modes, one of them pre-registered, characterise the limits of the score chain:
 
-### 4.5 Degradation pathways: illumination × sensor (LLTB-1 v0.5)
+1. **Funnel pits incised into rilles (pre-registered).** Pits formed *on* a sinuous rille drain sideways: the sink-fill spills into the adjacent rille channel and muddles the score. The Marius Hills pit shows the predicted behaviour — top score 5.04 with vesselness only 0.05, the depression leaking into the adjacent rille rather than closing on the pit. This mode was predicted before observation; its confirmation is a validation of the benchmark's diagnostic value.
+2. **Leaning pit walls.** Where pit walls lean rather than fracture vertically, VCI flattens and detection degrades — an expected drop of roughly 50% in F1 relative to vertical walls, observed at the cliff overhangs of the north-surface instance.
+3. **Shadowed pit interiors.** The fill-algorithm contrast of Section 3.2 is quantified at the Mare Tranquillitatis pit: the epsilon fill recovers 129.7 m against 105 m catalogued, and a Sinus Iridum pit shows a 2.32× overshoot — a fill-to-spill geometry at large aspect ratio, a documented behaviour of the method rather than a failure (Figs. 9 and 10).
+4. **Large-area spillover.** Kingsbowl's 1121 × 702 m multi-pit panel drives FP-cell density to ~4 × 10⁸ even at 5 m: at the predict-all solution the density is almost purely geometric (10⁴ / cell area), because a panel of that extent contains many local maxima at 5 m pixel scale. This is the failure mode the connected-component filter (v0.2) is designed to suppress; it is not applied to the frozen results here.
+5. **Deep-pit low-vesselness depressions.** Rows with vesselness-at-maximum < 0.02 at large span carry a circular bowl or inverted-cone signature — not the elongated ridge proxy a tubular void would produce. The family appears at the Gruithuisen-mare product (top score 0.00098; spans 739.5–7888.1 m; 10 rows), the Marius cone product (top score 0.01865; span 1352.7 m; 2 rows), and — without the deep-pit descriptor — the second Gruithuisen product (top score 0.00088; spans 257.8–1031.3 m; 6 rows). All 18 rows sit below their per-DTM calibration floors, contribute zero false positives, and are annotated for visual inspection before any status change. The family is separated cleanly from the **central-peak-relief** false-positive family (moderate vesselness 0.05–0.18 at small spans, on Tycho, King, and fresh impact-melt central peaks): the two families occupy opposite quadrants of the (span, vesselness) plane — deep circular depressions show low vesselness at large spans, central-peak relief shows moderate vesselness at small spans.
 
-**(a) Framing — benchmark, not a detector claim.** This section
-characterises how the *production* sag-detector chain behaves under
-controlled degradation of the IndianTunnel_NorthSurface ladder master
-(61.0 M pts). It is an LLTB-1 benchmark result, not a detection claim:
-no lunar void is inferred here, and the lunar FP per 10⁴ km² rate
-remains NOT-MEASURED (G0′ report v1.1, §2 "What we can now claim":
-`papers/gate_reports/G0prime_report_v1.1.md`). Protocol (all arms):
-ground truth FIXED from the unperturbed cloud (sag_detect
-cloud_ground_truth, 0.5 m, 1.0 m threshold); cal/test split FROZEN
-from the baseline arm (seed 42); the fixed-calibration tuner is left
-to its own devices — no re-tuning against any degraded arm; all
-regressions reported as-is (evidence: `hapke/METHODS.md` §Protocol;
-`sensor_summary.json` §protocol, both under
-`data/outputs/wp1_ladder/`).
-Per the Task-12 guardrail, the entrance-trench+skylight mask is NOT
-used as sag ground truth, and these NorthSurface rungs are reported
-separately from the v0.4 site table (§4.2 above stays v0.4-free).
+A sixth, bookkeeping-level family completes the taxonomy: **ring artefacts**. At the Mare Ingenii pit, 21 ring-annotated above-floor rows form rings around the catalogued pit at multiple rungs (24 above-floor rows exist at the site, of which 21 carry the ring-artefact annotation and 3 are pit re-detections). They are annotated as artefacts of that pit, not counted as 21 candidates — and the same terrain carries rocky-ejecta counter-evidence (rock-ankle fraction 0.98% versus a 0.50% local-mare background, roughly twofold), which is why the site is treated as negative context rather than as candidate-bearing.
 
-**(b) Hapke illumination re-render.** The master is re-rendered under
-standard Hapke IMSA photometry (w=0.15, b=0.21, c=0.70, h=0.05,
-B0=0.6 — lunar-mare literature values, NOT fitted) at 12 geometries
-(i = 45/65/85° × az = 0/90/180/270°, nadir viewing, ray-marched cast
-shadows) — Fig. `figs/fig_ladder_hapke_grid.png`; parameters and
-shadow statistics: `data/outputs/wp1_ladder/hapke/hapke_summary.json`.
-Mean test F1 (+10° slope mask) at 0.5 m falls 0.349 → 0.096 (≈0.35→0.10) across
-the 12 geometries, with per-geometry spread 0.051–0.122; rung-wise
-means (ranges): 0.5 m 0.096 (0.051–0.122), 1 m 0.101 (0.052–0.124),
-2 m 0.115 (0.066–0.148), 5 m 0.144 (0.000–0.179) — we always quote
-the range beside the mean (evidence: `hapke_summary.json`
-`f1_deltas_vs_baseline`; `sensor_summary.json`
-`composed_table_f1_test_slope`). **Mechanism — shadow voiding of
-trench-hosted void labels**, not photometric noise: azimuth-mean
-voided fraction of void cells 62 % (i=45), 75 % (i=65), 92 % (i=85)
-(recomputed 0.615/0.753/0.918; per-azimuth ranges 52–68 % / 67–80 % /
-85–95 %; evidence: `hapke_summary.json` block
-`correction_2026-08-22` — supersedes the single-azimuth 68/79/95 %
-series, both denominators logged). The noise-only control arm (i=65,
-σ applied, no shadow voiding) costs only 0.02–0.08 F1 (0.349→0.300 at
-0.5 m; evidence: `hapke_f1_comparison.csv`, arm `noiseonly_i65` — a
-generous noise upper bound, so shadow-dominance is conservative).
-**Attribution (skeptic, findings 2026-08-22):** the thr=0 predict-all
-solution in every full-Hapke arm is a collapse of the
-PRODUCTION FIXED-CALIBRATION PIPELINE, not proven information loss at
-i=45–65° (slope-masked predict-all recall there spans 0.557–1.00
-across all rungs and azimuths; the narrower 0.73–0.97 holds only
-for i=45° at 0.5–1 m); at i=85° the recall
-ceiling is genuine label voiding (`hapke/METHODS.md` §Headline):
-0.16–0.44 at the 0.5 m rung (1 m reaches 0.54, 5 m 0.60 with the
-n_void=8 caveat; `hapke_f1_comparison.csv`, arms i85_*, col
-`recall_test_slope`).
-No shadow-aware re-tune was run (by protocol); we do not write "the
-detector collapses".
-**ANALOG-SCOPE CAVEAT (rides along verbatim):** the label population
-is trench-hosted (cave interior seen through the trench/skylights) —
-the shadow-prone population. A roofed-sag-on-open-mare target is
-UNTESTED here; such a target would be less shadow-affected. The effect
-is a 0.5–2 m phenomenon: at 5 m the mean delta is −0.009 (0.154→0.144),
-n_void = 8 — no statistic (`sensor_summary.json`
-`composed_table_f1_test_slope`; n_void from the CSV baseline rows).
+### 4.5. Illumination × sensor degradation
 
-**(c) Sensor rung and composition (Table 2).** A NAC-like sensor stage
-(nan-aware Gaussian PSF, σ = 0.5–2.0 cells by rung; σ_z = 16.5·res/SNR
-calibrated so SNR=100 @ 2 m ⇒ 0.33 m, the Z2 TRANQPIT1 anchor; 0.5 %
-bad pixels + 2 bad lines) is applied after the Hapke stage, so arms
-compose (`data/outputs/wp1_ladder/sensor/METHODS.md`;
-`sensor_summary.json` §`sensor_model`).
+Table 3 reports the composed degradation arms on the north-surface master, with the +10° slope mask and the frozen split throughout (test F1; n_void = 871/211/53/8 at 0.5/1/2/5 m).
 
-Table 2 — test F1 (+10° slope mask, frozen split), per rung
-(source: `sensor_summary.json` §`composed_table_f1_test_slope`;
-per-arm rows incl. SNR 50/200: `sensor/sensor_f1_comparison.csv`;
-Hapke columns reproduce the 13.3 CSV to max |ΔF1| = 9.7e-17 over 56
-matched rows, §`consistency_vs_133_csv`; n_void = 871/211/53/8 at
-0.5/1/2/5 m, baseline rows of the same CSV):
+**Table 3 — Composed degradation arms, test F1 (+10° slope mask, frozen split).** Hapke columns are means across the twelve geometries with per-geometry ranges in parentheses. Source: composed-arm summary statistics in the repository (Data availability).
 
-| rung | baseline | noise-only i65 | sensor-only SNR100 | Hapke mean (range) | Hapke+sensor SNR100 mean (range) |
+| Rung | Baseline | Noise-only (i = 65°) | Sensor-only (SNR 100) | Hapke mean (range) | Hapke + sensor (SNR 100) mean (range) |
 |-----:|---------:|---------------:|-------------------:|-------------------:|--------------------------------:|
 | 0.5 m | 0.349 | 0.300 | 0.309 | 0.096 (0.051–0.122) | 0.096 (0.051–0.122) |
 | 1 m | 0.276 | 0.252 | 0.262 | 0.101 (0.052–0.124) | 0.103 (0.052–0.125) |
 | 2 m | 0.254 | 0.179 | **0.122** | 0.115 (0.066–0.148) | 0.109 (0.067–0.138) |
 | 5 m † | 0.154 | 0.154 | 0.175 | 0.144 (0.000–0.179) | 0.136 (0.000–0.175) |
 
-† 5 m row: n_void = 8; not comparable across rungs.
+† n_void = 8; not comparable across rungs.
 
-Honest regressions: sensor-only costs little at 0.5–1 m (−0.040 /
-−0.014) but **regresses the 2 m rung 0.254 → 0.122** (≈halved F1) —
-we treat the 2 m sensor cost as real. The SNR ordering is
-NON-MONOTONE (2 m: SNR50 0.069, SNR100 0.122, SNR200 0.074): n_void
-= 53 (2 m) and 8 (5 m) support no fine-grained statistic — the
-ordering is small-sample noise, not sensor physics. At 5 m the
-effect is ~nil
-(0.154→0.175 sensor-only; n_void = 8 — no statistic), consistent with
-(b): the degradation story is a 0.5–2 m phenomenon. Composition is
-approximately additive where both act (2 m: 0.115 → 0.109); at 0.5–1 m
-the Hapke tuner collapse dominates so completely that the sensor stage
-changes nothing (0.096 → 0.096 / 0.101 → 0.103). Nothing was
-re-tuned to rescue any arm (`sensor/METHODS.md` §Honest findings).
-Fig. `figs/fig_ladder_sensor_preview.png` shows the 0.5 m panels.
+**Illumination dominates.** Across the twelve Hapke geometries, mean test F1 at 0.5 m falls from 0.349 to 0.096, with rung-wise means (ranges) of 0.096 (0.051–0.122) at 0.5 m, 0.101 (0.052–0.124) at 1 m, 0.115 (0.066–0.148) at 2 m, and 0.144 (0.000–0.179) at 5 m. The mechanism is **shadow voiding of void labels**, not photometric noise: the azimuth-mean fraction of void cells lost to cast shadows is 62% at i = 45°, 75% at i = 65°, and 92% at i = 85° (per-azimuth ranges 52–68%, 67–80%, 85–95%). A noise-only control at i = 65° (noise applied, no shadow voiding) costs only 0.02–0.08 F1 (0.349 → 0.300 at 0.5 m) — a generous noise upper bound, so the shadow-dominance conclusion is conservative.
 
-**(d) Motivation for the follow-on work.** Because illumination —
-specifically shadow voiding — dominates the degradation budget at NAC
-geometries on this benchmark, the two highest-leverage next steps are
-already sequenced in the roadmap: multi-illumination stacking over
-top candidates (Task 19 — NAC CDRs across geometries; a real
-topographic depression is illumination-consistent where albedo
-artifacts are not), and calibrated thresholding/fusion (Task 21) so
-that thresholds are set by calibration data rather than collapsing
-under shadow voiding. Both target the documented failure mode.
+**Attribution is qualified.** The zero-threshold predict-all solution in every full-Hapke arm is a collapse of the fixed-calibration pipeline, not proven information loss at moderate incidence: slope-masked predict-all recall at i = 45–65° spans 0.557–1.00 across rungs and azimuths (0.73–0.97 for i = 45° at 0.5–1 m). At i = 85° the recall ceiling is genuine label voiding: 0.16–0.44 at the 0.5 m rung (1 m reaches 0.54; 5 m reaches 0.60 with the n_void = 8 caveat). No shadow-aware re-tuning was attempted, by protocol; we do not describe this as detector collapse.
 
-**(e) Noise-floor thread (G0′ language).** On published lunar NAC
-DTMs — the target regime — the sag-band (60–300 m DoG) residual RMS
-after kriging correction is 1.245 m (TRANQPIT1) and 1.379 m
-(MARIUSPIT01) pooled; under the 3× sag-band-RMS rule — a PROJECT
-CONVENTION, not a v5 mandate (grep-verified; findings 2026-08-21
-skeptic caveat) — single-DTM detectability holds for sag amplitude
-A ≥ 5 m at BOTH pooled sites (3σ = 3.74 / 4.14 m; ≥4 m at the quieter
-site), and A = 1–2 m is NOT single-DTM detectable, requiring
-multi-evidence stacking (evidence:
-`data/outputs/wp0_kriging/noise_floor_stats.csv` header verdicts +
-POOLED rows; Figs. `figs/fig_wp0_noise_floor_panels.png`,
-`figs/fig_wp0_kriging_tranqpit1.png`). Caveats carried from the
-skeptic review: the floor is sampled at only 2 of ~649 mare DTMs;
-per-panel RMS spans 0.74–2.05 m (Marius P3 local 3σ ≈ 6.1 m), so
-per-DTM floors are required before survey-wide claims. The lunar
-FP/10⁴ km² rate stays NOT-MEASURED until the Z2 search is calibrated.
+**The sensor stage is regime-dependent.** Sensor-only degradation costs little at 0.5–1 m (−0.040 / −0.014) but regresses the 2 m rung from 0.254 to 0.122 — approximately halved, and we treat it as real. The SNR ordering at 2 m is non-monotone (SNR 50: 0.069; SNR 100: 0.122; SNR 200: 0.074); with n_void = 53 (2 m) and 8 (5 m) this ordering is small-sample noise, not sensor physics. At 5 m the effect is ~nil (0.154 → 0.175 sensor-only; n_void = 8), consistent with shadow voiding being a 0.5–2 m phenomenon on this benchmark. Composition is approximately additive where both stages act (2 m: 0.115 → 0.109); at 0.5–1 m the Hapke collapse dominates so completely that the sensor stage changes nothing (0.096 → 0.096; 0.101 → 0.103). Nothing was re-tuned to rescue any arm.
+
+**Analog-scope caveat.** The label population here is trench-hosted — the cave interior is seen through the collapse trench and skylights — which is exactly the shadow-prone population. A roofed sag on open mare, the actual lunar target, is untested by this experiment and would be less shadow-affected; the result should be read as a worst-case bound on illumination sensitivity, not as a prediction for open-mare surveys.
+
+### 4.6. Residual noise floor on lunar DTMs
+
+On published lunar NAC DTMs — the target regime — the sag-band (60–300 m) residual RMS after kriging correction is 1.245 m at the Mare Tranquillitatis pit and 1.379 m at the Marius Hills pit, pooled. Under the 3× sag-band-RMS convention (Section 3.6), single-DTM detectability holds for sag amplitudes **A ≥ 5 m at both** floor-sampling sites (3σ = 3.74 and 4.14 m respectively; A ≥ 4 m at the quieter site), and **A = 1–2 m is not single-DTM detectable** — such sags require multi-evidence stacking (Fig. 8). Two caveats bound these verdicts: the floor has been sampled at only two of roughly 649 mare DTMs, and per-panel RMS spans 0.74–2.05 m within those two (a local Marius panel implies 3σ ≈ 6.1 m). Per-DTM floors are therefore required before any survey-wide detectability statement, and the lunar survey-grade FP rate per 10⁴ km² remains not measured until a calibrated search is run over a genuinely sampled DTM population.
 
 ## 5. Discussion
 
-### 5.1 What the curve says about future instruments
-- Sag amplitude 1–2 m is NOT single-DTM detectable on published NAC
-  DTMs under the 3× sag-band-RMS project convention; A ≥ 5 m is the
-  single-DTM detectability floor at both pooled floor-sampling sites
-  (G0′-qualified verdict from
-  `data/outputs/wp0_kriging/noise_floor_stats.csv`; see §4.5(e)).
-  1–2 m sags require multi-evidence stacking (Task 19/21), not
-  finer GSD alone.
-- A 5 m sag amplitude is RECOVERABLE at every ladder rung
-  in the LROC NAC range.
-- 60 m posting is BELOW the curve everywhere — single-pixel
-  coverage is too coarse to sample a 60-300 m feature; the
-  Kaguya TC SLDEM2015 (~59 m) cannot directly detect sag.
+### 5.1. Implications for instrument requirements
 
-### 5.2 Honest limitations
-- Single tube-geometry class: a real lunar roof is not
-  necessarily a terrestrial-analog roof; angular rille
-  intersections, compound sink-fill, and partial roof
-  collapse modes are not exercised.
-- Hapke photometry and sensor degradation are exercised on ONE site
-  (NorthSurface) whose labels are trench-hosted — the analog-scope
-  caveat of §4.5(b) bounds their transfer: a roofed-sag-on-open-mare
-  target is untested; the other five sites remain idealised
-  topography.
-- 4 analog sites is few; per-site leave-one-out is the
-  smallest defensible validation, done in v0.2.
-- The F1 numbers are low because of overflagging at thr=0; the
-  recall = 1.00 cells of Table 1 are thr=0 predict-all rungs
-  (recall by construction), and at tuned-threshold rungs recall
-  (0.00–0.69) — not precision — is the binding constraint.
-- **Sample size** (added 2026-08-23, Cycles 1-2 close): The lunar
-  N=21 transfer (now effectively N=24 with Cycles 1-2 closures of
-  TYCHOPK / GRUITHUIS17 / GRUITHMARE2 / MARIUSCONE) is
-  **selection-biased to catalogued pits** (82 of the registry's 278
-  tier-C morphometry rows have LROC NAC coverage; 226 registry rows
-  have NO LROC NAC DTMs). The 30 random-mare sites in the v5
-  scope map are **NOT in scope** for Paper 1 — no LROC NAC DTMs
-  exist for those footprints. Any survey-grade FP-rate claim would
-  require either Kaguya/SP/Chang'e DTMs (different pipeline, deferred
-  to Paper 2+) or N much larger from NAC DTMs (requires Tier-1 rental
-  authorised under D2). The reported 3.74 [1.71, 7.10] per 10⁴ km²
-  aggregate is **calibration-context only**.
-- **I12 confound covariates not exercised** (added v1.0 polish,
-  2026-08-24): the inherited Reichenzeller 2026 I12 component
-  (independent confound covariates with nulls reported; reference
-  list line 648) is acknowledged but is not run as an explicit
-  protocol arm. Slope and illumination are partially addressed via
-  the +10° slope mask (§3.2 line 149) and the 12-geometry Hapke grid
-  (§4.5(b) lines 406–446), but a formal I12-style null test
-  (e.g. slope × aspect × illumination × DTM noise σ) is not.
-  Sequenced into the LLTB-1 v0.2 backlog.
-- **No SLDEM2015 absolute-elevation cross-validation** (added
-  v1.0 polish, 2026-08-24): the I2 kriging correction is
-  self-validated at TRANQPIT1 (RMSE 0.373 → 0.327 m; §4.5(e)
-  line 506) but is not cross-checked against an independent
-  SLDEM2015 absolute-elevation reference (Kaguya TC ~59 m
-  posting; mentioned in §5.1 line 527 only as a detectability-
-  curve data point — below the curve for 60–300 m sag features,
-  so cannot directly cross-validate). Closing this gap requires
-  careful georeferencing under the Moon eqc CRS and is deferred.
-- **INGENIIPIT ring-artefact annotation** (added v1.0 polish,
-  2026-08-24): the candidate registry carries 24 INGENIIPIT
-  rows annotated as ring artefacts around catalogued pit r001
-  (not 23 separate void candidates; `notes/findings.md`
-  lines 310–315, 504, 704–706). This bookkeeping is a known
-  data-hygiene feature, not a bug, and INGENIIPIT is reframed
-  as rocky-ejecta counter-evidence (RA_pct_mean 0.98 % vs
-  0.50 % local mare ≈2×; `notes/2026-08-23_Paper1_v1.0_release_note.md`
-  line 152).
-- **Sample-size power calculation not run** (added v1.0 polish,
-  2026-08-24): the aggregate 3.74 [1.71, 7.10] per 10⁴ km² figure
-  (n_fp = 9) is reported with a Poisson-exact (Garwood) 95% CI
-  but without a formal a-priori sample-size power calculation;
-  the appropriate denominator for a ±50 % precision target on a
-  1 % FP-rate estimate is ≈16,000 FP trials — roughly 40× the
-  current budget. A formal power analysis is sequenced for Paper 2
-  once the 30 random-mare sites (Q10 above) close.
+The degradation ladder and noise floor jointly bound what future missions must carry to find intact tube roofs. Three concrete implications follow directly from Sections 4.1, 4.5, and 4.6. First, a 5 m sag amplitude is recoverable at every ladder rung in the LROC NAC range — posting is not the binding constraint at that amplitude. Second, 1–2 m sags are not single-DTM detectable on published NAC DTMs under the 3× convention; the remedy is multi-evidence stacking (illumination-consistent repeat observations, co-registered gravity or radar), not finer ground-sample distance alone. Third, ~60 m posting is below the curve everywhere: a single pixel cannot sample a 60–300 m sag feature, so the Kaguya TC SLDEM2015 (~59 m) cannot directly detect roof sag at all — global coarser archives constrain context, not candidates. Within the NAC band, illumination geometry matters more than sensor noise (Section 4.5): mission planning for tube prospecting should prioritise multiple illumination geometries over marginal SNR improvements, because shadow voiding — not photometric noise — dominates the error budget at NAC geometries on trench-hosted targets.
 
-## 6. Conclusion
-- LLTB-1 v0.1 sets the baseline: detectability curve,
-  per-rung metrics, VCI behaviour, failure modes. The
-  per-claim inference framing (v5 Section 9) is the
-  contribution that survives the brutal base rate.
-- A score-threshold + connected-component post-processing
-  pass is the highest-leverage v0.2 improvement.
-- **Cycles 1-2 of the local Tier-1 plan (2026-08-23) closed two
-  G2 deferrals (TYCHOPK 1.44 GiB memory ceiling + GRUITHUIS17 /
-  GRUITHMARE2 / MARIUSCONE no-cached-raster)** and shifted the
-  aggregate FP-rate denominator from 14,840 km² to **24,062.96 km²**
-  (**3.74 [1.71, 7.10] per 10⁴ km², calibration-context, NOT survey**;
-  **278 tier-C rows (45 above-floor; 233 below-floor preserved); 14
-  above-floor inferred void candidates**; n_fp = 9, n_tp = 14). The G2
-  gate currently stands at **5 PASS / 1 PARTIAL /
-  2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-PARTIAL / 1 NOT
-  MEASURED**; final-pass decision pending user review
-  (`plans/2026-08-23_GATE_G2_report_v1.0.md`). The 30-random-mare gap
-  and Cycles 3-5 (NAC EDR + ASP stereo + quality gate) remain deferred
-  — the PDS NAC_EDR paths are currently non-functional (404) pending
-  PDS4 migration, and Hetzner Tier-1 rental ($55/mo, D2 trigger
-  APPROVED 2026-08-22 but rental not yet authorised; $150 ceiling
-  preserved, $0 spent to date) would close these. **Tranquillitatis
-  radar conduit remains the only instrumented subsurface evidence on
-  the Moon** (Carrer 2024); nothing subsurface is verifiable today.
+### 5.2. Re-detections, not discoveries
+
+The lunar accounting of Section 4.2 deserves emphasis because it inverts the usual presentation of candidate lists. **All 14 above-floor true positives are re-detections of catalogued pits at above-floor scores; zero novel above-floor candidates exist in the calibration-context set.** Read as a search, the frozen chain found nothing new — and that is the correct result to report, for two reasons. First, the 21-DTM population is pit-associated by construction, so the informative quantity is not novelty but behaviour: the chain re-finds known pits (14 of them, above floor), avoids false positives across 9,222.69 km² of highland and impact-melt terrain, and concentrates its errors at two pit-bearing sites. Second, the base rate of Section 1.1 makes any claim of novel discovery from single-method morphometry untenable — at ~20 tube-relevant features in the population, a handful of above-floor scores at uncatalogued locations would be far more likely false positives than discoveries. A novel candidate in this framework would require, at minimum, an above-floor score at a location without a catalogued pit, surviving visual inspection and a second, independent evidence leg; none exist in this set. The nine above-floor false positives (Section 4.2) remain pending systematic visual inspection, and we report them as calibration-context findings, not as candidate voids.
+
+### 5.3. Positioning relative to imagery-based detectors
+
+Our results quantify why detection-style reporting is insufficient at the lunar base rate, and what a calibrated alternative looks like in practice. The ESSA detector of Le Corre et al. (2025) reports strong F1 against Lunar Pit Atlas labels — but those are detection scores against the training label population, with no per-claim void probability and no false-positive-per-area reporting, and the method responds to pit appearance in 2D imagery rather than to the topographic sag signature of a roofed, unexposed tube. LLTB-1 complements that line of work: it fixes surveyed ground truth, degrades it under controlled photometry and sensor models, reports per-rung detectability with the tuner's failures included, and expresses lunar results as a calibration-context FP rate with exact intervals (3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²) plus an explicit statement of what is not measured. The two approaches are not competitors for the same claim: imagery methods find candidate entrances; calibrated morphometry bounds when a roof signature can be inferred at all. A survey-grade synthesis would combine them and report per-claim probabilities with area-normalised false-positive rates — the reporting standard this paper is built to enable.
+
+### 5.4. Limitations
+
+The honesty apparatus of this benchmark is a results section of its own; we state each limit explicitly.
+
+- **Selection-biased lunar sample.** The 21 processed DTMs are pit-associated or pit-rich by construction. The 30 random-mare control footprints in the project scope map have no existing NAC DTMs, so no survey-grade FP rate is possible from the current archive; all 278 registry rows derive from these 21 processed DTMs, and the atlas-level coverage gap — only a subset of the ~281 catalogued pits have NAC DTMs at all — is itself a scope limitation. Every lunar rate in this paper is calibration-context only. A survey-grade claim would require alternative-sensor DTMs (a different pipeline, deferred to the companion data paper) or a substantially larger NAC DTM population.
+- **Per-row false-positive accounting.** FP counts are per candidate row; the same physical depression scored at two rungs is counted twice where both rows fall above floor. The registry now annotates rung duplicates (278 rows → 117 unique features; 45 above-floor rows → 21 unique features); the frozen row-based accounting of Table 2 is retained, with the full unique-feature re-accounting deferred to the companion data paper. The rates reported here are therefore an upper-bound-style accounting under the row definition, and the per-rung table (Table 2) is the finest granularity at which the definition is unambiguous.
+- **Four field sites, six instances, one tube.** The analog corpus provides four independent field sites; three of the six map instances sample the same trench-hosted tube, and the Hapke/sensor arms run on that one instance alone. Leave-one-site-out validation was not performed; it would become necessary — and is planned — before any claim of transfer generalisation, i.e. that thresholds and scales calibrated on some field sites carry to a wholly withheld site. All per-rung results here are within-site detectability results.
+- **Degradation arms on one trench-hosted instance.** Illumination and sensor results (Section 4.5) inherit the trench-hosted label population; a roofed sag on open mare is untested, and the other five instances remain idealised topography (no photometric or sensor stage).
+- **Single tube-geometry class.** A real lunar roof is not necessarily a terrestrial-analog roof; angular rille intersections, compound sink-fill, and partial roof-collapse modes are not exercised.
+- **Low absolute F1, by construction of the honest reporting.** The F1 values are low because the tuner collapses to predict-all at several rungs (recall trivially 1.00, precision 5–20%) while at informative thresholds recall (0.00–0.69) binds. Score-threshold and connected-component post-processing is the highest-leverage remediation and is in progress (v0.2 filter; Section 4.4).
+- **Small FP counts, no a-priori power calculation.** The aggregate rate rests on nine false positives; a ±50% precision target on a 1% FP-rate estimate would require on the order of 16,000 FP trials — roughly 40× the current calibration-context population. A formal power analysis accompanies the random-mare closure in the companion paper.
+- **Confound covariates not exercised as a formal null test.** Slope and illumination are partially addressed (the +10° slope mask; the 12-geometry Hapke grid), but a formal null test over slope × aspect × illumination × DTM noise (the independent-confound-covariate discipline of Reichenzeller et al., 2026) has not been run as an explicit protocol arm.
+- **Self-validated kriging correction.** The distortion correction is validated against independent LOLA tracks at the Mare Tranquillitatis anchor (RMSE 0.373 → 0.327 m) but has not been cross-checked against an independent absolute-elevation reference; the coarser global archives sit below the detectability curve for 60–300 m features (Section 5.1) and cannot serve as that reference.
+- **Noise floor sampled at two sites.** The A ≥ 5 m verdict rests on 2 of ~649 mare DTMs with per-panel RMS spanning 0.74–2.05 m (Section 4.6).
+- **Visual inspection pending.** The nine above-floor false positives and the deep-pit low-vesselness rows await systematic NAC image inspection; no row can change status before that inspection is recorded.
+- **Retrievability gaps.** Kingsbowl per-cell statistics were not retained and only its F1 history is corroborated (Table 1 note); the failure is documented rather than papered over.
+
+### 5.5. Future work
+
+The degradation budget of Section 4.5 dictates the two highest-leverage next steps: multi-illumination stacking over top candidates — a real topographic depression is illumination-consistent where albedo artefacts are not — and calibrated thresholding and fusion, so that thresholds are set by calibration data rather than collapsing under shadow voiding. Both target the documented failure mode. Beyond them: the connected-component filter enters the production chain; leave-one-site-out validation runs across the four field sites; the random-mare control population closes the selection-bias gap (via alternative-sensor DTMs or new stereo processing), converting the calibration-context FP rate into a survey rate; and per-DTM noise floors replace the two-site pooled verdict. A second, independent evidence leg (gravity or radar at candidate scale) is the prerequisite for any tier above morphometric inference.
+
+## 6. Conclusions
+
+We built LLTB-1, a calibrated benchmark that degrades surveyed terrestrial laser scans of four volcanic-field sites (six map instances) to lunar-observing conditions and measures what a depth × vesselness roof-sag detector can and cannot infer. The measurable conclusions are:
+
+1. On surveyed ground truth, the best honest per-rung result at NAC-class posting is F1 = 0.277 (precision 0.196, recall 0.474) at 1 m, lifted to 0.362 by per-rung slope-mask tuning; perfect recall occurs only at predict-all thresholds, and at informative thresholds recall spans 0.00–0.69. Topographic roof-sag inference from a single observation at NAC conditions is, at present, a weak-signal discipline.
+2. Illumination dominates the degradation budget: mean F1 at 0.5 m falls from 0.349 to 0.096 across twelve NAC-like geometries through shadow voiding of void labels (62–92% of labels voided by incidence 45–85°), while a NAC-like sensor stage alone halves the 2 m rung (0.254 → 0.122). The effect is a 0.5–2 m phenomenon on trench-hosted targets; roofed sags on open mare are untested.
+3. On published lunar DTMs, the sag-band residual noise floor makes single-DTM inference tenable only for sag amplitudes ≥ 5 m at both floor-sampling sites; 1–2 m sags require multi-evidence stacking. Coarse global topography (~60 m posting) sits below the detectability curve for 60–300 m features.
+4. Across 21 pit-associated lunar DTMs (24,062.96 km²), the row-based calibration-context false-positive rate is 3.74 per 10⁴ km² (Poisson-exact 95% CI [1.71, 7.10]); all nine false positives sit at two pit-bearing sites; all 14 above-floor true positives are re-detections of catalogued pits, and zero novel above-floor candidates exist in the calibration-context set.
+5. The per-claim inference framing — calibrated scores, area-normalised false-positive rates with exact intervals, and explicit statements of what is not measured — is the contribution that survives the lunar base rate, and the reporting standard we propose for the field.
+
+The Tranquillitatis radar conduit remains the only instrumented subsurface evidence on the Moon (Carrer et al., 2024). Nothing subsurface is verifiable today, and every lunar result in this paper is calibrated inference with error bars — never verified detection.
+
+## Data availability
+
+The NASA Planetary Pits and Caves analog dataset (Wong et al., 2014) is third-party data licensed for research and academic use only; it is not redistributed here, and fetch and conversion scripts are provided instead. LROC NAC DTMs were obtained from the NASA Planetary Data System (public domain) and were fetched by product ID rather than mirrored. The derived candidate registry (`data/candidate_registry.csv`, 278 rows), all per-rung and per-arm summary statistics underlying every table and figure, the processing methods documentation, and the analysis code — the roof-sag detector (LLTB-1 v0.5) and the connected-component post-processing filter (v0.2, not applied to the frozen results reported here) — are available from the authors and via repository-on-request. All lunar score thresholds use an amplitude floor calibrated on the Mare Tranquillitatis pit calibration anchor (TRANQPIT1) and frozen thereafter: no threshold was re-tuned on any lunar product after anchoring.
 
 ## Acknowledgements
-- NASA Pits and Caves analog dataset (Wong 2014);
-  research-use licence acknowledged.
-- LROC NAC team for the published DTMs that the
-  v5 primitive is validated on.
-- DLR Institute of Data Science for the open Mueller
-  2026 / Reichenzeller 2026 papers and code.
 
-## Author contributions (CRediT taxonomy)
-Single-author manuscript. All CRediT roles
-(Contributor Roles Taxonomy,
-<https://credit.niso.org/>) assigned to the
-**LUNARVOID team**: conceptualisation, methodology,
-software, validation, formal analysis, investigation,
-data curation, writing — original draft, writing —
-review & editing, visualisation, supervision, project
-administration, funding acquisition.
+The analog benchmark is built on the NASA Planetary Pits and Caves analog dataset (Wong et al., 2014), used here under its research/academic-use licence. We thank the LROC NAC team for the published digital terrain models on which the lunar transfer and noise-floor analyses rest, and the DLR Institute of Data Science for the open publication of the Mueller et al. (2026) and Reichenzeller et al. (2026) methods and code that this pipeline inherits. No Chandrayaan data were used in this work.
 
-## Conflict of interest
+## CRediT author contributions
+
+**LUNARVOID team:** Conceptualisation, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing — original draft, Writing — review & editing, Visualisation, Supervision, Project administration, Funding acquisition.
+
+## Declaration of competing interests
+
 The authors declare no competing interests.
-
-## Data and code availability
-- LLTB-1 v0.1: derived rasters only.
-- NASA analog dataset: research-use only, fetch-script in
-  `code/wp1_lla/convert_f32.py` and `code/setup/extract_rar.py`.
-- LROC NAC DTMs: PDS public domain, fetched by product ID.
-- Code: open at the LUNARVOID repository.
 
 ## References
 
-Author-year style (matching the inline citation form used throughout
-this paper). Sorted alphabetically by first author. **8 references
-verified** against local Zotero library (8 entries attached 2026-08-28);
-DOIs confirmed in Crossref for all 8. The stability-bounds anchor is
-Blair 2017 + Theinat 2018 + Reichenzeller 2026's I8 (Chwala 2024
-was dropped: no DOI found in Crossref, arXiv, or Google Scholar
-during reference verification).
+Blair, D.M., Chappaz, L., Sood, R., Melosh, H.J., et al. (2017). The structural stability of lunar lava tubes. *Icarus* 282, 47–55. doi:10.1016/j.icarus.2016.10.008.
 
-Blair, D.M., Chappaz, L., Sood, R., Melosh, H.J., et al. (2017). The
-structural stability of lunar lava tubes. *Icarus* 282, 47–55.
-doi:10.1016/j.icarus.2016.10.008.
-*— Provides one of two stability-bound anchors for the realistic
-~60–300 m lunar tube-width band used in the §3.3 vesselness scale
-selection (paired with Theinat 2018); DOI confirmed in Crossref.*
+Carrer, L., Pozzobon, R., Sauro, F., Patterson, G.W., Hiesinger, H., and the Mini-RF team (2024). Radar evidence of an accessible cave conduit on the Moon below the Mare Tranquillitatis pit. *Nature Astronomy* 8(9), 1119–1126. doi:10.1038/s41550-024-02302-y.
 
-Carrer, L., Pozzobon, R., Sauro, F., Patterson, G.W., Hiesinger, H.,
-and the Mini-RF team (2024). Radar evidence of an accessible cave
-conduit on the Moon below the Mare Tranquillitatis pit. *Nature
-Astronomy* 8(9), 1119–1126. doi:10.1038/s41550-024-02302-y.
-*— The only instrumented subsurface structure on the Moon evidenced
-by any instrument to date (v5 claim-discipline anchor).*
+Le Corre, D., Mason, N., Bernard-Salas, J., Mary, D., & Cox, N. (2025). New candidate cave entrances on the Moon found using deep learning. *Icarus* 441, 116675. doi:10.1016/j.icarus.2025.116675.
 
-Le Corre, D., Mason, N., Bernard-Salas, J., Mary, D., & Cox, N.
-(2025). New candidate cave entrances on the Moon found using deep
-learning. *Icarus* 441, 116675. doi:10.1016/j.icarus.2025.116675.
-*— ESSA: Mask R-CNN trained on Lunar Pit Atlas labels with Martian
-HiRISE and synthetic implanted-pit augmentation; the most-cited
-direct competitor (positioned as inference vs detection, never used
-as a label source per v5 risks R8/R9). DOI confirmed in Crossref.*
+Mueller, R., et al. (2026). Kriged distortion correction after ICP registration on snow-covered UAV photogrammetric point clouds. *Arctic Science* 12:1–23. doi:10.1139/as-2025-0062.
 
-Mueller, R., et al. (2026). Kriged distortion correction after ICP
-registration on snow-covered UAV photogrammetric point clouds.
-*Arctic Science* 12:1–23. doi:10.1139/as-2025-0062.
-*— Source of inherited components I1–I7 (ICP parameters; kriged
-systematic-error correction; zero-change noise-floor protocol;
-watershed segmentation; sun-azimuth sector artifact test; damping-
-depth thermal workflow; conservative lower-bound framing); verified
-in Zotero 2026-08-28; DOI confirmed in Crossref.*
+Reichenzeller, E., et al. (2026). Vertical Complexity Index for overstory tree detection in UAV-LiDAR and SfM forest plots. *Forests* 17(8), 807. doi:10.3390/f17070807.
 
-Reichenzeller, E., et al. (2026). Vertical Complexity Index for
-overstory tree detection in UAV-LiDAR and SfM forest plots.
-*Forests* 17(8), 807. doi:10.3390/f17070807.
-*— Source of inherited components I8–I15 (VCI overhang detector;
-per-rung threshold re-tuning; inspect-every-apparent-FP discipline;
-stratified detectability template; independent confound covariates
-with nulls reported; sensitivity heatmap; pre-registered funnel-pit
-failure prediction; calibrate-once-transfer-unchanged with declared
-matching radius); verified in Zotero 2026-08-28; DOI confirmed in
-Crossref after manual retry (initial Add-by-Identifier failed; full
-URL form succeeded).*
+Theinat, A.K., Modiriasari, A., Bobet, A., Melosh, J., Dyke, S., Ramirez, J., Maghareh, A., Gomez, D., et al. (2018). Geometry and structural stability of lunar lava tubes. AIAA SciTech 2018; paper 2018-5185. doi:10.2514/6.2018-5185.
 
-Theinat, A.K., Modiriasari, A., Bobet, A., Melosh, J., Dyke, S.,
-Ramirez, J., Maghareh, A., Gomez, D., et al. (2018). Geometry
-and structural stability of lunar lava tubes. AIAA SciTech 2018;
-paper 2018-5185. doi:10.2514/6.2018-5185.
-*— Stability-bounds anchor (with Blair 2017);
-DOI confirmed in Crossref.*
+Wagner, R.V. & Robinson, M.S. (2021). Lunar Pit Atlas: a morphometric compilation of catalogued lunar pits. *LPSC 52*, Abstract #2530.
 
-Wagner, R.V. & Robinson, M.S. (2021). Lunar Pit Atlas: a
-morphometric compilation of catalogued lunar pits. *LPSC 52*,
-Abstract #2530.
-*— THE primary label set (~281 catalogued pits of which ~15–16
-mare and ~5 highland are plausibly tube-related; ~30 m positional
-accuracy defines the declared match radius per v5 I15).*
-
-Wong, U., Whittaker, R., Jones, J. & Whittaker, W. (2014). NASA
-Planetary Pits and Caves analog dataset release. NASA Ames
-Research Center. https://ti.arc.nasa.gov/dataset/caves
-*— FARO X130/X330 TLS point clouds of King's Bowl, Indian Tunnel
-(surface + cave interior), Fieg, Sheepridge; multi-station ICP-
-registered; the LLTB-1 ground-truth corpus. Research / academic use
-only — licence gate before any redistribution.*
+Wong, U., Whittaker, R., Jones, J. & Whittaker, W. (2014). NASA Planetary Pits and Caves analog dataset release. NASA Ames Research Center. https://ti.arc.nasa.gov/dataset/caves
