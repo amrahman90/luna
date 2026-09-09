@@ -669,6 +669,42 @@ deferred WP3 scope, not this paper.
   produces the "unlabelled candidate" class required by v5 §9.
   Sequenced into the post-Paper-2 backlog; $0 cost; ~30–60 min.
 
+### 4.6 Unique-feature re-accounting (rows vs unique features; FP per 10⁴ km²)
+
+- **Registry annotation scheme**: the 278-row registry resolves to 117
+  unique features via `superseded_by` links (117 ACTIVE primary rows,
+  161 SUPERSEDED children); the 45 above-floor rows resolve to 21
+  unique features. A group inherits the class of its primary row.
+- **Both accountings side by side** (all numbers verbatim from
+  `data/outputs/wp2_sag/unique_accounting_2026-09-07.json`;
+  Poisson-exact (Garwood) 95% CIs; same 24,062.96 km² denominator):
+
+  | Accounting | TP | FP | Ring | Funnel | FP per 10⁴ km² | 95% CI |
+  |---|---:|---:|---:|---:|---:|---|
+  | Row-based (frozen, Paper 1) | 14 | 9 | 21 | 1 | 3.74 | [1.71, 7.10] |
+  | Unique-feature (this work) | 6 | 5 | 9 | 1 | **2.08** | **[0.67, 4.85]** |
+
+  The row-based rate reproduces the frozen Paper 1 value to better
+  than 10⁻⁹ (regression check: PASS on counts, rate, and CI at full
+  stored precision).
+- **Grouping-key disclosure**: unique counting groups rows by DTM at a
+  ~30 m co-location radius (3-decimal lon/lat bucketing), matching the
+  pit-atlas positional accuracy (~30 m); a group is FP iff its primary
+  row is FP.
+- **Sensitivity**: the unique FP count is stable at 5 across 30–60 m
+  radii; coarser grouping (~300 m) merges to 3; finer (~3 m) splits
+  to 6; a 100 m radius merges two FECUNPIT structures to 4. The 30 m
+  scale is the pre-registered atlas-accuracy choice, not post-hoc.
+- **Geometry of the FP sites** (registry coordinates, haversine
+  R = 1,737,400 m): TRANQPIT1's 3 row-FPs resolve to 2 unique
+  structures (a row pair co-located at 16.5 m — one structure scored
+  at two rungs, r003 registry-SUPERSEDED — and a third row 132.8 m
+  away); FECUNPIT's 6 row-FPs resolve to 3 unique structures.
+- **Framing**: the unique-feature rate is the more conservative
+  survey-relevant quantity (one count per spatial feature, not one per
+  rung row); the row-based rate is retained as the frozen
+  calibration-context anchor. Neither is a detection rate.
+
 ---
 
 ## 5. Discussion
@@ -855,6 +891,10 @@ The authors declare no competing interests.
   (md5 `2597002375206aba3119c240c373ad62` unchanged); transfer
   output at `data/outputs/wp2_sag/transfer/transfer_summary.json`
   (2026-08-23 freeze).
+- **Unique-feature re-accounting** (§4.6): deterministic re-count of
+  the registry at the pre-registered 30 m atlas-accuracy grouping;
+  `data/outputs/wp2_sag/unique_accounting_2026-09-07.json`
+  (registry md5 `a60fb52152e33f37e9052434ad026a6e`).
 - **Candidate registry**: `data/candidate_registry.csv` (310 lines,
   32-line header + 278 data rows; the schema + tier-discipline
   comments + provenance line are part of the artifact).

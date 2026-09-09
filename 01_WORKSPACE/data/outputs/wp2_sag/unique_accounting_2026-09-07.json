@@ -1,0 +1,1892 @@
+{
+  "task": "A2a unique-feature FP re-accounting",
+  "deterministic": true,
+  "seed_declared": 42,
+  "network": "none",
+  "inputs": {
+    "registry": "01_WORKSPACE/data/candidate_registry.csv",
+    "registry_md5": "a60fb52152e33f37e9052434ad026a6e",
+    "registry_rows": 278,
+    "registry_status_counts": {
+      "ACTIVE": 117,
+      "SUPERSEDED": 161
+    },
+    "pit_catalog": "01_WORKSPACE/data/outputs/wp0_scope_map/relevant_pits_x_dtms.csv",
+    "pit_catalog_md5": "49dcf7098b6d48e9f205153463793e13",
+    "transfer_summary": "01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json",
+    "transfer_summary_md5": "39c72f3ce477069a36d408202d45dcca"
+  },
+  "classification_rules": {
+    "above_floor": "notes lack below-local-floor",
+    "ring": "notes contain \"ring artifact\" (excluded from TP matching)",
+    "tp": "per (DTM, rung): nearest above-floor non-ring row within 100 m of a catalogued pit (one TP row per pit per pair)",
+    "fp": "above-floor, non-ring, >100 m from every pit of its DTM",
+    "funnel": "above-floor, non-ring, within radius but unassigned, I14-annotated",
+    "ci": "Poisson-exact Garwood 95%; NEVER Wilson"
+  },
+  "row_based": {
+    "n_above": 45,
+    "n_fp": 9,
+    "n_tp": 14,
+    "n_ring": 21,
+    "n_funnel": 1,
+    "fp_per_1e4km2": 3.74018820451733,
+    "ci95_lo": 1.7102522128891549,
+    "ci95_hi": 7.100042260610549,
+    "area_km2": 24062.96022518323,
+    "regression_vs_paper1": {
+      "n_fp_9": "PASS",
+      "n_tp_14": "PASS",
+      "n_ring_21": "PASS",
+      "n_funnel_1": "PASS",
+      "rate_3.74018820451733": "PASS",
+      "ci_1.7102522128891549_7.100042260610549": "PASS"
+    }
+  },
+  "unique_b1_key": {
+    "grouping_key": "B1 link key (primary + superseded_by children; class = primary's class)",
+    "n_unique_above_floor": 21,
+    "n_unique_fp": 5,
+    "n_unique_tp": 6,
+    "n_unique_ring": 9,
+    "n_unique_funnel": 1,
+    "fp_per_1e4km2": 2.0778823358429617,
+    "ci95_lo": 0.6746827385017041,
+    "ci95_hi": 4.84908422327487,
+    "ci_method": "Poisson-exact (Garwood) 95% CI",
+    "area_km2": 24062.96022518323
+  },
+  "sensitivity": [
+    {
+      "key": "round lon/lat to 2 dp (~300 m grid)",
+      "n_groups": 10,
+      "n_fp": 3,
+      "n_tp": 6,
+      "n_ring": 1,
+      "n_funnel": 0,
+      "fp_per_1e4km2": 1.2467294015057768,
+      "ci95_lo": 0.2571055751686471,
+      "ci95_hi": 3.643472369025854
+    },
+    {
+      "key": "round lon/lat to 3 dp (~30 m grid)",
+      "n_groups": 21,
+      "n_fp": 5,
+      "n_tp": 6,
+      "n_ring": 9,
+      "n_funnel": 1,
+      "fp_per_1e4km2": 2.0778823358429617,
+      "ci95_lo": 0.6746827385017041,
+      "ci95_hi": 4.84908422327487
+    },
+    {
+      "key": "round lon/lat to 4 dp (~3 m grid)",
+      "n_groups": 25,
+      "n_fp": 6,
+      "n_tp": 6,
+      "n_ring": 12,
+      "n_funnel": 1,
+      "fp_per_1e4km2": 2.4934588030115536,
+      "ci95_lo": 0.9150554349445525,
+      "ci95_hi": 5.427210077358319
+    },
+    {
+      "key": "haversine single-linkage 30 m (within DTM, R=1737400)",
+      "n_groups": 14,
+      "n_fp": 5,
+      "n_tp": 6,
+      "n_ring": 2,
+      "n_funnel": 1,
+      "fp_per_1e4km2": 2.0778823358429617,
+      "ci95_lo": 0.6746827385017041,
+      "ci95_hi": 4.84908422327487
+    },
+    {
+      "key": "haversine single-linkage 60 m (within DTM, R=1737400)",
+      "n_groups": 11,
+      "n_fp": 5,
+      "n_tp": 6,
+      "n_ring": 0,
+      "n_funnel": 0,
+      "fp_per_1e4km2": 2.0778823358429617,
+      "ci95_lo": 0.6746827385017041,
+      "ci95_hi": 4.84908422327487
+    },
+    {
+      "key": "haversine single-linkage 100 m (within DTM, R=1737400)",
+      "n_groups": 10,
+      "n_fp": 4,
+      "n_tp": 6,
+      "n_ring": 0,
+      "n_funnel": 0,
+      "fp_per_1e4km2": 1.662305868674369,
+      "ci95_lo": 0.45292240166100595,
+      "ci95_hi": 4.25616323991813
+    }
+  ],
+  "boundary_straddlers": [
+    {
+      "row_a": "LV-FECUNPIT-0400cm-r001",
+      "row_b": "LV-FECUNPIT-0400cm-r002",
+      "dtm": "FECUNPIT",
+      "sep_m": 83.1,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-FECUNPIT-0400cm-r001",
+      "row_b": "LV-FECUNPIT-0500cm-r002",
+      "dtm": "FECUNPIT",
+      "sep_m": 83.1,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-FECUNPIT-0400cm-r002",
+      "row_b": "LV-FECUNPIT-0500cm-r001",
+      "dtm": "FECUNPIT",
+      "sep_m": 83.1,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-FECUNPIT-0500cm-r001",
+      "row_b": "LV-FECUNPIT-0500cm-r002",
+      "dtm": "FECUNPIT",
+      "sep_m": 83.1,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0200cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 40.72,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0200cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.93,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0200cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 31.94,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0200cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 71.38,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0200cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 62.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0200cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 28.79,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 28.8 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 53.25,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 7.98,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 8.0 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.24,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 25.2 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 71.38,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 62.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 53.25,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 7.98,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 8.0 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.24,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 25.2 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 71.38,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 62.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0200cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.84,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0200cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 45.48,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0200cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 17.87,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 17.9 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.6,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 39.92,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 11.31,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 11.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.84,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 45.48,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.6,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 39.92,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 11.31,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 11.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.84,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 45.48,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0200cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0200cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 80.22,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0200cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.1,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0200cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 17.87,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 17.9 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0400cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 40.72,
+      "classes": "RING/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0400cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 34.37,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0400cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 5.67,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 5.7 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0500cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 40.72,
+      "classes": "RING/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 34.37,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r006",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 5.67,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 5.7 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0400cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.93,
+      "classes": "RING/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0400cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 41.12,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0400cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 12.61,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 12.6 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.93,
+      "classes": "RING/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 41.12,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 12.61,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 12.6 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 68.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 35.71,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 7.98,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 80.22,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.1,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 68.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 35.71,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 7.98,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 80.22,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0200cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 63.1,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0400cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.23,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 61.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/TP",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.23,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 61.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r004",
+      "row_b": "LV-INGENIIPIT-0400cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 33.9,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "RING/TP",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.23,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 33.9,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 61.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r006",
+      "row_b": "LV-INGENIIPIT-0500cm-r001",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "RING/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r006",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 33.9,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r007",
+      "row_b": "LV-INGENIIPIT-0400cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0400cm-r008",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r002",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 30.38,
+      "classes": "TP/RING",
+      "same_b1_group": true,
+      "flags": [
+        "B1-linked but 30.4 m apart (>30 m B1 scale)",
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r001",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 36.14,
+      "classes": "TP/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r003",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r004",
+      "dtm": "INGENIIPIT",
+      "sep_m": 25.23,
+      "classes": "RING/RING",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 61.07,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.26,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r002",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r005",
+      "dtm": "INGENIIPIT",
+      "sep_m": 32.91,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 75.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r003",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 67.95,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r004",
+      "row_b": "LV-INGENIIPIT-0500cm-r006",
+      "dtm": "INGENIIPIT",
+      "sep_m": 33.9,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r007",
+      "dtm": "INGENIIPIT",
+      "sep_m": 72.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r005",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 55.59,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-INGENIIPIT-0500cm-r007",
+      "row_b": "LV-INGENIIPIT-0500cm-r008",
+      "dtm": "INGENIIPIT",
+      "sep_m": 23.28,
+      "classes": "RING/RING",
+      "same_b1_group": false,
+      "flags": [
+        "B1-distinct but 23.3 m apart (<=30 m B1 scale)",
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-MARIUSPIT01-0400cm-r001",
+      "row_b": "LV-MARIUSPIT01-0400cm-r002",
+      "dtm": "MARIUSPIT01",
+      "sep_m": 51.12,
+      "classes": "TP/FUNNEL",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-MARIUSPIT01-0400cm-r002",
+      "row_b": "LV-MARIUSPIT01-0800cm-r002",
+      "dtm": "MARIUSPIT01",
+      "sep_m": 51.12,
+      "classes": "FUNNEL/TP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-TRANQPIT1-0500cm-r001",
+      "row_b": "LV-TRANQPIT1-0500cm-r002",
+      "dtm": "TRANQPIT1",
+      "sep_m": 132.76,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-TRANQPIT1-0500cm-r001",
+      "row_b": "LV-TRANQPIT1-0500cm-r003",
+      "dtm": "TRANQPIT1",
+      "sep_m": 142.9,
+      "classes": "FP/FP",
+      "same_b1_group": false,
+      "flags": [
+        "same 2-dp cell, split at 3 dp"
+      ]
+    },
+    {
+      "row_a": "LV-TRANQPIT1-0500cm-r002",
+      "row_b": "LV-TRANQPIT1-0500cm-r003",
+      "dtm": "TRANQPIT1",
+      "sep_m": 16.5,
+      "classes": "FP/FP",
+      "same_b1_group": true,
+      "flags": [
+        "same 3-dp cell, split at 4 dp"
+      ]
+    }
+  ],
+  "fp_group_detail": [
+    {
+      "primary": "LV-TRANQPIT1-0500cm-r001",
+      "dtm": "TRANQPIT1",
+      "class": "FP",
+      "n_members": 1,
+      "members": [
+        {
+          "id": "LV-TRANQPIT1-0500cm-r001",
+          "rung_cm": 500,
+          "status": "ACTIVE",
+          "lon": 33.19502,
+          "lat": 8.746131,
+          "score": 18.1427,
+          "dist_to_primary_m": 0.0
+        }
+      ]
+    },
+    {
+      "primary": "LV-TRANQPIT1-0500cm-r002",
+      "dtm": "TRANQPIT1",
+      "class": "FP",
+      "n_members": 2,
+      "members": [
+        {
+          "id": "LV-TRANQPIT1-0500cm-r002",
+          "rung_cm": 500,
+          "status": "ACTIVE",
+          "lon": 33.19915,
+          "lat": 8.747714,
+          "score": 6.3249,
+          "dist_to_primary_m": 0.0
+        },
+        {
+          "id": "LV-TRANQPIT1-0500cm-r003",
+          "rung_cm": 500,
+          "status": "SUPERSEDED",
+          "lon": 33.199283,
+          "lat": 8.748242,
+          "score": 5.8676,
+          "dist_to_primary_m": 16.5
+        }
+      ]
+    },
+    {
+      "primary": "LV-FECUNPIT-0400cm-r001",
+      "dtm": "FECUNPIT",
+      "class": "FP",
+      "n_members": 2,
+      "members": [
+        {
+          "id": "LV-FECUNPIT-0400cm-r001",
+          "rung_cm": 400,
+          "status": "ACTIVE",
+          "lon": 48.752134,
+          "lat": -0.327847,
+          "score": 155.4883,
+          "dist_to_primary_m": 0.0
+        },
+        {
+          "id": "LV-FECUNPIT-0500cm-r001",
+          "rung_cm": 500,
+          "status": "SUPERSEDED",
+          "lon": 48.752134,
+          "lat": -0.327847,
+          "score": 155.4883,
+          "dist_to_primary_m": 0.0
+        }
+      ]
+    },
+    {
+      "primary": "LV-FECUNPIT-0400cm-r002",
+      "dtm": "FECUNPIT",
+      "class": "FP",
+      "n_members": 2,
+      "members": [
+        {
+          "id": "LV-FECUNPIT-0400cm-r002",
+          "rung_cm": 400,
+          "status": "ACTIVE",
+          "lon": 48.752522,
+          "lat": -0.33056,
+          "score": 139.5809,
+          "dist_to_primary_m": 0.0
+        },
+        {
+          "id": "LV-FECUNPIT-0500cm-r002",
+          "rung_cm": 500,
+          "status": "SUPERSEDED",
+          "lon": 48.752522,
+          "lat": -0.33056,
+          "score": 139.5809,
+          "dist_to_primary_m": 0.0
+        }
+      ]
+    },
+    {
+      "primary": "LV-FECUNPIT-0400cm-r003",
+      "dtm": "FECUNPIT",
+      "class": "FP",
+      "n_members": 2,
+      "members": [
+        {
+          "id": "LV-FECUNPIT-0400cm-r003",
+          "rung_cm": 400,
+          "status": "ACTIVE",
+          "lon": 48.749808,
+          "lat": -0.197617,
+          "score": 33.5892,
+          "dist_to_primary_m": 0.0
+        },
+        {
+          "id": "LV-FECUNPIT-0500cm-r003",
+          "rung_cm": 500,
+          "status": "SUPERSEDED",
+          "lon": 48.749808,
+          "lat": -0.197617,
+          "score": 33.5892,
+          "dist_to_primary_m": 0.0
+        }
+      ]
+    }
+  ]
+}
