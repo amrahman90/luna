@@ -18,12 +18,12 @@ superseded by the D1 group-split evaluation
 `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`
 (run B, 15 morphometric features: leave-one-DTM-out pooled OOF
 F1=0.824 [DTM-cluster-bootstrap 95% CI 0.35, 0.98], AUC=0.930
-[0.49, 1.00]). Section transitions and verbatim quotes
-reused from Paper 1 (`papers/paper1_resolution_limits/main.md` v1.0) and
-`notes/findings.md`. Aspiration-mode: the v5 WP2 → G2 close; WP3 partial
-(PU baseline only). The Tranquillitatis radar conduit remains the only
-instrumented subsurface structure on the Moon evidenced by any instrument
-today (Carrer 2024; v5).
+[0.49, 1.00]). Section framing follows the frozen Paper 1
+(`papers/paper1_resolution_limits/main.md`, v2.0), cited by section
+rather than quoted, plus `notes/findings.md`. Aspiration-mode: the v5
+WP2 → G2 close; WP3 partial (PU baseline only). To date, the
+Tranquillitatis radar conduit is the one subsurface lunar structure for
+which any instrument provides evidence (Carrer 2024; v5).
 
 ---
 
@@ -65,15 +65,16 @@ multi-evidence deferrals that bound the v5 WP3 scope.
 
 ### 1.1 Why Paper 2 (extends Paper 1 from benchmark to inference)
 
-- Paper 1 (`papers/paper1_resolution_limits/main.md` v1.0, 2026-08-23)
+- Paper 1 (`papers/paper1_resolution_limits/main.md`, frozen v2.0)
   shipped **the benchmark** — LLTB-1 v0.1 / v0.4 / v0.5; six analog
   sites; best honest result IndianTunnel_NorthSurface @ 1 m F1 0.277
   pre-v0.4 / 0.362 v0.4 @ 45°; degrade-ladder detectability curve.
-  Paper 1 closed at G2 with **278 tier-C morphometry rows, 45 above-
-  floor, 14 above-floor inferred void candidates, 9 FPs, aggregate
-  FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km², all 21 on-disk
-  DTMs pit-associated or pit-rich (selection-biased to catalogued
-  pits)** (verbatim from Paper 1 abstract).
+  Its G2 close left the frozen lunar accounting that Paper 2 builds
+  on (§4.2 there): **278 tier-C morphometry rows, of which 45 sit
+  above-floor with 14 above-floor inferred void candidates and 9 FPs;
+  aggregate FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²; and
+  21 on-disk DTMs that are all pit-associated or pit-rich, i.e.
+  selected with bias toward catalogued pits**.
 - Paper 2 ships **the actual inference problem** under v5 §9
   mandatory reporting: (a) the catalogued-pit-associated tier-C
   candidate catalogue with **calibrated FP per 10⁴ km²** as the
@@ -127,16 +128,16 @@ multi-evidence deferrals that bound the v5 WP3 scope.
   for visual inspection (the user-completed 2026-08-28 walk-through
   is recorded but per-cluster labels were not captured on-disk — see
   §4.5 for the honest state).
-- **Claim-discipline carry-over from Paper 1** (verbatim from Paper 1
-  §1.2 line 110–113):
-  > "IS NOT: a global lava-tube detection claim. A lunar inference
-  > paper (Paper 2) follows once LLTB-1 validates the detector.
-  > IS NOT: a GRAIL / Mini-RF paper (those are confirmation layers,
-  > Tier D in v5; not detectors)."
-- **The Tranquillitatis carve-out** (verbatim from Paper 1 abstract
-  line 86–88): "nothing subsurface on the Moon is verifiable today
-  except the Tranquillitatis radar conduit" (Carrer 2024; v5). This
-  paper does not change that statement.
+- **Claim-discipline carry-over from Paper 1** (scope statement in its
+  §1.3): the benchmark paper already disclaims any global lava-tube
+  detection claim, treats GRAIL / Mini-RF-style geophysics as
+  confirmation layers rather than survey detectors (Tier D in v5), and
+  defers the registry-and-inference side of the problem to a companion
+  paper once the detector is validated — Paper 2 is that companion.
+- **The Tranquillitatis carve-out** (Paper 1 §1.1 and §6): no
+  subsurface lunar feature is verifiable today; the radar-evidenced
+  Tranquillitatis conduit (Carrer 2024; v5) is the sole exception.
+  Paper 2 leaves that boundary unchanged.
 
 ### 1.3 Trigger conditions for Paper 2 — honest state
 
@@ -160,7 +161,7 @@ deferred WP3 scope, not this paper.
 
 ---
 
-## 2. Related work (brief; reuses much from Paper 1 §2)
+## 2. Related work (brief; extends Paper 1 §1.2)
 
 - Populated from `notes/prior_art_matrix.csv` (33 refs; priority-done
   rows from Paper 1 carry over). Paper 2 extends with WP3 fusion
@@ -168,14 +169,15 @@ deferred WP3 scope, not this paper.
   anomaly references.
 - **Stability bounds (Blair 2017 + Theinat 2018)** — anchor for the
   realistic ~60–300 m lunar tube-width band used in the morphometric
-  Frangi scale selection; carried verbatim from Paper 1 references.
-- **Tranquillitatis radar conduit (Carrer 2024)** — the only
-  instrumented subsurface evidence on the Moon; v5 claim-discipline
-  anchor; carried verbatim.
+  Frangi scale selection; citations carried over from Paper 1.
+- **Tranquillitatis radar conduit (Carrer 2024)** — the sole lunar
+  subsurface structure with instrument-based evidence; v5
+  claim-discipline anchor; citation carried over from Paper 1.
 - **Pit Atlas (Wagner & Robinson 2021)** — primary label set
   (~281 catalogued pits; ~30 m positional accuracy defines the
-  declared match radius per v5 I15); carried verbatim.
-- **Wong 2014 NASA analog** — LLTB-1 ground truth; carried verbatim.
+  declared match radius per v5 I15); citation carried over.
+- **Wong 2014 NASA analog** — LLTB-1 ground truth; citation carried
+  over.
 - **Mueller 2026 (I1–I7) + Reichenzeller 2026 (I8–I15)** — inherited
   component source. **I10 in particular**: "inspect-every-apparent-FP
   discipline" (verbatim from the `prior_art_matrix.csv` Reichenzeller
@@ -263,15 +265,15 @@ deferred WP3 scope, not this paper.
 
 ### 3.2 Per-DTM noise floors (TRANSPIT1 / MARIUSPIT01 with the 3× sag-band-RMS rule)
 
-- **Pooled sag-band (60–300 m DoG) residual RMS** (verbatim from
-  Paper 1 §4.5(e) line 497–498):
-  > "On published lunar NAC DTMs — the target regime — the sag-band
-  > (60–300 m DoG) residual RMS after kriging correction is 1.245 m
-  > (TRANQPIT1) and 1.379 m (MARIUSPIT01) pooled; under the 3× sag-
-  > band-RMS rule — a PROJECT CONVENTION, not a v5 mandate (grep-
-  > verified; findings 2026-08-21 skeptic caveat) — single-DTM
-  > detectability holds for sag amplitude A ≥ 5 m at BOTH pooled
-  > sites (3σ = 3.74 / 4.14 m; ≥4 m at the quieter site)"
+- **Pooled sag-band (60–300 m DoG) residual RMS** (method and verdicts
+  documented in the companion benchmark, Paper 1 §3.6/§4.6): the
+  target regime — published lunar NAC DTMs — shows a pooled sag-band
+  residual RMS, after kriging correction, of 1.245 m for TRANQPIT1
+  and 1.379 m for MARIUSPIT01. Applying the 3× sag-band-RMS rule — a
+  PROJECT CONVENTION, not a v5 mandate (grep-verified; findings
+  2026-08-21 skeptic caveat) — single-DTM detectability holds for sag
+  amplitude A ≥ 5 m at BOTH pooled sites (3σ = 3.74 / 4.14 m; ≥ 4 m
+  at the quieter site).
 - **Per-DTM `local_Amin` table** (subset; from
   `transfer_summary.json.per_dtm`, units metres):
 
@@ -294,18 +296,15 @@ deferred WP3 scope, not this paper.
 
   (Source: `transfer_summary.json.per_dtm.*`; rows above are a
   representative subset; full per-DTM block is 21 DTM keys.)
-- **3× rule provenance** (verbatim from Paper 1 §5.2 line 555–556 +
-  `notes/findings.md` line 70–71 skeptic caveat):
-  > "The '3× sag-band RMS' rule is a PROJECT CONVENTION; no such
-  > multiplier appears in v5 §4 (grep-verified 2026-08-21) — do not
-  > cite v5 for it."
-  Each `local_Amin` row in `per_dtm` is `3 × pooled_rms_m` for that
-  DTM; the per-panel RMS spans 0.74–2.05 m (Marius P3 local 3σ ≈
-  6.1 m), so per-DTM floors are required before survey-wide claims.
-- **Caveat carried from Paper 1** (verbatim, line 508–510): "the
-  floor is sampled at only 2 of ~649 mare DTMs; per-panel RMS spans
-  0.74–2.05 m (Marius P3 local 3σ ≈ 6.1 m), so per-DTM floors are
-  required before survey-wide claims."
+- **3× rule provenance** (Paper 1 §3.6 carries the same caveat, from
+  the `notes/findings.md` line 70–71 skeptic entry): the "3× sag-band
+  RMS" multiplier is a PROJECT CONVENTION; no such multiplier appears
+  in v5 §4 (grep-verified 2026-08-21) — do not cite v5 for it.
+- **Caveat inherited from Paper 1** (§4.6 there): the floor is
+  sampled at only 2 of ~649 mare DTMs; each `local_Amin` row in
+  `per_dtm` is `3 × pooled_rms_m` for that DTM, the per-panel RMS
+  spans 0.74–2.05 m (Marius P3 local 3σ ≈ 6.1 m), and per-DTM floors
+  are therefore required before survey-wide claims.
 
 ### 3.3 The PU-learning baseline (v1 0.857 → v2 0.909 random-split, leak-inflated; D1 leak-free LODO run B F1 0.824 / AUC 0.930; flag-ablation decisions unchanged)
 
@@ -605,18 +604,18 @@ deferred WP3 scope, not this paper.
   | FRESHMELT / FRESHMELT1 | 0 | 1,540.91 | 0.00 | (below-floor; terrain_extrapolation) |
   | TYCHOPK / 02 / 03 / 04 / 07 | 0 | 5,177.49 | 0.00 | (below-floor; terrain_extrapolation) |
 
-- **Honest per-DTM headline** (verbatim from Paper 1 §4.1 line 269–270):
-  > "The honest per-DTM rate is TRANQPIT1 240.41 [49.58, 702.58] per
-  > 10⁴ km² (n=4); the rate improvement from 6.06 → 3.74 reflects
-  > the 14,840 → 24,062.96 km² denominator increase."
-- **Where the 9 FPs sit** (verbatim from Paper 1 abstract line 76–78):
-  > "9 of 9 FPs at 2 sites with catalogued pits (FECUNPIT 6 at
-  > 155/140/34 m amplitudes; TRANQPIT1 3 at 95.4/57.4/48.8 m
-  > amplitudes; visual inspection pending; G2 §3 row 11)."
-- **Tranquillitatis carve-out** (verbatim, Paper 1 line 275–277):
-  > "Tranquillitatis radar conduit remains the only instrumented
-  > subsurface evidence on the Moon (Carrer 2024); nothing
-  > subsurface is verifiable today."
+- **Honest per-DTM headline** (Paper 1 §4.2): the only per-DTM rate
+  with a usable interval is TRANQPIT1 at 240.41 [49.58, 702.58] per
+  10⁴ km² (n=4); the aggregate's move from 6.06 to 3.74 reflects the
+  14,840 → 24,062.96 km² denominator increase, not a chain change.
+- **Where the 9 FPs sit** (Paper 1 §4.2): 9 of 9 at 2 sites with
+  catalogued pits — FECUNPIT 6 (amplitudes 155/140/34 m) and
+  TRANQPIT1 3 (amplitudes 95.4/57.4/48.8 m); visual inspection
+  pending; G2 §3 row 11.
+- **Tranquillitatis carve-out** (Paper 1 §6): the radar conduit
+  beneath Mare Tranquillitatis is the single subsurface lunar
+  structure with instrumented evidence (Carrer 2024); no subsurface
+  verification exists today.
 
 ### 4.2 PU-learning baseline vs extended (v1 → v2)
 
@@ -738,12 +737,11 @@ deferred WP3 scope, not this paper.
 
 ### 4.4 I14 funnel-pit failure (MARIUSPIT01 case study)
 
-- **The pre-registered failure mode** (verbatim from Paper 1 §4.4
-  line 336–341, FUNNEL PIT entry):
-  > "FUNNEL PIT (I14 pre-registered): MARIUSPIT01 shows the predicted
-  > behaviour. Top score 5.04, Frangi 0.05 — the sink-fill drains
-  > sideways into Rille A and the score is muddled by the funnel
-  > geometry. Documented in `notes/2026-08-19_task4_sweep_notes.md`."
+- **The pre-registered failure mode** (Paper 1 §4.4, failure mode 1):
+  MARIUSPIT01 behaves as the v5 I14 pre-registration predicted — top
+  score 5.04 with Frangi vesselness 0.05, the sink-fill draining
+  sideways into Rille A so that the funnel geometry muddles the score.
+  Documented in `notes/2026-08-19_task4_sweep_notes.md`.
 - **2026-08-22 skeptic finding** (verbatim from `findings.md`
   line 274–283):
   > "**TIER-B INVERSION OF I14 FUNNEL (CRITICAL)** — the 3 tier-B
@@ -840,10 +838,9 @@ deferred WP3 scope, not this paper.
 ### 5.1 What we can claim (calibrated inference; 14 above-floor inferred void candidates; tier-C morphometry)
 
 - **14 above-floor inferred void candidates**, all tier-C single-method
-  morphometry (Paper 1 abstract line 86–88): "the registry holds
-  **278 tier-C rows (45 above-floor; 233 below-floor preserved); 14
-  above-floor inferred void candidates**, all single-method
-  (morphometry only)".
+  morphometry, per the frozen Paper 1 accounting (§4.2 there): 278
+  tier-C rows in total, 45 above-floor and 233 below-floor preserved,
+  with all 14 candidates inferred from morphometry alone.
 - **Aggregate FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²**
   is **calibration-context only**, NOT a survey rate, NOT a
   random-mare estimate. The selection bias toward catalogued pits
@@ -857,8 +854,9 @@ deferred WP3 scope, not this paper.
   AUC 0.931; §3.3) — promising, but consistent with chance at the
   CI lower bounds: a small-n feasibility result (15 positives),
   not classifier validation.
-- **No claim of detection**. Tranquillitatis remains the only
-  instrumented subsurface evidence on the Moon (Carrer 2024; v5).
+- **No claim of detection**. The Tranquillitatis radar conduit is
+  still the sole subsurface lunar structure supported by any
+  instrument (Carrer 2024; v5).
 - **Honest per-DTM headline**: TRANQPIT1 240.41 [49.58, 702.58]
   per 10⁴ km² (n=4) is the only per-DTM rate with a usable CI;
   every other DTMs is n_fp=0 because the calibration-context
@@ -867,10 +865,13 @@ deferred WP3 scope, not this paper.
 ### 5.2 Honest limitations
 
 - **Catalogued-pits-only sampling**: 0/649 random-mare DTMs in
-  scope (Paper 1 §5.2 line 547–551); 82 of the registry's 278
-  rows have LROC NAC coverage; 226 do not. Any survey-grade claim
-  requires Kaguya/SP/Chang'e DTMs (deferred) or a much larger NAC
-  DTM pool (Tier-1 rental deferred).
+  scope (Paper 1 §5.4); all 278 registry rows derive from the 21
+  pit-associated NAC DTMs, and at the atlas level only 82 of the
+  278 catalogued pits in the WP0 scope map overlap a published NAC
+  DTM (196 do not;
+  `data/outputs/wp0_scope_map/coverage_by_terrain_all_278_pits.csv`).
+  Any survey-grade claim requires Kaguya/SP/Chang'e DTMs (deferred)
+  or a much larger NAC DTM pool (Tier-1 rental deferred).
 - **PU-learning positives are local-max proxies**, not ground
   truth. The v2 registry-wide positive set (34 positives = 7
   catalogued-pit-DTMS rank-1 + 24 INGENIIPIT ring-artefact + 3
@@ -894,18 +895,18 @@ deferred WP3 scope, not this paper.
 - **I2 SLDEM2015 cross-validation deferred**: the kriging
   correction is self-validated at TRANQPIT1 (RMSE 0.373 → 0.327 m);
   SLDEM2015 absolute-elevation cross-check not implemented (Paper 1
-  §5.2 line 565–574).
+  §5.4).
 - **I12 confound covariates not exercised**: slope and illumination
-  partially addressed via the +10° slope mask (Paper 1 §3.2 line
-  149) and the 12-geometry Hapke grid (Paper 1 §4.5(b) lines 406–
-  446), but a formal I12-style null test is not run; sequenced
+  partially addressed via the +10° slope mask (Paper 1 §3.2)
+  and the 12-geometry Hapke grid (Paper 1 §4.5), but a formal
+  I12-style null test is not run; sequenced
   into the LLTB-1 v0.2 backlog.
-- **Sample-size power calculation not run** (Paper 1 §5.2 line
-  584–591): the aggregate 3.74 [1.71, 7.10] per 10⁴ km² figure
+- **Sample-size power calculation not run** (limitation stated in
+  Paper 1 §5.4): the aggregate 3.74 [1.71, 7.10] per 10⁴ km² figure
   (n_fp=9) carries a Poisson-exact (Garwood) 95% CI but no formal
-  a-priori power analysis. The appropriate denominator for ±50%
-  precision on a 1% FP-rate estimate is ~16,000 FP trials — roughly
-  40× the current budget. Formally deferred to Paper 2 once the 30
+  a-priori power analysis. A ±50% precision goal for a 1% FP-rate
+  estimate would need roughly 16,000 FP trials — about 40× the
+  population available today. Formally deferred until the 30
   random-mare sites close.
 
 ### 5.3 Comparison to ESSA (Le Corre 2025): inference vs detection
@@ -996,8 +997,9 @@ deferred WP3 scope, not this paper.
   licence acknowledged.
 - LROC NAC team for the published DTMs that the v5 primitive is
   validated on.
-- DLR Institute of Data Science for the open Mueller 2026 /
-  Reichenzeller 2026 papers and code.
+- The DLR Institute of Data Science, whose open publication of the
+  Mueller 2026 / Reichenzeller 2026 methods and code this pipeline
+  builds on.
 - **NEW for Paper 2** (additive to Paper 1): Cushing 2015 / 2017
   MGC3 catalog authors (cross-body pretraining source); Williams
   2017 / Powell 2023 Diviner team; Hurwitz 2013 rille shapefile
@@ -1047,7 +1049,7 @@ The authors declare no competing interests.
   leave-INGENIIPIT-out summaries, and threshold sensitivity stored
   inside; registry md5 `a60fb52152e33f37e9052434ad026a6e`
   recorded in the JSON.
-- **G2 transfer summary** (re-used from Paper 1 v1.0): frozen
+- **G2 transfer summary** (shared with Paper 1): frozen
   calibration at `data/outputs/wp2_sag/transfer/calibration_transqpit1.json`
   (md5 `2597002375206aba3119c240c373ad62` unchanged); transfer
   output at `data/outputs/wp2_sag/transfer/transfer_summary.json`
@@ -1071,14 +1073,13 @@ The authors declare no competing interests.
 
 *Author-year style (matching the inline citation form used throughout
 Paper 2). Sorted alphabetically by first author. **8 references
-verified** against the local Zotero library in Paper 1 v1.0
-(`papers/paper1_resolution_limits/main.md` line 649–655 — 8 entries
+verified** against the local Zotero library in Paper 1 (8 entries
 attached 2026-08-28; DOIs confirmed in Crossref for all 8). Paper 2
 adds the following (Zotero attach + DOI verification pending at the
 submission milestone; some entries may need user-curation before
 submission):*
 
-**Carried verbatim from Paper 1 (8 references, verified 2026-08-28):**
+**Shared with Paper 1 (8 references, verified 2026-08-28):**
 
 1. Blair, D.M., Chappaz, L., Sood, R., Melosh, H.J., et al. (2017).
    The structural stability of lunar lava tubes. *Icarus* 282,
