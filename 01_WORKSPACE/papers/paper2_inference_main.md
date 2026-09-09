@@ -13,7 +13,12 @@ freeze (`data/outputs/wp2_sag/transfer/transfer_summary.json`; 2026-08-23;
 21 on-disk NAC DTMs; 278 tier-C rows; n_fp=9, n_tp=14; aggregate FP
 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²) and the WP3 PU-learning
 v2 baseline (`data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`;
-2026-08-28; F1=0.909, AUC=0.931). Section transitions and verbatim quotes
+2026-08-28; F1=0.909, AUC=0.931 on a random row split — leak-inflated,
+superseded by the D1 group-split evaluation
+`data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`
+(run B, 15 morphometric features: leave-one-DTM-out pooled OOF
+F1=0.824 [DTM-cluster-bootstrap 95% CI 0.35, 0.98], AUC=0.930
+[0.49, 1.00]). Section transitions and verbatim quotes
 reused from Paper 1 (`papers/paper1_resolution_limits/main.md` v1.0) and
 `notes/findings.md`. Aspiration-mode: the v5 WP2 → G2 close; WP3 partial
 (PU baseline only). The Tranquillitatis radar conduit remains the only
@@ -29,11 +34,19 @@ LUNARVOID Tier-C candidate catalogue (278 rows across 21 on-disk LROC
 NAC DTMs over 24,062.96 km²; calibration-context rate 3.74 [Poisson-
 exact Garwood 95% CI 1.71, 7.10] FP per 10⁴ km²; n_fp = 9, n_tp = 14;
 all 9 FPs at 2 sites with catalogued pits), and a positive-unlabeled
-(PU) learning baseline over the same 278 rows (n_positives_TP = 34;
-n_unlabeled = 244; 19 features; LogisticRegression(C=1.0) inside
-pulearn; 30/70 stratified split; F1 = 0.9091, precision = 0.9091,
-recall = 0.9091, ROC AUC = 0.9312 on the held-out 85 rows; wall time
-0.04 s on the Tier-0 box). The pipeline is frozen from the G2 transfer
+(PU) learning baseline over the same catalogue, evaluated leak-free
+under the D1 redesign: 161 SUPERSEDED duplicate rows excluded (117
+active rows; 15 positives / 102 unlabeled), four annotation-derived
+identity-proxy flags removed (run B: 15 morphometric features; a
+diagnostic run retaining the flags yields identical decisions),
+LogisticRegression(C=1.0) inside pulearn, not retuned; leave-one-
+DTM-out over the 21 DTMs with train-fold-only imputation and
+scaling; pooled out-of-fold F1 = 0.824 [DTM-cluster-bootstrap 95%
+CI 0.35, 0.98], precision = 0.737, recall = 0.933 (14/15
+positives), ROC AUC = 0.930 [0.49, 1.00] (21 DTM clusters, 1000
+draws, seed 42) — intervals this wide, with lower bounds near
+chance, make this a small-n feasibility result (15 positives), not
+classifier validation. The pipeline is frozen from the G2 transfer
 calibration (frac=0.20, slope=45°, neigh=5, Frangi σ = 30/60/100/150/
 200/300 m; TRANSPIT1 recipe byte-identical md5 `2597002375206aba3119
 c240c373ad62`); tier discipline is A=0 / B=0 / C=278 after the Cycle-1
@@ -64,9 +77,10 @@ multi-evidence deferrals that bound the v5 WP3 scope.
 - Paper 2 ships **the actual inference problem** under v5 §9
   mandatory reporting: (a) the catalogued-pit-associated tier-C
   candidate catalogue with **calibrated FP per 10⁴ km²** as the
-  primary metric; (b) a PU-learning baseline that **ranks** the 244
-  unlabeled ML-detected sags against the 34 local-max positive
-  proxies; (c) the I10 apparent-FP inspection rules and three capture
+  primary metric; (b) a PU-learning baseline that **ranks** the unlabeled
+  ML-detected sags against the catalogued-pit local-max positive
+  proxies (244/34 registry-wide v2 accounting; 102/15 active rows
+  under the D1 evaluation of §3.3); (c) the I10 apparent-FP inspection rules and three capture
   paths required by v5 §9 ("Every apparent FP manually inspected
   before scoring, with a separate 'unlabelled candidate' class
   reported (I10)"; master plan line 562–563); (d) a cross-body MGC3
@@ -96,8 +110,10 @@ multi-evidence deferrals that bound the v5 WP3 scope.
 
 - **IS**: a tier-C morphometry candidate catalogue (278 rows) with
   per-candidate confusion annotations and per-DTM `local_Amin`
-  calibration floors; a PU-learning **ranking** baseline (F1 0.909 /
-  AUC 0.931); the first lunar-published framework that reports FP per
+  calibration floors; a PU-learning **ranking** baseline (leak-free
+  leave-one-DTM-out pooled OOF F1 0.824 [cluster-bootstrap 0.35,
+  0.98] / AUC 0.930 [0.49, 1.00], run B morphometric-only feature
+  set; §3.3); the first lunar-published framework that reports FP per
   10⁴ km² (master plan §9 mandatory metric); the explicit I10
   apparent-FP discipline; the Marius Hills I14 funnel-pit case study
   as a v5-confirmed confounder.
@@ -133,7 +149,7 @@ conditions. Their status as of 2026-08-28:
 | T2 | N ≥ 30 tier-B candidates | **NOT MET** — tier-B count collapsed 3 → 0 after the skeptic Cycle-1 downgrade of the I14 funnel rule (`notes/findings.md` 2026-08-22; **A=0 / B=0 / C=278**); tier-B promotion requires two-independent-methods agreement (master plan §9) and we have only Z2 morphometry active at 21/21 + thermal at 2/7 (per the 2026-08-22 P4.3 review, "INCONCLUSIVE at N=7 due to 4/7 equatorial coverage gap") + photometric (P4.2) deferred. |
 | T3 | Cycles 3–5 closed (NAC EDR + ASP stereo + quality gate) | **NOT MET** — PDS NAC_EDR / NAC_CDR / browse 404 on every endpoint (2026-08-23 environment block); Hetzner Tier-1 rental ($55/mo, D2 trigger APPROVED 2026-08-22 but rental not yet authorised; $150 ceiling preserved, **$0 spent to date**) would close these but is gated on user approval. |
 | T4 | Multi-evidence stacking at ≥2 evidence legs at ≥5 candidates | **NOT MET** — multi-evidence stacking is deferred to Paper 3 (WP3 scope; v5 master plan §8 WP3 line 493–506); only morphometry is active site-wide; thermal at 2/7 INCONCLUSIVE; photometric deferred (P4.2); GRAIL gravity not active (P3.1a Phase-3 floor logging only; l_max=680 subset v0.1 was never integrated into the registry). |
-| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312; 5-feature importance block; LogisticRegression(C=1.0, max_iter=1000); wall time 0.04 s. The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969; the v2 extension lifted both. |
+| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v4 dual-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969. |
 | **(implicit)** | G2 FINAL-PASSED | **PARTIAL** — `notes/findings.md` line 794 verbatim: "**G2' status:** FINAL-PASSED 2026-08-28 (already flipped in earlier 'complete all' session; user's 'pass g2' instruction served as explicit confirmation). Row 10 PARTIAL honest state preserved verbatim. Final-pass does NOT depend on per-candidate verdicts; the verdict text already documents the catalogued-pits-only framing honestly." |
 
 **Honest framing**: Paper 2 ships the WP2 deliverable + the PU-learning
@@ -291,10 +307,14 @@ deferred WP3 scope, not this paper.
   0.74–2.05 m (Marius P3 local 3σ ≈ 6.1 m), so per-DTM floors are
   required before survey-wide claims."
 
-### 3.3 The PU-learning baseline (v1 F1 0.857 → v2 F1 0.909; AUC 0.897 → 0.931)
+### 3.3 The PU-learning baseline (v1 0.857 → v2 0.909 random-split, leak-inflated; D1 leak-free LODO run B F1 0.824 / AUC 0.930; flag-ablation decisions unchanged)
 
-- **Source**: `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
-  (273 lines; generated 2026-08-28; commit forthcoming).
+- **Sources**: `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
+  (273 lines; generated 2026-08-28; v1/v2 history, random split,
+  leak-inflated) and `data/outputs/wp5_fusion/
+  pu_learning_groupsplit_2026-09-09.json` (the D1 v4 dual-run
+  leak-free evaluation; registry md5 `a60fb52152e33f37e9052434ad
+  026a6e`; canonical for every v3-column number below).
 - **Feature matrix** (verbatim from JSON `feature_audit` block):
   - `n_features_v2 = 19`, `n_features_v1 = 5`, `n_new_features = 14`
   - All 19 names: `span_m, sag_amp_m, score, conf_dist_rille_m,
@@ -316,31 +336,108 @@ deferred WP3 scope, not this paper.
     + the 24 INGENIIPIT r002–r008 ring-artefact rows + 3 other
     catalogued-pit rank-1 hits across the 21 DTMs × 2–3 rungs)
   - `n_unlabeled = 244`
+  - (v2 registry-wide accounting over all 278 rows; under the D1
+    active-set evaluation below, the same label rule yields **15
+    positives / 102 unlabeled** on 117 rows after the 161 SUPERSEDED
+    duplicates are excluded — 10 of the 15 positives are INGENIIPIT
+    rows)
 - **PU-learner configuration** (verbatim from JSON `metrics`):
   - Estimator: `LogisticRegression(C=1.0, max_iter=1000)`
   - Hold-out ratio: 0.1; random_state: 42; test_size: 0.3
   - Scaler: `StandardScaler (zero-mean, unit-variance; train-set
     stats)`
   - sklearn warnings: `[]`
-- **Headline metrics** (verbatim, JSON `metrics` block):
+- **Metrics** (v1/v2 verbatim from the v2 JSON `metrics` block —
+  both from a random row split and therefore **leak-inflated**;
+  v3 = the D1 leak-free re-evaluation, v4 dual-run, pooled
+  out-of-fold (OOF); **run B (15 morphometric features, four
+  annotation-derived flags removed) is the headline**; run A
+  (19 features, flags retained) is a diagnostic upper bound;
+  95% CIs are DTM-level **cluster bootstrap**: 21 DTM clusters
+  resampled with replacement, 1000 draws, seed 42):
 
-  | Metric | v1 (5 feat) | v2 (19 feat) |
-  |---|---:|---:|
-  | f1_test | 0.8571 | **0.9091** |
-  | precision_test | 0.8182 | 0.9091 |
-  | recall_test | 0.9000 | 0.9091 |
-  | roc_auc_test | 0.8969 | **0.9312** |
-  | n_test_predicted_positive | — | 11 |
-  | n_test_total | — | 85 |
-  | n_test_positives | — | 11 |
-  | n_train_total | — | 193 |
-  | n_train_positives | — | 23 |
+  | Metric | v1 (5 feat, random split) | v2 (19 feat, random split) | **v3 run B (15 feat, D1 LODO, pooled OOF)** | v3 run A (19 feat, diagnostic) |
+  |---|---:|---:|---:|---:|
+  | F1 | 0.8571 | 0.9091 | **0.824 [0.35, 0.98]** | 0.824 [0.35, 0.98] |
+  | precision | 0.8182 | 0.9091 | 0.737 [0.25, 1.00] | 0.737 [0.25, 1.00] |
+  | recall | 0.9000 | 0.9091 | 0.933 (14/15) [0.50, 1.00] | 0.933 (14/15) |
+  | ROC AUC | 0.8969 | 0.9312 | **0.930 [0.49, 1.00]** | 0.927 [0.49, 1.00] |
+  | n_predicted_positive | — | 11 | 19 | 19 |
+  | n_test_total | — | 85 | 117 (pooled OOF, 21 folds) | 117 (same folds) |
+  | n_test_positives | — | 11 | 15 | 15 |
+  | n_train_total | — | 193 | per-fold (held-out DTM excluded) | per-fold (same) |
+  | n_train_positives | — | 23 | per-fold (5 when INGENIIPIT held out) | per-fold (same) |
 
   (v1 figures from the LLTB-1 v0.4 PU baseline release note; the v2
   JSON does not restate them — paper-writer to confirm against
   `admin/verification_evidence/` if available, else cite the v1
-  release note path.)
-- **Top-5 features by |coef|** (verbatim, JSON `top_5_features_by_abs_coef`):
+  release note path. v3 figures from
+  `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`
+  (`runs.run_B_MORPH_headline` and
+  `runs.run_A_FULL_diagnostic_upper_bound`: `pooled_oof` +
+  `bootstrap_cluster_HEADLINE` blocks; the row bootstrap over pooled
+  OOF rows is stored in the same JSON as a **secondary,
+  anti-conservative** interval — rows cluster by DTM — and is not
+  used as a headline anywhere in this paper); per-row OOF
+  predictions for all 117 rows are stored in that JSON.)
+
+- **D1 redesign — leak-free dual-run re-evaluation (2026-09-09,
+  regenerated in place 2026-09-10 after the skeptic repair)**: the
+  v2 split above was random over rows, which leaks twice — 161
+  SUPERSEDED duplicate rows of the same physical feature could span
+  train/test, and rows from the same DTM (spatially autocorrelated
+  terrain) could span both. The D1 evaluation
+  (`data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`;
+  registry md5 `a60fb52152e33f37e9052434ad026a6e`) excludes all
+  SUPERSEDED duplicates (117 active rows: 15 positives / 102
+  unlabeled), groups folds by DTM (leave-one-DTM-out, 21 folds),
+  fits median imputation and StandardScaler on training folds only
+  (closing the second leak), and keeps the v2 estimator and
+  hyperparameters unchanged (no retuning). **Headline = run B**,
+  which additionally removes the four notes-derived annotation
+  flags (`has_terrain_extrap`, `has_deep_pit_low_vesselness`,
+  `has_funnel_risk`, `has_12km_FP` — partial DTM-identity /
+  human-FP-adjudication proxies), leaving 15 morphometric features.
+  **Run A** (19 features) is retained as a diagnostic upper bound:
+  pooled OOF F1 0.824 / AUC 0.927 with **decisions identical to
+  run B at the 0.5 threshold (0/117 rows differ)** — the flags were
+  NOT load-bearing for the decision set, so the ablation is a
+  robustness result, not a metric change (they did deform the raw
+  score scale; see the I14 note below). Uncertainty is quantified
+  by DTM-level **cluster bootstrap** (21 DTM clusters resampled
+  with replacement, 1000 draws, seed 42): run-B F1 95% CI
+  **[0.35, 0.98]**, AUC **[0.49, 1.00]** — wide, with lower bounds
+  near chance; the row bootstrap over pooled OOF rows is kept in
+  the JSON as a secondary, anti-conservative interval only (rows
+  cluster by DTM) and is not quoted as a headline. Recall is
+  reported as a recovered count: **14/15 positives**. **Leave-
+  INGENIIPIT-out** (10 of the 15 positives live in that fold): F1
+  0.571, precision 0.444, recall 0.800 (4/5), AUC 0.790 — the
+  pooled numbers are dominated by the INGENIIPIT fold and degrade
+  away from it. **Named failure mode**: MARIUSPIT01 r001 (the only
+  positive in its fold) is the lowest-scoring positive in both
+  runs — OOF score ~2.2×10⁻⁷² (run B; 2.7×10⁻⁶⁴ run A), fold ROC
+  AUC 0.000 — the **pre-registered I14 funnel failure recurring in
+  the PU layer** (pits incised into rilles spill sideways at the
+  fill-to-spill reference, so morphometry ranks the Marius Hills
+  pit below its rille-context neighbours; §4.4). **Threshold
+  sensitivity** (run B, pooled OOF): F1 0.824 @ t=0.5 / 0.839 @
+  t=1.0 / 0.846 @ t=1.5. One fold (INGENIIPIT held out, 5 training
+  positives) required the pre-registered feasibility retry of
+  pulearn's internal hold-out draw (random_state ladder 42→43 at
+  hold_out_ratio 0.1, both runs; recorded per fold in the JSON);
+  its test F1 is 1.000 — stated factually, with no claim that it
+  sits inside any CI width (it does not: 1.0 exceeds the
+  cluster-bootstrap F1 upper bound of 0.98). Honest reading: the
+  random split overstated precision; under leakage-corrected
+  evaluation with cluster-level uncertainty, the PU ranking is
+  promising but consistent with chance at the CI lower bounds — a
+  small-n feasibility result (15 positives), not classifier
+  validation.
+- **Top-5 features by |coef|** (verbatim, v2 JSON
+  `top_5_features_by_abs_coef` — random-split coefficients retained
+  for provenance; the D1 v4 JSON records run-A per-fold and run-B
+  mean LODO coefficients in `logistic_coefficients`):
   1. `log_sag_amp_m` (+1.392)
   2. `has_12km_FP` (−0.734)
   3. `log_sag_x_score` (+0.672)
@@ -351,22 +448,28 @@ deferred WP3 scope, not this paper.
   FP family). `has_12km_FP` and `sag_per_span` pull toward unlabeled
   — the TRANQPIT1 12-km FPs and the deep-pit low-vesselness cluster
   behave correctly under the model.
-- **Claim-discipline framing** (verbatim from JSON `claim_discipline`):
+- **Claim-discipline framing** (verbatim from the D1 v4 JSON
+  `claim_discipline`):
   > "PU-learning produces a RANKING of inferred void candidates, NOT
-  > a detection. The 34 positives are a defensible proxy for
-  > catalogued-pit local-max hits; the 244 unlabeled are ML-detected
-  > sags whose true nature is unknown. Calibrated inference only."
-- **Why the ranking helps**: ranks 244 unlabeled ML-detected sags by
-  their estimated P(catalogued-pit-like); the top of the rank
-  identifies the candidates most worth visual-inspecting first. This
+  > detections. The positives are a proxy for catalogued-pit local-max
+  > hits; unlabeled rows are ML-detected sags of unknown nature.
+  > Metrics estimate agreement with that proxy on held-out DTMs; run B
+  > removes annotation-derived identity proxies and is the only
+  > defensible generalisation estimate reported here. Calibrated
+  > inference only."
+- **Why the ranking helps**: ranks the 102 active unlabeled
+  ML-detected sags (244 registry-wide before superseded-duplicate
+  exclusion) by their estimated P(catalogued-pit-like); the top of
+  the rank identifies the candidates most worth visual-inspecting
+  first. This
   is the missing tier-A-prep layer that the v5 master plan §9 I10
   discipline requires.
 - **Caveats**: (a) positive-class definition is a **proxy**, not
-  ground truth; (b) the held-out 85 rows are not a held-out mare
+  ground truth; (b) the held-out DTM folds are not a held-out mare
   basin (master plan §9 "One entire mare basin held out untouched
   until final evaluation" is not yet implementable at N=21); (c) the
-  ranking is monotonic on the v2 feature set, not a calibrated
-  posterior — conformal-prediction coverage (master plan §9) is
+  ranking is monotonic on the run-B (15-feature) set, not a
+  calibrated posterior — conformal-prediction coverage (master plan §9) is
   deferred.
 
 ### 3.4 Cross-body MGC3 transfer (sketch only; gated on rental)
@@ -386,7 +489,7 @@ deferred WP3 scope, not this paper.
   > remains the G1 path; DL pretraining on free Colab/Kaggle GPU
   > tiers stays an option if needed, still $0."
 - **Why deferred in this paper**: at N=21 DTMs / 278 rows / 34
-  positives the MGC3 transfer would produce non-interpretable
+  registry-wide positives the MGC3 transfer would produce non-interpretable
   deltas. The PU-learning baseline (§3.3) is the same Mars→Moon
   cross-body lesson learned at the feature-engineering level
   (the MGC3 skylight morphology proxy flows through the `span_m`,
@@ -500,8 +603,14 @@ deferred WP3 scope, not this paper.
 
 ### 4.2 PU-learning baseline vs extended (v1 → v2)
 
-- **Headline**: F1 0.857 → **0.909**; AUC 0.897 → **0.931**
-  (5 → 19 features); wall time **0.04 s**; held-out 85 rows.
+- **Headline**: v1 F1 0.857 → v2 F1 0.909; AUC 0.897 → 0.931
+  (5 → 19 features) — all on a random row split, **leak-inflated**
+  (duplicate features and shared DTMs could span train/test); the
+  D1 leak-free re-evaluation (run B, 15 morphometric features)
+  gives pooled OOF **F1 0.824 [cluster-bootstrap 0.35, 0.98] /
+  AUC 0.930 [0.49, 1.00]** over 117 active rows (§3.3); the
+  19-feature diagnostic run (A) yields identical 0.5-threshold
+  decisions (0/117 differ); wall time **0.04 s** (v2 run).
 - **Per-feature importance** (full table from JSON
   `all_feature_coefficients`, 19 rows; descending |coef|):
 
@@ -539,7 +648,8 @@ deferred WP3 scope, not this paper.
     unlabeled
   - `log_sag_x_score` (+0.67) — high score × log-sag synergy
     identifies the genuine void-candidate shape
-- **Ranking use**: rank the 244 unlabeled ML-detected sags by
+- **Ranking use**: rank the 244 registry-wide unlabeled ML-detected
+  sags (102 active after superseded-duplicate exclusion) by
   predicted P(positive); the top-K is the visual-inspection short-
   list. PU-baseline provides a principled, frozen, reproducible
   short-list ordering for the I10 inspection discipline (§4.3).
@@ -585,7 +695,8 @@ deferred WP3 scope, not this paper.
   *captured* (the per-cluster labels are missing). This is honest
   and required by the v5 §9 mandatory reporting.
 - **Suggested inspection-short-list from PU baseline** (the new
-  contribution): use §4.2 to rank the 244 unlabeled sags; the top-K
+  contribution): use §4.2 to rank the 244 registry-wide unlabeled
+  sags (102 active); the top-K
   becomes the I10 inspection short-list for the next visual-
   inspection round. Concrete proposal: top-20 from the PU ranking
   → 20 short-listed candidates → user-driven LROC QuickMap walk-
@@ -720,9 +831,15 @@ deferred WP3 scope, not this paper.
   is **calibration-context only**, NOT a survey rate, NOT a
   random-mare estimate. The selection bias toward catalogued pits
   is preserved (all 21 on-disk DTMs are pit-associated or pit-rich).
-- **The PU baseline ranks 244 unlabeled sags** with a defensible
-  positive-class proxy (the 34 catalogued-pit rank-1 + ring-artefact
-  rows); F1 0.909 / AUC 0.931 on the held-out 85 rows.
+- **The PU baseline ranks the unlabeled sags** with a defensible
+  positive-class proxy (catalogued-pit rank-1 + ring-artefact rows);
+  leak-free leave-one-DTM-out pooled OOF **F1 0.824
+  [cluster-bootstrap 0.35, 0.98] / AUC 0.930 [0.49, 1.00]** over
+  117 active rows, run B with the four annotation-derived flags
+  removed (supersedes the leak-inflated random-split F1 0.909 /
+  AUC 0.931; §3.3) — promising, but consistent with chance at the
+  CI lower bounds: a small-n feasibility result (15 positives),
+  not classifier validation.
 - **No claim of detection**. Tranquillitatis remains the only
   instrumented subsurface evidence on the Moon (Carrer 2024; v5).
 - **Honest per-DTM headline**: TRANQPIT1 240.41 [49.58, 702.58]
@@ -738,10 +855,15 @@ deferred WP3 scope, not this paper.
   requires Kaguya/SP/Chang'e DTMs (deferred) or a much larger NAC
   DTM pool (Tier-1 rental deferred).
 - **PU-learning positives are local-max proxies**, not ground
-  truth. The 34 positives = 7 catalogued-pit-DTMS rank-1 + 24
-  INGENIIPIT ring-artefact + 3 other rank-1 catalogued-pit hits.
-  A held-out mare basin is not implementable at N=21 DTMs (master
-  plan §9 requirement).
+  truth. The v2 registry-wide positive set (34 positives = 7
+  catalogued-pit-DTMS rank-1 + 24 INGENIIPIT ring-artefact + 3
+  other rank-1 catalogued-pit hits). A held-out mare basin is not
+  implementable at N=21 DTMs (master plan §9 requirement). Under
+  the D1 leak-free evaluation the active set carries only 15
+  positives (10 concentrated in the INGENIIPIT fold): the PU
+  metrics are a feasibility estimate with wide DTM-cluster-
+  bootstrap CIs (F1 0.35–0.98, AUC 0.49–1.00; lower bounds near
+  chance), not a production-classifier benchmark.
 - **MGC3 / multi-evidence stacking deferred** (§3.4 / §3.5): the
   cross-body and the multi-evidence claims require Cycles 3–5 close
   + Tier-1 rental + Cycles 1–2 of WP3 (multi-illumination azimuth
@@ -776,8 +898,10 @@ deferred WP3 scope, not this paper.
   labels with Martian HiRISE and synthetic implanted-pit
   augmentation; **reports detection F1** on a label set that
   includes the ~281 catalogued pits (Wagner & Robinson 2021).
-- LUNARVOID Paper 2 headline: **F1 0.909 is a RANKING F1 on
-  inferred-void candidates**, not a detection F1; positives are
+- LUNARVOID Paper 2 headline: **F1 0.824 (run B, leak-free LODO;
+  §3.3) is
+  a RANKING F1 on inferred-void candidates**, not a detection F1;
+  positives are
   local-max proxies, negatives are unlabeled sags, no detection
   claim is made.
 - **Both are valid framings; they answer different questions**:
@@ -795,7 +919,8 @@ deferred WP3 scope, not this paper.
 - **Convergent finding**: the catalogued pits are the right
   positive class; the FP family (12-km FPs, deep-pit low-
   vesselness, central-peak-relief) is the right negative class;
-  the model discriminates them with F1 0.909. **Diverge** on
+  the model discriminates them with leak-free LODO F1 0.824
+  [cluster-bootstrap 0.35, 0.98] (§3.3). **Diverge** on
   interpretation: ESSA claims detection; LUNARVOID claims ranking.
 - **Master plan R8 verbatim** (line 592–593):
   > "Prior-art collision with ESSA — cite early, position as
@@ -815,7 +940,14 @@ deferred WP3 scope, not this paper.
   - Paper 2 closes **G2**: 278 tier-C morphometry rows (45 above-
     floor; 14 above-floor inferred void candidates); aggregate FP
     3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km² (calibration-
-    context, NOT survey); PU-learning baseline F1 0.909 / AUC 0.931.
+    context, NOT survey); PU-learning baseline run B (15
+    morphometric features; four annotation-derived flags removed;
+    decisions identical to the 19-feature diagnostic run) leak-free
+    leave-one-DTM-out pooled OOF F1 0.824 [DTM-cluster-bootstrap
+    95% CI 0.35, 0.98] / AUC 0.930 [0.49, 1.00], 14/15 positives
+    recovered (117 active rows; 161 superseded duplicates
+    excluded) — lower CI bounds near chance: a small-n feasibility
+    result (15 positives), not classifier validation.
   - The I10 inspection discipline + I14 funnel-pit disqualifier
     protect against the two pre-registered failure modes (the v5
     §9 "unlabelled candidate" class; the v5 I14 rille-intersection
@@ -879,13 +1011,24 @@ The authors declare no competing interests.
 - **LROC NAC DTMs**: PDS public domain; fetched by product ID
   only (never mirrored in the repo; per AGENTS.md / data
   discipline).
-- **PU-learning v2 baseline** (this paper's primary new artifact):
+- **PU-learning v2 baseline** (superseded evaluation; retained for
+  provenance — its random split was leak-inflated):
   `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
   (commit forthcoming); train script at
   `code/wp5_fusion/pu_learning_extended.py`; reproducible from
   the registry + random_state=42. (A6 fix 2026-09-04: the earlier
   `pu_learning_baseline_v2.py` reference did not exist; the v2
   baseline is `pu_learning_extended.py`.)
+- **PU-learning D1 leak-free group-split evaluation** (the paper's
+  canonical PU metrics): `data/outputs/wp5_fusion/
+  pu_learning_groupsplit_2026-09-09.json` — 117 active rows (161
+  SUPERSEDED duplicates excluded), 21 leave-one-DTM-out folds,
+  dual-run ablation (run B 15-feature headline / run A 19-feature
+  diagnostic), per-row out-of-fold predictions, DTM-cluster-
+  bootstrap (headline) and row-bootstrap (secondary) 95% CIs,
+  leave-INGENIIPIT-out summaries, and threshold sensitivity stored
+  inside; registry md5 `a60fb52152e33f37e9052434ad026a6e`
+  recorded in the JSON.
 - **G2 transfer summary** (re-used from Paper 1 v1.0): frozen
   calibration at `data/outputs/wp2_sag/transfer/calibration_transqpit1.json`
   (md5 `2597002375206aba3119c240c373ad62` unchanged); transfer
