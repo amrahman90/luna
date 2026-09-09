@@ -1,14 +1,18 @@
 {
   "date": "2026-09-10",
-  "version": "v4_groupsplit_dualrun (D1-repair)",
-  "supersedes": "v3_groupsplit (D1) in this same file \u2014 regenerated in place per the D1 skeptic verdict (3 HIGH + 2 MED objections)",
-  "purpose": "Leak-free, ablated PU-learning evaluation: feature-deduplicated (SUPERSEDED excluded), DTM-grouped out-of-fold, run A (FULL, 19 features, diagnostic upper bound) vs run B (MORPH, 15 features, notes-derived annotation flags removed \u2014 HEADLINE), DTM-level cluster bootstrap CIs, leave-INGENIIPIT-out summaries, named failure modes. Same model, same labels as v2 \u2014 evaluation design and feature-set honesty are the only changes. No retuning.",
+  "version": "v5_groupsplit_triplerun (D1-LOW repair, F20)",
+  "supersedes": "v4_groupsplit_dualrun (D1-repair) in this same file \u2014 regenerated in place to close the two skeptic LOW residuals (F20). Run A and run B numbers are UNCHANGED from the committed 596a74f8 artifact (regression-checked); v5 only ADDS the run-C sensitivity row and the explicit degenerate-draw rule.",
+  "purpose": "Leak-free, ablated PU-learning evaluation: feature-deduplicated (SUPERSEDED excluded), DTM-grouped out-of-fold, run A (FULL, 19 features, diagnostic upper bound) vs run B (MORPH, 15 features, notes-derived annotation flags removed \u2014 HEADLINE) vs run C (run B minus rung_cm, 14 features \u2014 SENSITIVITY ROW ONLY), DTM-level cluster bootstrap CIs with an explicit degenerate-draw rule, leave-INGENIIPIT-out summaries, named failure modes. Same model, same labels as v2 \u2014 evaluation design and feature-set honesty are the only changes. No retuning.",
   "skeptic_objections_addressed": {
     "O1_annotation_identity_proxies": "Dual-run ablation (A FULL vs B MORPH); 4 notes-derived flags dropped in B; remaining 15 audited; run-A logistic coefficients recorded per fold.",
     "O2_row_bootstrap_anti_conservative": "DTM-level cluster bootstrap (21 clusters, 1000 draws, seed 42) is the HEADLINE CI for both runs; row bootstrap kept as secondary without recall.",
     "O3_INGENIIPIT_dependence_and_I14": "Leave-INGENIIPIT-out summary rows for both runs; known_failure_modes names MARIUSPIT01 r001 as the pre-registered I14 funnel failure recurring in the PU layer.",
     "O4_recall_ci_decorative": "Recall reported as 'k/15 recovered' + cluster-bootstrap interval; row-bootstrap recall CI dropped.",
     "O5_threshold_and_prose": "Threshold sensitivity 0.5/1.0/1.5 for run B; retry stated factually, no 'inside CI width' claims."
+  },
+  "skeptic_low_residuals_addressed_F20": {
+    "L1_rung_cm_identity_carrier": "Run C = run B minus rung_cm (14 features) added as a SENSITIVITY ROW ONLY; headline remains run B. Reports pooled OOF metrics + cluster-bootstrap CIs (21 clusters, 1000 draws, seed 42), the MARIUSPIT01-r001 I14 score in B and C, and the decision-flip count vs B at t=0.5. Per-rung row/DTM counts backing the identity claim are recorded in feature_sets.run_C_MORPH_no_rung_sensitivity.rung_identity_evidence.",
+    "L2_degenerate_draw_rule_implicit": "The exact degenerate-resample rule (discard-and-count on zero TRUE positives / zero TRUE unlabeled; zero PREDICTED-positive draws retained via zero_division=0) is now documented at method.cluster_bootstrap.degenerate_draw_rule with per-run discarded-draw counts in method.cluster_bootstrap.n_discarded_draws. The v4 implementation was ALREADY discard-and-count; documenting it changed no number (published B CIs reproduced bit-identically, delta 0.000 <= 0.005)."
   },
   "registry": {
     "n_rows_total": 278,
@@ -37,6 +41,19 @@
     "scaler": "StandardScaler fit on train fold only",
     "estimator": "ElkanotoPuClassifier(LogisticRegression(C=1.0, max_iter=1000, random_state=42), hold_out_ratio ladder 0.10/0.07/0.05/0.03/0.02, random_state=42) \u2014 IDENTICAL to v2, not retuned, used UNMODIFIED for both run A (19 features) and run B (15 features). No retuning accompanied the ablation. Feasibility-only retry: when a fold's train positives are too few for pulearn's hold-out draw at seed 42 (INGENIIPIT-held-out fold), the internal RNG draw is retried across random_state 42->81 \u2014 the seed ladder range(42, 82), 40 consecutive seeds at each hold_out_ratio \u2014 with the same configuration; the seed actually used is recorded per fold. Selection never touches test folds. (Retry outcomes are stated factually per fold; no CI-width claims are made.)",
     "decision_threshold": 0.5,
+    "cluster_bootstrap": {
+      "design": "DTM-level cluster bootstrap: 21 DTM clusters resampled with replacement, 1000 draws, seed 42, percentile 95% CI (HEADLINE). Secondary row bootstrap: same draw count and seed over pooled OOF rows.",
+      "degenerate_draw_rule": "A bootstrap draw is DEGENERATE iff the resample contains zero TRUE positives or zero TRUE unlabeled rows (ROC AUC is undefined without both classes; F1/precision/recall would be vacuous). Degenerate draws are DISCARDED (skipped \u2014 NOT redrawn, NOT coerced to a metric value), counted per run in n_degenerate_draws_skipped, and the percentile CI is computed over the retained draws only. Draws with zero PREDICTED positives are NOT degenerate: sklearn's zero_division=0 defines F1/precision/recall as 0.0 there and such draws are RETAINED with their 0-valued contributions (AUC is unaffected \u2014 it ignores predictions). The identical rule applies to the secondary row bootstrap. Discarding-instead-of-redrawing is deliberate: redrawing would consume extra RNG values and change every downstream draw of the seeded stream. This rule was already the v4 behaviour; making it explicit changed nothing (published CIs bit-identical, delta 0.000 <= 0.005 tolerance).",
+      "n_discarded_draws": {
+        "run_A_cluster": 1,
+        "run_A_row_secondary": 0,
+        "run_B_cluster": 1,
+        "run_B_row_secondary": 0,
+        "run_C_cluster": 1,
+        "run_C_row_secondary": 0
+      },
+      "note": "Degenerate draws are DROPPED from the CI, not redrawn (redrawing would consume extra values from the seeded RNG stream and change every subsequent draw). With positives in 6/21 DTMs, P(a 21-cluster draw misses all 6) is small but nonzero \u2014 hence the occasional 1 discarded draw per 1000."
+    },
     "note_on_k": "Only 2 ACTIVE DTMs contain both classes (positives concentrate in INGENIIPIT: 10 of 15; positives in 6 of 21 DTMs). The dispatch rule k=min(5, both-class DTMs) yields k=2, but the deterministic GroupKFold(k=2) split puts 14/15 positives in one half \u2014 the other fold trains with 1 positive, which makes Elkanoto's internal hold-out mathematically infeasible. Fell back to leave-one-DTM-out (worst train fold: 5 positives when INGENIIPIT is held out). This is the eval-design consequence of positive-label concentration, reported as part of the D1 finding."
   },
   "label_definition": "positive \u2190 (dtm \u2208 CATALOGUED_PIT_DTMS AND candidate_id matches '-r001') OR (notes contain 'ring artifact'); AND NOT below-local-floor",
@@ -143,7 +160,89 @@
         "n_confusion_keys_present": "count of parsed keys in the automated confusion field (2 for 115/117 rows); automated, not human annotation; kept"
       }
     },
-    "leak_guard": "registry_io.assert_no_leak passed on the full 19-feature list AND the run-B 15-feature subset",
+    "run_C_MORPH_no_rung_sensitivity": {
+      "n_features": 14,
+      "features": [
+        "span_m",
+        "sag_amp_m",
+        "score",
+        "conf_dist_rille_m",
+        "conf_dist_chain_m",
+        "log_span_m",
+        "log_sag_amp_m",
+        "log_score",
+        "log_conf_dist_rille_m",
+        "log_conf_dist_chain_m",
+        "sag_per_span",
+        "log_sag_x_score",
+        "is_single_method_morphometry",
+        "n_confusion_keys_present"
+      ],
+      "role": "SENSITIVITY ROW ONLY (D1-LOW F20): run B minus rung_cm. The HEADLINE REMAINS RUN B. Reported in runs.run_C_MORPH_no_rung_sensitivity.",
+      "dropped_features": {
+        "rung_cm": "D1-LOW residual (F20): rung_cm is parsed from candidate_id and is the only KEPT run-B feature the skeptic flagged as a residual identity carrier \u2014 rung 500 occurs only in TRANQPIT1 and rung 800 only in MARIUSPIT01, so those two values uniquely identify their DTMs on <=8/117 rows. Dropped HERE ONLY (run C, 14 features) as an ablation-sensitivity row; KEPT in run B, where it is audited as a genuine shared measurement parameter (200/400 rungs span the other 19 DTMs)."
+      },
+      "rung_identity_evidence": {
+        "200cm": {
+          "n_rows": 74,
+          "n_dtms": 13,
+          "unique_to_one_dtm": false,
+          "dtms": [
+            "FECNDITATS2",
+            "FRESHMELT",
+            "FRESHMELT1",
+            "INGENIIPIT",
+            "KINGCRATER2",
+            "KINGCRATER3",
+            "KINGCRATER4",
+            "SWFECUNPIT1",
+            "TYCHOPK",
+            "TYCHOPK02",
+            "TYCHOPK03",
+            "TYCHOPK04",
+            "TYCHOPK07"
+          ]
+        },
+        "400cm": {
+          "n_rows": 37,
+          "n_dtms": 14,
+          "unique_to_one_dtm": false,
+          "dtms": [
+            "FECUNPIT",
+            "FRESHMELT",
+            "GRUITHMARE2",
+            "GRUITHUIS17",
+            "INGENIIPIT",
+            "IRIDIUMPIT1",
+            "KINGCRATER2",
+            "KINGCRATER4",
+            "MARIUSCONE",
+            "MARIUSPIT01",
+            "PRCLRMPIT01",
+            "TYCHOPK02",
+            "TYCHOPK03",
+            "TYCHOPK07"
+          ]
+        },
+        "500cm": {
+          "n_rows": 3,
+          "n_dtms": 1,
+          "unique_to_one_dtm": true,
+          "dtms": [
+            "TRANQPIT1"
+          ]
+        },
+        "800cm": {
+          "n_rows": 3,
+          "n_dtms": 1,
+          "unique_to_one_dtm": true,
+          "dtms": [
+            "MARIUSPIT01"
+          ]
+        }
+      }
+    },
+    "leak_guard": "registry_io.assert_no_leak passed on the full 19-feature list, the run-B 15-feature subset, AND the run-C 14-feature subset",
     "excluded_leak_features_note": "dtm/lon/lat/ring-artifact/below-floor/rank excluded as in v2 (see pu_learning_registry_baseline_v2.json feature_audit)"
   },
   "runs": {
@@ -3837,6 +3936,1838 @@
           }
         ]
       }
+    },
+    "run_C_MORPH_no_rung_sensitivity": {
+      "n_features": 14,
+      "features": [
+        "span_m",
+        "sag_amp_m",
+        "score",
+        "conf_dist_rille_m",
+        "conf_dist_chain_m",
+        "log_span_m",
+        "log_sag_amp_m",
+        "log_score",
+        "log_conf_dist_rille_m",
+        "log_conf_dist_chain_m",
+        "sag_per_span",
+        "log_sag_x_score",
+        "is_single_method_morphometry",
+        "n_confusion_keys_present"
+      ],
+      "folds": [
+        {
+          "fold": 0,
+          "test_dtms": [
+            "FECNDITATS2"
+          ],
+          "n_train": 116,
+          "n_train_pos": 14,
+          "n_test": 1,
+          "n_test_pos": 1,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 1,
+          "test_dtms": [
+            "FECUNPIT"
+          ],
+          "n_train": 114,
+          "n_train_pos": 15,
+          "n_test": 3,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 2,
+          "test_dtms": [
+            "FRESHMELT"
+          ],
+          "n_train": 103,
+          "n_train_pos": 15,
+          "n_test": 14,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 3,
+          "test_dtms": [
+            "FRESHMELT1"
+          ],
+          "n_train": 112,
+          "n_train_pos": 15,
+          "n_test": 5,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 4,
+          "test_dtms": [
+            "GRUITHMARE2"
+          ],
+          "n_train": 112,
+          "n_train_pos": 15,
+          "n_test": 5,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 5,
+          "test_dtms": [
+            "GRUITHUIS17"
+          ],
+          "n_train": 114,
+          "n_train_pos": 15,
+          "n_test": 3,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 6,
+          "test_dtms": [
+            "INGENIIPIT"
+          ],
+          "n_train": 107,
+          "n_train_pos": 5,
+          "n_test": 10,
+          "n_test_pos": 10,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 43,
+          "feasibility_retry": true,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": NaN,
+          "fit_warnings": [
+            "hold_out_ratio=0.1, pu_rs=42 failed: No positive examples found in the hold-out set. Cannot estimate p(s=1|y=1,x). Try reducing hold_out_ratio or using more positive examples."
+          ]
+        },
+        {
+          "fold": 7,
+          "test_dtms": [
+            "IRIDIUMPIT1"
+          ],
+          "n_train": 116,
+          "n_train_pos": 15,
+          "n_test": 1,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 8,
+          "test_dtms": [
+            "KINGCRATER2"
+          ],
+          "n_train": 108,
+          "n_train_pos": 15,
+          "n_test": 9,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 9,
+          "test_dtms": [
+            "KINGCRATER3"
+          ],
+          "n_train": 116,
+          "n_train_pos": 15,
+          "n_test": 1,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 10,
+          "test_dtms": [
+            "KINGCRATER4"
+          ],
+          "n_train": 114,
+          "n_train_pos": 15,
+          "n_test": 3,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 11,
+          "test_dtms": [
+            "MARIUSCONE"
+          ],
+          "n_train": 116,
+          "n_train_pos": 15,
+          "n_test": 1,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 12,
+          "test_dtms": [
+            "MARIUSPIT01"
+          ],
+          "n_train": 112,
+          "n_train_pos": 14,
+          "n_test": 5,
+          "n_test_pos": 1,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": 0.0,
+          "fit_warnings": []
+        },
+        {
+          "fold": 13,
+          "test_dtms": [
+            "PRCLRMPIT01"
+          ],
+          "n_train": 116,
+          "n_train_pos": 14,
+          "n_test": 1,
+          "n_test_pos": 1,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 14,
+          "test_dtms": [
+            "SWFECUNPIT1"
+          ],
+          "n_train": 116,
+          "n_train_pos": 14,
+          "n_test": 1,
+          "n_test_pos": 1,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 15,
+          "test_dtms": [
+            "TRANQPIT1"
+          ],
+          "n_train": 114,
+          "n_train_pos": 14,
+          "n_test": 3,
+          "n_test_pos": 1,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.5,
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "fit_warnings": []
+        },
+        {
+          "fold": 16,
+          "test_dtms": [
+            "TYCHOPK"
+          ],
+          "n_train": 116,
+          "n_train_pos": 15,
+          "n_test": 1,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 17,
+          "test_dtms": [
+            "TYCHOPK02"
+          ],
+          "n_train": 90,
+          "n_train_pos": 15,
+          "n_test": 27,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 18,
+          "test_dtms": [
+            "TYCHOPK03"
+          ],
+          "n_train": 113,
+          "n_train_pos": 15,
+          "n_test": 4,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 19,
+          "test_dtms": [
+            "TYCHOPK04"
+          ],
+          "n_train": 113,
+          "n_train_pos": 15,
+          "n_test": 4,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        },
+        {
+          "fold": 20,
+          "test_dtms": [
+            "TYCHOPK07"
+          ],
+          "n_train": 102,
+          "n_train_pos": 15,
+          "n_test": 15,
+          "n_test_pos": 0,
+          "hold_out_ratio_used": 0.1,
+          "pulearn_random_state_used": 42,
+          "feasibility_retry": false,
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "roc_auc": NaN,
+          "fit_warnings": []
+        }
+      ],
+      "pooled_oof": {
+        "n": 117,
+        "n_positives": 15,
+        "n_unlabeled": 102,
+        "f1": 0.8,
+        "precision": 0.7,
+        "recall": 0.9333333333333333,
+        "roc_auc": 0.9281045751633986,
+        "n_predicted_positive": 20,
+        "n_true_positives": 14
+      },
+      "leave_ingeniipit_out": {
+        "n": 107,
+        "n_positives": 5,
+        "n_unlabeled": 102,
+        "f1": 0.5333333333333333,
+        "precision": 0.4,
+        "recall": 0.8,
+        "roc_auc": 0.7843137254901961,
+        "n_predicted_positive": 10,
+        "n_true_positives": 4,
+        "excluded_fold": 6,
+        "excluded_dtm": "INGENIIPIT",
+        "note": "pooled OOF metrics with the INGENIIPIT test fold (fold 6, 10 of 15 positives) excluded \u2014 how the run performs away from the dominant positive DTM."
+      },
+      "bootstrap_cluster_HEADLINE": {
+        "n_resamples": 1000,
+        "seed": 42,
+        "method": "DTM-level cluster bootstrap: the 21 DTM clusters resampled with replacement; all rows of a drawn cluster enter the resample (with multiplicity); percentile 95% CI. HEADLINE CI (rows cluster by DTM; row bootstrap is anti-conservative).",
+        "n_clusters": 21,
+        "n_degenerate_draws_skipped": 1,
+        "f1_95ci": {
+          "low": 0.2850649350649351,
+          "high": 1.0
+        },
+        "precision_95ci": {
+          "low": 0.1875,
+          "high": 1.0
+        },
+        "recall_95ci": {
+          "low": 0.5,
+          "high": 1.0
+        },
+        "roc_auc_95ci": {
+          "low": 0.4864731283492014,
+          "high": 1.0
+        }
+      },
+      "bootstrap_row_secondary": {
+        "n_resamples": 1000,
+        "seed": 42,
+        "method": "percentile bootstrap over pooled out-of-fold ROWS \u2014 SECONDARY, reported for continuity with v3 only; anti-conservative because rows cluster by DTM. Use the cluster bootstrap as the headline. Recall CI deliberately omitted (objection 4).",
+        "n_degenerate_draws_skipped": 0,
+        "f1_95ci": {
+          "low": 0.6315037593984962,
+          "high": 0.9285714285714286
+        },
+        "precision_95ci": {
+          "low": 0.5,
+          "high": 0.9
+        },
+        "roc_auc_95ci": {
+          "low": 0.7647928994082843,
+          "high": 1.0
+        }
+      },
+      "logistic_coefficients": {
+        "space": "standardised feature space; wrapped LogisticRegression(C=1.0) fit by ElkanotoPuClassifier on its non-hold-out training subset (unlabeled=0, positive=1); positive coefficient -> pushes score UP for positives",
+        "mean_across_folds": {
+          "span_m": 0.9023227719272083,
+          "sag_amp_m": -0.4315213105802691,
+          "score": -0.11999849299847927,
+          "conf_dist_rille_m": -0.25318830129194475,
+          "conf_dist_chain_m": 0.2245790339470017,
+          "log_span_m": 0.5256465319029461,
+          "log_sag_amp_m": 1.284301207558566,
+          "log_score": 0.5448701263149756,
+          "log_conf_dist_rille_m": 0.34388387402878645,
+          "log_conf_dist_chain_m": -0.3659588600475649,
+          "sag_per_span": -0.6063474976524007,
+          "log_sag_x_score": 0.5210137872301819,
+          "is_single_method_morphometry": 0.0,
+          "n_confusion_keys_present": -0.26023729339496265
+        },
+        "per_fold": [
+          [
+            1.065249482539545,
+            -0.5172754279864018,
+            -0.05667934969344776,
+            -0.27269984979641027,
+            -0.037125459508719934,
+            0.8684162704958174,
+            1.0342540145657286,
+            0.6658794554594719,
+            0.5304490006516724,
+            -0.5052003863268576,
+            -0.5890558026638757,
+            0.6096336149732899,
+            0.0,
+            0.022688395214216717
+          ],
+          [
+            0.7302041110772508,
+            -0.024466136490813552,
+            0.278244726282167,
+            -0.2707216466356568,
+            0.2714944568746883,
+            0.21220197249750591,
+            1.514216598592317,
+            0.4127883193586165,
+            0.17883058486196998,
+            -0.156371335386949,
+            -0.700255252401301,
+            0.4426963475555689,
+            0.0,
+            -0.28462195422628195
+          ],
+          [
+            0.6123440185769301,
+            -0.645663907801356,
+            -0.1853404055079816,
+            -0.11473356958417719,
+            0.3130384531970641,
+            0.5130124112615195,
+            1.183880241090408,
+            0.8601200595861207,
+            0.28086685095388275,
+            -0.267060472832858,
+            -0.7548980128123253,
+            0.7778648787517904,
+            0.0,
+            -0.32523680535838323
+          ],
+          [
+            0.9935653120189456,
+            -0.5447728642971964,
+            -0.10304199588273663,
+            -0.2650575186462236,
+            0.3069169292962407,
+            0.5000644217117106,
+            1.3660019336506464,
+            0.5506861937228185,
+            0.40050578206572196,
+            -0.35674499612617594,
+            -0.600128671382683,
+            0.4792501693029231,
+            0.0,
+            -0.3223377750478242
+          ],
+          [
+            0.9914522271892765,
+            -0.5434698415930261,
+            -0.10170233857755491,
+            -0.2923299233467231,
+            0.31279285026971043,
+            0.4927035995561233,
+            1.357386360732211,
+            0.5468938894588139,
+            0.378292010300664,
+            -0.3713571554262917,
+            -0.5961664133011132,
+            0.4766694335700895,
+            0.0,
+            -0.32895844499673527
+          ],
+          [
+            0.9928666752488723,
+            -0.5456070976780608,
+            -0.10205790906126774,
+            -0.3016695483190564,
+            0.31190716679143377,
+            0.4894159700861223,
+            1.368506721296147,
+            0.5492853269731639,
+            0.3813947268113704,
+            -0.3661413008246358,
+            -0.595985256905372,
+            0.4777811486908927,
+            0.0,
+            -0.32821418608356406
+          ],
+          [
+            0.7243415339577615,
+            0.527048411954315,
+            -0.27667212861262314,
+            -0.13985321687053456,
+            -0.04135178618347098,
+            0.5568527292006447,
+            1.1514982005931909,
+            -0.1332105643780764,
+            0.19815569901749586,
+            -0.21786201118557244,
+            -0.37646427998395143,
+            0.18634281109957165,
+            0.0,
+            0.035679901211482644
+          ],
+          [
+            1.1053088200428787,
+            -0.4497496020268692,
+            -0.05775433403574319,
+            -0.2562450685588325,
+            -0.03577710213349797,
+            0.8301214688128385,
+            1.0216656968166333,
+            0.6237740172141134,
+            0.5541013374932677,
+            -0.5117537569678282,
+            -0.5649808049066284,
+            0.592557980848078,
+            0.0,
+            0.021925906806950356
+          ],
+          [
+            0.9518362566896034,
+            -0.5400327862616298,
+            -0.1054852315137806,
+            -0.29742593655704996,
+            0.3223092760294903,
+            0.5135617238131228,
+            1.3647316236553404,
+            0.550773914600778,
+            0.4029912380321869,
+            -0.37067291379444295,
+            -0.5807462359455348,
+            0.48485185726755897,
+            0.0,
+            -0.33843650322691765
+          ],
+          [
+            0.9935100669780459,
+            -0.5476148749264715,
+            -0.10062289885581256,
+            -0.2648319596967886,
+            0.30522957501529535,
+            0.48766038277586987,
+            1.3700581689220397,
+            0.5495150068539958,
+            0.3911552990680449,
+            -0.36068515980336857,
+            -0.5971850824571371,
+            0.4797045354626118,
+            0.0,
+            -0.32110498720624014
+          ],
+          [
+            0.9781953514783515,
+            -0.546815344376015,
+            -0.10190240393903043,
+            -0.29057613365712137,
+            0.31010812038294,
+            0.4932319009234088,
+            1.3709220480323006,
+            0.5509918858753757,
+            0.3911368397278151,
+            -0.3618545834283433,
+            -0.5938346524843361,
+            0.480675522378067,
+            0.0,
+            -0.32624094981814517
+          ],
+          [
+            0.9890343768668057,
+            -0.5472849419621045,
+            -0.09858806099085235,
+            -0.27963777413876345,
+            0.3061960471253088,
+            0.49180572847477655,
+            1.3604884217431867,
+            0.5454274776347646,
+            0.38130172286489544,
+            -0.3635971789797726,
+            -0.5940200364398752,
+            0.4752205216653418,
+            0.0,
+            -0.32229282904802126
+          ],
+          [
+            1.3303926069644478,
+            -0.3636887940994144,
+            0.007245224041236666,
+            -0.19406999985245588,
+            -0.4529750494813874,
+            0.8626015922333954,
+            0.6375587765529596,
+            0.5352352789785848,
+            0.09095452036522464,
+            -0.4868198719046368,
+            -0.42684224014500344,
+            0.4489782304119645,
+            0.0,
+            0.0
+          ],
+          [
+            0.9641673788827207,
+            -0.5497017200060363,
+            -0.10105532915375987,
+            -0.2542031196724366,
+            0.3058672196914965,
+            0.44852978103535457,
+            1.3599636493137137,
+            0.5510292669631288,
+            0.4040200444554648,
+            -0.3614312080410868,
+            -0.5893586604624595,
+            0.4729878466662641,
+            0.0,
+            -0.3213889148895023
+          ],
+          [
+            0.8948156923321996,
+            -0.5700553123734697,
+            -0.14682572026263252,
+            -0.21510211704679946,
+            0.324201841726386,
+            0.4417248935634205,
+            1.1596924804900592,
+            0.7238840267962585,
+            0.330431085527434,
+            -0.3295265331891853,
+            -0.6437404483644626,
+            0.6493957087807608,
+            0.0,
+            -0.33895053844272105
+          ],
+          [
+            0.43676571402125236,
+            0.26481376539553153,
+            -0.6692150840460881,
+            -0.21534809465761162,
+            0.34391052312360226,
+            0.32557676817093173,
+            1.5636638971485546,
+            0.21700261672537277,
+            0.17987181543157038,
+            -0.6114753252969929,
+            -0.6556852706114754,
+            0.6234080444562563,
+            0.0,
+            -0.3599202427722332
+          ],
+          [
+            0.9858061641985248,
+            -0.5463201302900176,
+            -0.09954731315994318,
+            -0.2774443275001827,
+            0.3057834049449507,
+            0.4955423636394756,
+            1.362174937732086,
+            0.5466316275660157,
+            0.384269203797577,
+            -0.362420451199145,
+            -0.5952844426156821,
+            0.47504531476409895,
+            0.0,
+            -0.3218858624481775
+          ],
+          [
+            0.6387298753185664,
+            -0.6304769220526291,
+            -0.10740771870439468,
+            -0.317434720536536,
+            0.29110879544605467,
+            0.5675122019809415,
+            1.4899073473827238,
+            0.6333275661808899,
+            0.33763682017419566,
+            -0.29768070037571254,
+            -0.711609159555896,
+            0.5642108938847851,
+            0.0,
+            -0.3059359302836793
+          ],
+          [
+            0.9860836243458183,
+            -0.5465900796703506,
+            -0.10273267497141783,
+            -0.29054131884086576,
+            0.31135001415983216,
+            0.4848904667139561,
+            1.3741614368642785,
+            0.5514326690272577,
+            0.3875905119526866,
+            -0.36403273197013275,
+            -0.6008519514470939,
+            0.48205335051816783,
+            0.0,
+            -0.3274362857436709
+          ],
+          [
+            0.9867594846542413,
+            -0.5465500897558963,
+            -0.10245907650107329,
+            -0.2918516125853259,
+            0.311131262381594,
+            0.47809906745138087,
+            1.3727795458466434,
+            0.5520533393293984,
+            0.3888534701024289,
+            -0.3682816687440456,
+            -0.6029054115224164,
+            0.48026821083995497,
+            0.0,
+            -0.32760920603849986
+          ],
+          [
+            0.5973494370893333,
+            -0.6476738258877388,
+            -0.18636832982132798,
+            -0.21517687063128818,
+            0.3300431737380234,
+            0.48505145556354956,
+            1.1868132577087225,
+            0.8587512786876219,
+            0.2487527909489458,
+            -0.29416631919482983,
+            -0.763299364291792,
+            0.7816931099457822,
+            0.0,
+            -0.3447059488962672
+          ]
+        ]
+      },
+      "oof_predictions_self_check": "PASS: 117 rows; F1 0.8000000000 / AUC 0.9281045752 match pooled to <=1e-9",
+      "oof_predictions": [
+        {
+          "candidate_id": "LV-FECNDITATS2-0200cm-r001",
+          "dtm": "FECNDITATS2",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 2.1334815472700708,
+          "fold": 0
+        },
+        {
+          "candidate_id": "LV-FECUNPIT-0400cm-r001",
+          "dtm": "FECUNPIT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 2.0513233187774977e-08,
+          "fold": 1
+        },
+        {
+          "candidate_id": "LV-FECUNPIT-0400cm-r002",
+          "dtm": "FECUNPIT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 1.786046879750477e-07,
+          "fold": 1
+        },
+        {
+          "candidate_id": "LV-FECUNPIT-0400cm-r003",
+          "dtm": "FECUNPIT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 1.3530983251452677e-12,
+          "fold": 1
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r001",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01096747057057129,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r002",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.018562535166589494,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r003",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.02170523657730554,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r004",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01094627439023647,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r005",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.015302426264240769,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r006",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.013829025669709552,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r007",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01554211848923953,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r008",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011662700687891082,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r009",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.012673666719574225,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0200cm-r010",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01056648063412566,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0400cm-r004",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.015568820172113735,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0400cm-r008",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.008384148984036327,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0400cm-r010",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.009875095719970849,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT-0400cm-r011",
+          "dtm": "FRESHMELT",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.013304662735671484,
+          "fold": 2
+        },
+        {
+          "candidate_id": "LV-FRESHMELT1-0200cm-r001",
+          "dtm": "FRESHMELT1",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.005317945358445129,
+          "fold": 3
+        },
+        {
+          "candidate_id": "LV-FRESHMELT1-0200cm-r002",
+          "dtm": "FRESHMELT1",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.012126347993518503,
+          "fold": 3
+        },
+        {
+          "candidate_id": "LV-FRESHMELT1-0200cm-r003",
+          "dtm": "FRESHMELT1",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.004123070795268348,
+          "fold": 3
+        },
+        {
+          "candidate_id": "LV-FRESHMELT1-0200cm-r004",
+          "dtm": "FRESHMELT1",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.008411328478527127,
+          "fold": 3
+        },
+        {
+          "candidate_id": "LV-FRESHMELT1-0200cm-r005",
+          "dtm": "FRESHMELT1",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011972090746043034,
+          "fold": 3
+        },
+        {
+          "candidate_id": "LV-GRUITHMARE2-0400cm-r001",
+          "dtm": "GRUITHMARE2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0029012699487702223,
+          "fold": 4
+        },
+        {
+          "candidate_id": "LV-GRUITHMARE2-0400cm-r002",
+          "dtm": "GRUITHMARE2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.002331177365160732,
+          "fold": 4
+        },
+        {
+          "candidate_id": "LV-GRUITHMARE2-0400cm-r003",
+          "dtm": "GRUITHMARE2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.002002919092779778,
+          "fold": 4
+        },
+        {
+          "candidate_id": "LV-GRUITHMARE2-0400cm-r004",
+          "dtm": "GRUITHMARE2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.03517581896814792,
+          "fold": 4
+        },
+        {
+          "candidate_id": "LV-GRUITHMARE2-0400cm-r005",
+          "dtm": "GRUITHMARE2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0023852118469868152,
+          "fold": 4
+        },
+        {
+          "candidate_id": "LV-GRUITHUIS17-0400cm-r001",
+          "dtm": "GRUITHUIS17",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0014248949118633757,
+          "fold": 5
+        },
+        {
+          "candidate_id": "LV-GRUITHUIS17-0400cm-r002",
+          "dtm": "GRUITHUIS17",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0014219855485562837,
+          "fold": 5
+        },
+        {
+          "candidate_id": "LV-GRUITHUIS17-0400cm-r003",
+          "dtm": "GRUITHUIS17",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0019608011040865236,
+          "fold": 5
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r001",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 233.698910402644,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r002",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 226.03125071506733,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r003",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 135.4392298606751,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r004",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 108.34908400745368,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r005",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 115.0968425426687,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r006",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 67.04502026439773,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r007",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 54.65220377529655,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0200cm-r008",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 80.95674020190853,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0400cm-r003",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 225.48738837990592,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-INGENIIPIT-0400cm-r006",
+          "dtm": "INGENIIPIT",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 73.66575655406776,
+          "fold": 6
+        },
+        {
+          "candidate_id": "LV-IRIDIUMPIT1-0400cm-r001",
+          "dtm": "IRIDIUMPIT1",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 1.3990195969884707,
+          "fold": 7
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0200cm-r001",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0011825603374825554,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r001",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0006749967258602978,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r002",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0019042810815547307,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r003",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0005732159779884338,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r004",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0011516951780396955,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r005",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0007944571771608575,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r006",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.001426226704153559,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r007",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0020518114265903765,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER2-0400cm-r008",
+          "dtm": "KINGCRATER2",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0009353425869534351,
+          "fold": 8
+        },
+        {
+          "candidate_id": "LV-KINGCRATER3-0200cm-r001",
+          "dtm": "KINGCRATER3",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.00575428977178663,
+          "fold": 9
+        },
+        {
+          "candidate_id": "LV-KINGCRATER4-0200cm-r001",
+          "dtm": "KINGCRATER4",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0016722191318293588,
+          "fold": 10
+        },
+        {
+          "candidate_id": "LV-KINGCRATER4-0400cm-r001",
+          "dtm": "KINGCRATER4",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0013514982994929498,
+          "fold": 10
+        },
+        {
+          "candidate_id": "LV-KINGCRATER4-0400cm-r002",
+          "dtm": "KINGCRATER4",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0005651077640597478,
+          "fold": 10
+        },
+        {
+          "candidate_id": "LV-MARIUSCONE-0400cm-r001",
+          "dtm": "MARIUSCONE",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0026946189442209286,
+          "fold": 11
+        },
+        {
+          "candidate_id": "LV-MARIUSPIT01-0400cm-r001",
+          "dtm": "MARIUSPIT01",
+          "y_true": 1,
+          "y_pred": 0,
+          "score": 5.659599945003489e-73,
+          "fold": 12
+        },
+        {
+          "candidate_id": "LV-MARIUSPIT01-0400cm-r002",
+          "dtm": "MARIUSPIT01",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 4.829000856198734e-72,
+          "fold": 12
+        },
+        {
+          "candidate_id": "LV-MARIUSPIT01-0800cm-r001",
+          "dtm": "MARIUSPIT01",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 0.8776702509857809,
+          "fold": 12
+        },
+        {
+          "candidate_id": "LV-MARIUSPIT01-0800cm-r003",
+          "dtm": "MARIUSPIT01",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 0.7126745536596846,
+          "fold": 12
+        },
+        {
+          "candidate_id": "LV-MARIUSPIT01-0800cm-r004",
+          "dtm": "MARIUSPIT01",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 0.7510540075562387,
+          "fold": 12
+        },
+        {
+          "candidate_id": "LV-PRCLRMPIT01-0400cm-r001",
+          "dtm": "PRCLRMPIT01",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 1.190889229744504,
+          "fold": 13
+        },
+        {
+          "candidate_id": "LV-SWFECUNPIT1-0200cm-r001",
+          "dtm": "SWFECUNPIT1",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 0.6587759743776315,
+          "fold": 14
+        },
+        {
+          "candidate_id": "LV-TRANQPIT1-0500cm-r001",
+          "dtm": "TRANQPIT1",
+          "y_true": 1,
+          "y_pred": 1,
+          "score": 1.0782785397089227,
+          "fold": 15
+        },
+        {
+          "candidate_id": "LV-TRANQPIT1-0500cm-r002",
+          "dtm": "TRANQPIT1",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 1.05443121086447,
+          "fold": 15
+        },
+        {
+          "candidate_id": "LV-TRANQPIT1-0500cm-r004",
+          "dtm": "TRANQPIT1",
+          "y_true": 0,
+          "y_pred": 1,
+          "score": 1.0689602436453274,
+          "fold": 15
+        },
+        {
+          "candidate_id": "LV-TYCHOPK-0200cm-r001",
+          "dtm": "TYCHOPK",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0041552058755577395,
+          "fold": 16
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r001",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.02030430778251921,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r002",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.02572455758440491,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r003",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.018556421920988626,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r004",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.014353182936259428,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r005",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.012348442021711184,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r006",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.015117343047267189,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r007",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011451533749166035,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r008",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.010010346935012147,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r009",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.00968998802152675,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r010",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.010948788352181002,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r011",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.007533477573274346,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r012",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011754843164191403,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r013",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.009335826999951786,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r014",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.00869618210906099,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r015",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.012500681917859585,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r016",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.008040709937104547,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r017",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.012072894438397345,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r018",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.016308516107538407,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r019",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011023676945909186,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r020",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0118661205991418,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r021",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011683416189581797,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r022",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01245901599675783,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r023",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0060302917124476964,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0200cm-r024",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.007944263411960679,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0400cm-r007",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011216424884539434,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0400cm-r022",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.010214042575983712,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK02-0400cm-r026",
+          "dtm": "TYCHOPK02",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.013551793351444595,
+          "fold": 17
+        },
+        {
+          "candidate_id": "LV-TYCHOPK03-0200cm-r001",
+          "dtm": "TYCHOPK03",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.003331247939979677,
+          "fold": 18
+        },
+        {
+          "candidate_id": "LV-TYCHOPK03-0200cm-r002",
+          "dtm": "TYCHOPK03",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0039994642763972596,
+          "fold": 18
+        },
+        {
+          "candidate_id": "LV-TYCHOPK03-0200cm-r003",
+          "dtm": "TYCHOPK03",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.001093248411002098,
+          "fold": 18
+        },
+        {
+          "candidate_id": "LV-TYCHOPK03-0400cm-r002",
+          "dtm": "TYCHOPK03",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.004439762955646739,
+          "fold": 18
+        },
+        {
+          "candidate_id": "LV-TYCHOPK04-0200cm-r001",
+          "dtm": "TYCHOPK04",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0068258547544880165,
+          "fold": 19
+        },
+        {
+          "candidate_id": "LV-TYCHOPK04-0200cm-r002",
+          "dtm": "TYCHOPK04",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0054543752351303475,
+          "fold": 19
+        },
+        {
+          "candidate_id": "LV-TYCHOPK04-0200cm-r003",
+          "dtm": "TYCHOPK04",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.006782202443339853,
+          "fold": 19
+        },
+        {
+          "candidate_id": "LV-TYCHOPK04-0200cm-r004",
+          "dtm": "TYCHOPK04",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0033086179408797515,
+          "fold": 19
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r001",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01116405475680531,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r002",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.004313344544831931,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r003",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.010917934210382625,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r004",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.011435828042626113,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r005",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.010750279253155526,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r006",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.01056907233627487,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r007",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.006655564510401044,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r008",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.009964920166866658,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r009",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0031250456056695205,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r010",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.007325239873083032,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r011",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.008388081326478208,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r012",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.00687115461835239,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r013",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0075415900974483,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0200cm-r014",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.0075512572785348415,
+          "fold": 20
+        },
+        {
+          "candidate_id": "LV-TYCHOPK07-0400cm-r006",
+          "dtm": "TYCHOPK07",
+          "y_true": 0,
+          "y_pred": 0,
+          "score": 0.009836663685804478,
+          "fold": 20
+        }
+      ],
+      "role": "SENSITIVITY ROW ONLY \u2014 run B minus rung_cm (14 features), answering the D1-LOW F20 residual that rung_cm is a residual identity carrier (rung 500 only in TRANQPIT1, rung 800 only in MARIUSPIT01). The HEADLINE REMAINS RUN B; this block exists to show how much of run B depends on that one feature.",
+      "comparison_vs_run_B": {
+        "n_differing_predictions_at_0.5": 5,
+        "flipped_rows": [
+          {
+            "candidate_id": "LV-MARIUSPIT01-0800cm-r001",
+            "dtm": "MARIUSPIT01",
+            "y_true": 0,
+            "pred_B": 0,
+            "pred_C": 1,
+            "score_B": 0.04330030676422407,
+            "score_C": 0.8776702509857809
+          },
+          {
+            "candidate_id": "LV-MARIUSPIT01-0800cm-r003",
+            "dtm": "MARIUSPIT01",
+            "y_true": 0,
+            "pred_B": 0,
+            "pred_C": 1,
+            "score_B": 0.02463077289420447,
+            "score_C": 0.7126745536596846
+          },
+          {
+            "candidate_id": "LV-MARIUSPIT01-0800cm-r004",
+            "dtm": "MARIUSPIT01",
+            "y_true": 0,
+            "pred_B": 0,
+            "pred_C": 1,
+            "score_B": 0.0553329765712153,
+            "score_C": 0.7510540075562387
+          },
+          {
+            "candidate_id": "LV-FECUNPIT-0400cm-r001",
+            "dtm": "FECUNPIT",
+            "y_true": 0,
+            "pred_B": 1,
+            "pred_C": 0,
+            "score_B": 0.9357282940383123,
+            "score_C": 2.0513233187774977e-08
+          },
+          {
+            "candidate_id": "LV-FECUNPIT-0400cm-r002",
+            "dtm": "FECUNPIT",
+            "y_true": 0,
+            "pred_B": 1,
+            "pred_C": 0,
+            "score_B": 0.9417618507418503,
+            "score_C": 1.786046879750477e-07
+          }
+        ],
+        "mariuspit01_r001_I14": {
+          "candidate_id": "LV-MARIUSPIT01-0400cm-r001",
+          "score_run_B": 2.171983189536244e-72,
+          "score_run_C": 5.659599945003489e-73,
+          "score_magnitude_regime_unchanged": true,
+          "y_pred_run_B": 0,
+          "y_pred_run_C": 0,
+          "rank_among_15_positives_run_B": 0,
+          "rank_among_15_positives_run_C": 0,
+          "verdict": "I14 funnel failure RECURS in run C: score 5.660e-73 (vs 2.172e-72 in B), rank 1/15 among positives by score (B: rank 1/15), decision stays negative at t=0.5."
+        },
+        "delta_pooled_C_minus_B": {
+          "f1": -0.023529,
+          "precision": -0.036842,
+          "recall": 0.0,
+          "roc_auc": -0.001961
+        },
+        "note": "Removing rung_cm changed the raw score scale but 5/117 pooled decisions at t=0.5 vs run B. Read alongside run_B's own numbers \u2014 run B stays canonical."
+      }
     }
   },
   "run_A_vs_run_B": {
@@ -3856,7 +5787,7 @@
   "known_failure_modes": [
     {
       "id": "I14_funnel_failure_in_PU_layer",
-      "what": "MARIUSPIT01 r001 (the catalogued Marius Hills pit, the only positive in its fold) is the LOWEST-scoring positive in both runs: OOF score 2.731e-64 (run A) / 2.172e-72 (run B); fold ROC AUC 0.000 (all unlabeled rows in the fold rank above the pit).",
+      "what": "MARIUSPIT01 r001 (the catalogued Marius Hills pit, the only positive in its fold) is the LOWEST-scoring positive in both runs: OOF score 2.731e-64 (run A) / 2.172e-72 (run B); fold ROC AUC 0.000 (all unlabeled rows in the fold rank above the pit). It does NOT move in the run-C rung_cm ablation: 5.660e-73, still rank 1/15 among positives, still negative at t=0.5.",
       "diagnosis": "This is the pre-registered I14 funnel failure recurring in the PU layer: pits incised into rilles (Marius Hills) spill sideways at the fill-to-spill reference, so morphometry ranks the pit below its rille-context neighbours. Pre-registered in the v5 master plan (I14 funnel prediction); a FINDING, not a bug."
     },
     {
@@ -3909,7 +5840,7 @@
     "n_candidate_groups_checked": 117,
     "n_superseded_children_fold_inherited": 161,
     "registry_md5_recorded": true,
-    "applies_to_both_runs": "Both runs share the identical LODO fold assignment (asserted); the leak guards therefore cover run A and run B alike.",
+    "applies_to_all_runs": "All three runs (A FULL, B MORPH, C MORPH-no-rung) share the identical LODO fold assignment (asserted); the leak guards therefore cover every run alike.",
     "detail": "Every SUPERSEDED row inherits the fold of its ACTIVE primary (superseded_by=); each group has exactly one distinct fold. SUPERSEDED rows are additionally excluded from train/test entirely (duplicates by construction)."
   },
   "seed": 42,

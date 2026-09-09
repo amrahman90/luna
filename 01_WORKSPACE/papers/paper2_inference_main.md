@@ -149,7 +149,7 @@ conditions. Their status as of 2026-08-28:
 | T2 | N ≥ 30 tier-B candidates | **NOT MET** — tier-B count collapsed 3 → 0 after the skeptic Cycle-1 downgrade of the I14 funnel rule (`notes/findings.md` 2026-08-22; **A=0 / B=0 / C=278**); tier-B promotion requires two-independent-methods agreement (master plan §9) and we have only Z2 morphometry active at 21/21 + thermal at 2/7 (per the 2026-08-22 P4.3 review, "INCONCLUSIVE at N=7 due to 4/7 equatorial coverage gap") + photometric (P4.2) deferred. |
 | T3 | Cycles 3–5 closed (NAC EDR + ASP stereo + quality gate) | **NOT MET** — PDS NAC_EDR / NAC_CDR / browse 404 on every endpoint (2026-08-23 environment block); Hetzner Tier-1 rental ($55/mo, D2 trigger APPROVED 2026-08-22 but rental not yet authorised; $150 ceiling preserved, **$0 spent to date**) would close these but is gated on user approval. |
 | T4 | Multi-evidence stacking at ≥2 evidence legs at ≥5 candidates | **NOT MET** — multi-evidence stacking is deferred to Paper 3 (WP3 scope; v5 master plan §8 WP3 line 493–506); only morphometry is active site-wide; thermal at 2/7 INCONCLUSIVE; photometric deferred (P4.2); GRAIL gravity not active (P3.1a Phase-3 floor logging only; l_max=680 subset v0.1 was never integrated into the registry). |
-| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v4 dual-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969. |
+| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v5 triple-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969. |
 | **(implicit)** | G2 FINAL-PASSED | **PARTIAL** — `notes/findings.md` line 794 verbatim: "**G2' status:** FINAL-PASSED 2026-08-28 (already flipped in earlier 'complete all' session; user's 'pass g2' instruction served as explicit confirmation). Row 10 PARTIAL honest state preserved verbatim. Final-pass does NOT depend on per-candidate verdicts; the verdict text already documents the catalogued-pits-only framing honestly." |
 
 **Honest framing**: Paper 2 ships the WP2 deliverable + the PU-learning
@@ -312,7 +312,7 @@ deferred WP3 scope, not this paper.
 - **Sources**: `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
   (273 lines; generated 2026-08-28; v1/v2 history, random split,
   leak-inflated) and `data/outputs/wp5_fusion/
-  pu_learning_groupsplit_2026-09-09.json` (the D1 v4 dual-run
+  pu_learning_groupsplit_2026-09-09.json` (the D1 v5 triple-run
   leak-free evaluation; registry md5 `a60fb52152e33f37e9052434ad
   026a6e`; canonical for every v3-column number below).
 - **Feature matrix** (verbatim from JSON `feature_audit` block):
@@ -349,7 +349,7 @@ deferred WP3 scope, not this paper.
   - sklearn warnings: `[]`
 - **Metrics** (v1/v2 verbatim from the v2 JSON `metrics` block —
   both from a random row split and therefore **leak-inflated**;
-  v3 = the D1 leak-free re-evaluation, v4 dual-run, pooled
+  v3 = the D1 leak-free re-evaluation, v5 triple-run, pooled
   out-of-fold (OOF); **run B (15 morphometric features, four
   annotation-derived flags removed) is the headline**; run A
   (19 features, flags retained) is a diagnostic upper bound;
@@ -381,7 +381,7 @@ deferred WP3 scope, not this paper.
   used as a headline anywhere in this paper); per-row OOF
   predictions for all 117 rows are stored in that JSON.)
 
-- **D1 redesign — leak-free dual-run re-evaluation (2026-09-09,
+- **D1 redesign — leak-free triple-run re-evaluation (2026-09-09,
   regenerated in place 2026-09-10 after the skeptic repair)**: the
   v2 split above was random over rows, which leaks twice — 161
   SUPERSEDED duplicate rows of the same physical feature could span
@@ -403,13 +403,30 @@ deferred WP3 scope, not this paper.
   run B at the 0.5 threshold (0/117 rows differ)** — the flags were
   NOT load-bearing for the decision set, so the ablation is a
   robustness result, not a metric change (they did deform the raw
-  score scale; see the I14 note below). Uncertainty is quantified
+  score scale; see the I14 note below). **Run C (rung-ablation
+  sensitivity)**, added in the v5 regeneration of the same JSON to
+  close the residual that `rung_cm` is the last identity-flagged
+  feature (rung 500 exists only on TRANQPIT1, rung 800 only on
+  MARIUSPIT01), removes `rung_cm` from run B (14 features): pooled
+  OOF F1 0.800 / precision 0.700 / recall 0.933 (14/15) / AUC
+  0.928, cluster-bootstrap CI F1 [0.285, 1.000] / AUC [0.486,
+  1.000]. Only 5/117 decisions flip vs run B at t=0.5 — 3 of them
+  the MARIUSPIT01 800-cm rows themselves (the rung value exists
+  only on that DTM; the other 2 are FECUNPIT 400-cm rows turning
+  negative) — and the I14 failure (MARIUSPIT01 r001) does not move
+  (rank 1/15 by score and predicted negative in both runs); **run B
+  remains the headline**. Uncertainty is quantified
   by DTM-level **cluster bootstrap** (21 DTM clusters resampled
   with replacement, 1000 draws, seed 42): run-B F1 95% CI
   **[0.35, 0.98]**, AUC **[0.49, 1.00]** — wide, with lower bounds
   near chance; the row bootstrap over pooled OOF rows is kept in
   the JSON as a secondary, anti-conservative interval only (rows
-  cluster by DTM) and is not quoted as a headline. Recall is
+  cluster by DTM) and is not quoted as a headline. Degenerate
+  cluster-bootstrap draws — resamples containing zero true
+  positives or zero unlabeled rows (ROC AUC undefined without both
+  classes) — are discarded and counted, not redrawn (1/1000 draws
+  per run); draws with zero *predicted* positives are retained,
+  with F1/precision scored under `zero_division=0`. Recall is
   reported as a recovered count: **14/15 positives**. **Leave-
   INGENIIPIT-out** (10 of the 15 positives live in that fold): F1
   0.571, precision 0.444, recall 0.800 (4/5), AUC 0.790 — the
@@ -436,7 +453,7 @@ deferred WP3 scope, not this paper.
   validation.
 - **Top-5 features by |coef|** (verbatim, v2 JSON
   `top_5_features_by_abs_coef` — random-split coefficients retained
-  for provenance; the D1 v4 JSON records run-A per-fold and run-B
+  for provenance; the D1 v5 JSON records run-A per-fold and run-B
   mean LODO coefficients in `logistic_coefficients`):
   1. `log_sag_amp_m` (+1.392)
   2. `has_12km_FP` (−0.734)
@@ -1023,8 +1040,9 @@ The authors declare no competing interests.
   canonical PU metrics): `data/outputs/wp5_fusion/
   pu_learning_groupsplit_2026-09-09.json` — 117 active rows (161
   SUPERSEDED duplicates excluded), 21 leave-one-DTM-out folds,
-  dual-run ablation (run B 15-feature headline / run A 19-feature
-  diagnostic), per-row out-of-fold predictions, DTM-cluster-
+  triple-run ablation (run B 15-feature headline / run A 19-feature
+  diagnostic upper bound / run C 14-feature rung-ablation
+  sensitivity), per-row out-of-fold predictions, DTM-cluster-
   bootstrap (headline) and row-bootstrap (secondary) 95% CIs,
   leave-INGENIIPIT-out summaries, and threshold sensitivity stored
   inside; registry md5 `a60fb52152e33f37e9052434ad026a6e`

@@ -39,9 +39,31 @@ v4 (D1-repair, 2026-09-10) — answers the 5 skeptic objections (3 HIGH,
       row-bootstrap recall CI language dropped entirely.
   O5 (MED) threshold + prose: threshold sensitivity (F1/precision/recall
       at score thresholds 0.5/1.0/1.5) added for the run-B headline; all
-      retry prose is factual — this artifact makes NO claim that
-      retry-fold metrics stay inside any CI width (they do not: the
-      INGENIIPIT fold's test F1 is 1.0).
+       retry prose is factual — this artifact makes NO claim that
+       retry-fold metrics stay inside any CI width (they do not: the
+       INGENIIPIT fold's test F1 is 1.0).
+
+v5 (D1-LOW, 2026-09-10) — closes the two skeptic LOW residuals (F20)
+on the v4 artifact IN PLACE, without touching any run-A/run-B number
+(regression-checked against the committed 596a74f8 JSON):
+
+  L1 rung_cm ablation sensitivity: rung_cm is the only kept run-B
+      feature the skeptic flagged as a residual identity carrier
+      (rung 500 occurs only in TRANQPIT1, rung 800 only in
+      MARIUSPIT01). Run C = run B minus rung_cm (14 features) is
+      added as a SENSITIVITY ROW ONLY — run B REMAINS THE HEADLINE.
+      Run C reports pooled OOF F1/precision/recall/AUC + cluster-
+      bootstrap CIs (same protocol: 21 clusters, 1000 draws, seed 42),
+      the MARIUSPIT01-r001 (I14) score in both runs, its rank among
+      positives, and the decision-flip count vs run B at t=0.5.
+  L2 degenerate-resample rule made explicit: the cluster bootstrap
+      occasionally draws a resample with zero positives or zero
+      unlabeled rows; v4 already skipped-and-counted these
+      (n_degenerate_draws_skipped). The EXACT rule is now documented
+      at method.cluster_bootstrap.degenerate_draw_rule with per-run
+      discarded-draw counts. The IMPLEMENTATION IS UNCHANGED
+      (discard-and-count, not redraw, not coerce) so every published
+      CI is reproduced bit-identically (delta 0 <= 0.005 tolerance).
 
 Determinism: seed 42 everywhere; no wall time in the JSON (console
 only); the two oof_predictions arrays are self-checked against the
@@ -169,6 +191,49 @@ KEPT_FEATURE_AUDIT: dict[str, str] = {
 }
 
 logger = logging.getLogger("pu_groupsplit")
+
+# --- D1-LOW (F20) residual 1: run-C sensitivity feature-set definition ------
+# rung_cm is the ONLY kept run-B feature the skeptic flagged as a residual
+# identity carrier. Run C = run B minus rung_cm (14 features) is a
+# SENSITIVITY ROW ONLY; the headline remains run B (rungs are genuine
+# measurement parameters shared across the other 19 DTMs). The per-rung
+# row/DTM counts backing the identity claim are recomputed each run and
+# stored in the JSON (feature_sets.run_C_MORPH_no_rung_sensitivity.
+# rung_identity_evidence) — evidence, not prose.
+DROPPED_RUNG_FLAG: dict[str, str] = {
+    "rung_cm": (
+        "D1-LOW residual (F20): rung_cm is parsed from candidate_id and "
+        "is the only KEPT run-B feature the skeptic flagged as a residual "
+        "identity carrier — rung 500 occurs only in TRANQPIT1 and rung 800 "
+        "only in MARIUSPIT01, so those two values uniquely identify their "
+        "DTMs on <=8/117 rows. Dropped HERE ONLY (run C, 14 features) as "
+        "an ablation-sensitivity row; KEPT in run B, where it is audited "
+        "as a genuine shared measurement parameter (200/400 rungs span "
+        "the other 19 DTMs)."
+    ),
+}
+
+# --- D1-LOW (F20) residual 2: EXPLICIT degenerate-draw rule -----------------
+# This documents the v4 (and v5) implementation VERBATIM. The code in
+# cluster_bootstrap / row_bootstrap_secondary is UNCHANGED — documenting
+# the rule alters no number; all v4 CIs are reproduced bit-identically.
+DEGENERATE_DRAW_RULE = (
+    "A bootstrap draw is DEGENERATE iff the resample contains zero TRUE "
+    "positives or zero TRUE unlabeled rows (ROC AUC is undefined without "
+    "both classes; F1/precision/recall would be vacuous). Degenerate draws "
+    "are DISCARDED (skipped — NOT redrawn, NOT coerced to a metric value), "
+    "counted per run in n_degenerate_draws_skipped, and the percentile CI "
+    "is computed over the retained draws only. Draws with zero PREDICTED "
+    "positives are NOT degenerate: sklearn's zero_division=0 defines "
+    "F1/precision/recall as 0.0 there and such draws are RETAINED with "
+    "their 0-valued contributions (AUC is unaffected — it ignores "
+    "predictions). The identical rule applies to the secondary row "
+    "bootstrap. Discarding-instead-of-redrawing is deliberate: redrawing "
+    "would consume extra RNG values and change every downstream draw of "
+    "the seeded stream. This rule was already the v4 behaviour; making it "
+    "explicit changed nothing (published CIs bit-identical, delta 0.000 "
+    "<= 0.005 tolerance)."
+)
 
 
 # ---------------------------------------------------------------------------
@@ -668,6 +733,26 @@ def main() -> int:
     assert len(morph_feature_names) == len(full_feature_names) - 4
     assert_no_leak(morph_feature_names)
 
+    # --- D1-LOW L1: run C = run B minus rung_cm (sensitivity row only) ----
+    run_c_feature_names = [f for f in morph_feature_names if f != "rung_cm"]
+    assert len(run_c_feature_names) == len(morph_feature_names) - 1 == 14
+    assert_no_leak(run_c_feature_names)
+
+    # Rung identity-carrier evidence (recomputed, stored in the JSON): for
+    # each rung value, how many rows carry it and in how many DTMs it
+    # occurs. A rung occurring in exactly 1 DTM uniquely identifies that
+    # DTM on those rows (the skeptic's residual identity claim).
+    rung_parsed = active["candidate_id"].str.extract(r"-(\d{3,4})cm-")[0]
+    rung_evidence = {}
+    for rung in sorted(pd.unique(rung_parsed.dropna())):
+        m = (rung_parsed == rung).to_numpy()
+        rung_evidence[f"{int(rung)}cm"] = {
+            "n_rows": int(m.sum()),
+            "n_dtms": int(pd.unique(groups[m]).size),
+            "unique_to_one_dtm": bool(pd.unique(groups[m]).size == 1),
+            "dtms": sorted(pd.unique(groups[m]).tolist()),
+        }
+
     # --- Objection-1 evidence: recompute the proxy stats on ACTIVE rows --
     notes_lower = active["notes"].str.lower()
     proxy_evidence = {}
@@ -686,12 +771,14 @@ def main() -> int:
             ),
         }
 
-    # ---------------- Cross-fit BOTH feature sets ------------------------
+    # ---------------- Cross-fit the feature sets ------------------------
     res_a = cross_fit(active, y, folds, list(full_feature_names))
     res_b = cross_fit(active, y, folds, morph_feature_names)
+    res_c = cross_fit(active, y, folds, run_c_feature_names)
     # Same folds => identical fold assignment across runs (assert; the
-    # leak asserts below are run once and cover both runs).
+    # leak asserts below are run once and cover all three runs).
     assert np.array_equal(res_a["fold_of_row"], res_b["fold_of_row"])
+    assert np.array_equal(res_a["fold_of_row"], res_c["fold_of_row"])
 
     dtm_fold: dict[str, int] = {}
     for fold_i, (_, te_idx) in enumerate(folds):
@@ -739,9 +826,10 @@ def main() -> int:
         "n_candidate_groups_checked": len(group_folds),
         "n_superseded_children_fold_inherited": len(sup_target_by_row),
         "registry_md5_recorded": True,
-        "applies_to_both_runs": (
-            "Both runs share the identical LODO fold assignment (asserted); "
-            "the leak guards therefore cover run A and run B alike."
+        "applies_to_all_runs": (
+            "All three runs (A FULL, B MORPH, C MORPH-no-rung) share the "
+            "identical LODO fold assignment (asserted); the leak guards "
+            "therefore cover every run alike."
         ),
         "detail": (
             "Every SUPERSEDED row inherits the fold of its ACTIVE primary "
@@ -753,6 +841,14 @@ def main() -> int:
 
     # ---------------- Per-run assembly + self-checks ----------------
     ingeniipit_fold = dtm_fold[INGENIIPIT]
+
+    def _score_of(cid_sub: str, res: dict) -> float:
+        i = int(
+            active.index[
+                active["candidate_id"].str.contains(cid_sub, regex=False)
+            ][0]
+        )
+        return float(res["oof_score"][i])
 
     def assemble_run(res: dict, feature_names: list[str]) -> dict:
         s, p = res["oof_score"], res["oof_pred"]
@@ -817,6 +913,7 @@ def main() -> int:
     run_b["threshold_sensitivity"] = threshold_sensitivity(
         y, res_b["oof_score"]
     )
+    run_c = assemble_run(res_c, run_c_feature_names)
 
     # --- A-vs-B decision/score comparison (computed, not asserted) -------
     diff_pred = int((res_a["oof_pred"] != res_b["oof_pred"]).sum())
@@ -848,20 +945,93 @@ def main() -> int:
         ),
     }
 
-    # ---------------- Known failure modes (objection 3) ------------------
-    def _score_of(cid_sub: str, res: dict) -> float:
-        i = int(
-            active.index[
-                active["candidate_id"].str.contains(cid_sub, regex=False)
-            ][0]
-        )
-        return float(res["oof_score"][i])
-
+    # --- MARIUSPIT01 r001 (I14) scores, shared by the blocks below --------
     marius_fold = next(
         r for r in run_a["folds"] if "MARIUSPIT01" in r["test_dtms"]
     )
     marius_score_a = _score_of("LV-MARIUSPIT01-0400cm-r001", res_a)
     marius_score_b = _score_of("LV-MARIUSPIT01-0400cm-r001", res_b)
+
+    # --- D1-LOW (F20) L1: run C vs run B comparison (sensitivity row) ----
+    MARIUS_CID = "LV-MARIUSPIT01-0400cm-r001"
+    marius_score_c = _score_of(MARIUS_CID, res_c)
+    marius_row_i = int(
+        active.index[active["candidate_id"] == MARIUS_CID][0]
+    )
+    pos_rows = np.flatnonzero(y == 1)
+    # Rank among the 15 positives, ascending by OOF score (0 = lowest).
+    marius_rank_b = int(
+        (res_b["oof_score"][pos_rows] < res_b["oof_score"][marius_row_i]).sum()
+    )
+    marius_rank_c = int(
+        (res_c["oof_score"][pos_rows] < res_c["oof_score"][marius_row_i]).sum()
+    )
+    diff_pred_cb = int((res_b["oof_pred"] != res_c["oof_pred"]).sum())
+    flip_mask = res_b["oof_pred"] != res_c["oof_pred"]
+    flipped_rows_cb = [
+        {
+            "candidate_id": str(active["candidate_id"].iloc[i]),
+            "dtm": str(active["dtm"].iloc[i]),
+            "y_true": int(y[i]),
+            "pred_B": int(res_b["oof_pred"][i]),
+            "pred_C": int(res_c["oof_pred"][i]),
+            "score_B": float(res_b["oof_score"][i]),
+            "score_C": float(res_c["oof_score"][i]),
+        }
+        for i in np.flatnonzero(flip_mask)
+    ]
+    metrics4_cb = ("f1", "precision", "recall", "roc_auc")
+    delta_cb = {
+        m: round(
+            run_c["pooled_oof"][m] - run_b["pooled_oof"][m], 6
+        )
+        for m in metrics4_cb
+    }
+    run_c["role"] = (
+        "SENSITIVITY ROW ONLY — run B minus rung_cm (14 features), "
+        "answering the D1-LOW F20 residual that rung_cm is a residual "
+        "identity carrier (rung 500 only in TRANQPIT1, rung 800 only in "
+        "MARIUSPIT01). The HEADLINE REMAINS RUN B; this block exists to "
+        "show how much of run B depends on that one feature."
+    )
+    run_c["comparison_vs_run_B"] = {
+        "n_differing_predictions_at_0.5": diff_pred_cb,
+        "flipped_rows": flipped_rows_cb,
+        "mariuspit01_r001_I14": {
+            "candidate_id": MARIUS_CID,
+            "score_run_B": marius_score_b,
+            "score_run_C": marius_score_c,
+            "score_magnitude_regime_unchanged": bool(
+                (marius_score_b < 0.5) and (marius_score_c < 0.5)
+            ),
+            "y_pred_run_B": int(res_b["oof_pred"][marius_row_i]),
+            "y_pred_run_C": int(res_c["oof_pred"][marius_row_i]),
+            "rank_among_15_positives_run_B": marius_rank_b,
+            "rank_among_15_positives_run_C": marius_rank_c,
+            "verdict": (
+                f"I14 funnel failure RECURS in run C: score "
+                f"{marius_score_c:.3e} (vs {marius_score_b:.3e} in B), "
+                f"rank {marius_rank_c + 1}/15 among positives by score "
+                f"(B: rank {marius_rank_b + 1}/15), decision stays "
+                "negative at t=0.5."
+                if (marius_score_c < 0.5 and marius_rank_c == marius_rank_b)
+                else (
+                    f"score {marius_score_c:.3e} (vs {marius_score_b:.3e} "
+                    f"in B), rank {marius_rank_c + 1}/15 (B: "
+                    f"{marius_rank_b + 1}/15), pred_C="
+                    f"{int(res_c['oof_pred'][marius_row_i])}."
+                )
+            ),
+        },
+        "delta_pooled_C_minus_B": delta_cb,
+        "note": (
+            f"Removing rung_cm changed the raw score scale but "
+            f"{diff_pred_cb}/117 pooled decisions at t=0.5 vs run B. "
+            "Read alongside run_B's own numbers — run B stays canonical."
+        ),
+    }
+
+    # ---------------- Known failure modes (objection 3) ------------------
     ing_folds_a = next(r for r in run_a["folds"] if r["fold"] == ingeniipit_fold)
     ing_folds_b = next(r for r in run_b["folds"] if r["fold"] == ingeniipit_fold)
     known_failure_modes = [
@@ -873,7 +1043,18 @@ def main() -> int:
                 f"in both runs: OOF score {marius_score_a:.3e} (run A) / "
                 f"{marius_score_b:.3e} (run B); fold ROC AUC "
                 f"{marius_fold['roc_auc']:.3f} (all unlabeled rows in the "
-                "fold rank above the pit)."
+                "fold rank above the pit). It does NOT move in the run-C "
+                f"rung_cm ablation: {marius_score_c:.3e}, still rank "
+                f"{marius_rank_c + 1}/15 among positives, still negative "
+                "at t=0.5."
+                if marius_rank_c == 0 and marius_score_c < 0.5
+                else (
+                    "MARIUSPIT01 r001 OOF scores: "
+                    f"{marius_score_a:.3e} (run A) / {marius_score_b:.3e} "
+                    f"(run B) / {marius_score_c:.3e} (run C, no rung_cm; "
+                    f"rank {marius_rank_c + 1}/15); fold ROC AUC "
+                    f"{marius_fold['roc_auc']:.3f}."
+                )
             ),
             "diagnosis": (
                 "This is the pre-registered I14 funnel failure recurring in "
@@ -1013,6 +1194,55 @@ def main() -> int:
             "stated factually per fold; no CI-width claims are made.)"
         ),
         "decision_threshold": 0.5,
+        "cluster_bootstrap": {
+            "design": (
+                f"DTM-level cluster bootstrap: {n_groups} DTM clusters "
+                f"resampled with replacement, {N_BOOTSTRAP} draws, seed "
+                f"{SEED}, percentile 95% CI (HEADLINE). Secondary row "
+                "bootstrap: same draw count and seed over pooled OOF rows."
+            ),
+            "degenerate_draw_rule": DEGENERATE_DRAW_RULE,
+            "n_discarded_draws": {
+                "run_A_cluster": int(
+                    run_a["bootstrap_cluster_HEADLINE"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+                "run_A_row_secondary": int(
+                    run_a["bootstrap_row_secondary"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+                "run_B_cluster": int(
+                    run_b["bootstrap_cluster_HEADLINE"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+                "run_B_row_secondary": int(
+                    run_b["bootstrap_row_secondary"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+                "run_C_cluster": int(
+                    run_c["bootstrap_cluster_HEADLINE"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+                "run_C_row_secondary": int(
+                    run_c["bootstrap_row_secondary"][
+                        "n_degenerate_draws_skipped"
+                    ]
+                ),
+            },
+            "note": (
+                "Degenerate draws are DROPPED from the CI, not redrawn "
+                "(redrawing would consume extra values from the seeded RNG "
+                "stream and change every subsequent draw). With positives "
+                "in 6/21 DTMs, P(a 21-cluster draw misses all 6) is small "
+                "but nonzero — hence the occasional 1 discarded draw per "
+                "1000."
+            ),
+        },
         "note_on_k": (
             "Only 2 ACTIVE DTMs contain both classes (positives concentrate "
             "in INGENIIPIT: 10 of 15; positives in 6 of 21 DTMs). The "
@@ -1045,9 +1275,20 @@ def main() -> int:
             "dropped_features": DROPPED_ANNOTATION_FLAGS,
             "audit_of_kept_features": KEPT_FEATURE_AUDIT,
         },
+        "run_C_MORPH_no_rung_sensitivity": {
+            "n_features": len(run_c_feature_names),
+            "features": list(run_c_feature_names),
+            "role": (
+                "SENSITIVITY ROW ONLY (D1-LOW F20): run B minus rung_cm. "
+                "The HEADLINE REMAINS RUN B. Reported in "
+                "runs.run_C_MORPH_no_rung_sensitivity."
+            ),
+            "dropped_features": DROPPED_RUNG_FLAG,
+            "rung_identity_evidence": rung_evidence,
+        },
         "leak_guard": (
-            "registry_io.assert_no_leak passed on the full 19-feature list "
-            "AND the run-B 15-feature subset"
+            "registry_io.assert_no_leak passed on the full 19-feature list, "
+            "the run-B 15-feature subset, AND the run-C 14-feature subset"
         ),
         "excluded_leak_features_note": (
             "dtm/lon/lat/ring-artifact/below-floor/rank excluded as in "
@@ -1057,20 +1298,26 @@ def main() -> int:
 
     out = {
         "date": str(date.today()),
-        "version": "v4_groupsplit_dualrun (D1-repair)",
+        "version": "v5_groupsplit_triplerun (D1-LOW repair, F20)",
         "supersedes": (
-            "v3_groupsplit (D1) in this same file — regenerated in place "
-            "per the D1 skeptic verdict (3 HIGH + 2 MED objections)"
+            "v4_groupsplit_dualrun (D1-repair) in this same file — "
+            "regenerated in place to close the two skeptic LOW residuals "
+            "(F20). Run A and run B numbers are UNCHANGED from the "
+            "committed 596a74f8 artifact (regression-checked); v5 only "
+            "ADDS the run-C sensitivity row and the explicit degenerate-"
+            "draw rule."
         ),
         "purpose": (
             "Leak-free, ablated PU-learning evaluation: "
             "feature-deduplicated (SUPERSEDED excluded), DTM-grouped "
             "out-of-fold, run A (FULL, 19 features, diagnostic upper "
             "bound) vs run B (MORPH, 15 features, notes-derived "
-            "annotation flags removed — HEADLINE), DTM-level cluster "
-            "bootstrap CIs, leave-INGENIIPIT-out summaries, named failure "
-            "modes. Same model, same labels as v2 — evaluation design and "
-            "feature-set honesty are the only changes. No retuning."
+            "annotation flags removed — HEADLINE) vs run C (run B minus "
+            "rung_cm, 14 features — SENSITIVITY ROW ONLY), DTM-level "
+            "cluster bootstrap CIs with an explicit degenerate-draw rule, "
+            "leave-INGENIIPIT-out summaries, named failure modes. Same "
+            "model, same labels as v2 — evaluation design and feature-set "
+            "honesty are the only changes. No retuning."
         ),
         "skeptic_objections_addressed": {
             "O1_annotation_identity_proxies": (
@@ -1098,6 +1345,30 @@ def main() -> int:
                 "factually, no 'inside CI width' claims."
             ),
         },
+        "skeptic_low_residuals_addressed_F20": {
+            "L1_rung_cm_identity_carrier": (
+                "Run C = run B minus rung_cm (14 features) added as a "
+                "SENSITIVITY ROW ONLY; headline remains run B. Reports "
+                "pooled OOF metrics + cluster-bootstrap CIs (21 clusters, "
+                "1000 draws, seed 42), the MARIUSPIT01-r001 I14 score in "
+                "B and C, and the decision-flip count vs B at t=0.5. "
+                "Per-rung row/DTM counts backing the identity claim are "
+                "recorded in "
+                "feature_sets.run_C_MORPH_no_rung_sensitivity."
+                "rung_identity_evidence."
+            ),
+            "L2_degenerate_draw_rule_implicit": (
+                "The exact degenerate-resample rule (discard-and-count on "
+                "zero TRUE positives / zero TRUE unlabeled; zero "
+                "PREDICTED-positive draws retained via zero_division=0) is "
+                "now documented at method.cluster_bootstrap."
+                "degenerate_draw_rule with per-run discarded-draw counts "
+                "in method.cluster_bootstrap.n_discarded_draws. The v4 "
+                "implementation was ALREADY discard-and-count; "
+                "documenting it changed no number (published B CIs "
+                "reproduced bit-identically, delta 0.000 <= 0.005)."
+            ),
+        },
         "registry": {**reg_stats, "path": str(REGISTRY_CSV), "md5": registry_md5},
         "method": method_block,
         "label_definition": pos_mapping["definition"],
@@ -1113,6 +1384,7 @@ def main() -> int:
         "runs": {
             "run_A_FULL_diagnostic_upper_bound": run_a,
             "run_B_MORPH_HEADLINE": run_b,
+            "run_C_MORPH_no_rung_sensitivity": run_c,
         },
         "run_A_vs_run_B": ab_comparison,
         "recall_reporting": recall_reporting,
@@ -1139,14 +1411,20 @@ def main() -> int:
 
     ca = run_a["bootstrap_cluster_HEADLINE"]
     cb = run_b["bootstrap_cluster_HEADLINE"]
-    print(f"\n=== v4 groupsplit dual-run (k={k}, LODO={lodo}) ===")
-    print(f"{'':16s} {'A FULL (diag)':>16s} {'B MORPH (HEAD)':>16s}")
+    cc = run_c["bootstrap_cluster_HEADLINE"]
+    c_row = {m: run_c["pooled_oof"][m] for m in metrics4}
+    print(f"\n=== v5 groupsplit triple-run (k={k}, LODO={lodo}) ===")
+    print(
+        f"{'':16s} {'A FULL (diag)':>16s} {'B MORPH (HEAD)':>16s} "
+        f"{'C no-rung (sens)':>17s}"
+    )
     for m in metrics4:
         print(
-            f"{m:16s} {a_row[m]:>16.4f} {b_row[m]:>16.4f}"
+            f"{m:16s} {a_row[m]:>16.4f} {b_row[m]:>16.4f} "
+            f"{c_row[m]:>17.4f}"
         )
     print("\n--- cluster-bootstrap 95% CIs (21 DTM clusters, 1000 draws) ---")
-    for run_lbl, c, r in (("A", ca, a_row), ("B", cb, b_row)):
+    for run_lbl, c in (("A", ca), ("B", cb), ("C", cc)):
         print(f" run {run_lbl}: F1 [{c['f1_95ci']['low']:.3f}, "
               f"{c['f1_95ci']['high']:.3f}]  AUC "
               f"[{c['roc_auc_95ci']['low']:.3f}, "
@@ -1179,10 +1457,22 @@ def main() -> int:
     print(f"A-vs-B: {diff_pred}/117 decisions differ at t=0.5; "
           f"max score ratio {float(np.nanmax(ratios)):.1e}; "
           f"dAUC(B-A)={ab_comparison['delta_pooled_roc_auc_B_minus_A']:+.4f}")
+    rcb = run_c["comparison_vs_run_B"]
+    m14 = rcb["mariuspit01_r001_I14"]
+    print(f"C-vs-B: {rcb['n_differing_predictions_at_0.5']}/117 decisions "
+          f"differ at t=0.5; dAUC(C-B)={delta_cb['roc_auc']:+.6f}")
+    print(f"  MARIUSPIT01 r001 (I14): B {m14['score_run_B']:.3e} "
+          f"(rank {m14['rank_among_15_positives_run_B'] + 1}/15) -> "
+          f"C {m14['score_run_C']:.3e} "
+          f"(rank {m14['rank_among_15_positives_run_C'] + 1}/15), "
+          f"pred_C={m14['y_pred_run_C']}")
+    print("Degenerate draws (discarded per 1000): "
+          f"{json.dumps(out['method']['cluster_bootstrap']['n_discarded_draws'])}")
     print(f"Recall reporting (B): {recall_reporting['run_B_statement']}")
     print(f"Leak asserts: ALL PASS ({leak_asserts['n_candidate_groups_checked']} groups)")
     print(f"oof self-checks: A: {run_a['oof_predictions_self_check']}")
     print(f"                 B: {run_b['oof_predictions_self_check']}")
+    print(f"                 C: {run_c['oof_predictions_self_check']}")
     print(f"Wall time: {time.perf_counter() - t0:.1f} s (console-only; "
           "omitted from JSON for byte-determinism)")
     print(f"Wrote {OUTPUT_JSON}")
