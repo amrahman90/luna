@@ -1,14 +1,33 @@
-# Calibrated inference of lunar void candidates from LROC NAC
-# morphometry: LLTB-1 catalogue, PU-learning baseline, and I10
-# apparent-FP inspection rules across 21 on-disk NAC DTMs
+# An annotated test-bed registry and leakage-corrected evaluation
+# protocol for lunar void-candidate inference from meter-scale
+# orbital terrain data
 
 **Target venue:** Icarus (Elsevier; lunar-science flagship) or
-Planetary and Space Science (Elsevier; mid-tier) per v5 §12
-publication-strategy #2 ("roof-sag catalogue").
+Planetary and Space Science (Elsevier; mid-tier). The v5 §12
+publication-strategy #2 line calls this deliverable a "roof-sag
+catalogue"; the D4 audit (2026-09-10) reframed it — 233 of 278 rows
+are below-floor, Tier-A = 0, and the registry is calibration-context,
+so the honest, publishable substance is an **annotated test-bed
+registry + leakage-corrected evaluation protocol + honest baselines**,
+not a survey catalogue (the catalogue framing was the desk-reject
+risk).
 **Authors:** LUNARVOID team.
-**Date:** 2026-08-28 (skeleton draft v0.1; section structure + anchored
-numbers; not submission-ready).
-**Status:** Section-by-section skeleton. Built from the v1.0 G2 transfer
+**Date:** 2026-09-12 (v3.1-draft, task D4-fix: skeptic objections
+V1–V6 applied to the v3.0-draft-reframe — first-claim narrowed to a
+void-candidate **inference-evaluation** benchmark distinct from pit
+catalogues and detection-training releases (Watson & Baldini 2024;
+Le Corre 2025 dataset release added); title retermed
+benchmark → **test-bed registry** ("benchmark" kept only as the
+forward-looking, Zenodo-gated goal); §4.1 tier-B JSON/registry
+discrepancy quoted explicitly with dates; LROC/ASU web-product
+licence caveat in Data availability; protocol-box fixes (imputation
+leak = latent/hygiene; leak numbering) and language fixes
+("characterized" not "validated"; "missed catalogued-pit
+recovery"); §3.3/§4.6 anchored numbers byte-untouched; supersedes
+v3.0-draft-reframe of 2026-09-10, which superseded the v0.1 skeleton
+of 2026-08-28; not submission-ready).
+**Status:** Section-by-section skeleton under the D4 reframe. Built
+from the v1.0 G2 transfer
 freeze (`data/outputs/wp2_sag/transfer/transfer_summary.json`; 2026-08-23;
 21 on-disk NAC DTMs; 278 tier-C rows; n_fp=9, n_tp=14; aggregate FP
 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²) and the WP3 PU-learning
@@ -28,72 +47,135 @@ which any instrument provides evidence (Carrer 2024; v5).
 ---
 
 ## Abstract
-
-We present a calibrated inference of lunar void candidates from the
-LUNARVOID Tier-C candidate catalogue (278 rows across 21 on-disk LROC
-NAC DTMs over 24,062.96 km²; calibration-context rate 3.74 [Poisson-
-exact Garwood 95% CI 1.71, 7.10] FP per 10⁴ km²; n_fp = 9, n_tp = 14;
-all 9 FPs at 2 sites with catalogued pits), and a positive-unlabeled
-(PU) learning baseline over the same catalogue, evaluated leak-free
-under the D1 redesign: 161 SUPERSEDED duplicate rows excluded (117
-active rows; 15 positives / 102 unlabeled), four annotation-derived
-identity-proxy flags removed (run B: 15 morphometric features; a
-diagnostic run retaining the flags yields identical decisions),
-LogisticRegression(C=1.0) inside pulearn, not retuned; leave-one-
-DTM-out over the 21 DTMs with train-fold-only imputation and
-scaling; pooled out-of-fold F1 = 0.824 [DTM-cluster-bootstrap 95%
-CI 0.35, 0.98], precision = 0.737, recall = 0.933 (14/15
-positives), ROC AUC = 0.930 [0.49, 1.00] (21 DTM clusters, 1000
-draws, seed 42) — intervals this wide, with lower bounds near
-chance, make this a small-n feasibility result (15 positives), not
-classifier validation. The pipeline is frozen from the G2 transfer
-calibration (frac=0.20, slope=45°, neigh=5, Frangi σ = 30/60/100/150/
-200/300 m; TRANSPIT1 recipe byte-identical md5 `2597002375206aba3119
-c240c373ad62`); tier discipline is A=0 / B=0 / C=278 after the Cycle-1
-skeptic downgrade of the pre-registered v5 I14 rille-intersection rule
-(`notes/findings.md` 2026-08-22 "TIER-B INVERSION OF I14 FUNNEL"). All
-278 rows are single-method morphometry; no tier-A promotion; no GRAIL/
-Diviner/multi-illumination confirmation; no cross-body MGC3 transfer
-evaluation. We frame this as calibrated inference only — not detection
-— and document the three I10 apparent-FP inspection capture paths,
-the Marius Hills I14 funnel-pit failure case study, and the MGC3 /
-multi-evidence deferrals that bound the v5 WP3 scope.
+We present an annotated test-bed registry and a
+leakage-corrected evaluation protocol for lunar void-candidate
+inference from meter-scale orbital terrain data — to our knowledge
+the first annotated benchmark for void-candidate inference
+evaluation (scored detections + FP-per-10⁴-km² accounting +
+leakage-corrected protocol), distinct from pit catalogues
+(Wagner & Robinson 2021) and detection-training releases
+(Watson & Baldini 2024; Le Corre 2025, whose ESSA release
+publishes georeferenced detection shapefiles, open weights, and
+its training product list). Lunar and planetary evaluation
+resources are an emerging genre (Moonstone, Prasad & Mazumder
+2026; Mars-Bench, Purohit et al. 2025; neither addresses void or
+pit inference, and neither operates on meter-scale DTMs); the
+test-bed is released toward community-benchmark use once the
+planned versioned Zenodo deposition (E3) lands. The registry
+annotates 278 candidate rows across 21 on-disk LROC NAC DTMs over
+24,062.96 km²,
+all pit-associated or pit-rich (calibration-context by
+construction): 161 SUPERSEDED duplicate rows carry explicit
+`superseded_by` links (117 unique features); row-level labels
+comprise 14 TP / 9 FP / 21 ring-artefact / 1 funnel among the 45
+above-floor rows, plus 233 explicitly not-inferable below-floor
+rows; unique-feature accounting resolves the above-floor set to
+6 TP / 5 FP / 9 ring / 1 funnel of 21. Both FP accountings are
+reported — row-based 3.74 [Poisson-exact Garwood 95% CI 1.71,
+7.10] and unique-feature 2.08 [0.67, 4.85] per 10⁴ km² — as
+calibration-context rates, never survey rates. All 278 rows are
+single-method morphometry with tier discipline A=0 / B=0 / C=278
+after the Cycle-1 skeptic downgrade of the pre-registered v5 I14
+rille-intersection rule; the pipeline is frozen from the G2 transfer
+calibration (frac=0.20, slope=45°, Frangi σ = 30–300 m; TRANQPIT1
+recipe byte-identical md5 `2597002375206aba3119c240c373ad62`). The
+evaluation protocol is the methodological contribution: it closes the two
+leakage paths that inflated an earlier random-split baseline
+(F1 0.909) — duplicate features spanning train/test and shared-DTM
+spatial autocorrelation — via duplicate exclusion and
+leave-one-DTM-out fold grouping, and adds train-fold-only imputation
+and scaling as hygiene (no NaN rows were present, so the imputation
+leak was latent, not active), annotation-derived-feature
+ablation (identity-proxy discipline), DTM-cluster bootstrap
+confidence intervals, and an explicit degenerate-draw rule — a
+reusable, referee-ready checklist for small-n planetary registries.
+Under this protocol, a positive-unlabeled (PU) learning baseline
+(run B; 15 morphometric features; LogisticRegression(C=1.0) inside
+pulearn, not retuned) attains pooled out-of-fold F1 = 0.824
+[DTM-cluster-bootstrap 95% CI 0.35, 0.98], precision = 0.737,
+recall = 0.933 (14/15 positives), ROC AUC = 0.930 [0.49, 1.00]
+(21 DTM clusters, 1000 draws, seed 42); leave-INGENIIPIT-out
+degrades to F1 0.571 / AUC 0.790, and the pre-registered I14
+funnel failure (MARIUSPIT01 r001) recurs in the PU layer as the
+registry's first known-hard-case entry. The 233 below-floor rows
+are an emergent consequence of the resolution limit quantified by
+the companion benchmark paper (LLTB-1) — deliberately retained and
+explicitly labelled, not a designed output and not a deficiency:
+the registry measures where inference is not yet possible at
+current DTM resolution. All results are framed as
+calibrated inference, never detection; the I10 apparent-FP
+inspection discipline is documented with its three capture paths
+and its current verdicts-not-on-disk state. Intervals this wide,
+with lower bounds near chance, make the PU baseline a small-n
+feasibility result (15 positives), not classifier validation.
 
 ---
 
 ## 1. Introduction
 
-### 1.1 Why Paper 2 (extends Paper 1 from benchmark to inference)
+### 1.1 Why Paper 2 (from detector benchmark to an annotated inference test-bed registry + evaluation protocol)
 
 - Paper 1 (`papers/paper1_resolution_limits/main.md`, frozen v2.0)
-  shipped **the benchmark** — LLTB-1 v0.1 / v0.4 / v0.5; six analog
-  sites; best honest result IndianTunnel_NorthSurface @ 1 m F1 0.277
-  pre-v0.4 / 0.362 v0.4 @ 45°; degrade-ladder detectability curve.
-  Its G2 close left the frozen lunar accounting that Paper 2 builds
-  on (§4.2 there): **278 tier-C morphometry rows, of which 45 sit
-  above-floor with 14 above-floor inferred void candidates and 9 FPs;
-  aggregate FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²; and
-  21 on-disk DTMs that are all pit-associated or pit-rich, i.e.
-  selected with bias toward catalogued pits**.
-- Paper 2 ships **the actual inference problem** under v5 §9
-  mandatory reporting: (a) the catalogued-pit-associated tier-C
-  candidate catalogue with **calibrated FP per 10⁴ km²** as the
-  primary metric; (b) a PU-learning baseline that **ranks** the unlabeled
-  ML-detected sags against the catalogued-pit local-max positive
-  proxies (244/34 registry-wide v2 accounting; 102/15 active rows
-  under the D1 evaluation of §3.3); (c) the I10 apparent-FP inspection rules and three capture
-  paths required by v5 §9 ("Every apparent FP manually inspected
-  before scoring, with a separate 'unlabelled candidate' class
-  reported (I10)"; master plan line 562–563); (d) a cross-body MGC3
-  sketch that is **deferred** until the rental trigger fires; (e) a
-  multi-evidence stacking sketch that is **deferred** to Paper 3.
+  shipped **the detector benchmark** — LLTB-1 v0.1 / v0.4 / v0.5; six
+  analog sites; best honest result IndianTunnel_NorthSurface @ 1 m
+  F1 0.277 pre-v0.4 / 0.362 v0.4 @ 45°; degrade-ladder detectability
+  curve. Its G2 close left the frozen lunar accounting that Paper 2
+  builds on (§4.2 there): **278 tier-C morphometry rows, of which 45
+  sit above-floor with 14 above-floor inferred void candidates and 9
+  FPs; aggregate FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96
+  km²; and 21 on-disk DTMs that are all pit-associated or pit-rich,
+  i.e. selected with bias toward catalogued pits**.
+- **D4 audit framing (2026-09-10)**: this draft descended from a
+  "we produced candidate inferences" framing, but the honest
+  substance is different — 233 of 278 rows are below-floor (not
+  inferable at current resolution), Tier-A = 0, and the registry is
+  calibration-context, **not a survey catalogue**. What the work
+  actually delivers is stronger and truthful:
+  1. **Annotated test-bed registry** (§3.1, §4.1, §4.6): 278
+      rows / 117 unique features; B1-repaired (161 SUPERSEDED rows
+     carry explicit `superseded_by` links); row-level labels
+     (14 TP / 9 FP / 21 ring / 1 funnel above-floor; 233
+     below-floor rows) plus unique-level labels (6 TP / 5 FP /
+     9 ring / 1 funnel of 21); dual FP accounting (row-based
+      3.74 [1.71, 7.10]; unique 2.08 [0.67, 4.85] per 10⁴ km² over
+      24,062.96 km², calibration-context) — to our knowledge the
+      first annotated benchmark for **void-candidate inference
+      evaluation** (scored detections + FP-per-10⁴-km² accounting +
+      leakage-corrected protocol), distinct from pit catalogues
+      (Wagner & Robinson 2021) and detection-training releases
+      (Watson & Baldini 2024; Le Corre 2025).
+   2. **Leakage-corrected evaluation protocol** (§3.3; the D1
+     redesign presented as reusable methodology): duplicate
+     exclusion, leave-one-DTM-out fold grouping, train-fold-only
+     imputation and scaling, annotation-derived-feature ablation
+     (identity-proxy discipline), DTM-cluster bootstrap CIs, and
+     the degenerate-draw rule — written as a referee-ready
+     checklist for small-n planetary registries.
+  3. **Honest baselines under the protocol** (§3.3, §4.2): PU run B
+     (15 morphometric features): F1 0.824, P 0.737, R 14/15,
+     AUC 0.930; cluster CIs F1 [0.35, 0.98], AUC [0.49, 1.00];
+     run A diagnostic + run C rung-ablation;
+     leave-INGENIIPIT-out 0.571/0.790; the I14 funnel failure
+     (MARIUSPIT01 r001) enters the registry as its first
+     **known-hard-case** entry.
+  4. **Limitations as protocol outputs** (§5.2): small-n (15
+     positives), positive-mass concentration (10 of 15 positives
+      in one DTM fold), and wide CIs are what the test-bed
+      **measures** — reported properties of the resource, not
+      defects hidden from the reader.
 - Verbatim scope quote (master plan v5 §8 WP2 line 487–491):
   > "DELIVERABLE: regional candidate catalogue with per-candidate
   > evidence vectors, confuser-discrimination scores, explicit coverage
   > bounds, lower-bound sag framing (I7), and honest nulls.
   > GATE G2: catalogue survives confusion analysis; false-candidate
   > density per 10^4 km^2 reported."
-  This paper is the G2 deliverable. Paper 3 will close G3.
+  This paper is the G2 deliverable — with the v5 deliverable's
+  "candidate catalogue" language delivered honestly as an
+  **annotated test-bed registry + evaluation protocol**: the master plan's own
+  §9 claim-discipline rules (two-independent-methods tiering;
+  calibration-context FP reporting; I10 inspection) preclude a
+  survey-catalogue claim at this scope, and the D4 reframe makes
+  that explicit. Paper 3 will close G3.
 - Headline framing (verbatim from `notes/findings.md` line 286–292,
   2026-08-22 skeptic P3.1c review):
   > "AGGREGATE FP RATE IS THE CALIBRATION RATE DILUTED, NOT A SURVEY
@@ -109,16 +191,26 @@ multi-evidence deferrals that bound the v5 WP3 scope.
 
 ### 1.2 What this paper IS and IS NOT (claim discipline)
 
-- **IS**: a tier-C morphometry candidate catalogue (278 rows) with
-  per-candidate confusion annotations and per-DTM `local_Amin`
-  calibration floors; a PU-learning **ranking** baseline (leak-free
+- **IS**: an **annotated test-bed registry** (278 tier-C
+  morphometry rows; 117 unique features via `superseded_by` links)
+  with per-candidate confusion labels and per-DTM `local_Amin`
+  calibration floors — a resource for evaluating and calibrating
+  void-candidate inference methods; a **leakage-corrected
+  evaluation protocol** (duplicate exclusion, leave-one-DTM-out
+  folds, train-fold-only preprocessing, identity-proxy ablation,
+  DTM-cluster bootstrap CIs, degenerate-draw rule; §3.3); a
+  PU-learning **ranking** baseline under that protocol (leak-free
   leave-one-DTM-out pooled OOF F1 0.824 [cluster-bootstrap 0.35,
   0.98] / AUC 0.930 [0.49, 1.00], run B morphometric-only feature
   set; §3.3); the first lunar-published framework that reports FP per
   10⁴ km² (master plan §9 mandatory metric); the explicit I10
   apparent-FP discipline; the Marius Hills I14 funnel-pit case study
-  as a v5-confirmed confounder.
-- **IS NOT**: a lunar lava-tube detection claim. Tier A = 0 by
+as a v5-confirmed confounder and the registry's first
+   known-hard-case entry.
+- **IS NOT**: a lunar lava-tube detection claim; **not a survey
+  catalogue of inferred voids** (233 of 278 rows are below-floor
+  and explicitly not inferable; the registry is
+  calibration-context). Tier A = 0 by
   construction (the registry's max tier is C; tier-B promotion
   requires two-independent-methods agreement, master plan §9
   "two-independent-methods rule" line 28–30 of the registry header).
@@ -129,11 +221,13 @@ multi-evidence deferrals that bound the v5 WP3 scope.
   is recorded but per-cluster labels were not captured on-disk — see
   §4.5 for the honest state).
 - **Claim-discipline carry-over from Paper 1** (scope statement in its
-  §1.3): the benchmark paper already disclaims any global lava-tube
-  detection claim, treats GRAIL / Mini-RF-style geophysics as
-  confirmation layers rather than survey detectors (Tier D in v5), and
-  defers the registry-and-inference side of the problem to a companion
-  paper once the detector is validated — Paper 2 is that companion.
+  §1.3): Paper 1 (the detector benchmark) already disclaims any
+  global lava-tube detection claim, treats GRAIL / Mini-RF-style
+  geophysics as confirmation layers rather than survey detectors
+  (Tier D in v5), and defers the registry-and-inference side of the
+  problem to a companion paper once the detector is characterized —
+  Paper 2 is that companion (Paper 1 characterized, not validated,
+  the detector: best honest analog F1 0.362).
 - **The Tranquillitatis carve-out** (Paper 1 §1.1 and §6): no
   subsurface lunar feature is verifiable today; the radar-evidenced
   Tranquillitatis conduit (Carrer 2024; v5) is the sole exception.
@@ -153,7 +247,9 @@ conditions. Their status as of 2026-08-28:
 | **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v5 triple-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969. |
 | **(implicit)** | G2 FINAL-PASSED | **PARTIAL** — `notes/findings.md` line 794 verbatim: "**G2' status:** FINAL-PASSED 2026-08-28 (already flipped in earlier 'complete all' session; user's 'pass g2' instruction served as explicit confirmation). Row 10 PARTIAL honest state preserved verbatim. Final-pass does NOT depend on per-candidate verdicts; the verdict text already documents the catalogued-pits-only framing honestly." |
 
-**Honest framing**: Paper 2 ships the WP2 deliverable + the PU-learning
+**Honest framing**: Paper 2 ships the WP2 deliverable (delivered as
+an **annotated test-bed registry**, per the D4 audit + D4-fix), the
+**leakage-corrected evaluation protocol**, and the PU-learning
 ranking baseline that was always sequenced before WP3 fusion. The
 aspirational outline sketch's headline ("N=30+ tier-B candidates,
 multi-evidence per-candidate panel, GRAIL+Diviner stacking") is the
@@ -184,10 +280,67 @@ deferred WP3 scope, not this paper.
   row); §3.4 and §4.3 of this paper apply it.
 - **Le Corre 2025 ESSA** — the most-cited direct competitor
   (Mask R-CNN trained on Lunar Pit Atlas labels; reported detection
-  F1). Paper 2 cites, positions as inference vs detection (master
-  plan R8/R9), **never** uses as a label source. §5.3 expands the
+  F1). The release is public and annotated: georeferenced
+  shapefiles of every detection, open weights on Zenodo, code on
+  GitHub, and the full training product list
+  (`notes/prior_art_matrix.csv` LeCorre2025 row) — a
+  **detection-training dataset release**, the genre from which the
+  narrowed first-claim of this paper is distinct (void-candidate
+  inference evaluation: scored detections + FP-per-10⁴-km²
+  accounting + leakage-corrected protocol). Paper 2 cites,
+  positions as inference vs detection (master plan R8/R9),
+  **never** uses as a label source. §5.3 expands the
   inference-vs-detection framing.
-- **NEW for Paper 2** (added vs Paper 1's 8 refs):
+- **Benchmark-genre precedents (added in the D4 reframe)** — lunar
+  and planetary benchmark resources are an emerging genre, and this
+  paper positions itself within it:
+  - **Moonstone (Prasad & Mazumder 2026)** — the first multimodal
+    foundation-model benchmark for lunar remote sensing: a
+    28-channel, 128 ppd (~237 m/px) global pretraining corpus from
+    seven instrument families and six downstream tasks. It does
+    **not** address void or pit inference and does not operate at
+    meter-scale DTM resolution — the niche of this paper remains
+    open.
+  - **Mars-Bench (Purohit et al. 2025)** — the Mars-science
+    counterpart (20 datasets spanning classification,
+    segmentation, object detection; standardized baselines);
+    genre precedent for systematic model evaluation on planetary
+    tasks.
+  - **Watson & Baldini 2024** — Mask R-CNN (ResNet50)
+    cave-entrance detection trained jointly on lunar NAC imagery,
+    Martian HiRISE pit data, and synthetic implanted lunar pits
+    (~89% bbox / ~96% mask F1, lunar/Martian); the precursor
+    detection line to ESSA and the v5 R8 prior-art-collision
+    anchor. 2D raster detection only: no DTM morphometry, no
+    subsurface inference, no PU treatment, no FP-per-area
+    reporting — again detection training, not inference
+    evaluation.
+  - **StereoLunar (Grethen et al. 2025)** — an open lunar
+    stereo-pair dataset for 3D reconstruction; informs our
+    dataset-release conventions (versioned-DOI deposit; see
+    Data availability).
+  Position statement: Paper 2 is, to our knowledge, the **first
+  annotated benchmark for void-candidate inference evaluation
+  (scored detections + FP-per-10⁴-km² accounting +
+  leakage-corrected protocol) at meter scale from orbital DTMs,
+  distinct from pit catalogues (Wagner & Robinson 2021) and
+  detection-training releases (Watson & Baldini 2024; Le Corre
+  2025)**. The artifact ships as an annotated test-bed registry +
+  evaluation protocol; community-benchmark status is the
+  forward-looking goal, gated on the planned versioned Zenodo
+  deposition (E3; see Data availability).
+- **NEW for Paper 2** (added vs Paper 1's 8 refs; 10 planned
+  additions — Cushing ×2, Grethen, Hurwitz, Powell, Pozzobon,
+  Prasad & Mazumder, Purohit et al., Watson & Baldini, Williams —
+  plus one optional):
+  - **Prasad & Mazumder 2026 / Purohit et al. 2025 / Grethen et
+    al. 2025** — benchmark-genre precedents (Moonstone, Mars-Bench,
+    StereoLunar); see the bullet block above and References
+    entries 11, 15, 16.
+  - **Watson & Baldini 2024** — detection-training release
+    (Mask R-CNN cave-entrance detection, Icarus 411:115952); the
+    v5 R8 prior-art-collision anchor and precursor to ESSA; see
+    the genre block above and References entry 18.
   - **Cushing 2015 / Cushing 2017** — Mars Global Cave Catalog
     (MGC3); cross-body pretraining source; cited in outline sketch
     §2 but **NOT executed** (deferred — see §3.4).
@@ -209,11 +362,16 @@ deferred WP3 scope, not this paper.
 
 ## 3. Methods
 
-### 3.1 The candidate catalogue (278 rows, A=0 / B=0 / C=278)
+### 3.1 The annotated test-bed registry (278 rows, A=0 / B=0 / C=278; 117 unique features)
 
 - **Source**: `data/candidate_registry.csv` (310 lines; 32-line header
   + 278 data rows; **CSV line 31** = column header; provenance line 32
   = "2026-08-22 ... Phase 3 transfer pending" — the v5 WP2 schema).
+- **B1 duplicate repair (registry integrity)**: 161 of the 278 rows
+  are SUPERSEDED children carrying explicit `superseded_by` links to
+  their primary row (117 ACTIVE unique features); a group inherits
+  the class of its primary row. §4.6 gives the unique-level
+  accounting and its sensitivity to the grouping radius.
 - **Schema** (verbatim from registry header lines 9–30):
   - `candidate_id`: LV-`<dtm>`-`<rung>`-r`<rank>` stable unique id
   - `methods`: evidence streams currently agreeing, "|"-separated
@@ -231,9 +389,13 @@ deferred WP3 scope, not this paper.
   - **n_tier_A = 0** (no candidate has ≥2 independent methods;
     confirmed by `transfer_summary.json.aggregate.n_tier_A = 0`
     and the registry after the Cycle-1 downgrade)
-  - **n_tier_B = 0** (post-downgrade; the 3 MARIUSPIT01 rows that
-    earned B by "rille intersection within 100 m" were the
-    pre-registered v5 I14 failure mode — see §4.4)
+  - **n_tier_B = 0** in the registry (post-downgrade; the 3
+    MARIUSPIT01 rows that earned B by "rille intersection within
+    100 m" were the pre-registered v5 I14 failure mode — see §4.4).
+    The frozen `transfer_summary.json` (generated 2026-08-23)
+    still records the pre-downgrade `n_tier_B = 3`; the downgrade
+    to 0 lives in the registry itself (§4.1 quotes both values
+    with dates)
   - **n_tier_C = 278** (all rows are single-method morphometry)
 - **Above-floor vs below-floor split** (verbatim from
   `transfer_summary.json.aggregate`):
@@ -286,7 +448,7 @@ deferred WP3 scope, not this paper.
   | FECUNPIT | 2.567686 | 2.567686 | raw NAC; 6 FPs at the DTM north end |
   | GRUITHUIS17 | 4.385086 | 4.385086 | Cycle 1; all below-floor |
   | GRUITHMARE2 | 3.355474 | 3.355474 | Cycle 1; deep-pit low-vesselness case |
-  | IRIDIUMPIT1 | 2.837609 | 2.837609 | raw NAC; missed detection |
+  | IRIDIUMPIT1 | 2.837609 | 2.837609 | raw NAC; missed catalogued-pit recovery |
   | MARIUSCONE | 3.68877 | 3.68877 | Cycle 1; deep-pit low-vesselness case |
   | PRCLRMPIT01 | 3.526279 | 3.526279 | raw NAC |
   | SWFECUNPIT1 | 3.231591 | 3.231591 | raw NAC |
@@ -326,6 +488,8 @@ deferred WP3 scope, not this paper.
     `dtm, lon, lat, has_ring_artifact, has_below_local_floor,
     is_rank1 / rank_n`
   - Imputation: median per feature; `n_rows_with_nan_pre_imputation = 0`
+    (no NaN rows were present, so the imputation leak closed by
+    train-fold-only preprocessing was latent, not active — hygiene)
 - **Positive-class definition** (verbatim from JSON
   `positive_class_mapping`):
   > "positive ← (dtm ∈ CATALOGUED_PIT_DTMS AND candidate_id matches
@@ -382,16 +546,19 @@ deferred WP3 scope, not this paper.
 
 - **D1 redesign — leak-free triple-run re-evaluation (2026-09-09,
   regenerated in place 2026-09-10 after the skeptic repair)**: the
-  v2 split above was random over rows, which leaks twice — 161
-  SUPERSEDED duplicate rows of the same physical feature could span
-  train/test, and rows from the same DTM (spatially autocorrelated
-  terrain) could span both. The D1 evaluation
+  v2 split above was random over rows, which leaks twice — leak 1:
+  161 SUPERSEDED duplicate rows of the same physical feature could
+  span train/test; leak 2: rows from the same DTM (spatially
+  autocorrelated terrain) could span both. The D1 evaluation
   (`data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`;
   registry md5 `a60fb52152e33f37e9052434ad026a6e`) excludes all
   SUPERSEDED duplicates (117 active rows: 15 positives / 102
-  unlabeled), groups folds by DTM (leave-one-DTM-out, 21 folds),
-  fits median imputation and StandardScaler on training folds only
-  (closing the second leak), and keeps the v2 estimator and
+  unlabeled; closes leak 1), groups folds by DTM
+  (leave-one-DTM-out, 21 folds; closes leak 2), and fits median
+  imputation and StandardScaler on training folds only — closing a
+  third, **latent** leak-path as hygiene (no NaN rows were present
+  pre-imputation, so the imputation leak was latent, not active) —
+  and keeps the v2 estimator and
   hyperparameters unchanged (no retuning). **Headline = run B**,
   which additionally removes the four notes-derived annotation
   flags (`has_terrain_extrap`, `has_deep_pit_low_vesselness`,
@@ -535,7 +702,8 @@ deferred WP3 scope, not this paper.
   > GATE G3: fusion beats every single-stream baseline on calibrated
   > metrics on the held-out basin."
 - **Status**: **DEFERRED to Paper 3**. Paper 2 closes G2 (the
-  catalogue + PU-ranking baseline); Paper 3 closes G3 (the multi-
+  annotated test-bed registry + evaluation protocol + PU-ranking
+  baseline); Paper 3 closes G3 (the multi-
   evidence fusion on Marius Hills + Tranquillitatis + Ingenii).
 - **What Paper 2 ships as the precursor**: the §3.3 PU baseline IS
   the v5 WP3 positive-unlabeled learning kernel — the same
@@ -552,8 +720,16 @@ deferred WP3 scope, not this paper.
 
 ## 4. Results
 
-### 4.1 Catalogue summary table (278 rows; tier distribution; FP per 10⁴ km²)
+### 4.1 Registry summary table (annotated test-bed; 278 rows; tier distribution; FP per 10⁴ km²)
 
+- **Below-floor annotation is a label, not a gap**: the 233
+  below-floor rows are a deliberately retained, labelled output of
+  the resolution floor — they emerged from the per-DTM `local_Amin`
+  limits (the operational counterpart of Paper 1's
+  degradation-ladder limits, §4.6 there); the design choice was to
+  retain and label them, not to discard them. The test-bed thereby
+  measures where void-candidate inference is NOT possible at
+  current DTM resolution.
 - **Headline aggregate** (verbatim from
   `transfer_summary.json.aggregate`):
   - `n_dtms_with_score_raster = 21`
@@ -561,7 +737,16 @@ deferred WP3 scope, not this paper.
   - `n_candidates = 278`
   - `n_above_local_floor = 45`
   - `n_below_local_floor = 233`
-  - `n_tier_B = 0` (post-downgrade; pre-downgrade was 3)
+  - `n_tier_B = 3` — the value frozen in the JSON (generated
+    2026-08-23, i.e. the **pre-downgrade** count). The registry
+    carries the post-hoc downgrade to **0**: per the 2026-08-22
+    skeptic Cycle-1 verdict, the 3 MARIUSPIT01 rows that earned
+    tier B by "rille intersection within 100 m" were downgraded to
+    tier C with the I14-funnel-risk note (§4.4); the registry CSV
+    confirms A=0 / B=0 / C=278. The frozen JSON was not
+    regenerated after the downgrade (frozen-artifact discipline),
+    so the JSON value and the registry state differ by audit-trail
+    design — both are quoted here, with no silent substitution
   - `n_tier_A = 0`
   - `n_fp = 9` (all at 2 sites with catalogued pits: FECUNPIT 6,
     TRANQPIT1 3)
@@ -835,12 +1020,20 @@ deferred WP3 scope, not this paper.
 
 ## 5. Discussion
 
-### 5.1 What we can claim (calibrated inference; 14 above-floor inferred void candidates; tier-C morphometry)
+### 5.1 What the test-bed supports (annotated registry; calibrated inference; honest baselines)
 
-- **14 above-floor inferred void candidates**, all tier-C single-method
-  morphometry, per the frozen Paper 1 accounting (§4.2 there): 278
-  tier-C rows in total, 45 above-floor and 233 below-floor preserved,
-  with all 14 candidates inferred from morphometry alone.
+- **The registry's label mass**: of 278 tier-C rows, the 45
+  above-floor rows (14 TP / 9 FP / 21 ring / 1 funnel) support
+  **14 above-floor inferred void candidates**, all tier-C
+  single-method morphometry, per the frozen Paper 1 accounting
+  (§4.2 there), with all 14 candidates inferred from morphometry
+  alone.   The remaining **233 of 278 rows (83.8%) are below-floor
+  and explicitly not inferable** — an emergent consequence of the
+  resolution floor, deliberately retained and labelled (not a
+  designed output, not a deficiency): the registry measures where
+  void-candidate inference is NOT possible at current DTM
+  resolution, which is the operational counterpart of Paper 1's
+  degradation-ladder limits.
 - **Aggregate FP 3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km²**
   is **calibration-context only**, NOT a survey rate, NOT a
   random-mare estimate. The selection bias toward catalogued pits
@@ -864,6 +1057,12 @@ deferred WP3 scope, not this paper.
 
 ### 5.2 Honest limitations
 
+*(D4 contribution 4: the limitations below are **outputs of the
+protocol** — properties the test-bed measures and reports (small-n,
+positive-mass concentration, wide CIs), not defects hidden from the
+reader. An evaluation resource that could not surface them would not
+be doing its job.)*
+
 - **Catalogued-pits-only sampling**: 0/649 random-mare DTMs in
   scope (Paper 1 §5.4); all 278 registry rows derive from the 21
   pit-associated NAC DTMs, and at the atlas level only 82 of the
@@ -881,7 +1080,7 @@ deferred WP3 scope, not this paper.
   positives (10 concentrated in the INGENIIPIT fold): the PU
   metrics are a feasibility estimate with wide DTM-cluster-
   bootstrap CIs (F1 0.35–0.98, AUC 0.49–1.00; lower bounds near
-  chance), not a production-classifier benchmark.
+  chance), not production-classifier validation.
 - **MGC3 / multi-evidence stacking deferred** (§3.4 / §3.5): the
   cross-body and the multi-evidence claims require Cycles 3–5 close
   + Tier-1 rental + Cycles 1–2 of WP3 (multi-illumination azimuth
@@ -915,7 +1114,11 @@ deferred WP3 scope, not this paper.
   sourced if cited in v2): Mask R-CNN trained on Lunar Pit Atlas
   labels with Martian HiRISE and synthetic implanted-pit
   augmentation; **reports detection F1** on a label set that
-  includes the ~281 catalogued pits (Wagner & Robinson 2021).
+  includes the ~281 catalogued pits (Wagner & Robinson 2021). Its
+  public release (georeferenced detection shapefiles, open Zenodo
+  weights, code, and the training product list) is a
+  detection-training dataset — the genre from which the
+  inference-evaluation test-bed of this paper is distinct (§2).
 - LUNARVOID Paper 2 headline: **F1 0.824 (run B, leak-free LODO;
   §3.3) is
   a RANKING F1 on inferred-void candidates**, not a detection F1;
@@ -952,13 +1155,23 @@ deferred WP3 scope, not this paper.
 
 - **One-paragraph summary** (template from Paper 1 §6, to be
   written by user):
-  - LLTB-1 v0.5 + the Cycles 1-2 close closed the G2 deliverable
-    (regional candidate catalogue with per-candidate evidence
-    vectors and confusion-cleared lower-bound sag framing).
-  - Paper 2 closes **G2**: 278 tier-C morphometry rows (45 above-
-    floor; 14 above-floor inferred void candidates); aggregate FP
+  - LLTB-1 v0.5 + the Cycles 1-2 close closed the G2 deliverable —
+    the v5 "regional candidate catalogue", delivered honestly under
+    the D4 reframe as an **annotated test-bed registry** with
+    per-candidate evidence vectors, confusion-cleared lower-bound
+    sag framing, and B1 `superseded_by` duplicate links (117
+    unique features).
+  - Paper 2 closes **G2** as an annotated test-bed registry +
+    leakage-corrected evaluation protocol (community-benchmark
+    status remains the forward-looking goal, gated on the E3
+    Zenodo deposit): 278 tier-C morphometry
+    rows (45 above-floor; 14 above-floor inferred void candidates;
+    **233 below-floor — the registry's other half, measuring where
+    inference is NOT yet possible**, the resolution-limit
+    connection to Paper 1); aggregate FP
     3.74 [1.71, 7.10] per 10⁴ km² over 24,062.96 km² (calibration-
-    context, NOT survey); PU-learning baseline run B (15
+    context, NOT survey; unique-feature accounting 2.08 [0.67,
+    4.85], §4.6); PU-learning baseline run B (15
     morphometric features; four annotation-derived flags removed;
     decisions identical to the 19-feature diagnostic run) leak-free
     leave-one-DTM-out pooled OOF F1 0.824 [DTM-cluster-bootstrap
@@ -969,7 +1182,8 @@ deferred WP3 scope, not this paper.
   - The I10 inspection discipline + I14 funnel-pit disqualifier
     protect against the two pre-registered failure modes (the v5
     §9 "unlabelled candidate" class; the v5 I14 rille-intersection
-    inversion).
+    inversion); the I14 failure is retained in the registry as its
+    first known-hard-case entry.
   - Tier-A promotion count remains 0; nothing subsurface on the
     Moon is verifiable today except the Tranquillitatis radar
     conduit (Carrer 2024; v5).
@@ -1027,9 +1241,14 @@ The authors declare no competing interests.
   fetch-script in `code/wp1_lla/convert_f32.py` and
   `code/setup/extract_rar.py`. Licence gate before any
   redistribution.
-- **LROC NAC DTMs**: PDS public domain; fetched by product ID
+- **LROC NAC DTMs (PDS archive products)**: PDS public domain;
+  fetched by product ID
   only (never mirrored in the repo; per AGENTS.md / data
-  discipline).
+  discipline). **Caveat (MANIFEST licence note)**: LROC/ASU *web*
+  products (QuickMap, previews, and the Pit Atlas pages from which
+  the registry's label set derives) carry ASU terms that differ
+  from the PDS archive — the PDS-public-domain statement covers
+  the archived DTMs, not ASU web-served material.
 - **PU-learning v2 baseline** (superseded evaluation; retained for
   provenance — its random split was leak-inflated):
   `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json`
@@ -1061,6 +1280,26 @@ The authors declare no competing interests.
 - **Candidate registry**: `data/candidate_registry.csv` (310 lines,
   32-line header + 278 data rows; the schema + tier-discipline
   comments + provenance line are part of the artifact).
+- **Planned versioned release (E3)**: a Zenodo deposition carrying a
+  versioned DOI is scheduled as the E3 deliverable, bundling the
+  annotated registry (`candidate_registry.csv`), the annotation
+  METHODS / schema documentation, and the evaluation-protocol
+  scripts (duplicate exclusion + leave-one-DTM-out folds +
+  train-fold-only preprocessing + identity-proxy ablation +
+  DTM-cluster bootstrap); the frozen snapshot will be identified by
+  the registry md5 `a60fb52152e33f37e9052434ad026a6e`. Release
+  conventions follow comparable open lunar dataset deposits
+  (Grethen et al. 2025). Licence audit before any redistribution
+  per AGENTS.md data discipline: PDS *archive* products are public
+  domain, but LROC/ASU *web*-product terms differ from the PDS
+  archive (MANIFEST licence note) — because the registry's labels
+  are Pit-Atlas-derived, an explicit ASU-terms audit of the label
+  source is required **before** the E3 deposit redistributes them;
+  NASA-derived annotations are additionally checked for
+  research/academic-use restrictions. The deposit is also what
+  would qualify the test-bed as a citable community benchmark;
+  until it lands, the artifact is an annotated test-bed registry +
+  evaluation protocol.
 - **Visual inspection helper** (auxiliary, for the I10 capture
   path 1): `admin/visual_inspection_helper.html` (state not
   preserved on plain save; use Chrome `chrome-cli` save or capture
@@ -1069,7 +1308,7 @@ The authors declare no competing interests.
 
 ---
 
-## References (extends Paper 1's 8 with WP3 fusion + MGC3 + cross-body)
+## References (extends Paper 1's 8 with WP3 fusion + MGC3 + cross-body + benchmark-genre precedents)
 
 *Author-year style (matching the inline citation form used throughout
 Paper 2). Sorted alphabetically by first author. **8 references
@@ -1077,7 +1316,13 @@ verified** against the local Zotero library in Paper 1 (8 entries
 attached 2026-08-28; DOIs confirmed in Crossref for all 8). Paper 2
 adds the following (Zotero attach + DOI verification pending at the
 submission milestone; some entries may need user-curation before
-submission):*
+submission). The three benchmark-genre entries (Grethen 2025,
+Prasad & Mazumder 2026, Purohit et al. 2025) were verified against
+arXiv metadata on 2026-09-10 (titles/authors/abstracts; DOIs are
+arXiv identifiers). Pre-submission external audit still required:
+the Laurier/ASU DTM-attribute pit database is not covered by the
+33-ref prior-art matrix and must be audited before the first-claim
+is submitted:*
 
 **Shared with Paper 1 (8 references, verified 2026-08-28):**
 
@@ -1093,7 +1338,11 @@ submission):*
    N. (2025). New candidate cave entrances on the Moon found
    using deep learning. *Icarus* 441, 116675.
    doi:10.1016/j.icarus.2025.116675. *— ESSA; positioned as
-   inference vs detection.*
+   inference vs detection. The release publishes georeferenced
+   detection shapefiles, open weights (Zenodo), code, and the
+   training product list — a public detection-training dataset,
+   distinct from the inference-evaluation benchmark claimed
+   here.*
 4. Mueller, R., et al. (2026). Kriged distortion correction after
    ICP registration on snow-covered UAV photogrammetric point
    clouds. *Arctic Science* 12:1–23. doi:10.1139/as-2025-0062.
@@ -1115,8 +1364,9 @@ submission):*
    Ames Research Center. https://ti.arc.nasa.gov/dataset/caves
    *— LLTB-1 ground-truth corpus. Research / academic use only.*
 
-**NEW for Paper 2 (Zotero attach + DOI verification pending; cite
-order TBD by user):**
+**NEW for Paper 2 (18 planned entries total — 10 firm additions +
+8 shared; Zotero attach + DOI verification pending; cite order TBD
+by user; +1 optional entry below):**
 
 9. Cushing, G.E. (2015). Mars Global Cave Catalog: a database
    of cave-like features at candidate rover landing sites.
@@ -1125,26 +1375,61 @@ order TBD by user):**
 10. Cushing, G.E. (2017). Mars Global Cave Catalog: updates
     and new features. *LPSC 48*, Abstract #1951. *— MGC3 v2;
     HiRISE skylight morphology inventory.*
-11. Williams, J.-P., et al. (2017). Cold traps and recent
-    thermal behavior of lunar cold spots. *Icarus* 283, 313–
-    322. *— Diviner cumulative nighttime temperature; basis
-    for P4.3 thermal anomaly stacking.*
-12. Powell, T.M., et al. (2023). A high-resolution thermal
+11. Grethen, C., Gasparini, S., Morin, G., Lebreton, J.,
+    Marti, L., & Sanchez-Gestido, M. (2025). Adapting stereo
+    vision from objects to 3D lunar surface reconstruction with
+    the StereoLunar dataset. *arXiv:2510.18172*.
+    doi:10.48550/arXiv.2510.18172. *— Open lunar stereo-pair
+    dataset; benchmark-genre precedent; dataset-release
+    conventions (versioned DOI).*
+12. Hurwitz, D.M., et al. (2013). The sinuous rilles of
+    Marius Hills. *Icarus* 225, 1094–1107. *— The I5
+    confusion layer; I14 funnel-pit prediction.*
+13. Powell, T.M., et al. (2023). A high-resolution thermal
     anomaly map of the Moon from LRO Diviner GHRM. *Icarus*
     (submitted/in press). *— The actual 128-ppd product
     sampled at the 7 DTM sites; sub-pixel scale mismatch
     acknowledged.*
-13. Hurwitz, D.M., et al. (2013). The sinuous rilles of
-    Marius Hills. *Icarus* 225, 1094–1107. *— The I5
-    confusion layer; I14 funnel-pit prediction.*
 14. Pozzobon, R., et al. (2019). Lava tubes on Earth, Moon
     and Mars: a review on their size, morphology, and
     formation mechanisms. *Geosciences* 9(8), 347.
     doi:10.3390/geosciences9080347. *— Earlier work by the
     Carrer group on the same conduit; cited alongside
     Carrer 2024 for completeness.*
+15. Prasad, A., & Mazumder, S. (2026). Moonstone: A multimodal
+    foundation model and benchmark for lunar remote sensing.
+    *arXiv:2607.03644*. doi:10.48550/arXiv.2607.03644. *—
+    First lunar multimodal foundation-model benchmark
+    (28-channel, ~237 m/px, six downstream tasks); establishes
+    the lunar-benchmark genre; explicitly not void/pit
+    inference and not meter-scale DTMs — our niche remains
+    open.*
+16. Purohit, M., Gajera, B., Malaviya, V., Mehta, I.,
+    Kasodekar, K., Adler, J., Lu, S., Kerner, H. (2025).
+    Mars-Bench: A benchmark for evaluating foundation models
+    for Mars science tasks. *arXiv:2510.24010*.
+    doi:10.48550/arXiv.2510.24010. *— Mars-science benchmark
+    (20 datasets; classification/segmentation/detection);
+    genre precedent for standardized planetary-task
+    evaluation.*
+17. Williams, J.-P., et al. (2017). Cold traps and recent
+    thermal behavior of lunar cold spots. *Icarus* 283, 313–
+    322. *— Diviner cumulative nighttime temperature; basis
+    for P4.3 thermal anomaly stacking.*
+ 18. Watson, T. H., & Baldini, J. U. L. (2024). Martian cave
+     detection via machine learning coupled with visible light
+     imagery. [Mask R-CNN (ResNet50) trained jointly on lunar NAC
+     imagery, Martian HiRISE pit data, and synthetic implanted
+     lunar pits; ~89% bbox / ~96% mask F1 (lunar/Martian).]
+     *Icarus* 411, 115952.
+     https://doi.org/10.1016/j.icarus.2024.115952 *—
+     Detection-training release; v5 R8 prior-art-collision anchor;
+     precursor to ESSA (Le Corre 2025). Bibliographic details
+     verified against the DOI resolver 2026-09-12; bracketed
+     training/F1 summary from `notes/prior_art_matrix.csv` (row
+     WatsonBaldini2024).*
 
 *(Optional Paper 2 add — to confirm by user if cited:*
-15. *Besserer, J., et al. (2024). Thermal signature of lunar
+19. *Besserer, J., et al. (2024). Thermal signature of lunar
     lava tubes under simulated illumination conditions.
     *JGR Planets* (submitted/in press).)*
