@@ -1,0 +1,33 @@
+{
+  "site": "TRANQPIT1",
+  "utc": "2026-09-10T17:15:18.036774+00:00",
+  "dry_run": false,
+  "cc_filter": "off",
+  "skip_steps": [],
+  "steps": [
+    {
+      "name": "floors",
+      "action": "skip-auto",
+      "reason": "TRANQPIT1 already has a row in per_dtm_floors.csv (frozen P3.1a value); a --dtm-filtered re-run would TRUNCATE the canonical CSV"
+    },
+    {
+      "name": "score",
+      "action": "skip-auto",
+      "reason": "1 cached score raster(s) already discovered by transfer_apply (TRANQPIT1_5m_score.tif); regenerating would shadow the frozen cache the registry rows reproduce from"
+    },
+    {
+      "name": "transfer",
+      "action": "run",
+      "command": "/home/frostflux/lunarvoid/venv/bin/python /home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp2_sag/transfer/transfer_apply.py",
+      "returncode": 0,
+      "elapsed_s": 1019.1
+    },
+    {
+      "name": "accounting",
+      "action": "run",
+      "command": "/home/frostflux/lunarvoid/venv/bin/python /home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp2_sag/transfer/unique_accounting.py",
+      "returncode": 0,
+      "elapsed_s": 1.7
+    }
+  ]
+}

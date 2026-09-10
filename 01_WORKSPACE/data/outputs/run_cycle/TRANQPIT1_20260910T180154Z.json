@@ -1,0 +1,102 @@
+{
+  "site": "TRANQPIT1",
+  "utc": "2026-09-10T17:44:26.847832+00:00",
+  "dry_run": false,
+  "cc_filter": "off",
+  "skip_steps": [],
+  "steps": [
+    {
+      "name": "floors",
+      "action": "skip-auto",
+      "reason": "TRANQPIT1 already has a row in per_dtm_floors.csv (frozen P3.1a value); a --dtm-filtered re-run would TRUNCATE the canonical CSV"
+    },
+    {
+      "name": "score",
+      "action": "skip-auto",
+      "reason": "1 cached score raster(s) already discovered by transfer_apply (TRANQPIT1_5m_score.tif); regenerating would shadow the frozen cache the registry rows reproduce from"
+    },
+    {
+      "name": "transfer",
+      "action": "run",
+      "command": "/home/frostflux/lunarvoid/venv/bin/python /home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp2_sag/transfer/transfer_apply.py",
+      "returncode": 0,
+      "elapsed_s": 1045.7
+    },
+    {
+      "name": "accounting",
+      "action": "run",
+      "command": "/home/frostflux/lunarvoid/venv/bin/python /home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp2_sag/transfer/unique_accounting.py",
+      "returncode": 0,
+      "elapsed_s": 1.6
+    }
+  ],
+  "frozen_guard": {
+    "snapshot_dir": "/home/frostflux/lunarvoid/data/outputs/run_cycle_guard/TRANQPIT1_20260910T174426Z",
+    "files": [
+      {
+        "file": "01_WORKSPACE/data/candidate_registry.csv",
+        "sha256_before": "8105fe3e17848bed5d249cac97a222030c912b18b3d5c43c62ba22a4306ceabd",
+        "sha256_after": "8105fe3e17848bed5d249cac97a222030c912b18b3d5c43c62ba22a4306ceabd",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json",
+        "sha256_before": "3580b331c878f9f5937bc7119bb7d1c49bc84212341221d664b2c0c5bae1038d",
+        "sha256_after": "3580b331c878f9f5937bc7119bb7d1c49bc84212341221d664b2c0c5bae1038d",
+        "written_by_step": "transfer",
+        "restored": true
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp2_sag/transfer/calibration_transqpit1.json",
+        "sha256_before": "348a6441915e0ec74c048b631a72406deb39008a442cb4068c06a5d3a3a2cf30",
+        "sha256_after": "348a6441915e0ec74c048b631a72406deb39008a442cb4068c06a5d3a3a2cf30",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp2_sag/unique_accounting_2026-09-07.json",
+        "sha256_before": "84a0eee38f8d3d3066758677b69f53bdae185f14852ea85a782478280d934c5e",
+        "sha256_after": "84a0eee38f8d3d3066758677b69f53bdae185f14852ea85a782478280d934c5e",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp5_fusion/pu_learning_comparison.json",
+        "sha256_before": "d732e1b1584fd97eecaeaaa6a87a38d0d547aa89e9a843632891c194c2822538",
+        "sha256_after": "d732e1b1584fd97eecaeaaa6a87a38d0d547aa89e9a843632891c194c2822538",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json",
+        "sha256_before": "3d360793511dd348ee9b3a883f466dfbe606e82b8a65712b173bae0e1d7fbecf",
+        "sha256_after": "3d360793511dd348ee9b3a883f466dfbe606e82b8a65712b173bae0e1d7fbecf",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp5_fusion/pu_learning_registry_baseline.json",
+        "sha256_before": "cc82e7b9b3e9ef08b8bf5c06315d58fb605984dfbe60e9894a4313b663598efb",
+        "sha256_after": "cc82e7b9b3e9ef08b8bf5c06315d58fb605984dfbe60e9894a4313b663598efb",
+        "written_by_step": null,
+        "restored": false
+      },
+      {
+        "file": "01_WORKSPACE/data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json",
+        "sha256_before": "15a91b5102220803e372bae294110c7efa86880d287b81ec10f5e86ff241d3ac",
+        "sha256_after": "15a91b5102220803e372bae294110c7efa86880d287b81ec10f5e86ff241d3ac",
+        "written_by_step": null,
+        "restored": false
+      }
+    ],
+    "all_byte_identical_after_run": true
+  },
+  "frozen_writes_blocked": [
+    {
+      "file": "01_WORKSPACE/data/outputs/wp2_sag/transfer/transfer_summary.json",
+      "step": "transfer",
+      "action": "restored"
+    }
+  ]
+}
