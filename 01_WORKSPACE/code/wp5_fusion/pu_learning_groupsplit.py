@@ -577,6 +577,8 @@ def cross_fit(
         try:
             auc = float(roc_auc_score(y_te, s))
         except ValueError:
+            # silent by design: single-class held-out fold -> AUC undefined;
+            # NaN recorded in fold_records as explicit missing metric
             auc = float("nan")
         fold_records.append({
             "fold": fold_i,

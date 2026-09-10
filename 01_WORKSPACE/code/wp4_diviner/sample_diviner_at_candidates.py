@@ -276,6 +276,10 @@ def main():
                 span_m=float(r[span_idx]),
             ))
         except (ValueError, IndexError):
+            # C7 audit: silent row drops shrink the candidate set — warn
+            # so a registry schema drift is visible (still skip).
+            print(f"[warn] unparsable registry row skipped: {r[:7]!r}",
+                  file=sys.stderr, flush=True)
             continue
     print(f"[info] loaded {len(candidates)} candidates from {args.registry.name}",
           flush=True)

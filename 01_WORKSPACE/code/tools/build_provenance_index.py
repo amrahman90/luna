@@ -183,6 +183,7 @@ def git_date(rel_repo: str) -> str | None:
         ).stdout.strip()
         return out or None
     except subprocess.CalledProcessError:
+        # silent by design: git history absent (untracked file) — no date
         return None
 
 

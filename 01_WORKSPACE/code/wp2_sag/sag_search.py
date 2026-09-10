@@ -88,6 +88,8 @@ def existing_or_run_kriging(dtm_name: str, lola_dir: Path, force: bool = False) 
         try:
             head = pd.read_csv(csv, nrows=2)
         except Exception:
+            # silent by design: expected-miss probe — unreadable/foreign
+            # CSVs are skipped; column check below also skips non-LOLA files
             continue
         if not {"Pt_Longitude", "Pt_Latitude", "Pt_Radius"}.issubset(set(head.columns)):
             continue

@@ -158,7 +158,7 @@ def _fmt_float(x: Any, digits: int = 3) -> str:
     try:
         v = float(x)
     except (TypeError, ValueError):
-        return "not reported"
+        return "not reported"  # silent by design: messy registry fields render as "not reported"
     if math.isnan(v) or math.isinf(v):
         return "not reported"
     if v == 0:
@@ -177,7 +177,7 @@ def _fmt_int(x: Any) -> str:
     try:
         v = int(x)
     except (TypeError, ValueError):
-        return "not reported"
+        return "not reported"  # silent by design: messy registry fields render as "not reported"
     return str(v)
 
 
@@ -199,7 +199,7 @@ def _fmt_rungs(rungs: list[float]) -> str:
                     # drop trailing .0 for whole numbers
                     cleaned.append(f"{v:g}")
             except (TypeError, ValueError):
-                cleaned.append("—")
+                cleaned.append("—")  # silent by design: bad rung renders as em-dash
     return ", ".join(f"{x} m" for x in cleaned)
 
 
@@ -210,7 +210,7 @@ def _fmt_top_score(x: Any) -> str:
     try:
         v = float(x)
     except (TypeError, ValueError):
-        return "not reported"
+        return "not reported"  # silent by design: _fmt_top_score — messy field
     if math.isnan(v):
         return "not reported"
     if math.isinf(v):
@@ -224,7 +224,7 @@ def _fmt_ci(x: Any) -> str:
     try:
         v = float(x)
     except (TypeError, ValueError):
-        return "not reported"
+        return "not reported"  # silent by design: _fmt_ci — messy field
     if math.isnan(v):
         return "not reported"
     return f"{v:.2f}"
@@ -291,13 +291,13 @@ def _registry_per_dtm(rows: list[dict]) -> dict[str, dict[str, int]]:
             if amp > bucket["top_amp_m"]:
                 bucket["top_amp_m"] = amp
         except ValueError:
-            pass
+            pass  # silent by design: unparsable amp keeps prior bucket max
         try:
             score = float(r.get("score") or 0.0)
             if score > bucket["top_score"]:
                 bucket["top_score"] = score
         except ValueError:
-            pass
+            pass  # silent by design: unparsable score keeps prior bucket max
     return out
 
 
@@ -810,7 +810,7 @@ def _latest_source_mtime(site: str) -> float | None:
             try:
                 mtimes.append(f.stat().st_mtime)
             except OSError:
-                continue
+                continue  # silent by design: file vanished between glob and stat
     if not mtimes:
         return None
     return max(mtimes)

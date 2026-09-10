@@ -158,6 +158,8 @@ def _pit_lonlat(pit_name: str) -> tuple[float, float] | None:
     try:
         import geopandas as gpd
     except Exception:
+        # silent by design: optional-dependency probe — geopandas missing
+        # just disables pit-name lookup, caller falls back to None
         return None
     g = gpd.read_file(pit_shp)
     row = g[g["Name"] == pit_name]

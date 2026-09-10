@@ -82,6 +82,8 @@ def _head_size(url: str, timeout: int = 30) -> int | None:
             cl = resp.headers.get("Content-Length")
             return int(cl) if cl else None
     except Exception:
+        # silent by design: HEAD probe is best-effort — None means the
+        # resume completeness check is simply skipped
         return None
 
 

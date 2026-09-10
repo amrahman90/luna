@@ -23,6 +23,7 @@ import argparse
 import json
 import math
 import re
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -71,6 +72,10 @@ def load_grail_clm_slm(path: Path):
                 clm = float(parts[2].strip()); clm_sig = float(parts[3].strip())
                 slm = float(parts[4].strip()); slm_sig = float(parts[5].strip())
             except ValueError:
+                # C7 audit: silent row drops would silently change the
+                # gravity field — warn so corruption is visible (still skip).
+                print(f"[grail] WARNING: unparsable coefficient row skipped: "
+                      f"{parts[:6]!r}", file=sys.stderr, flush=True)
                 continue
             rows.append((l, m, clm, slm))
     if not rows:

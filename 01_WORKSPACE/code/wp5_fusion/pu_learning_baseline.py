@@ -202,7 +202,7 @@ def parse_confusion_distance(confusion_str: str, kind: str) -> float:
             try:
                 return float(v.replace("m", "").strip())
             except ValueError:
-                return 1e6
+                return 1e6  # silent by design: messy atlas strings -> "no constraint"
     return 1e6
 
 

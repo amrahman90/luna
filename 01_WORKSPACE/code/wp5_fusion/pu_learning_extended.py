@@ -139,7 +139,7 @@ def parse_confusion(confusion_str: str, kind: str) -> float:
             try:
                 return float(m.group(2))
             except ValueError:
-                return 1e6
+                return 1e6  # silent by design: regex guarantees digits — defensive only
     return 1e6
 
 
@@ -410,6 +410,8 @@ def train_and_score(
     try:
         auc = float(roc_auc_score(y_test, y_score_test))
     except ValueError:
+        # silent by design: single-class test split -> AUC undefined; NaN
+        # is reported downstream as an explicit missing metric
         auc = float("nan")
 
     # Feature importances: ElkanotoPuClassifier wraps LogisticRegression;

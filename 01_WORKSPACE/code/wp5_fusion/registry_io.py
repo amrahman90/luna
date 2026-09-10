@@ -117,7 +117,7 @@ def parse_confusion(confusion_str: str, kind: str) -> float:
             try:
                 return float(m.group(2))
             except ValueError:
-                return 1e6
+                return 1e6  # silent by design: regex guarantees digits — defensive only
     return 1e6
 
 

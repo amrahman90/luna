@@ -94,6 +94,8 @@ def write_las(arr: np.ndarray, out: Path, site: str = "", notes: str = "") -> No
             try:
                 header.vlrs.append(laspy.VLR(user_id=k, record_id=0, description=v.decode(errors="ignore")))
             except Exception:
+                # silent by design: VLR site/notes tags are cosmetic LAS
+                # metadata; point payload is written regardless
                 pass
 
     las = laspy.LasData(header)

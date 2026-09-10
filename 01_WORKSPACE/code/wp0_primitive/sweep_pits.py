@@ -63,12 +63,12 @@ def parse_depth(s):
     try:
         return float(s), ""
     except ValueError:
-        pass
+        pass  # silent by design: parse cascade — try '>N' next, else NaN+note
     if s.startswith(">"):
         try:
             return float(s[1:]), f"catalogued '{s}' parsed as lower bound"
         except ValueError:
-            pass
+            pass  # silent by design: falls through to documented NaN+note
     return float("nan"), f"catalogued depth '{s}' unparsable -> NaN"
 
 

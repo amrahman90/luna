@@ -260,9 +260,9 @@ def run_one_dtm(dtm_name: str, rungs: list, wbt, out_root: Path,
             dst.write(np.where(np.isfinite(score), score, -9999.0).astype(np.float32), 1)
         # cleanup tmp + filled
         try: tmp.unlink()
-        except FileNotFoundError: pass
+        except FileNotFoundError: pass  # silent by design: best-effort cleanup
         try: filled.unlink()
-        except FileNotFoundError: pass
+        except FileNotFoundError: pass  # silent by design: best-effort cleanup
         runtime = round(time.time() - t0, 1)
         print(f"  [done] {dtm_name} rung {rung:g} m -> "
               f"score {score.shape} max={float(score.max()):.3f} "

@@ -266,9 +266,9 @@ def run_one_dtm(dtm_name, outdir, args, wbt):
 
         # cleanup tmp + filled to save space
         try: tmp.unlink()
-        except FileNotFoundError: pass
+        except FileNotFoundError: pass  # silent by design: best-effort cleanup
         try: out_fill.unlink()
-        except FileNotFoundError: pass
+        except FileNotFoundError: pass  # silent by design: best-effort cleanup
 
     df = pd.DataFrame(all_rows)
     cand_csv = outdir / "sag_candidates.csv"
