@@ -1,0 +1,25 @@
+{
+  "_comment": "STAGING DRAFT — not yet posted. Underscore-prefixed keys are annotations: strip them and fill creators/licence before calling the Zenodo deposit API. Licence fields are RECOMMENDED-pending-user-confirmation per notes/2026-09-12_E3_licence_audit.md.",
+  "upload_type": "dataset",
+  "version": "1.0.0",
+  "title": "An annotated test-bed registry and leakage-corrected evaluation protocol for lunar void-candidate inference from meter-scale orbital terrain data",
+  "creators": [
+    {
+      "name": "LUNARVOID team",
+      "_note": "[USER] placeholder — confirm creator list, order, ORCIDs, affiliations before upload"
+    }
+  ],
+  "description": "<p>An annotated test-bed registry and leakage-corrected evaluation protocol for lunar void-candidate inference from meter-scale orbital terrain data, provided as a community-testable evaluation resource rather than a survey catalogue. The registry annotates 278 candidate rows across 21 LROC NAC digital terrain models (24,062.96 km2, calibration-context pit-associated sites), including explicit duplicate-supersession links (161 SUPERSEDED rows; 117 unique features), row-level TP/FP/ring/funnel labels, and 233 explicitly not-inferable below-floor rows; both row-based (3.74 [1.71, 7.10] per 10^4 km2) and unique-feature (2.08 [0.67, 4.85]) false-positive rates are reported as calibration-context rates, never survey rates. The evaluation protocol closes the two leakage paths that inflated an earlier random-split baseline (duplicate features spanning train/test splits and shared-DTM correlation), demonstrated with a leave-one-DTM-out PU-learning baseline (pooled out-of-fold F1 0.824, AUC 0.930). The release bundles the annotated registry, methods and provenance documentation, the evaluation-protocol scripts, and frozen summary statistics. Underlying LROC NAC DTMs and the lunar pit atlas are NASA PDS public-domain products, are not redistributed here, and all registry rows are calibrated inferences, never detections.</p>",
+  "keywords": [
+    "lunar",
+    "lava tube",
+    "benchmark",
+    "evaluation protocol",
+    "morphometry",
+    "NAC DTM",
+    "LUNARVOID"
+  ],
+  "license": "cc-by-4.0",
+  "_license_note": "[USER] cc-by-4.0 for registry/docs/JSONs recommended-pending; the four .py scripts recommended MIT (stated in README; Zenodo record-level field carries cc-by-4.0).",
+  "notes": "Test-bed framing per the companion manuscript (v3.1-draft): annotated test-bed registry + leakage-corrected evaluation protocol; calibration-context, not a survey. Registry snapshot md5 a60fb52152e33f37e9052434ad026a6e (sha-256 in CHECKSUMS.sha256). Detector lineage LLTB-1 v0.5.1. Pit-atlas labels derived from the PDS LROC LUNAR_PIT_LOCATIONS shapefile (public domain); cite Wagner & Robinson (2021), LPSC 52, #2530."
+}
