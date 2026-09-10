@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-11 (execution session 42 — B2/B3/B4 provenance & documentation batch)
+
+- **B3 METHODS.md catch-up** (geo-coder; verifier PASS): 801 → 943 lines, pure append in house style — three sections: B1 registry repair (2026-09-06; 97 groups/161 SUPERSEDED/117 primaries, md5s), A2 unique-feature accounting (2026-09-07; 2.08 [0.67, 4.85], row-based regression to 1e-9), D1 PU evaluation redesign v5 (2026-09-09/10; runs A/B/C, cluster CIs, leak-inflated annotation on v2 0.909/0.931, detector-unchanged note). 15+ numbers verified against evidence JSONs.
+- **B4 provenance sidecar** (geo-coder): `data/outputs/PROVENANCE_INDEX.md` — 160 artifacts, 66 with cited-in links, 0 unattributable producers; deterministic builder `code/tools/build_provenance_index.py` (byte-identical double run); exclusions documented (audit/, hand-authored md, backups). **Zero in-place edits to evidence artifacts** — all paper-cited shas preserved (groupsplit 3d360793…, registry md5 a60fb521…, both JSONs byte-identical to HEAD).
+- **B2 MANIFEST outputs-tree** (archivist): new "## Derived outputs tree (data/outputs/)" section (11 rows, canonical entry-points, Paper 1/2 consumers; wp0_scope_map marked SUPERSEDED vs v11 CANONICAL) + policy paragraph (sidecar provenance; cited shas never edited in place) + cross-link from the LLTB-1 v0.1 section. B1–B5 cluster checkbox left unticked (no standalone MANIFEST line — partial tick not possible).
+- Audit item "outputs invisible to manifest" and "METHODS stops at 2026-08-23" both closed.
+
 ## 2026-09-10 (execution session 41 — D1 LOW residuals + literature sweep + A7 recycling pass)
 
 - **D1-LOW** (geo-coder → paper-writer → verifier PASS; skeptic F20 residuals fully closed): run C added to the groupsplit evidence (`rung_cm` ablation, 14 features): F1 0.800 / P 0.700 / R 0.933 / AUC 0.928, cluster CIs F1 [0.285, 1.000] / AUC [0.486, 1.000]; **5/117 decision flips vs B** — 3 are the MARIUSPIT01 800-cm rows (rung value exists only on that DTM), 2 FECUNPIT 400-cm; **I14 failure unmoved** (MARIUSPIT01 0400cm-r001 rank 1/15, predicted negative in both runs). Degenerate-resample rule documented (discard-and-count; 1/1000 draws per run; B CIs bit-unchanged). A/B subtrees regression-identical to committed JSON. Paper 2 §3.3 sentence-pair + v4→v5 descriptors (§3.3 ×4, §1.3, data availability). New JSON sha 3d360793… (byte-identical double run).

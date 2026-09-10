@@ -799,3 +799,145 @@ closed TYCHOPK + 3 no-raster DTMs; 30 random-mare-sites gap remains
 deferred — no LROC NAC DTMs for those footprints; Kaguya/SP/Chang'e
 out of scope for Paper 1). Both gates report mirrors updated
 (`plans/2026-08-23_...` and `papers/gate_reports/...`).
+
+## B1 — registry repair: malformed rows + cross-rung dedupe (2026-09-06, geo-coder)
+
+### Scope
+
+Audit-driven repair of `data/candidate_registry.csv` (Next-Level Plan
+v2, Phase B1). Script:
+`01_WORKSPACE/code/tools/repair_registry_v1.py`; evidence:
+`data/outputs/wp2_sag/registry_repair_2026-09-06.json` (full
+before/after row lists, per-DTM accounting, both md5s). One-shot
+backup taken before the run:
+`data/candidate_registry_backup_2026-09-06.csv`
+(md5 `d38d63fb…`); repaired registry md5 `a60fb521…`.
+
+### What was repaired
+
+1. **15 malformed rows fixed** — Cycles 1-2 rows whose `notes` field
+   carried a comma-tail that shifted the CSV columns (10 ×
+   GRUITHMARE2, 2 × MARIUSCONE, 3 × TYCHOPK). Notes rejoined
+   byte-identical to intent; row count unchanged.
+2. **3 `methods` values fixed** — three MARIUSPIT01 rows carried the
+   literal tier value `"C"` in the `methods` column; remapped to
+   `morphometry` (dtm-specific mapping, count 3).
+3. **97 cross-rung duplicate groups → 161 rows SUPERSEDED** — the
+   same physical feature detected at two rungs (e.g. 4 m and 5 m) had
+   been stored as independent rows. Dedupe key: `(dtm, lon, lat)`
+   rounded to 3 dp (~30 m at the lunar equator; consistent with the
+   v5 I15 ≥ 30 m match radius). Losers get
+   `status=SUPERSEDED` + `; superseded_by=<primary>` appended to
+   notes; primary = finest rung, earliest-id tie-break.
+4. **117 unique features** remain ACTIVE (21 DTM groups; 45
+   above-floor rows = 21 primaries + 24 superseded).
+
+### What does NOT change
+
+- **278 rows in / 278 out** — no row added, removed, or reordered;
+  tiers, scores, spans, floors untouched (verifier: independent
+  regroup + field-by-field diff vs backup, zero defects).
+- Idempotent: a second run is byte-identical.
+- Registry schema unchanged (15 columns + provenance comment).
+
+## A2 — unique-feature FP accounting (2026-09-07, geo-coder)
+
+### Scope
+
+Row-based vs unique-feature false-positive accounting on the
+post-B1 registry. Script:
+`01_WORKSPACE/code/wp2_sag/transfer/unique_accounting.py`; evidence:
+`data/outputs/wp2_sag/unique_accounting_2026-09-07.json`
+(byte-deterministic, seed 42, all input md5s recorded: registry
+`a60fb521…`, pit catalog `49dcf709…`, transfer_summary `39c72f3c…`).
+
+### Row-based regression (gate to Paper 1)
+
+Reproduces the Paper-1 headline row-based accounting **to 1e-9**:
+9 FP / 14 TP / 21 ring / 1 funnel over 24,062.96 km² →
+**3.74 [1.71, 7.10] per 10⁴ km²** (Poisson-exact Garwood 95% CI;
+NEVER Wilson). Classification rules frozen: above-floor = notes lack
+`below-local-floor`; ring = notes contain `ring artifact`; TP = one
+above-floor non-ring row per (DTM, pit) within 100 m; funnel =
+I14-annotated unassigned. Referential integrity of the 161
+`superseded_by` links: 161/161 valid.
+
+### Unique-feature accounting (the new number)
+
+Grouping on the B1 link key (primary + its superseded children;
+class = primary's class), 30 m granularity:
+
+- **6 TP + 5 FP + 9 ring + 1 funnel** → **2.08 [0.67, 4.85] per
+  10⁴ km²** (Garwood). Matches the skeptic hand count exactly.
+- TRANQPIT1's 3 FP rows are two spatial structures (pair co-located
+  at 16.5 m + third at 132.8 m).
+- Sensitivity across grouping radii: unique FP count stays in the
+  3–6 band (5 at the 30–60 m head; 6 at ~3 m; 4 at 100 m; 3 at
+  ~300 m). 146 boundary-straddler pairs listed in the evidence JSON.
+
+## D1 — PU-learning evaluation redesign v5, leak-free group split (2026-09-09/10, geo-coder)
+
+### Scope
+
+Rebuild of the registry PU-learning evaluation after the skeptic
+UNSNOUND verdict on the v2 random split. Script:
+`01_WORKSPACE/code/wp5_fusion/pu_learning_groupsplit.py`; evidence:
+`data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`
+(version `v5_groupsplit_triplerun`; internal date 2026-09-10 — run C
+was regenerated in place 2026-09-10 to close the D1-LOW F20
+residual).
+
+### Leaks fixed
+
+1. **161 SUPERSEDED duplicate rows excluded** — 117 ACTIVE rows only
+   (15 positives / 102 unlabeled); superseded links validated 161/161.
+2. **Leave-one-DTM-out, 21 folds** — rows grouped by DTM so no DTM
+   spans train/test (GroupKFold-2 infeasible: only 2 DTMs hold both
+   classes; fallback documented in-evidence).
+3. **Train-fold-only imputation + scaling** — per-feature medians and
+   StandardScaler fitted on the training fold only (v2 had used
+   full-dataset medians — the second leak).
+
+### Ablation runs
+
+- **Run A (19 features)** — diagnostic upper bound ONLY; retains the
+  4 notes-derived annotation flags with positive-class information
+  (evidence records their p(positive|flag) leaks).
+- **Run B (15 morphometric features) — HEADLINE** — the 4
+  annotation-derived flags removed. Pooled out-of-fold:
+  **F1 0.824, precision 0.737, recall 14/15, AUC 0.930**. DTM-level
+  cluster bootstrap (21 clusters, 1000 draws, seed 42) headline CIs:
+  **F1 [0.35, 0.98], AUC [0.49, 1.00]**. Leave-INGENIIPIT-out
+  (10 of 15 positives): F1 0.571 / AUC 0.790. 0/117 decisions differ
+  from run A at t=0.5.
+- **Run C (14 features)** — sensitivity row only (D1-LOW F20):
+  run B minus `rung_cm` (parsed from candidate_id; the one residual
+  identity carrier). F1 0.800 / AUC 0.928; 5/117 flips vs B.
+
+### Degenerate-resample rule (explicit)
+
+A bootstrap draw is DEGENERATE iff the resample contains zero TRUE
+positives or zero TRUE unlabeled. Degenerate draws are
+**discard-and-count** — dropped from the CI, not redrawn (redrawing
+would consume extra values from the seeded RNG and break
+determinism). Observed: 1/1000 cluster draws per run; CIs unchanged.
+Both OOF prediction arrays (A and B) self-check against pooled
+metrics to ≤1e-9.
+
+### v2 annotation
+
+The published v2 random-split numbers
+(`pu_learning_registry_baseline_v2.json`, 2026-08-28:
+F1 0.909 / AUC 0.931) are annotated **LEAK-INFLATED** in the v5
+evidence: duplicate rows and shared DTMs spanned train/test.
+Ranking survives (AUC 0.927–0.930); precision drops
+(0.909 → 0.737).
+
+### Detector unchanged in this window (2026-09-06 → 2026-09-10)
+
+B1, A2 and D1 are **registry/evaluation-layer methods only**. The
+detector itself — `sag_detect` (LLTB-1 v0.5) and the frozen I15
+transfer recipe (score_frac 0.20 / slope 45° / neigh 5 / PD fill /
+100 m pit match) — is unchanged; no score raster, candidate score,
+tier, or floor value was touched. Smoke test stays at the known-good
+F1 0.392/0/0.800, fusion AUC 0.990.

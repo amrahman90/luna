@@ -173,7 +173,9 @@ positives, never true positives. See
 
 For comparison, the v0.2 number on IndianTunnel_NorthSurface @ 1m
 was F1 = 0.277 (pre-slope-mask). v0.3 is the productive precision
-lift on top of the v0.1 detector.
+lift on top of the v0.1 detector. The on-repo evidence tree behind
+these runs (and all later LLTB-1 results) is mapped in the
+"Derived outputs tree (data/outputs/)" section below.
 
 ## Diviner thermal / rock-abundance grids (Powell 2023 GHRM)
 
@@ -257,6 +259,42 @@ gap is the stereo-rebuild for DTMs that DON'T exist on PDS.
 | Product | Source | Local path | SHA-256 | Size (bytes) | Date | Licence | Note |
 |---|---|---|---|---|---|---|---|
 | Pre-B1 registry snapshot | derived: `data/candidate_registry.csv` immediately before the B1 repair run | `01_WORKSPACE/data/candidate_registry_backup_2026-09-06.csv` | `87c8822c2a7f93858db0460ba1767f53b69e8d25b736e8d23e5fa4df285da520` | 101,061 | 2026-09-06 | n/a (internal derived) | one-shot backup; md5 `d38d63fb4bd2536952dfd2fc99e6c327`; repair evidence in `data/outputs/wp2_sag/registry_repair_2026-09-06.json` |
+
+## Derived outputs tree (data/outputs/)
+
+Added 2026-09-10 (audit task B2). This section is the map + policy
+layer for the curated evidence tree under `01_WORKSPACE/data/outputs/`;
+file-level SHA-256 provenance lives in the sidecar
+`data/outputs/PROVENANCE_INDEX.md` (see policy below).
+
+| Subdirectory | Holds | Canonical entry-point artifact | Consumed by |
+|---|---|---|---|
+| `wp0_kriging/` | LOLA-vs-DTM kriged-correction metrics (TRANQPIT1, MARIUSPIT01) + per-DTM vertical noise floors | `noise_floor_summary.json` | Paper 1 (vertical-error characterisation) |
+| `wp0_primitive/` | depression-depth primitive validation at known pits (recovery table, depth check) | `pit_recovery_table.csv` | Paper 1 (methods) |
+| `wp0_scope_map/` | **SUPERSEDED** v1 scope map: 278-pit coverage vs available DTMs; kept on disk for audit | `pit_coverage_summary.csv` | internal (audit only) |
+| `wp0_scope_map_v11/` | **CANONICAL** v11 scope map: 660-DTM target ranking (pit/rille/crater-density/quality scores) | `target_ranking.csv` (660 rows) | Paper 1 (scope) + internal DTM prioritisation |
+| `wp1_analog/` | terrestrial-analog (Fieg) registration + entrance/trench/skylight void mask | `registration/registration_report.json` | Paper 1 (analog ground truth) |
+| `wp1_detector/` | LLTB-1 detector integration-test evidence | `v0_2_integration_test.json` | internal (QA) |
+| `wp1_ladder/` | degradation ladder: Hapke re-renders (i=45/65/85° x 4 azimuths) + sensor-noise rungs, F1 comparisons | `hapke/hapke_summary.json` + `sensor/sensor_summary.json` | Paper 1 (detectability ladder) |
+| `wp2_sag/` | sag search over 7 mare DTMs + MTP pilot (per-site candidates/depth/frangi/score rasters), confusion layer, transfer/calibration, registry repair + unique-FP accounting | per-site `sag_search_summary.json`; top-level `registry_repair_2026-09-06.json` | Paper 1 (results) + Paper 2 (calibration) |
+| `wp3_fusion/` | MTP-region evidence layers (GRAIL gradient rasters + Diviner placeholder) | `MTP/evidence_layers_summary.json` | Paper 2 (fusion prototype) |
+| `wp5_fusion/` | PU-learning experiments (v1 vs extended, group-split eval, registry baselines) | `pu_learning_comparison.json` | Paper 2 |
+| `audit/` | 2026-09-04 audit findings dump feeding the v2 remediation plan | `audit_findings.md` | internal |
+
+Supersession note: `wp0_scope_map_v11/` is canonical (660 DTM rows,
+`scope_map_v11.py`); the original `wp0_scope_map/` (278-pit coverage
+view) is superseded — it stays on disk for audit and is marked as such
+here and in `PROVENANCE_INDEX.md`.
+
+**Policy (derived outputs).** Everything under `data/outputs/` is
+regenerable from `01_WORKSPACE/code/` plus the acquired inputs
+documented above — the tree is evidence, not a data dependency.
+SHA-level provenance lives in `data/outputs/PROVENANCE_INDEX.md`
+(sidecar, geo-coder-owned, regenerable via
+`code/tools/build_provenance_index.py`). Evidence SHA-256s cited in
+the papers must **never** be edited in place — regenerate to a new
+artifact and update the citation instead. Superseded artifacts stay on
+disk for audit but are marked in the index.
 
 ## Licence notes (from dataset assessment, 00_SOURCE_ORIGINALS)
 
