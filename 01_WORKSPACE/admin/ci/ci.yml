@@ -1,0 +1,42 @@
+name: lunarvoid-ci
+# STAGED, NOT ACTIVE (task E4): this file is inert while it lives in
+# 01_WORKSPACE/admin/ci/ — GitHub only reads workflows from
+# <repo-root>/.github/workflows/. Activating it therefore requires a
+# user-approved exception to the AGENTS.md root-clean rule. See README.md.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned freeze
+        run: |
+          python -m pip install --upgrade pip
+          # KNOWN INSTALL QUIRK (requirements.txt header): pulearn==0.2.0
+          # metadata pins numpy<2.5 while this freeze has numpy==2.5.2, so
+          # strict resolvers may reject the pair. Install the freeze sans
+          # pulearn, then add pulearn with --no-deps (pair verified working
+          # in the project venv).
+          grep -v '^pulearn==' 01_WORKSPACE/code/setup/requirements.txt > /tmp/req-sans-pulearn.txt
+          pip install -r /tmp/req-sans-pulearn.txt pytest
+          pip install --no-deps pulearn==0.2.0
+
+      - name: "Smoke test (synthetic anchors: F1 0.392/0/0.800, fusion AUC 0.990)"
+        run: python 01_WORKSPACE/code/smoke_test.py --outdir /tmp/smoke
+        env:
+          MPLBACKEND: Agg
+
+      - name: "Pytest suite (repo-portable subset; localdata/E2E auto-skip)"
+        run: python -m pytest 01_WORKSPACE/code/tests/ -q
