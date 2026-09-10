@@ -1,6 +1,17 @@
 # Gate G1 Report v1.0 — LUNARVOID (LLTB-1 v0.5 + Phase-3 transfer + Diviner thermal)
 
+> **Canonical install:** `papers/gate_reports/GATE_G1_report_v1.0.md`
+> is the paper-writer's working copy. This file is the archivist's
+> canonical install at `01_WORKSPACE/plans/2026-08-22_GATE_G1_report_v1.0.md`
+> per `plans/2026-08-19_ZEROCOST_Roadmap.md` §9 (gate reports land in
+> `plans/` with ISO-date names). Reports v0.1/v1.0 are DRAFT; v1.x FINAL
+> only after a human G1 decision lands. Status mirror is held in the
+> paper-writer's working copy.
+
+---
+
 **Date:** 2026-08-22 · **Version:** v1.0 · **Status:** FINAL-PASSED (human decision 2026-08-22)
+
 Status: FINAL-PASSED. The DEMONSTRATION-only verdict + DEFERRED-DTM-gap remain; D2 (Task 8 §8 T1 trigger) is APPROVED by the user 2026-08-22, cost ceiling $150.
 **Extends:** G0′ final `papers/gate_reports/G0prime_report_v1.1.md` (FINAL-PASSED 2026-08-21, D1). G1 = zero-cost extension covering LLTB-1 v0.5 degradation, Indian Tunnel analog registration, per-DTM noise floors, TRANQPIT1 calibration freeze / Phase-3 transfer, Powell 2023 Diviner thermal. Authority: v5 §4/§8; `plans/2026-08-19_ZEROCOST_Roadmap.md`.
 **Session commits since G0′:** `67146d3` Phase 0 G0′ FINAL · `c021298` G0′ report v1.1 · `da308cd` Task 12 Indian Tunnel + mask relabel · `1b08d35` Phase 1 LLTB-1 v0.5 (verify 11/11) · `0246f12` Phase 2 Paper 1 v0.2 §4.5 · `c1cc6c1` P3.1a per-DTM floors N=10/649 · `36edccf` Phase 3 transfer N=7/649 · `4a3a3d7` P4.3 Diviner N=7 INGENIIPIT rocky-ejecta. Paths `01_WORKSPACE/...` unless noted.
@@ -38,7 +49,7 @@ G0′ finished at **9 PASS / 0 PARTIAL / 0 FAIL at $0** (7 science + 2 process-o
 
 ## 4. What we can now claim (G1 inference language)
 
-FP rate NOT MEASURED at survey scale; the only honest rate is TRANQPIT1 per-DTM 240.41 [49.58, 702.58] per 10⁴ km² (n=4). The aggregate 3.71 [0.76, 10.83] over 8091.7 km² is a calibration-context rate, NOT a survey rate. The detector chain is **portable in principle across the 6 of 7 on-disk NAC DTMs (IRIDIUMPIT1 missed detection) at the demonstrated noise floor** (≥4 m at TRANQPIT1, ≥5 m at MARIUSPIT01 pooled under the 3× sag-band-RMS project convention; per-DTM RMS spans 0.766–1.462 m, median 1.147 m, `local_Amin` median 3.44 m; per-DTM floors required before any survey-wide single-DTM claim). The **Tranquillitatis radar conduit remains the only subsurface structure on the Moon evidenced by any instrument today** (Carrer 2024 radar sounder); the registry contains **44 inferred void candidates at tier C, all single-method (morphometry-only)**, with the catalogued-pit recovery test passing at 6 of 7 DTMs (IRIDIUMPIT1 missed). Aggregate FP 3.71 [0.76, 10.83] per 10⁴ km² is a **calibration-context rate**, NOT a survey rate — a survey rate requires the 639-DTM held-out set, which awaits Task 8 / §8 trigger T1. Thermal evidence at G1 is **INCONCLUSIVE** (2/7 coverage; INGENIIPIT +2.65 K reframed as rocky-ejecta counter-evidence; tube-scale sub-pixel at Powell 128 ppd). Multi-evidence stacking is **morphometry-only at G1** — a DEMONSTRATION claim, not a science result. Nothing subsurface on the Moon is verifiable today except the Tranquillitatis radar conduit, and nothing in this report changes that.
+FP rate NOT MEASURED at survey scale; the only honest rate is TRANQPIT1 per-DTM 240.41 [49.58, 702.58] per 10⁴ km² (n=4). The aggregate 3.71 [0.76, 10.83] over 8091.7 km² is a calibration-context rate, NOT a survey rate. The detector chain is **portable in principle across the 6 of 7 on-disk NAC DTMs (IRIDIUMPIT1 missed) at the demonstrated noise floor** (≥4 m at TRANQPIT1, ≥5 m at MARIUSPIT01 pooled under the 3× sag-band-RMS project convention; per-DTM RMS spans 0.766–1.462 m, median 1.147 m, `local_Amin` median 3.44 m; per-DTM floors required before any survey-wide single-DTM claim). The **Tranquillitatis radar conduit remains the only subsurface structure on the Moon evidenced by any instrument today** (Carrer 2024 radar sounder); the registry contains **44 inferred void candidates at tier C, all single-method (morphometry-only)**, with the catalogued-pit recovery test passing at 6 of 7 DTMs (IRIDIUMPIT1 missed). Aggregate FP 3.71 [0.76, 10.83] per 10⁴ km² is a **calibration-context rate**, NOT a survey rate — a survey rate requires the 639-DTM held-out set, which awaits Task 8 / §8 trigger T1. Thermal evidence at G1 is **INCONCLUSIVE** (2/7 coverage; INGENIIPIT +2.65 K reframed as rocky-ejecta counter-evidence; tube-scale sub-pixel at Powell 128 ppd). Multi-evidence stacking is **morphometry-only at G1** — a DEMONSTRATION claim, not a science result. Nothing subsurface on the Moon is verifiable today except the Tranquillitatis radar conduit, and nothing in this report changes that.
 
 ## 5. What does NOT pass G1
 
