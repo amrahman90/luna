@@ -48,6 +48,51 @@ from typing import Tuple
 import numpy as np
 from scipy.ndimage import label, generate_binary_structure
 
+# ---------------------------------------------------------------------------
+# Per-rung AREA_MIN table (C3, LLTB-1 v0.6 candidate wiring).
+#
+# Authority: V0.2_PLAN.md §4.1 (the dispatch said "if V0.2_PLAN specifies
+# a table, use it" — it does). v0_2_pipeline_integration.py carries the
+# same values; THIS dict is the canonical copy going forward.
+#
+# Scale-awareness rationale ((GSD ratio)^2 area scaling): the legacy
+# convention is min_component = 5 CELLS at the native 0.5 m rung. A
+# fixed cell count scales the minimum physical footprint by
+# (GSD ratio)^2 across rungs — 5 cells at the 5 m rung of a 0.5 m
+# source already covers 100x the area per cell (125 m^2 vs 1.25 m^2),
+# so a SMALL cell count stays meaningful at coarse rungs while a large
+# one would destroy recall (recall = 1.00 at every rung with >= 5 void
+# cells is the asset this filter must not break). Hence the floor
+# DECREASES with rung:
+#
+#   rung (m) | area_min (cells) | area_min (m^2) | rationale
+#   ---------|-----------------|----------------|----------------------
+#   0.5      | 50              | 12.5           | tubular features ~5x10 cells at 0.5 m
+#   1        | 20              | 20             | v0.2 min-component 10-20 optimal band
+#   2        | 8               | 32             | v0.2 NorthSurface 2 m regression band
+#   5        | 3               | 75             | few positives; protect recall = 1.00
+#   8 / 10   | 2               | 128 / 200      | conservative; few positives exist
+# ---------------------------------------------------------------------------
+AREA_MIN_PER_RUNG: dict[float, int] = {
+    0.5: 50,
+    1.0: 20,
+    2.0: 8,
+    5.0: 3,
+    8.0: 2,
+    10.0: 2,
+}
+
+
+def area_min_for_rung(rung_m: float) -> int:
+    """Return the AREA_MIN table entry for the rung nearest `rung_m`.
+
+    Exact float keys match the fixed ladder (0.5/1/2/5/8/10 m); the
+    nearest-key lookup keeps arbitrary rungs (e.g. 1.5 m) from raising.
+    """
+    keys = sorted(AREA_MIN_PER_RUNG)
+    nearest = min(keys, key=lambda k: abs(k - float(rung_m)))
+    return AREA_MIN_PER_RUNG[nearest]
+
 
 def connected_component_filter(
     score_raster: np.ndarray,

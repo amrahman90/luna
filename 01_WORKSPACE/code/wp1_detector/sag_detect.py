@@ -19,6 +19,7 @@ definition; it serves as the LLTB-1 label set for the v0.1 release.
 CLI:
   sag_detect.py --npz path/to/analog.npz --outdir <repo out dir>
                 [--rungs 0.02 0.5 2 5 60] [--grid-spacing 0.5]
+                [--cc-filter off|on|auto]  (C3, default off = v0.5 parity)
 """
 from __future__ import annotations
 
@@ -38,6 +39,25 @@ from rasterio.transform import Affine, from_bounds
 from scipy.ndimage import label as ndlabel
 from skimage.filters import frangi
 from whitebox import WhiteboxTools
+
+# C3 (LLTB-1 v0.6 candidate): standalone connected-component engine +
+# per-rung AREA_MIN table. Dual import style: this file is executed BOTH
+# as a bare script (sys.path[0] = wp1_detector/) and as a namespace-
+# package module (wp1_detector.sag_detect, code/ on sys.path — e.g.
+# hapke_render.py / sensor_degrade.py). Try package style first, fall
+# back to the bare-script style.
+try:
+    from wp1_detector.connected_component_filter import (  # noqa: E402
+        AREA_MIN_PER_RUNG,
+        area_min_for_rung,
+        connected_component_filter,
+    )
+except ImportError:  # bare-script execution
+    from connected_component_filter import (  # noqa: E402
+        AREA_MIN_PER_RUNG,
+        area_min_for_rung,
+        connected_component_filter,
+    )
 
 
 def cloud_ground_truth(x, y, z, pixel: float, threshold_depth: float = 1.0):
@@ -171,6 +191,67 @@ def filter_small_components(mask: np.ndarray, min_size: int = 1) -> np.ndarray:
     return keep_labels & np.isfinite(mask) | (mask & ~np.isfinite(mask))
 
 
+def _cc_counts(binary: np.ndarray) -> tuple:
+    """(n_components, sizes) of an 8-connected binary mask."""
+    structure = np.ones((3, 3), dtype=np.int8)
+    lab, n = ndlabel(binary & np.isfinite(binary), structure=structure)
+    return int(n), np.bincount(lab.ravel(), minlength=n + 1)
+
+
+def apply_cc_filter(score: np.ndarray, thr: float, mode: str,
+                    min_component: int, cc_area_min, rung_m: float):
+    """C3: post-threshold connected-component post-processing dispatch.
+
+    Wiring point: called on the binary detection mask AFTER the score
+    threshold, BEFORE slope masking / metrics. Modes:
+
+      - ``off``  : the legacy v0.2-v0.5 inline scalar path
+        (:func:`filter_small_components` with ``min_component``, default
+        5). Byte-identical v0.5 parity arm — the frozen Paper 1/2
+        evidence derives from this path.
+      - ``on``   : the standalone :func:`connected_component_filter`
+        engine with a UNIFORM ``area_min`` (``--cc-area-min``, falls
+        back to ``min_component``).
+      - ``auto`` : the standalone engine with the per-rung
+        ``AREA_MIN_PER_RUNG`` table (V0.2_PLAN.md §4.1; scale-aware
+        (GSD ratio)^2 rationale documented in the module).
+
+    Returns ``(pred_mask, audit)`` where audit records the effective
+    area_min, component counts, and the components_dropped ratio
+    (near-1 = the mask is mostly noise; near-0 = filter is a no-op).
+    """
+    pred = score >= thr
+    if mode == "off":
+        filtered = filter_small_components(pred, min_size=min_component)
+        n_total, sizes = _cc_counts(pred)
+        area_eff = int(min_component)
+        n_kept = int((sizes[1:] >= area_eff).sum()) if n_total else 0
+    else:
+        area_eff = (int(cc_area_min) if cc_area_min is not None
+                    else int(min_component)) if mode == "on" \
+            else int(area_min_for_rung(rung_m))
+        # Engine = the standalone module (C3 wiring). Feed it the 0/1
+        # raster at threshold 0.5 so the module's `score > threshold`
+        # reproduces the pipeline's `score >= thr` mask exactly (the
+        # tuned thr is a score quantile, so `== thr` cells exist).
+        binf = pred.astype(np.float64)
+        filtered_score, n_kept = connected_component_filter(
+            binf, threshold=0.5, area_min=area_eff, connectivity=2)
+        filtered = filtered_score > 0.5
+        n_total, _ = _cc_counts(pred)
+    n_dropped = n_total - n_kept
+    audit = {
+        "cc_filter": mode,
+        "cc_area_min_effective": area_eff,
+        "cc_components_total": n_total,
+        "cc_components_kept": n_kept,
+        "cc_components_dropped": n_dropped,
+        "cc_components_dropped_ratio": (n_dropped / n_total) if n_total else 0.0,
+        "cc_cells_dropped": int((pred & ~filtered).sum()),
+    }
+    return filtered, audit
+
+
 def slope_mask(dtm: np.ndarray, pixel_m: float, min_slope_deg: float,
                smooth: int = 3) -> np.ndarray:
     """Return a boolean mask where True = "local slope is steep enough
@@ -287,7 +368,9 @@ def tune_threshold(scores_cal: np.ndarray, truth_cal: np.ndarray, n_grid: int = 
     return best
 
 
-def main():
+def build_arg_parser() -> argparse.ArgumentParser:
+    """The sag_detect CLI parser (C3: extracted from main() so the
+    default surface (--cc-filter off) is unit-testable)."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--npz", type=Path, required=True)
     ap.add_argument("--outdir", type=Path, required=True)
@@ -299,7 +382,21 @@ def main():
     ap.add_argument("--min-component", type=int, default=5,
                     help="Minimum connected-component size (8-connectivity) in cells; "
                     "components below this are removed before F1 is computed. "
-                    "Default 5; set to 1 to disable.")
+                    "Default 5; set to 1 to disable. Used verbatim when "
+                    "--cc-filter off (v0.5 parity) and as the fallback area "
+                    "when --cc-filter on is set without --cc-area-min.")
+    ap.add_argument("--cc-filter", choices=["off", "on", "auto"], default="off",
+                    help="C3 connected-component filter mode. 'off' (default): "
+                    "legacy inline scalar --min-component path (v0.5 parity, "
+                    "frozen Paper 1/2 evidence). 'on': standalone "
+                    "connected_component_filter engine with a uniform "
+                    "--cc-area-min. 'auto': the per-rung AREA_MIN table "
+                    "(V0.2_PLAN.md sec 4.1; 0.5m->50, 1m->20, 2m->8, 5m->3, "
+                    "8/10m->2 cells).")
+    ap.add_argument("--cc-area-min", type=int, default=None,
+                    help="Uniform minimum component area (cells) for "
+                    "--cc-filter on. Ignored in auto (table) and off "
+                    "(legacy --min-component) modes.")
     ap.add_argument("--slope-mask-degrees", type=float, default=10.0,
                     help="Mask out predictions on slopes steeper than this many "
                     "degrees (gentle slopes cannot host roof-sag dimples that "
@@ -312,7 +409,11 @@ def main():
                     "report the F1-maximising slope per rung. Default off (use the "
                     "fixed --slope-mask-degrees value). Lift on hardest sites: "
                     "typically +5-15 percent on F1.")
-    args = ap.parse_args()
+    return ap
+
+
+def main():
+    args = build_arg_parser().parse_args()
 
     args.outdir.mkdir(parents=True, exist_ok=True)
     data = np.load(args.npz)
@@ -413,8 +514,11 @@ def main():
         # apply connected-component post-processing on the FULL score
         # surface, then partition into cal/test (otherwise cal/test
         # are not i.i.d. samples of the same post-processing).
-        pred_full = score >= thr
-        pred_full = filter_small_components(pred_full, min_size=args.min_component)
+        # C3: mode dispatch (off = legacy scalar for v0.5 parity;
+        # on/auto = standalone engine, per-rung AREA_MIN table in auto).
+        pred_full, cc_audit = apply_cc_filter(
+            score, thr, args.cc_filter, args.min_component,
+            args.cc_area_min, r)
         # slope-aware mask: predictions on too-gentle slopes cannot
         # host roof-sag dimples that show up in 2-5 m amplitude
         # depression-depth rasters. v0.3 precision lift.
@@ -476,6 +580,9 @@ def main():
             "n_void_cells": int(truth_r.sum()),
             "n_detected_test": m_tst_pred["tp"],
             "min_component": args.min_component,
+            "precision_test_slope": m_tst_slope["precision"],
+            "recall_test_slope": m_tst_slope["recall"],
+            **cc_audit,
             "slope_mask_degrees": float(best_deg),
             "slope_mask_tuned": bool(args.tune_slope),
             "n_slope_masked_test": int(((pred_full & ~slope_ok) & test_mask).sum()),
@@ -542,6 +649,12 @@ def main():
         json.dump({
             "source": str(args.npz), "n_points": int(len(x)),
             "gt_void_cells_master": n_void_cells, "rungs": rung_rows,
+            "cc_filter": args.cc_filter,
+            "cc_area_min_uniform": (args.cc_area_min if args.cc_filter == "on"
+                                    else None),
+            "area_min_per_rung_table": ({str(k): v for k, v in
+                                         sorted(AREA_MIN_PER_RUNG.items())}
+                                        if args.cc_filter == "auto" else None),
             "figure_curve": str(curve_path),
         }, f, indent=2)
     print(f"[out ] summary -> {summary_path}", flush=True)

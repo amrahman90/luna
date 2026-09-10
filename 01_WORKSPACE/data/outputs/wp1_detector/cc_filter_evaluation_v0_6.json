@@ -1,0 +1,483 @@
+{
+  "task": "C3 \u2014 cc-filter wiring evaluation (LLTB-1 v0.6 candidate)",
+  "date": "2026-09-10",
+  "provenance": {
+    "git_sha": "3b21e02d1efab4c6672c27991a54a3a5e0bc9774",
+    "git_tree_dirty": true,
+    "seed": 42,
+    "split": "50/50 cal/test (v5 I9)",
+    "detector": "01_WORKSPACE/code/wp1_detector/sag_detect.py",
+    "engine": "01_WORKSPACE/code/wp1_detector/connected_component_filter.py",
+    "frozen_evidence": "Paper 1/2 JSONs derive from LLTB-1 v0.5 (--cc-filter off); untouched by this change"
+  },
+  "arms": {
+    "off": "--cc-filter off (legacy scalar min-component 5; v0.5 parity)",
+    "auto": "--cc-filter auto (per-rung AREA_MIN table)"
+  },
+  "area_min_table": {
+    "0.5": 50,
+    "1": 20,
+    "2": 8,
+    "5": 3,
+    "8": 2,
+    "10": 2
+  },
+  "area_min_rationale": "V0.2_PLAN.md \u00a74.1 table (authoritative); (GSD ratio)^2 scale-awareness documented in connected_component_filter.AREA_MIN_PER_RUNG",
+  "parity": {
+    "reference": "notes/2026-08-21_LLTB1_v0.4_release_note.md \u00a75 (site table frozen through v0.5)",
+    "tolerance": 0.002,
+    "all_ok": true,
+    "failures": []
+  },
+  "decision_rule": {
+    "rule": "default ON only if F1_auto >= F1_off - 0.005 at EVERY site AND F1_auto > F1_off at >= 3 sites; else OFF",
+    "n_nonregressing": 7,
+    "n_improved": 0,
+    "n_sites": 7,
+    "default_on": false,
+    "branch": "OFF: non-regressing at 7/7 sites, improved at 0/7 (needs ALL + >= 3)"
+  },
+  "sites": [
+    {
+      "site": "IndianTunnel_NorthSurface",
+      "rung_m": 1.0,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_NorthSurface/lltb1/IndianTunnel_NorthSurface_0.5m.npz",
+      "slope_mask_degrees_off": 45.0,
+      "slope_mask_degrees_auto": 45.0,
+      "v05_pin_f1": 0.3618,
+      "off": {
+        "f1": 0.36180904522613067,
+        "precision": 0.43373493975903615,
+        "recall": 0.3103448275862069,
+        "threshold": 0.005208178143948358,
+        "cc_components_dropped_ratio": 0.7407407407407407,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.358974358974359,
+        "precision": 0.4430379746835443,
+        "recall": 0.3017241379310345,
+        "threshold": 0.005208178143948358,
+        "cc_components_dropped_ratio": 0.9259259259259259,
+        "cc_area_min_effective": 20
+      },
+      "delta": {
+        "f1": -0.0028346862517716898,
+        "precision": 0.009303034924508125,
+        "recall": -0.008620689655172431
+      }
+    },
+    {
+      "site": "IndianTunnel_Collapse3",
+      "rung_m": 0.5,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_Collapse3/IndianTunnel_Collapse3_0.5m.npz",
+      "slope_mask_degrees_off": 45.0,
+      "slope_mask_degrees_auto": 45.0,
+      "v05_pin_f1": 0.1875,
+      "off": {
+        "f1": 0.18747684327528713,
+        "precision": 0.10377358490566038,
+        "recall": 0.9693486590038314,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.18747684327528713,
+        "precision": 0.10377358490566038,
+        "recall": 0.9693486590038314,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 50
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    {
+      "site": "Fieg_A",
+      "rung_m": 0.5,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/Fieg/Fieg_0.5m.npz",
+      "slope_mask_degrees_off": 45.0,
+      "slope_mask_degrees_auto": 45.0,
+      "v05_pin_f1": 0.1365,
+      "off": {
+        "f1": 0.13648293963254596,
+        "precision": 0.0783132530120482,
+        "recall": 0.5306122448979592,
+        "threshold": 0.15890802115201988,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.13648293963254596,
+        "precision": 0.0783132530120482,
+        "recall": 0.5306122448979592,
+        "threshold": 0.15890802115201988,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 50
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    {
+      "site": "Sheepridge",
+      "rung_m": 5.0,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/Sheepridge/Sheepridge_0p5m.npz",
+      "slope_mask_degrees_off": 45.0,
+      "slope_mask_degrees_auto": 45.0,
+      "v05_pin_f1": 0.0909,
+      "off": {
+        "f1": 0.09090909090909093,
+        "precision": 0.1111111111111111,
+        "recall": 0.07692307692307693,
+        "threshold": 0.19404352486133633,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.09090909090909093,
+        "precision": 0.1111111111111111,
+        "recall": 0.07692307692307693,
+        "threshold": 0.19404352486133633,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 3
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    {
+      "site": "IndianTunnel_cave_10x",
+      "rung_m": 5.0,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_10x/IndianTunnel_cave_10x_0p5m.npz",
+      "slope_mask_degrees_off": 10.0,
+      "slope_mask_degrees_auto": 10.0,
+      "v05_pin_f1": 0.085,
+      "off": {
+        "f1": 0.0847457627118644,
+        "precision": 0.04424778761061947,
+        "recall": 1.0,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.0847457627118644,
+        "precision": 0.04424778761061947,
+        "recall": 1.0,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 3
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    {
+      "site": "Kingsbowl",
+      "rung_m": 5.0,
+      "tune_slope": true,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/Kingsbowl/lltb1/Kingsbowl_0.5m.npz",
+      "slope_mask_degrees_off": 20.0,
+      "slope_mask_degrees_auto": 20.0,
+      "v05_pin_f1": 0.043,
+      "off": {
+        "f1": 0.043343653250773995,
+        "precision": 0.022187004754358162,
+        "recall": 0.9333333333333333,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.043343653250773995,
+        "precision": 0.022187004754358162,
+        "recall": 0.9333333333333333,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 3
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    {
+      "site": "IndianTunnel_cave_1x",
+      "rung_m": 5.0,
+      "tune_slope": false,
+      "npz": "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_1x/IndianTunnel_cave_1x_0p5m.npz",
+      "slope_mask_degrees_off": 10.0,
+      "slope_mask_degrees_auto": 10.0,
+      "v05_pin_f1": 0.068,
+      "off": {
+        "f1": 0.06779661016949151,
+        "precision": 0.03508771929824561,
+        "recall": 1.0,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 5,
+        "parity_ok": true
+      },
+      "auto": {
+        "f1": 0.06779661016949151,
+        "precision": 0.03508771929824561,
+        "recall": 1.0,
+        "threshold": 0.0,
+        "cc_components_dropped_ratio": 0.0,
+        "cc_area_min_effective": 3
+      },
+      "delta": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    }
+  ],
+  "commands": {
+    "IndianTunnel_NorthSurface": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_NorthSurface/lltb1/IndianTunnel_NorthSurface_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "1.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_NorthSurface/lltb1/IndianTunnel_NorthSurface_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "1.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "IndianTunnel_Collapse3": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_Collapse3/IndianTunnel_Collapse3_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "0.5",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_Collapse3/IndianTunnel_Collapse3_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "0.5",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "Fieg_A": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Fieg/Fieg_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "0.5",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Fieg/Fieg_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "0.5",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "Sheepridge": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Sheepridge/Sheepridge_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Sheepridge/Sheepridge_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "IndianTunnel_cave_10x": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_10x/IndianTunnel_cave_10x_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_10x/IndianTunnel_cave_10x_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "Kingsbowl": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Kingsbowl/lltb1/Kingsbowl_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off",
+        "--tune-slope"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/Kingsbowl/lltb1/Kingsbowl_0.5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto",
+        "--tune-slope"
+      ]
+    },
+    "IndianTunnel_cave_1x": {
+      "off": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_1x/IndianTunnel_cave_1x_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "off"
+      ],
+      "auto": [
+        "/home/frostflux/lunarvoid/venv/bin/python",
+        "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/code/wp1_detector/sag_detect.py",
+        "--npz",
+        "/home/frostflux/lunarvoid/data/lltb1/IndianTunnel_cave_1x/IndianTunnel_cave_1x_0p5m.npz",
+        "--outdir",
+        "<outdir>",
+        "--rungs",
+        "5.0",
+        "--min-component",
+        "5",
+        "--cc-filter",
+        "auto"
+      ]
+    }
+  }
+}
