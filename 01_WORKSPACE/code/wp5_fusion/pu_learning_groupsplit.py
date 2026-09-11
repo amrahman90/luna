@@ -76,6 +76,7 @@ Cost: $0. Local laptop computation.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import logging
@@ -657,7 +658,183 @@ def threshold_sensitivity(
     }
 
 
-def main() -> int:
+# ---------------------------------------------------------------------------
+# CLI (added 2026-09-11, session-44 cosmetic queue): a bare invocation used
+# to start the full 3-run x 21-fold LODO battery (~20 min) immediately.
+# Default is now help+exit; the battery requires an explicit --run.
+# Computation logic, output paths, and numerics are UNCHANGED — run_battery
+# is the former main() verbatim.
+# ---------------------------------------------------------------------------
+SCRIPT_VERSION = "v5_groupsplit_triplerun (D1-LOW repair, F20)"
+
+
+def _evidence_sha256() -> str:
+    """SHA-256 of the evidence JSON this script targets (provenance)."""
+    try:
+        return hashlib.sha256(OUTPUT_JSON.read_bytes()).hexdigest()
+    except OSError:
+        return "<evidence JSON not present on disk>"
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="pu_learning_groupsplit.py",
+        description=(
+            "Leak-free PU-learning evaluation on the candidate registry: "
+            "leave-one-DTM-out cross-fit of three feature-set runs, with "
+            "DTM-level cluster-bootstrap CIs. A bare invocation prints this "
+            "help and exits; the battery runs ONLY with an explicit --run "
+            "(it takes ~20 minutes and rewrites the committed evidence "
+            "JSON)."
+        ),
+        epilog=(
+            "run modes (all executed by a single --run pass; seed 42):\n"
+            "  run A 'FULL'     all 19 features — DIAGNOSTIC UPPER BOUND "
+            "ONLY\n"
+            "                   (includes 4 notes-derived annotation flags "
+            "that partially\n"
+            "                   encode DTM identity / human FP "
+            "adjudication).\n"
+            "  run B 'MORPH'    15 features — the 4 annotation flags "
+            "REMOVED — HEADLINE.\n"
+            "  run C            run B minus rung_cm (14 features) — "
+            "SENSITIVITY ROW ONLY.\n"
+            "  folds            GroupKFold(k=min(5, both-class DTMs)) "
+            "attempted; falls back to\n"
+            "                   leave-one-DTM-out (21 folds) when a train "
+            "fold keeps <2\n"
+            "                   positives for Elkanoto (currently the "
+            "case).\n"
+            "  CIs              DTM-level CLUSTER bootstrap (21 clusters, "
+            "1000 draws, seed\n"
+            "                   42, percentile 95%) = HEADLINE; row "
+            "bootstrap secondary\n"
+            "                   (recall CI deliberately omitted).\n"
+            "  extras           leave-INGENIIPIT-out summaries, threshold "
+            "sensitivity\n"
+            "                   0.5/1.0/1.5 (run B), known failure modes "
+            "(I14 funnel), leak\n"
+            "                   asserts, oof self-checks.\n"
+            "\n"
+            "Use --list-runs to print the planned configuration without "
+            "executing anything."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p.add_argument(
+        "--run", action="store_true",
+        help="Execute the full battery (default: print help and exit).",
+    )
+    p.add_argument(
+        "--list-runs", "--dry-run", dest="list_runs", action="store_true",
+        help="Print the planned run configuration and exit WITHOUT "
+             "executing the battery.",
+    )
+    p.add_argument(
+        "--version", action="version",
+        version=(
+            f"%(prog)s {SCRIPT_VERSION}\n"
+            f"targets evidence JSON: {OUTPUT_JSON.name}\n"
+            f"evidence sha256:       {_evidence_sha256()}"
+        ),
+    )
+    return p
+
+
+def planned_run_summary() -> str:
+    """Static config + cheap registry counts for --list-runs (no fitting)."""
+    lines = [
+        "=== pu_learning_groupsplit.py planned run configuration ===",
+        f"script version      : {SCRIPT_VERSION}",
+        f"evidence JSON       : {OUTPUT_JSON}",
+        f"evidence sha256     : {_evidence_sha256()}",
+        f"registry            : {REGISTRY_CSV}",
+        f"seed / n_bootstrap  : {SEED} / {N_BOOTSTRAP}",
+        f"thresholds (run B)  : {THRESHOLDS}",
+        "",
+        "runs:",
+        "  A FULL   19 features (diagnostic upper bound; includes the 4",
+        "           notes-derived annotation flags)",
+        "  B MORPH  15 features (HEADLINE; drops: "
+        + ", ".join(DROPPED_ANNOTATION_FLAGS) + ")",
+        "  C        14 features (sensitivity row only; additionally drops: "
+        + ", ".join(DROPPED_RUNG_FLAG) + ")",
+        "folds:",
+        "  GroupKFold(k=min(5, n_both_class_DTMs)) attempted; falls back to",
+        "  leave-one-DTM-out if any train fold has <2 positives "
+        "(Elkanoto",
+        "  needs >=2: 1 in its internal hold-out AND >=1 for fitting).",
+        "CIs:",
+        "  cluster bootstrap (DTM level) = HEADLINE; row bootstrap "
+        "secondary;",
+        "  degenerate draws discarded-and-counted, never redrawn.",
+    ]
+    try:
+        df = load_registry(REGISTRY_CSV)
+        active, _sup, stats = prepare_frames(df)
+        pos_mask, _pm = build_positive_mask(active)
+        y = pos_mask.astype(int).to_numpy()
+        groups = active["dtm"].to_numpy()
+        n_groups = int(pd.unique(groups).size)
+        both = sum(
+            1 for d in pd.unique(groups)
+            if (y[groups == d] == 1).any() and (y[groups == d] == 0).any()
+        )
+        # Same feasibility check as run_battery() (pure indexing, no fit):
+        k_att = min(5, both)
+        if k_att >= 2:
+            from sklearn.model_selection import GroupKFold
+            cand_folds = list(
+                GroupKFold(n_splits=k_att).split(
+                    X=np.zeros(len(y)), y=y, groups=groups
+                )
+            )
+            bad = [
+                i for i, (tr, _) in enumerate(cand_folds)
+                if (y[tr] == 1).sum() < 2
+            ]
+            split_plan = (
+                f"GroupKFold(k={k_att}) — all train folds have >=2 positives"
+                if not bad
+                else f"LODO fallback ({n_groups} folds) — GroupKFold(k="
+                     f"{k_att}) infeasible: fold(s) {bad} train with "
+                     f"<2 positives"
+            )
+        else:
+            split_plan = f"LODO ({n_groups} folds) — k_attempted={k_att} < 2"
+        lines += [
+            "",
+            "registry counts (ACTIVE frame only; SUPERSEDED excluded):",
+            f"  rows ACTIVE={stats['n_active_kept']} "
+            f"(expected {N_ACTIVE_EXPECTED}), "
+            f"superseded excluded={stats['n_superseded_excluded']}",
+            f"  positives={int(y.sum())}, unlabeled={int((y == 0).sum())}, "
+            f"DTM groups={n_groups}, both-class DTMs={both}",
+            f"  splitter plan: {split_plan}",
+        ]
+    except Exception as exc:  # registry absent/unreadable — still useful
+        lines += [f"", f"(registry counts unavailable: {exc})"]
+    lines += [
+        "",
+        "DRY RUN — nothing executed, nothing written.",
+    ]
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_arg_parser()
+    args = parser.parse_args(argv)
+    if args.list_runs:
+        print(planned_run_summary())
+        return 0
+    if args.run:
+        return run_battery()
+    # Default (bare invocation): help + exit; never start the battery.
+    parser.print_help()
+    return 0
+
+
+def run_battery() -> int:
     t0 = time.perf_counter()
     warnings.filterwarnings("always")
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)

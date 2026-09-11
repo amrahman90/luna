@@ -10,16 +10,29 @@ registry + leakage-corrected evaluation protocol + honest baselines**,
 not a survey catalogue (the catalogue framing was the desk-reject
 risk).
 **Authors:** LUNARVOID team.
-**Date:** 2026-09-12 (v3.2-draft, verifier-queued cosmetic fixes,
-no content change: References NEW-block alphabetical reorder —
-Watson & Baldini now entry 17, Williams entry 18 (the one stale
-cross-reference, §2, updated); entry indentation and initial style
-normalized to the block's convention; title block normalized to
-Paper 1's single-line H1 style; supersedes v3.1-draft of 2026-09-12
-(task D4-fix: skeptic objections V1–V6 applied to the
-v3.0-draft-reframe), which superseded the v3.0-draft-reframe of
-2026-09-10 and the v0.1 skeleton of 2026-08-28; not
-submission-ready).
+**Date:** 2026-09-12 (v3.3-draft, bibliographic corrections +
+pre-submission mechanical sweep: Powell 2023 resolved via DOI to the
+published JGR Planets 128(2), e2022JE007532 record (was "Icarus
+submitted"); Williams 2017 corrected to the verbatim published title
+and pages (Icarus 283, 300–325 — was a wrong title, 313–322); Hurwitz
+2013 corrected to the verbatim Crossref record (PSS 79–80, 1–38 — was
+a wrong Icarus 225 venue/title); INGENIIPIT ring-row count normalized
+to the registry's 21 everywhere (was 24 in §3.1/§3.3/§5.2 and 23 in
+§4.3; positive-set gloss recomputed from the registry: 34 = 21 ring +
+13 r001 rows); v1 random-split column corrected against
+`pu_learning_registry_baseline.json` (precision/recall transposition;
+AUC 0.8968 not 0.8969; footnote source attribution fixed); supersedes
+v3.2-draft of 2026-09-12 (verifier-queued cosmetic fixes, no content
+change: References NEW-block alphabetical reorder — Watson & Baldini
+now entry 17, Williams entry 18 (the one stale cross-reference, §2,
+updated); entry indentation and initial style normalized to the
+block's convention; title block normalized to Paper 1's single-line
+H1 style), which superseded v3.1-draft of 2026-09-12 (task D4-fix:
+skeptic objections V1–V6 applied to the v3.0-draft-reframe), which
+superseded the v3.0-draft-reframe of 2026-09-10 and the v0.1 skeleton
+of 2026-08-28; not submission-ready).
+skeptic repairs: first-claim hedged, code-availability corrected,
+refs verified/dropped (session 49).
 **Status:** Section-by-section skeleton under the D4 reframe. Built
 from the v1.0 G2 transfer
 freeze (`data/outputs/wp2_sag/transfer/transfer_summary.json`; 2026-08-23;
@@ -196,8 +209,10 @@ feasibility result (15 positives), not classifier validation.
   PU-learning **ranking** baseline under that protocol (leak-free
   leave-one-DTM-out pooled OOF F1 0.824 [cluster-bootstrap 0.35,
   0.98] / AUC 0.930 [0.49, 1.00], run B morphometric-only feature
-  set; §3.3); the first lunar-published framework that reports FP per
-  10⁴ km² (master plan §9 mandatory metric); the explicit I10
+  set; §3.3); to our knowledge, the first framework in the lunar
+  literature to make FP per 10⁴ km² a mandatory reporting metric
+  (together with the companion Paper 1 calibration-context
+  accounting; master plan §9 mandatory metric); the explicit I10
   apparent-FP discipline; the Marius Hills I14 funnel-pit case study
 as a v5-confirmed confounder and the registry's first
    known-hard-case entry.
@@ -238,7 +253,7 @@ conditions. Their status as of 2026-08-28:
 | T2 | N ≥ 30 tier-B candidates | **NOT MET** — tier-B count collapsed 3 → 0 after the skeptic Cycle-1 downgrade of the I14 funnel rule (`notes/findings.md` 2026-08-22; **A=0 / B=0 / C=278**); tier-B promotion requires two-independent-methods agreement (master plan §9) and we have only Z2 morphometry active at 21/21 + thermal at 2/7 (per the 2026-08-22 P4.3 review, "INCONCLUSIVE at N=7 due to 4/7 equatorial coverage gap") + photometric (P4.2) deferred. |
 | T3 | Cycles 3–5 closed (NAC EDR + ASP stereo + quality gate) | **NOT MET** — PDS NAC_EDR / NAC_CDR / browse 404 on every endpoint (2026-08-23 environment block); Hetzner Tier-1 rental ($55/mo, D2 trigger APPROVED 2026-08-22 but rental not yet authorised; $150 ceiling preserved, **$0 spent to date**) would close these but is gated on user approval. |
 | T4 | Multi-evidence stacking at ≥2 evidence legs at ≥5 candidates | **NOT MET** — multi-evidence stacking is deferred to Paper 3 (WP3 scope; v5 master plan §8 WP3 line 493–506); only morphometry is active site-wide; thermal at 2/7 INCONCLUSIVE; photometric deferred (P4.2); GRAIL gravity not active (P3.1a Phase-3 floor logging only; l_max=680 subset v0.1 was never integrated into the registry). |
-| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v5 triple-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8969. |
+| **(implicit)** | PU-learning baseline | **MET (BEYOND)** — `data/outputs/wp5_fusion/pu_learning_registry_baseline_v2.json` 2026-08-28: 278 rows / 19 features / n_positives_TP=34 / n_unlabeled=244; F1 = 0.9091 / AUC = 0.9312 on a random row split — **leak-inflated** (duplicate features and shared DTMs could span train/test), superseded by the D1 leak-free group-split evaluation `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json` (v5 triple-run): 117 active rows (161 SUPERSEDED duplicates excluded), leave-one-DTM-out (21 folds), run B (15 morphometric features; 4 annotation-derived flags removed) pooled OOF F1 = 0.824 [DTM-cluster-bootstrap 0.35, 0.98] / AUC = 0.930 [0.49, 1.00]; run A diagnostic (19 features) F1 = 0.824 / AUC = 0.927 with **0/117 decisions differing from B at t=0.5**. LogisticRegression(C=1.0, max_iter=1000), not retuned; wall time 0.04 s (v2 run). The v1 baseline (5 features) gave F1 = 0.8571 / AUC = 0.8968. |
 | **(implicit)** | G2 FINAL-PASSED | **PARTIAL** — `notes/findings.md` line 794 verbatim: "**G2' status:** FINAL-PASSED 2026-08-28 (already flipped in earlier 'complete all' session; user's 'pass g2' instruction served as explicit confirmation). Row 10 PARTIAL honest state preserved verbatim. Final-pass does NOT depend on per-candidate verdicts; the verdict text already documents the catalogued-pits-only framing honestly." |
 
 **Honest framing**: Paper 2 ships the WP2 deliverable (delivered as
@@ -260,6 +275,13 @@ deferred WP3 scope, not this paper.
 - **Stability bounds (Blair 2017 + Theinat 2018)** — anchor for the
   realistic ~60–300 m lunar tube-width band used in the morphometric
   Frangi scale selection; citations carried over from Paper 1.
+- **Comparative tube morphometry (Sauro et al. 2020, incl.
+  Pozzobon)** — Earth–Moon–Mars review that measures collapse
+  chains and skylights on satellite images and DTMs and reports
+  lunar and Martian tubes 1–3 orders of magnitude more voluminous
+  than terrestrial analogues while remaining within roof-stability
+  thresholds: the observational complement to the Blair/Theinat
+  modelling bounds behind the Frangi scale band.
 - **Tranquillitatis radar conduit (Carrer 2024)** — the sole lunar
   subsurface structure with instrument-based evidence; v5
   claim-discipline anchor; citation carried over from Paper 1.
@@ -324,9 +346,8 @@ deferred WP3 scope, not this paper.
   forward-looking goal, gated on the planned versioned Zenodo
   deposition (E3; see Data availability).
 - **NEW for Paper 2** (added vs Paper 1's 8 refs; 10 planned
-  additions — Cushing ×2, Grethen, Hurwitz, Powell, Pozzobon,
-  Prasad & Mazumder, Purohit et al., Watson & Baldini, Williams —
-  plus one optional):
+  additions — Cushing ×2, Grethen, Hurwitz, Powell, Sauro,
+  Prasad & Mazumder, Purohit et al., Watson & Baldini, Williams):
   - **Prasad & Mazumder 2026 / Purohit et al. 2025 / Grethen et
     al. 2025** — benchmark-genre precedents (Moonstone, Mars-Bench,
     StereoLunar); see the bullet block above and References
@@ -335,8 +356,10 @@ deferred WP3 scope, not this paper.
     (Mask R-CNN cave-entrance detection, Icarus 411:115952); the
     v5 R8 prior-art-collision anchor and precursor to ESSA; see
     the genre block above and References entry 17.
-  - **Cushing 2015 / Cushing 2017** — Mars Global Cave Catalog
-    (MGC3); cross-body pretraining source; cited in outline sketch
+  - **Cushing 2015 / Cushing 2017** — Mars Global Cave Candidate
+    Catalog (MGC3; PDS bundle + AbSciCon 2017 abstract — see
+    References entries 9–10 correction notes); cross-body
+    pretraining source; cited in outline sketch
     §2 but **NOT executed** (deferred — see §3.4).
   - **Williams 2017** — Diviner cumulative nighttime temperature;
     basis for the P4.3 thermal anomaly stacking (sketch only;
@@ -348,9 +371,6 @@ deferred WP3 scope, not this paper.
     sub-pixel at all 7 sites; only site-scale anomalies resolvable).
   - **Hurwitz 2013** — sinuous rille shapefile (the I5 confusion
     layer); used in the v5 I14 funnel-pit prediction.
-  - **Elkins-Tanton 2024 / Besserer 2024** (if cited) — recent
-    lunar subsurface void / thermal modelling; placeholder for the
-    v5 Tier-D confirmation layer framing.
 
 ---
 
@@ -411,12 +431,13 @@ deferred WP3 scope, not this paper.
   TYCHOPK/02/03/04/07, FRESHMELT, FRESHMELT1) have NaN `local_Amin`
   and are preserved in the registry with `terrain_extrapolation`
   annotation; they do **not** contribute to FP counting.
-- **INGENIIPIT ring-artefact annotation**: 24 INGENIIPIT rows (r002–r008
+- **INGENIIPIT ring-artefact annotation**: 21 INGENIIPIT rows (r002–r008
   at 2/4/5 m rungs, all within ~10 km of catalogued pit r001)
   carry the `ring artifact around catalogued pit r001` note and are
-  **not** 23 separate void candidates (one row each, but the same
-  detector-induced Frangi ring pattern); r001 is the actual catalogued
-  pit (top score 19.33, 46 m from the catalogued feature; verifier
+  **not** 21 separate void candidates (one row each, but the same
+  detector-induced Frangi ring pattern); the DTM's remaining 3 rows
+  are the r001 catalogued-pit rows themselves; r001 is the actual
+  catalogued pit (top score 19.33, 46 m from the catalogued feature; verifier
   finding 2026-08-21).
 
 ### 3.2 Per-DTM noise floors (TRANSPIT1 / MARIUSPIT01 with the 3× sag-band-RMS rule)
@@ -489,9 +510,11 @@ deferred WP3 scope, not this paper.
   > "positive ← (dtm ∈ CATALOGUED_PIT_DTMS AND candidate_id matches
   > '-r001') OR (notes contain 'ring artifact'); AND NOT below-local-
   > floor"
-  - `n_positive_candidates = 34` (the 7 CATALOGUED_PIT_DTMS rank-1 TPs
-    + the 24 INGENIIPIT r002–r008 ring-artefact rows + 3 other
-    catalogued-pit rank-1 hits across the 21 DTMs × 2–3 rungs)
+  - `n_positive_candidates = 34` (registry-recomputed 2026-09-12:
+    the 21 INGENIIPIT r002–r008 ring-artefact rows + 13
+    catalogued-pit r001 rows across 6 of the 7 CATALOGUED_PIT_DTMs
+    — IRIDIUMPIT1's r001 rows sit below floor — over the 21 DTMs ×
+    2–3 rungs)
   - `n_unlabeled = 244`
   - (v2 registry-wide accounting over all 278 rows; under the D1
     active-set evaluation below, the same label rule yields **15
@@ -516,19 +539,23 @@ deferred WP3 scope, not this paper.
   | Metric | v1 (5 feat, random split) | v2 (19 feat, random split) | **v3 run B (15 feat, D1 LODO, pooled OOF)** | v3 run A (19 feat, diagnostic) |
   |---|---:|---:|---:|---:|
   | F1 | 0.8571 | 0.9091 | **0.824 [0.35, 0.98]** | 0.824 [0.35, 0.98] |
-  | precision | 0.8182 | 0.9091 | 0.737 [0.25, 1.00] | 0.737 [0.25, 1.00] |
-  | recall | 0.9000 | 0.9091 | 0.933 (14/15) [0.50, 1.00] | 0.933 (14/15) |
-  | ROC AUC | 0.8969 | 0.9312 | **0.930 [0.49, 1.00]** | 0.927 [0.49, 1.00] |
+  | precision | 0.9000 | 0.9091 | 0.737 [0.25, 1.00] | 0.737 [0.25, 1.00] |
+  | recall | 0.8182 | 0.9091 | 0.933 (14/15) [0.50, 1.00] | 0.933 (14/15) |
+  | ROC AUC | 0.8968 | 0.9312 | **0.930 [0.49, 1.00]** | 0.927 [0.49, 1.00] |
   | n_predicted_positive | — | 11 | 19 | 19 |
   | n_test_total | — | 85 | 117 (pooled OOF, 21 folds) | 117 (same folds) |
   | n_test_positives | — | 11 | 15 | 15 |
   | n_train_total | — | 193 | per-fold (held-out DTM excluded) | per-fold (same) |
   | n_train_positives | — | 23 | per-fold (5 when INGENIIPIT held out) | per-fold (same) |
 
-  (v1 figures from the LLTB-1 v0.4 PU baseline release note; the v2
-  JSON does not restate them — paper-writer to confirm against
-  `admin/verification_evidence/` if available, else cite the v1
-  release note path. v3 figures from
+  (v1 figures from
+  `data/outputs/wp5_fusion/pu_learning_registry_baseline.json`
+  (restated in `pu_learning_comparison.json`); the v2 JSON does not
+  restate them. The v1 precision/recall pair was transposed and the
+  AUC mis-rounded (0.8969 → 0.8968) in earlier drafts — corrected
+  2026-09-12 against the v1 JSON; the earlier attribution to the
+  LLTB-1 v0.4 PU baseline release note was wrong (that note contains
+  no v1 PU metrics). v3 figures from
   `data/outputs/wp5_fusion/pu_learning_groupsplit_2026-09-09.json`
   (`runs.run_B_MORPH_headline` and
   `runs.run_A_FULL_diagnostic_upper_bound`: `pooled_oof` +
@@ -654,6 +681,10 @@ deferred WP3 scope, not this paper.
 - **Goal** (verbatim from `plans/2026-08-23_Paper2_outline_sketch.md`
   §3.6): "MGC3 pretraining (Cushing 2015/2017 catalog; HiRISE/CTX
   skylight morphology)".
+  (Catalog-record note: the "2015/2017" label is the sketch's
+  shorthand, quoted verbatim; the verifiable records are the 2015
+  PDS archive bundle and the AbSciCon 2017 abstract #3708 —
+  References entries 9–10.)
 - **Status**: **DEFERRED**. `notes/findings.md` line 470–480
   (decision 2026-08-22) verbatim:
   > "MGC3 cross-body pretraining (Mars cave catalog Cushing 2015/2017)
@@ -909,7 +940,7 @@ deferred WP3 scope, not this paper.
     "12-km-scale FP from pit; possible floor-fractured crater rim /
     ejecta / modification — visual inspection required to confirm
     FP label".
-  - **INGENIIPIT**: ring artifacts r002–r008 at 2/4/5 m rungs (23
+  - **INGENIIPIT**: ring artifacts r002–r008 at 2/4/5 m rungs (21
     rows total, all within ~10 km of r001); cross-reference to "ring
     artifact around catalogued pit r001; not an independent void
     candidate".
@@ -1066,9 +1097,10 @@ be doing its job.)*
   Any survey-grade claim requires Kaguya/SP/Chang'e DTMs (deferred)
   or a much larger NAC DTM pool (Tier-1 rental deferred).
 - **PU-learning positives are local-max proxies**, not ground
-  truth. The v2 registry-wide positive set (34 positives = 7
-  catalogued-pit-DTMS rank-1 + 24 INGENIIPIT ring-artefact + 3
-  other rank-1 catalogued-pit hits). A held-out mare basin is not
+  truth. The v2 registry-wide positive set (34 positives = 21
+  INGENIIPIT ring-artefact rows + 13 catalogued-pit r001 rows
+  across 6 of the 7 catalogued-pit DTMs; registry-recomputed
+  2026-09-12). A held-out mare basin is not
   implementable at N=21 DTMs (master plan §9 requirement). Under
   the D1 leak-free evaluation the active set carries only 15
   positives (10 concentrated in the INGENIIPIT fold): the PU
@@ -1298,7 +1330,8 @@ The authors declare no competing interests.
   path 1): `admin/visual_inspection_helper.html` (state not
   preserved on plain save; use Chrome `chrome-cli` save or capture
   path 2).
-- **Code**: open at the LUNARVOID repository.
+- **Code**: available from the authors on request; a versioned
+  public release will accompany the planned E3 Zenodo deposition.
 
 ---
 
@@ -1313,7 +1346,10 @@ submission milestone; some entries may need user-curation before
 submission). The three benchmark-genre entries (Grethen 2025,
 Prasad & Mazumder 2026, Purohit et al. 2025) were verified against
 arXiv metadata on 2026-09-10 (titles/authors/abstracts; DOIs are
-arXiv identifiers). Pre-submission external audit still required:
+arXiv identifiers). Watson & Baldini 2024 was DOI-verified
+2026-09-12; Powell 2023, Williams 2017, and Hurwitz 2013 were
+DOI/Crossref-verified 2026-09-12 (entries 12, 13, 18 carry the
+correction notes). Pre-submission external audit still required:
 the Laurier/ASU DTM-attribute pit database is not covered by the
 37-ref prior-art matrix and must be audited before the first-claim
 is submitted:*
@@ -1360,15 +1396,33 @@ is submitted:*
 
 **NEW for Paper 2 (18 planned entries total — 10 firm additions +
 8 shared; Zotero attach + DOI verification pending; cite order TBD
-by user; +1 optional entry below):**
+by user):**
 
-9. Cushing, G.E. (2015). Mars Global Cave Catalog: a database
-   of cave-like features at candidate rover landing sites.
-   *LPSC 46*, Abstract #1164. *— MGC3 v1; cross-body
-   pretraining source.*
-10. Cushing, G.E. (2017). Mars Global Cave Catalog: updates
-    and new features. *LPSC 48*, Abstract #1951. *— MGC3 v2;
-    HiRISE skylight morphology inventory.*
+9. Cushing, G.E. (2015). Mars Global Cave Candidate Catalog
+   (MGC3) [data set]. NASA Planetary Data System archive bundle,
+   urn:nasa:pds:mars_mro.odyssey_multi_cavecatalog_cushing_2016.
+   doi:10.17189/1519222. *— MGC3 v1; cross-body pretraining
+   source. Correction 2026-09-12: the prior record ("Mars Global
+   Cave Catalog: a database of cave-like features at candidate
+   rover landing sites", LPSC 46 #1164) matches no published
+   abstract — LPSC 46 #1164 is McCollom (Meridiani sulfate
+   geochemistry), and no Cushing LPSC 2015 cave abstract exists.
+   Verified record: the PDS bundle page itself (DOI resolver:
+   authors "Cushing, Glen E.", publication year 2015); ADS
+   bibcode 2016pds..data....8C carries a January 2016 date (the
+   bundle-id year), PDS remains the publisher of record.*
+10. Cushing, G.E. (2017). Mars Global Cave Candidate Catalog
+    (MGC3). *Astrobiology Science Conference 2017*, Abstract
+    #3708 (LPI Contrib. No. 1965). *— THEMIS VIS + CTX survey of
+    lava-tube skylights and Atypical Pit Craters, quality-rated
+    0–3; the catalog was in PDS review at abstract time.
+    Correction 2026-09-12: the prior record ("updates and new
+    features", LPSC 48 #1951) matches no published abstract —
+    LPSC 48 #1951 is Toplis et al. (Ceres bulk composition).
+    Verified verbatim from the LPI PDF header: "Astrobiology
+    Science Conference 2017 (LPI Contrib. No. 1965) 3708.pdf —
+    MARS GLOBAL CAVE CANDIDATE CATALOG (MGC3). G. E. Cushing,
+    U.S. Geological Survey, Astrogeology Science Center".*
 11. Grethen, C., Gasparini, S., Morin, G., Lebreton, J.,
     Marti, L., & Sanchez-Gestido, M. (2025). Adapting stereo
     vision from objects to 3D lunar surface reconstruction with
@@ -1376,20 +1430,50 @@ by user; +1 optional entry below):**
     doi:10.48550/arXiv.2510.18172. *— Open lunar stereo-pair
     dataset; benchmark-genre precedent; dataset-release
     conventions (versioned DOI).*
-12. Hurwitz, D.M., et al. (2013). The sinuous rilles of
-    Marius Hills. *Icarus* 225, 1094–1107. *— The I5
-    confusion layer; I14 funnel-pit prediction.*
-13. Powell, T.M., et al. (2023). A high-resolution thermal
-    anomaly map of the Moon from LRO Diviner GHRM. *Icarus*
-    (submitted/in press). *— The actual 128-ppd product
-    sampled at the 7 DTM sites; sub-pixel scale mismatch
-    acknowledged.*
-14. Pozzobon, R., et al. (2019). Lava tubes on Earth, Moon
-    and Mars: a review on their size, morphology, and
-    formation mechanisms. *Geosciences* 9(8), 347.
-    doi:10.3390/geosciences9080347. *— Earlier work by the
-    Carrer group on the same conduit; cited alongside
-    Carrer 2024 for completeness.*
+12. Hurwitz, D.M., Head, J.W., & Hiesinger, H. (2013). Lunar
+     sinuous rilles: Distribution, characteristics, and
+     implications for their origin. *Planetary and Space Science*
+     79–80, 1–38. doi:10.1016/j.pss.2012.10.019. *— The I5
+     confusion layer; I14 funnel-pit prediction. Bibliographic
+     details verified against Crossref 2026-09-12; corrects an
+     earlier mis-attribution ("The sinuous rilles of Marius
+     Hills", Icarus 225, 1094–1107) — no such Hurwitz Icarus
+     paper exists; the prior-art-matrix row (PSS 79-80:1-38) was
+     correct.*
+13. Powell, T.M., Horvath, T., Robles, V.L., Williams, J.-P.,
+     Hayne, P.O., Gallinger, C.L., Greenhagen, B.T., McDougall,
+     D.S., & Paige, D.A. (2023). High-Resolution Nighttime
+     Temperature and Rock Abundance Mapping of the Moon Using the
+     Diviner Lunar Radiometer Experiment With a Model for
+     Topographic Removal. *Journal of Geophysical Research:
+     Planets* 128(2), e2022JE007532. doi:10.1029/2022JE007532.
+     *— The actual 128-ppd product sampled at the 7 DTM sites;
+     sub-pixel scale mismatch acknowledged. Bibliographic details
+     verified against the DOI resolver / Crossref 2026-09-12;
+     corrects the earlier "Icarus (submitted/in press)"
+     placeholder — the prior-art-matrix row (JGR Planets,
+     doi:10.1029/2022JE007532) was correct.*
+14. Sauro, F., Pozzobon, R., Massironi, M., De Bernardinis, P.,
+     Santagata, T., & De Waele, J. (2020). Lava tubes on Earth,
+     Moon and Mars: A review on their size and morphology
+     revealed by comparative planetology. *Earth-Science Reviews*
+     209, 103288. doi:10.1016/j.earscirev.2020.103288. *—
+     Comparative-planetology morphometry of tube collapse chains
+     and skylights measured on satellite images and DTMs; anchors
+     the §2 stability-bounds discussion from the observational
+     side. Correction 2026-09-12: the prior entry ("Pozzobon, R.,
+     et al. (2019), Lava tubes on Earth, Moon and Mars: a review
+     on their size, morphology, and formation mechanisms,
+     Geosciences 9(8), 347, doi:10.3390/geosciences9080347")
+     matched no published record — that DOI resolves to Khatami
+     et al. (2019, earthquake-induced structural pounding), and
+     the same-titled lava-tube review is by Sauro et al.
+     (Pozzobon second author), ESR 209 (2020) 103288. Verified
+     via Crossref and Semantic Scholar. (Crossref's journal
+     record spells the fourth author "De Berardinis"; the
+     Copernicus EPSC companion record and the Semantic Scholar
+     author extraction give "De Bernardinis" — we use the
+     latter.)*
 15. Prasad, A., & Mazumder, S. (2026). Moonstone: A multimodal
     foundation model and benchmark for lunar remote sensing.
     *arXiv:2607.03644*. doi:10.48550/arXiv.2607.03644. *—
@@ -1418,12 +1502,14 @@ by user; +1 optional entry below):**
     verified against the DOI resolver 2026-09-12; bracketed
     training/F1 summary from `notes/prior_art_matrix.csv` (row
     WatsonBaldini2024).*
-18. Williams, J.-P., et al. (2017). Cold traps and recent
-    thermal behavior of lunar cold spots. *Icarus* 283, 313–
-    322. *— Diviner cumulative nighttime temperature; basis
-    for P4.3 thermal anomaly stacking.*
-
-*(Optional Paper 2 add — to confirm by user if cited:*
-19. *Besserer, J., et al. (2024). Thermal signature of lunar
-    lava tubes under simulated illumination conditions.
-    *JGR Planets* (submitted/in press).)*
+18. Williams, J.-P., Paige, D.A., Greenhagen, B.T., &
+     Sefton-Nash, E. (2017). The global surface temperatures of
+     the Moon as measured by the Diviner Lunar Radiometer
+     Experiment. *Icarus* 283, 300–325.
+     doi:10.1016/j.icarus.2016.08.012. *— Diviner cumulative
+     nighttime temperature; basis for P4.3 thermal anomaly
+     stacking. Bibliographic details verified against the DOI
+     resolver 2026-09-12; corrects an earlier wrong title ("Cold
+     traps and recent thermal behavior of lunar cold spots" — a
+     conflated title matching no published record) and wrong page
+      range (313–322).*

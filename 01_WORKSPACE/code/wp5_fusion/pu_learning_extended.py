@@ -38,7 +38,9 @@ Cost: $0. Local laptop computation.
 """
 from __future__ import annotations
 
+import argparse
 import csv
+import hashlib
 import io
 import json
 import logging
@@ -460,7 +462,132 @@ def train_and_score(
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
-def main() -> int:
+# ---------------------------------------------------------------------------
+# CLI (added 2026-09-11, session-44 cosmetic queue): a bare invocation used
+# to start the v2 battery immediately, OVERWRITING the two committed
+# historical JSON artifacts. Default is now help+exit; running requires an
+# explicit --run. Computation logic, output paths, and numerics are
+# UNCHANGED — run_battery is the former main() verbatim. NOTE: the
+# importable functions (load_registry, build_extended_features,
+# build_positive_mask, train_and_score, audit_numeric_columns) are
+# unchanged and still imported by pu_learning_groupsplit.py.
+# ---------------------------------------------------------------------------
+SCRIPT_VERSION = "v2_extended"
+
+
+def _sha256_of(path: Path) -> str:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return f"<{path.name} not present on disk>"
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="pu_learning_extended.py",
+        description=(
+            "HISTORICAL v2 extended PU-learning baseline: 19 registry "
+            "features, leaky random 70/30 ROW split (seed 42). Kept "
+            "verbatim as the record behind the published v2 numbers; "
+            "superseded for headline claims by pu_learning_groupsplit.py "
+            "(LODO, leak-free). A bare invocation prints help and exits; "
+            "the battery runs ONLY with an explicit --run and OVERWRITES "
+            "the committed v2/comparison JSONs."
+        ),
+        epilog=(
+            "run mode (single pass, seed 42):\n"
+            "  v2_extended   19-feature PU fit on ALL registry rows "
+            "(SUPERSEDED\n"
+            "               duplicates included — the leak), Elkanoto-"
+            "LogisticRegression,\n"
+            "               random 70/30 row split, hold_out_ratio ladder "
+            "0.10..0.02.\n"
+            "  writes        pu_learning_registry_baseline_v2.json and\n"
+            "               pu_learning_comparison.json (both OVERWRITTEN).\n"
+            "  caveat        metrics are leak-inflated upper bounds (row "
+            "split; DTM\n"
+            "               autocorrelation; superseded duplicates) — do "
+            "not cite as\n"
+            "               generalisation estimates; see "
+            "pu_learning_groupsplit.py.\n"
+            "\n"
+            "Use --list-runs to print the planned configuration without "
+            "executing anything."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p.add_argument(
+        "--run", action="store_true",
+        help="Execute the v2 battery (default: print help and exit).",
+    )
+    p.add_argument(
+        "--list-runs", "--dry-run", dest="list_runs", action="store_true",
+        help="Print the planned run configuration and exit WITHOUT "
+             "executing the battery.",
+    )
+    p.add_argument(
+        "--version", action="version",
+        version=(
+            f"%(prog)s {SCRIPT_VERSION}\n"
+            f"targets evidence JSON: {V2_OUTPUT_JSON.name}\n"
+            f"evidence sha256:       {_sha256_of(V2_OUTPUT_JSON)}\n"
+            f"also rewrites:         {COMPARISON_JSON.name} "
+            f"(sha256 {_sha256_of(COMPARISON_JSON)})"
+        ),
+    )
+    return p
+
+
+def planned_run_summary() -> str:
+    lines = [
+        "=== pu_learning_extended.py planned run configuration ===",
+        f"script version      : {SCRIPT_VERSION} (HISTORICAL — leaky "
+        "random row split)",
+        f"evidence JSON (writable): {V2_OUTPUT_JSON}",
+        f"  current sha256    : {_sha256_of(V2_OUTPUT_JSON)}",
+        f"comparison JSON (writable): {COMPARISON_JSON}",
+        f"  current sha256    : {_sha256_of(COMPARISON_JSON)}",
+        f"registry            : {REGISTRY_CSV}",
+        "estimator           : ElkanotoPuClassifier("
+        "LogisticRegression(C=1.0, max_iter=1000)), "
+        "hold_out_ratio ladder 0.10/0.07/0.05/0.03/0.02, seed 42",
+        "split               : train_test_split(test_size=0.30, "
+        "random_state=42) over ROWS (leak-inflated; superseded)",
+    ]
+    try:
+        df = load_registry(REGISTRY_CSV)
+        X, feature_names, _audit = build_extended_features(df)
+        positive, _pm = build_positive_mask(df)
+        lines += [
+            "",
+            "registry counts (ALL rows, SUPERSEDED included — the leak):",
+            f"  rows={len(df)}, features={len(feature_names)}, "
+            f"positives={int(positive.sum())}, "
+            f"unlabeled={int((~positive).sum())}",
+        ]
+    except Exception as exc:
+        lines += ["", f"(registry counts unavailable: {exc})"]
+    lines += [
+        "",
+        "DRY RUN — nothing executed, nothing written.",
+    ]
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_arg_parser()
+    args = parser.parse_args(argv)
+    if args.list_runs:
+        print(planned_run_summary())
+        return 0
+    if args.run:
+        return run_battery()
+    # Default (bare invocation): help + exit; never start the battery.
+    parser.print_help()
+    return 0
+
+
+def run_battery() -> int:
     t0 = time.perf_counter()
     V2_OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     warnings.filterwarnings("always")
