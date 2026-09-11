@@ -22,7 +22,7 @@ paraphrase, re-round, or refresh from memory.
 
 | # | Claim | v2.0 value | Manuscript anchor | Output artifact |
 |---|---|---|---|---|
-| 1 | Manuscript | IMRaD; 297 lines / 8,281 words; 8 references | whole manuscript | — |
+| 1 | Manuscript | IMRaD; 307 lines / 8,617 words (7,837 main text Abstract–Conclusions); 12 references (v2.1, 2026-09-11 QA pass) | whole manuscript | — |
 | 2 | Analog scope | **four field sites / six map instances** (three instances sample the same trench-hosted tube; site-level independence = 4, not 6) | §2.1, §5.4 | — |
 | 3 | Lunar scope | **21 DTM instances, 24,062.96 km²**; pit-associated by construction → *calibration-context, not survey* | §2.2, Table 2 | `data/outputs/wp2_sag/transfer/transfer_summary.json` |
 | 4 | Registry | 278 morphometry rows → **117 unique features**; 45 above-floor rows = 14 TP + 9 FP + 21 ring + 1 funnel; **21 unique above-floor** | §2.2, §4.2, §5.4 | `data/candidate_registry.csv` |
@@ -94,7 +94,7 @@ Section 0 table only. Referee-specific material goes here: ...]
 3. **Revision.** Manuscript location + before/after, or an explicit
    no-change statement with reason.
 4. **Citation discipline.** New citations go through Zotero and the
-   author-year References list (currently 8 entries).
+   author-year References list (currently 9 entries).
 
 Stylistic rules (project conventions):
 
@@ -167,7 +167,7 @@ amplitudes 155/140/34 m; three at Tranquillitatis, forming two spatial
 structures — a 16.5 m pair and a third at 132.8 m), and produced
 **zero false positives across 9,222.69 km² of added highland and
 impact-melt terrain (21 new rows, every one below-floor)** (§4.2). At
-the §1.1 base rate (~20 tube-relevant features among ~281 catalogued
+the §1.1 base rate (~20 tube-relevant features among ~300 catalogued
 pits), a novel single-method morphometric claim would be more likely a
 false positive than a discovery; a novel candidate would require an
 above-floor score at an uncatalogued location surviving visual

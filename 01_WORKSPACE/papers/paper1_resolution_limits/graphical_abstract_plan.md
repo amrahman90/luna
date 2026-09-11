@@ -1,4 +1,4 @@
-# Graphical Abstract Plan — Paper 1 v2.0 ("LLTB-1 calibrated benchmark")
+# Graphical Abstract Plan — Paper 1 v2.1 ("LLTB-1 calibrated benchmark")
 
 **Status:** Canonical panel spec for the v2.0 re-render of
 `figs/fig_graphical_abstract.png` (1280×720). The PNG is being

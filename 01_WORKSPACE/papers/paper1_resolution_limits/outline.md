@@ -11,7 +11,7 @@ over unchanged from main.md v1.2; no new scientific claims.
 |---|---|---|
 | Title page | title, authors (placeholder), keywords | v1.2 header (venue/status block stripped) |
 | Abstract | ≤300 words, single paragraph, all headline numbers | v1.2 Abstract (A3 sentence added; A4 site count added) |
-| 1.1 Base-rate problem | ~20/~281 pits, 240k tiles, 0.8% precision, FP per 10⁴ km² | v1.2 §1.1 |
+| 1.1 Base-rate problem | ~20/~300 pits, 240k tiles, 0.8% precision, FP per 10⁴ km² | v1.2 §1.1 |
 | 1.2 Related work | Atlas, ESSA, radar, stability bounds, inherited methods, analog corpus | v1.2 §2 (scaffolding refs removed) |
 | 1.3 Scope & contributions | 5 contributions; IS/IS-NOT framing | v1.2 §1.2 |
 | 2.1 Analog sites | four field sites, six map instances (A4), per-instance stats | v1.2 §3.1 |

@@ -8,7 +8,7 @@
 > (`aggregate` block), `data/candidate_registry.csv`, and
 > `main.md` Abstract and §4.2 Table 2.
 
-- LLTB-1 sets first-of-their-kind F1/P/R curves across LROC NAC GSD bands (0.5–10 m)
+- LLTB-1: per-rung F1/P/R detectability curves across LROC NAC GSD bands (0.5–10 m)
 - Calibration-context row-based FP rate 3.74 [1.71, 7.10] per 10⁴ km², 24,062.96 km²
 - 278 tier-C rows: 45 above-floor + 233 below-floor; 14 re-detections of known pits
 - Tranquillitatis radar conduit (Carrer 2024) = Moon's sole instrumented subsurface
@@ -20,7 +20,7 @@
 
 | # | Highlight claim | Source |
 |---|---|---|
-| H1 | LLTB-1 per-rung F1/P/R curves; first-of-their-kind for the LROC NAC GSD band (0.5–10 m rungs) | `main.md` §1.3 contribution 2; §4.1 Table 1; `data/outputs/wp1_detector/sag_detect.py`; `~/lunarvoid/data/lltb1/<site>/sag/sag_summary.json` |
+| H1 | LLTB-1 per-rung F1/P/R detectability curves for the LROC NAC GSD band (0.5–10 m rungs), on surveyed ground truth; the manuscript's §1.3 contribution 2 carries the "to our knowledge, the first" hedge | `main.md` §1.3 contribution 2; §4.1 Table 1; `data/outputs/wp1_detector/sag_detect.py`; `~/lunarvoid/data/lltb1/<site>/sag/sag_summary.json` |
 | H2 | Row-based calibration-context aggregate FP per 10⁴ km² = 3.74 [Poisson-exact 95% CI 1.71, 7.10] over 24,062.96 km² of 21 pit-associated DTMs (NOT survey) | `main.md` §4.2 Table 2 (aggregate row); `data/outputs/wp2_sag/transfer/transfer_summary.json` block `aggregate` |
 | H3 | 278 tier-C morphometry rows; 45 above-floor; 233 below-floor preserved; all 14 above-floor true positives are re-detections of catalogued pits — zero novel candidates | `main.md` Abstract; §4.2; §5.2; `data/candidate_registry.csv` |
 | H4 | Tranquillitatis radar conduit (Carrer 2024) = the only instrumented subsurface structure on the Moon evidenced by any instrument today | `main.md` Abstract; §1.1; §6 closing; References: Carrer et al. 2024 |
@@ -43,18 +43,20 @@
 - No coverage-fraction claim: the incorrect "82/278 rows have NAC coverage;
   226 do not" statement was removed from `main.md` §2.2 and §5.4 (post-A1
   fix); all 278 rows derive from the 21 processed DTMs, and the remaining
-  coverage gap is atlas-level (~281 catalogued pits), stated as a scope
+  coverage gap is atlas-level (~300 catalogued pits), stated as a scope
   limitation.
 
 ---
 
-*Char-count verification (incl. spaces, Unicode code points; verified
-2026-09-07 against the five bullet lines above):*
+*Char-count verification (incl. spaces, Unicode code points; re-verified
+2026-09-11 against the five bullet lines above; H1 reworded this pass to
+drop the un-hedgeable "first-of-their-kind" claim — the hedged first
+claim lives in `main.md` §1.3):*
 
 | # | Chars | Budget | Status |
 |---|------:|-------:|--------|
-| H1 | 83 | ≤85 | OK |
-| H2 | 83 | ≤85 | OK |
-| H3 | 82 | ≤85 | OK |
-| H4 | 82 | ≤85 | OK |
-| H5 | 84 | ≤85 | OK |
+| H1 | 81 | ≤85 | OK |
+| H2 | 82 | ≤85 | OK |
+| H3 | 81 | ≤85 | OK |
+| H4 | 81 | ≤85 | OK |
+| H5 | 83 | ≤85 | OK |

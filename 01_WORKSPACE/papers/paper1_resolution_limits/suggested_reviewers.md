@@ -20,12 +20,17 @@ Emails and current affiliations still require verification.
 >
 > **Cited-reference exclusion applies.** The pre-submission checklist
 > below forbids suggesting any co-author of a Paper 1 reference. The
-> authors of Le Corre 2025, Wagner & Robinson 2014/2021/2022,
-> Henriksen 2017, Carrer 2024, Chwała 2024, Theinat 2020, Blair 2017,
-> Zhou 2024, Costello 2026, van Ewijk 2011, Mueller 2026 and
-> Reichenzeller 2026 are therefore listed only as *excluded-but-
-> obvious* names, never as primaries. The primaries below are
-> deliberately independent of the reference list.
+> current twelve references are Blair 2017, Carrer 2024, Garwood 1936,
+> Kelahan 2026, Le Corre 2025, Mueller 2026, Planchon & Darboux 2002,
+> Reichenzeller 2026, Theinat 2018, Wagner & Robinson 2021, Wang & Liu
+> 2006, and Wong 2014; their authors (including
+> **V. T. Bickel, a Kelahan et al. 2026 co-author — added as the ninth
+> reference on 2026-09-10, after this file was first populated**) are
+> therefore listed only as *excluded-but-obvious* names, never as
+> primaries. Closely associated earlier works (Wagner & Robinson
+> 2014/2022, Henriksen 2017, Chwała 2024, van Ewijk 2011, Zhou 2024,
+> Costello 2026) are treated as excluded as well. The primaries below
+> are deliberately independent of the reference list.
 >
 > **Conflict of interest:** the LUNARVOID team has no current
 > collaborations, shared grants, or shared affiliations with any
@@ -47,7 +52,7 @@ The paper spans five expertise areas:
 3. **Forest / VCI / UAV-LiDAR** — Reichenzeller 2026 I8–I15; VCI for
    overstory tree detection in UAV-LiDAR and SfM forest plots; van
    Ewijk 2011 VCI original.
-4. **Lava tube stability** — Blair 2017; Chwala 2024; Theinat 2020 —
+4. **Lava tube stability** — Blair 2017; Chwala 2024; Theinat 2018 —
    the 60–300 m lunar tube-width band that anchors the vesselness
    scale selection.
 5. **Radar sounder** — Carrer 2024 Mini-RF S-band imaging of the
@@ -68,29 +73,31 @@ methodological inheritance.
 
 | Field | Value |
 |---|---|
-| **Name** | Valentin T. Bickel |
-| **Affiliation** | Center for Space and Habitability, University of Bern, Switzerland [verify — previously MPS Göttingen] |
-| **Email** | [verify email — corresponding author line, Nat. Comms. 2021] |
-| **Representative pubs** | Bickel, Moseley, Lopez-Francos & Shirley (2021), "Peering into lunar permanently shadowed regions with deep learning", *Nature Communications* 12:5607. — Gómez Jodar, Mittelholz & Bickel (2025), "Geologic and Thermophysical Characterization of Lunar Volcanic Pits". |
-| **Expertise (1 sentence)** | Machine-learning detection of small-scale lunar surface features (rockfalls, PSR interiors, volcanic pits) from LROC NAC imagery under adverse illumination. |
-| **Why qualified (1 sentence)** | He works the exact failure mode LLTB-1 quantifies — detector performance collapsing under low-signal, shadow-dominated NAC conditions (§4.5 Hapke-IMSA arm, mean F1 0.35→0.10) — and can audit the detection-vs-inference positioning against ESSA without being an ESSA co-author. |
-| **Conflict-of-interest note** | No known conflict. Not a co-author of any Paper 1 reference. |
+| **Name** | Anna Mittelholz |
+| **Affiliation** | Institute of Geophysics, ETH Zürich, Switzerland [verify] |
+| **Email** | [verify email — corresponding author line, recent ETH publications] |
+| **Representative pubs** | Gómez Jodar, Mittelholz & Bickel (2025), "Geologic and Thermophysical Characterization of Lunar Volcanic Pits". — Ritter, Karatekin, Mittelholz & Stähler (2024), "Exploring subsurface extent and physical properties of lunar lava tubes using surface microgravity survey". |
+| **Expertise (1 sentence)** | Geophysical characterisation of lunar volcanic pits and lava tubes — bridges pit detection and the gravity-confirmation layer (v5 Tier D). |
+| **Why qualified (1 sentence)** | She characterises the exact target population (lunar volcanic pits) with independent geophysics, so she can audit the detection-vs-inference positioning and the base-rate argument without being an ESSA co-author. |
+| **Conflict-of-interest note** | No known conflict. Not a co-author of any Paper 1 reference (verified against the nine-reference list 2026-09-11). Note: frequent co-author of V. T. Bickel (now excluded, below) — collaboration-network proximity only, no cited-reference conflict. |
 
 **ALTERNATES**
 
-- **Anna Mittelholz** — Institute of Geophysics, ETH Zürich [verify].
-  Co-author, Gómez Jodar, Mittelholz & Bickel (2025) lunar volcanic
-  pits; also Ritter, Karatekin, Mittelholz & Stähler (2024),
-  "Exploring subsurface extent and physical properties of lunar lava
-  tubes using surface microgravity survey". Bridges pit
-  characterisation and the geophysics-confirmation layer (v5 Tier D).
-  No known conflict.
 - **Lingli Mu** — State Key Laboratory of Remote Sensing Science /
   Beijing Normal University & CAS [verify]. Li, Mu, Zhang, Dong & He
   (2025), "Martian Skylight Identification Based on the Deep Learning
   Model", *Remote Sensing* 17(15). Closest published analogue to
   ESSA outside the ESSA group; strong on the base-rate/false-positive
   framing. No known conflict.
+- *Excluded but obvious:* **Valentin T. Bickel** (Center for Space and
+  Habitability, University of Bern [verify — previously MPS
+  Göttingen])* — was the original R1 primary (Bickel, Moseley,
+  Lopez-Francos & Shirley 2021, "Peering into lunar permanently
+  shadowed regions with deep learning", *Nature Communications*
+  12:5607), but became **a co-author of a Paper 1 cited reference**
+  when Kelahan, Angerhausen, Lesnikowski & Bickel (2026,
+  arXiv:2608.09350) was added as the ninth reference on 2026-09-10;
+  barred by the cited-reference exclusion rule. Do not suggest.
 - *Excluded but obvious:* Daniel Le Corre (ESSA first author) — direct
   competitor **and** a Paper 1 cited author; do not suggest.
 
@@ -105,7 +112,7 @@ methodological inheritance.
 | **Email** | [verify email — corresponding author line, PSJ 2025] |
 | **Representative pubs** | Hemmi, Inoue, Kikuchi, Sato, Miyamoto, Otake & Yamamoto (2025), "LROC NAC-derived Meter-scale Topography of the Moon's South Polar Landing Sites: Digital Terrain Models and Their Quality Assessments", *Planetary Science Journal*, doi:10.3847/psj/ae10a4. |
 | **Expertise (1 sentence)** | Production **and formal quality assessment** of meter-scale LROC NAC stereo DTMs, including vertical-precision budgets and LOLA co-registration. |
-| **Why qualified (1 sentence)** | Paper 1's entire GSD-rung argument (0.5–10 m) and the `local_Amin` floor rest on what a NAC DTM can and cannot resolve; Hemmi is the most recent independent author of a NAC-DTM *quality assessment*, so he can audit the rung ladder and the 82-of-278 NAC-coverage bookkeeping without being a Henriksen 2017 co-author. |
+| **Why qualified (1 sentence)** | Paper 1's entire GSD-rung argument (0.5–10 m) and the `local_Amin` floor rest on what a NAC DTM can and cannot resolve; Hemmi is the most recent independent author of a NAC-DTM *quality assessment*, so he can audit the rung ladder and the per-DTM calibration-floor bookkeeping without being a Henriksen 2017 co-author. |
 | **Conflict-of-interest note** | No known conflict; not a co-author of any Paper 1 reference. |
 
 **ALTERNATES**
@@ -197,7 +204,9 @@ methodological inheritance.
   detectability curve. No known conflict.
 - *Excluded but obvious:* Paul Treitz / K. van Ewijk (Queen's
   University) — authors of the original VCI paper (van Ewijk et al.
-  2011, PE&RS), a Paper 1 cited reference; barred by the checklist.
+  2011, PE&RS; dropped from Paper 1's reference list at v1.1, but
+  methodologically adjacent to the cited Reichenzeller et al. 2026);
+  treated as excluded by the checklist.
 
 ### R5 — Lava tube stability / structural mechanics (FEM)
 
@@ -211,7 +220,7 @@ methodological inheritance.
 | **Representative pubs** | Wang, Kang, Ye, Yang & Qi (2025), "Validating Lava Tube Stability Through Finite Element Analysis of Real-Scene 3D Models", *Electronics* 14(15). |
 | **Expertise (1 sentence)** | Finite-element stability analysis of lava tubes driven by **measured real-scene 3D point-cloud geometry** rather than idealised cross-sections. |
 | **Why qualified (1 sentence)** | Uniquely placed to judge whether the 60–300 m vesselness-scale window (§3.3 line 158; §4.5(e) line 496; §5.1 line 525) is a defensible physical prior, because his group derives stable-span bounds from the same kind of surveyed analog point clouds LLTB-1 degrades. |
-| **Conflict-of-interest note** | No known conflict; not a co-author of Blair 2017, Theinat 2020 or Chwała 2024. |
+| **Conflict-of-interest note** | No known conflict; not a co-author of Blair 2017 or Theinat 2018. |
 
 **ALTERNATES**
 
@@ -228,7 +237,7 @@ methodological inheritance.
   No known conflict.
 - *Excluded but obvious:* Marcin Chwała, Goro Komatsu, Junichi
   Haruyama (Chwała 2024) and A. K. Theinat / A. Bobet / S. J. Dyke
-  (Theinat 2020) — all Paper 1 cited authors; barred.
+  (Theinat 2018) — all cited or closely associated authors; barred.
 
 ### R6 — Radar sounder / lunar subsurface (Tranquillitatis anchor)
 
@@ -301,11 +310,16 @@ RSE Editorial Manager typically asks for:
 ## Final pre-submission checklist
 
 - [ ] No reviewer is a co-author of any reference cited in Paper 1
-  (R8/R9 in `notes/prior_art_matrix.csv`); the references section
-  was assembled 2026-08-23 and is the authoritative exclusion list.
-  **Status 2026-09-04: all six primaries checked against the 33-row
-  prior-art matrix and none is a cited co-author.** The excluded
-  obvious names are listed per slot above.
+  (R8/R9 in `notes/prior_art_matrix.csv`). **Status 2026-09-11
+  (post-Kelahan re-check): the reference list was, at that check, nine entries
+  (Kelahan, Angerhausen, Lesnikowski & Bickel 2026, arXiv:2608.09350,
+  added 2026-09-10). Re-checking the primaries against the nine-entry
+  list found ONE conflict: V. T. Bickel (then R1 primary) is a
+  Kelahan 2026 co-author → demoted to excluded-but-obvious; Anna
+  Mittelholz promoted to R1 primary. The remaining primaries
+  (Mittelholz, Hemmi, Walker, Su, Kang, Orosei) are not co-authors of
+  any of the then-nine references. Update 2026-09-11 (skeptic session 50): three method references added (Garwood 1936; Planchon & Darboux 2002; Wang & Liu 2006) — the list is now TWELVE entries; none of the new co-authors (Garwood; Planchon; Darboux; Wang; Liu) is a current primary, so the exclusion verdict stands.** The excluded obvious names are listed
+  per slot above.
 - [ ] No reviewer shares an institutional affiliation with the
   LUNARVOID team for the past 5 years.
 - [ ] No reviewer is a current collaborator on any active grant or
