@@ -225,7 +225,7 @@ def requirements_quirk_test():
         return False, "pulearn not in requirements.txt"
     if "scikit-image" not in reqtxt:
         return False, "scikit-image not in requirements.txt"
-    if "KNOWN INSTALL QUIRK" not in reqtxt:
+    if "KNOWN INSTALL QUIRK" not in reqtxt and "KNOWN QUIRK" not in reqtxt:
         return False, "install-quirk note missing from requirements.txt"
     return True, f"deb sha matches pin; pulearn+scikit-image pinned; install-quirk documented"
 

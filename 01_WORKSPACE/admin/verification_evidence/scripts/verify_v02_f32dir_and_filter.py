@@ -2,6 +2,11 @@
 
 Run with:
     ~/lunarvoid/venv/bin/python /tmp/hermes_verify_lunarvoid_v02.py
+
+NOTE (session 51): the LLTB-1 subprocess this script drives imports
+`_crs` from wp3, so run from the repo root with
+`PYTHONPATH=01_WORKSPACE/code` set, or 14/17 checks false-fail with
+ModuleNotFoundError.
 """
 
 import json, sys, subprocess

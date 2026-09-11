@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import struct
+import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,6 +39,35 @@ FIELDS = ["x", "y", "z", "nir", "r", "g", "b"]
 DTYPE = np.dtype([(f, "<f4") for f in FIELDS])
 BYTES_PER_POINT = DTYPE.itemsize  # 28
 N_ATTRS = 7
+
+# --- sentinel thresholds (LOW-10, audit notes/2026-09-04_AUDIT_REVIEW.md;
+#     dormancy claim refuted by direct measurement, session 51, 2026-09-11) ---
+# The true NASA .f32 "no data" sentinel magnitude is ~1e38. xyz values
+# are NaNed only beyond SENTINEL_MAX_M (1e6 m), so a future analog site
+# with >1 km extent (e.g. SP Mountain ~1.5 km) is NOT silently NaNed.
+# MEASURED (session 51, read-only numpy pass): the gray band
+# (1e3, 1e6] is NOT empty — Kingsbowl_orig.f32 has 37 points there
+# (max |xyz| ~930,515.8 m) and Indian_NorthSurface_1x.f32 has 31
+# (max ~620,616.4 m). These are wild outliers (sites are <=1.2 km
+# extent), not large-site edges: the OLD 1e3 filter silently NaNed
+# them; the 1e6 threshold intentionally KEEPS them as
+# visible-but-flagged (the >WARN_MAX_M warning surfaces them by
+# design) instead of silently NaNing. The frozen npz corpus is NOT
+# regenerated (regeneration is forbidden); if this converter is ever
+# re-run, gray-band points must be explicitly reviewed — never
+# silently kept or dropped. Color/NIR attributes keep their own 1e3
+# bound (colors are [0,255]) — behavior unchanged.
+SENTINEL_MAX_M = 1e6
+WARN_MAX_M = 100.0
+ATTR_SENTINEL_MAX = 1e3
+
+# Diagnostics from the most recent read_f32 call (session 51): a
+# best-effort side channel so downstream tools can see the gray-band
+# count without parsing the warning text. Purely additive — the
+# read_f32 return signature is unchanged (caller grep 2026-09-11:
+# only convert_f32.main() and tests/test_convert_f32_sentinel.py;
+# run_lltb1.py drives this module as a CLI subprocess).
+LAST_READ_DIAGNOSTICS: dict = {}
 
 
 def f32_stats(path: Path) -> int:
@@ -54,26 +84,79 @@ def read_f32(path: Path) -> np.ndarray:
     """Memory-map the .f32 and return a structured array of {n, 7} float32.
 
     NASA Pits & Caves .f32 files use a sentinel value for "no data"
-    in any of the 7 attributes. Empirically, valid terrain is in
-    the range [-1e4, 1e4] m; anything outside (typically 1e38) is
-    a sentinel. We mark all attributes NaN if xyz is sentinel, and
-    any individual attribute is NaN if it's outside the valid
-    range.
+    in any of the 7 attributes. The true sentinel magnitude is ~1e38;
+    xyz values are NaNed only beyond SENTINEL_MAX_M = 1e6 m (LOW-10,
+    audit 2026-09-04; the previous 1e3 m heuristic would silently NaN
+    the edges of any future >1 km analog site, e.g. SP Mountain
+    ~1.5 km). MEASURED (session 51, 2026-09-11): the gray band
+    (1e3, 1e6] is NOT empty — Kingsbowl_orig.f32 carries 37 wild
+    outlier points there (max |xyz| ~930,515.8 m) and
+    Indian_NorthSurface_1x.f32 carries 31 (max ~620,616.4 m). Those
+    are kept as visible-but-flagged: any KEPT |xyz| exceeding
+    WARN_MAX_M = 100 m emits one warning per read, and the counts/max
+    are recorded in LAST_READ_DIAGNOSTICS (and the CLI summary JSON).
+    The frozen npz corpus is NOT regenerated (regeneration is
+    forbidden); gray-band points in any future conversion must be
+    explicitly reviewed, not silently kept or dropped. Individual
+    color/NIR attributes are NaNed outside ATTR_SENTINEL_MAX = 1e3
+    (colors are [0,255]; unchanged).
     """
     n = f32_stats(path)
     arr = np.memmap(path, dtype=DTYPE, mode="r", shape=(n,))
     arr = np.array(arr, copy=True)
-    # xyz sentinel mask: any of x/y/z is outside the valid range
-    # (NASA analog sites are typically 1-1000 m extent; values > 1e3
-    # m are sentinels or unrecoverable outliers per the histogram
-    # analysis of Kingsbowl_orig.f32; values < 1e3 m are kept as
-    # real data even in cliff/cave overhangs)
+    # xyz sentinel mask: any of x/y/z beyond SENTINEL_MAX_M (true
+    # sentinel ~1e38; 1e6 leaves headroom for future >1 km sites).
+    # Previously the literal 1e3 m. MEASURED (session 51): this change
+    # is NOT dormant — Kingsbowl_orig.f32 has 37 points with |xyz| in
+    # (1e3, 1e6] (max ~930,515.8 m) and Indian_NorthSurface_1x.f32 has
+    # 31 (max ~620,616.4 m): wild outliers the old filter silently
+    # NaNed and the new threshold deliberately keeps visible-but-
+    # flagged. (LOW-10, audit 2026-09-04; counts re-measured
+    # 2026-09-11. Frozen corpus NOT regenerated — any future re-run
+    # must review gray-band points explicitly.)
     xyz_sentinel = (
-        (np.abs(arr["x"]) > 1e3) | (np.abs(arr["y"]) > 1e3) | (np.abs(arr["z"]) > 1e3)
+        (np.abs(arr["x"]) > SENTINEL_MAX_M)
+        | (np.abs(arr["y"]) > SENTINEL_MAX_M)
+        | (np.abs(arr["z"]) > SENTINEL_MAX_M)
+    )
+    # gray-zone early alert (once per read): kept |xyz| > WARN_MAX_M.
+    # MEASURED non-empty (session 51): the real hits so far are wild
+    # outliers (hundreds of km on <=1.2 km sites), not large sites —
+    # surfaced in the warning, LAST_READ_DIAGNOSTICS, and the CLI
+    # summary JSON instead of staying silent.
+    kept = ~xyz_sentinel
+    over_warn = kept & (
+        (np.abs(arr["x"]) > WARN_MAX_M)
+        | (np.abs(arr["y"]) > WARN_MAX_M)
+        | (np.abs(arr["z"]) > WARN_MAX_M)
+    )
+    mx = (
+        max((float(np.abs(arr[f][over_warn]).max()) for f in ("x", "y", "z")), default=0.0)
+        if over_warn.any()
+        else 0.0
+    )
+    if over_warn.any():
+        warnings.warn(
+            f"{path.name}: {int(over_warn.sum())} points with kept |xyz| > "
+            f"{WARN_MAX_M:g} m (max {mx:.1f} m); sentinels (~1e38) are NaNed "
+            f"only beyond {SENTINEL_MAX_M:g} m — verify this site's extent "
+            f"(LOW-10 gray zone between real data and sentinel)",
+            stacklevel=2,
+        )
+    # session 51: expose the gray-band count/max without warning-text
+    # parsing. Mutates the module-level dict in place; return value and
+    # call signature unchanged.
+    LAST_READ_DIAGNOSTICS.clear()
+    LAST_READ_DIAGNOSTICS.update(
+        path=str(path),
+        n_total=int(len(arr)),
+        n_xyz_sentinel=int(xyz_sentinel.sum()),
+        n_gray_band=int(over_warn.sum()),
+        gray_band_max_abs_m=mx,
     )
     # per-attribute sentinel: outside valid range (for color/nir)
     for field in ("nir", "r", "g", "b"):
-        attr_sentinel = (np.abs(arr[field]) > 1e3) | ~np.isfinite(arr[field])
+        attr_sentinel = (np.abs(arr[field]) > ATTR_SENTINEL_MAX) | ~np.isfinite(arr[field])
         arr[field] = np.where(attr_sentinel, np.nan, arr[field])
     # zero out xyz where sentinel (all attributes set to NaN)
     for field in ("x", "y", "z"):
@@ -164,6 +247,11 @@ def main():
     print(f"[f32 ] exact point count: {n:,}", flush=True)
     arr = read_f32(args.f32)
     summary = summarise(arr)
+    # session 51: gray-band visibility in the summary JSON/log without
+    # warning-text parsing (n_gray_band_xyz = kept |xyz| in (100 m, 1e6]).
+    summary["n_xyz_sentinel"] = LAST_READ_DIAGNOSTICS["n_xyz_sentinel"]
+    summary["n_gray_band_xyz"] = LAST_READ_DIAGNOSTICS["n_gray_band"]
+    summary["gray_band_max_abs_m"] = LAST_READ_DIAGNOSTICS["gray_band_max_abs_m"]
     summary["source"] = str(args.f32)
     summary["generated_utc"] = datetime.now(timezone.utc).isoformat()
     summary["site"] = args.site
