@@ -199,22 +199,72 @@ def test_measured_gray_band_regime_low10_mirror(tmp_path, recwarn):
 def test_consumer_imports_unchanged():
     """The three consumer modules reference io_analog's public names.
 
-    Smoke-only AST check — we deliberately do NOT execute the consumer
-    modules: explore_indian_tunnel.py runs its entire body (load +
-    savefig) on import, which would overwrite the canonical
-    `preflight_clouds.png` provenance artifact (sha256 in
-    PROVENANCE_INDEX.md row 47, status=canonical, 2026-08-21). Parse
-    each source for the expected `from io_analog import ...` statement.
+    Session-53 fix: this used to be an AST-parsing smoke test that
+    papered over the latent landmine in ``explore_indian_tunnel.py``
+    (which executed ``load_xyz + plt.savefig`` at module-import time).
+    After the session-53 refactor that module is import-safe, so we
+    can now do a real ``importlib.import_module`` and assert:
+
+      (a) the module imports cleanly without side effects — the canonical
+          ``preflight_clouds.png`` (PROVENANCE_INDEX row 47, sha256
+          ``ea376b2f…``, status=canonical) mtime is unchanged across the
+          import;
+      (b) ``main`` exists and is callable;
+      (c) ``OUT / "preflight_clouds.png"`` is still sha256 ``ea376b2f…``
+          AFTER the import (no overwrite).
+
+    The other two consumer modules (``register_cave``, ``coarse_search``)
+    are still AST-checked for their ``from io_analog import ...``
+    statement — those never ran side effects on import, so the real
+    import approach below is sufficient for the third.
     """
+    import importlib
+    import importlib.util
+
     import ast
 
+    # Real import of the refactored explore_indian_tunnel — proves
+    # import-safety (no load_xyz / no savefig at import time).
     wp1 = CODE_DIR / "wp1_analog"
-    expected = {
+    canonical_png = CODE_DIR.parent / "data" / "outputs" / "wp1_analog" / "registration" / "preflight_clouds.png"
+    CANONICAL_SHA = "ea376b2fb1b283a287e2348e54c09dd8901398a90760c1d5e46a6dc3e8d61b88"
+
+    # (a) import is side-effect-free: mtime + sha256 of canonical PNG
+    # must not change across the import.
+    pre_mtime = canonical_png.stat().st_mtime
+    pre_sha = _sha256_file(canonical_png)
+    spec = importlib.util.spec_from_file_location(
+        "explore_indian_tunnel", wp1 / "explore_indian_tunnel.py"
+    )
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    post_mtime = canonical_png.stat().st_mtime
+    post_sha = _sha256_file(canonical_png)
+    assert pre_mtime == post_mtime, (
+        f"explore_indian_tunnel import overwrote canonical PNG mtime "
+        f"({pre_mtime} -> {post_mtime})"
+    )
+    assert pre_sha == CANONICAL_SHA and post_sha == CANONICAL_SHA, (
+        f"canonical preflight_clouds.png sha256 drifted: pre={pre_sha} "
+        f"post={post_sha} expected={CANONICAL_SHA}"
+    )
+
+    # (b) main exists and is callable; module also exposes quick_dtm
+    # + SITES (useful to importers, per the refactor docstring).
+    assert callable(getattr(mod, "main", None))
+    assert callable(getattr(mod, "quick_dtm", None))
+    assert {"NorthSurface", "Collapse3", "Cave1x"} <= set(mod.SITES)
+    assert (mod.OUT / "preflight_clouds.png").name == "preflight_clouds.png"
+
+    # Other two consumers (no side effects on import historically) —
+    # keep the AST check for their ``from io_analog import ...`` line
+    # so a silent rename of the loader still surfaces here.
+    expected_io_imports = {
         "register_cave.py":     {"load_xyz", "voxel_downsample"},
         "coarse_search.py":     {"load_xyz", "voxel_downsample"},
-        "explore_indian_tunnel.py": {"load_xyz", "master_grid", "voxel_downsample"},
     }
-    for fname, names in expected.items():
+    for fname, names in expected_io_imports.items():
         tree = ast.parse((wp1 / fname).read_text())
         io_imports: set[str] = set()
         for node in ast.walk(tree):
@@ -224,10 +274,21 @@ def test_consumer_imports_unchanged():
             f"{fname} imports from io_analog: {sorted(io_imports)}; "
             f"expected at least {sorted(names)}"
         )
+
     # the names themselves must still resolve on the loader module
     assert hasattr(io_analog, "load_xyz")
     assert hasattr(io_analog, "voxel_downsample")
     assert hasattr(io_analog, "master_grid")
+
+
+def _sha256_file(p: Path) -> str:
+    """SHA-256 of a file in hex (helper for canonical-PNG assertions)."""
+    import hashlib
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def test_public_signatures_unchanged():
