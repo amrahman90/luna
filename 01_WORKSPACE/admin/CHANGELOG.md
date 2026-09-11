@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-12 (execution session 54 — PROVENANCE_INDEX row 47 deterministic-output pointer)
+
+- **PROVENANCE_INDEX row 47 notes-column pointer** (orchestrator surgical; 1 row only): expanded the `—` notes on `data/outputs/wp1_analog/registration/preflight_clouds.png` to point at `findings.md ## data-quality — session 52`. The canonical on-disk sha stays `ea376b…` (file preserved on disk; this row reflects the frozen state); the script's post-session-52/53 deterministic sha is `4ed3c0…` (documented in findings.md). Future readers of PROVENANCE_INDEX can now trace the why without guessing. No new evidence, no file regeneration, no SHA change; zero writes under `~/lunarvoid/data/`.
+
 ## 2026-09-12 (execution session 53 — explore_indian_tunnel.py __main__ guard refactor (C-class fix from session 52))
 
 - **`code/wp1_analog/explore_indian_tunnel.py` import-safety refactor** (geo-coder; verifier PASS): side-effect-bearing code (npz loading + per-site cloud prints + `plt.savefig` to canonical `preflight_clouds.png` + Collapse3-vs-NorthSurface frame-consistency block) wrapped in `def main(): ...`; `if __name__ == "__main__": main()` added at bottom. Module-level kept: imports, `REPO`/`sys.path`, `LLTB1`/`OUT`, `SITES` dict, `quick_dtm` helper — all cheap, reusable by any future importer. Docstring declares "script — invoke as `python explore_indian_tunnel.py`; import-safe (no side effects on import)".
