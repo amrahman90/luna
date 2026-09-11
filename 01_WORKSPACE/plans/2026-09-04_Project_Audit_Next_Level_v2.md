@@ -37,35 +37,37 @@ Re-evaluation after discovering a parallel (Hermes-side) session executed most o
 
 **Open:**
 
-- [ ] A1 IMRaD rewrite — dispatched to paper-writer (session 37)
-- [ ] A2 unique-feature FP re-accounting
-- [ ] A3 re-detection honesty sentence
-- [ ] A4 4-sites-not-6 honesty + LOO criterion
-- [ ] A5 cover-letter/metadata reconcile
-- [ ] A7 Paper 2 text-recycling pass
-- [ ] B1-B5 registry repair cluster (quoted-CSV writer, schema validation, row fixes + dedupe, MANIFEST/provenance, METHODS.md) — B1 dispatched to geo-coder (session 37)
-- [ ] B7 vault 00_HOME refresh (278 count, superseded banners)
-- [ ] B8 gate-mirror hygiene (canonical = `plans/`, G1 wording divergence)
-- [ ] B10 roadmap/doc sync sweep (owned by the separate ordering-sweep task; R1 draft commit pending)
-- [ ] B11 findings-log entries (Diviner 0.0-sentinel, pooled-RMS citations)
+- [x] A1 IMRaD rewrite (84f63ab, session 38 — Paper 1 v2.0, 8,281 words)
+- [x] A2 unique-feature FP re-accounting (2449926, session 38 — 5 unique FPs → 2.08 [0.67, 4.85] per 10⁴ km², ~30 m key)
+- [x] A3 re-detection honesty sentence (84f63ab — "14 re-detections … zero novel above-floor")
+- [x] A4 4-sites-not-6 honesty + LOO criterion (84f63ab — LOO stated as limitation)
+- [x] A5 cover-letter/metadata reconcile (84f63ab)
+- [x] A7 Paper 2 text-recycling pass (e67fc3c, session 41 — shared-8-gram overlap 3.13–3.29%)
+- [ ] B1-B5 registry repair cluster (quoted-CSV writer, schema validation, row fixes + dedupe, MANIFEST/provenance, METHODS.md) — B1 done (69216eb: 15 rows + 3 methods + 161 SUPERSEDED / 117 unique); B2/B3/B4 done (cdb8f08: MANIFEST outputs-tree + policy, METHODS.md 943 lines, PROVENANCE_INDEX 160 artifacts); remainder open: quoted-CSV writer + schema validation + structured flag columns, per-run summary files, B5 per-candidate records — cluster stays open (partial tick not possible; session-42 precedent)
+- [x] B7 vault 00_HOME refresh (278 count, superseded banners) (d3524bb, session 44)
+- [x] B8 gate-mirror hygiene (canonical = `plans/`, G1 wording divergence) (d3524bb — G1 mirror re-synced byte-identical, sha 5ad43dfb)
+- [x] B10 roadmap/doc sync sweep + R2 rebuild (this session, 2026-09-12; R1-draft commit portion user-gated — lineage recorded in `plans/2026-09-12_R2_Status_Report.md`)
+- [x] B11 findings-log entries (Diviner 0.0-sentinel, pooled-RMS citations) (d3524bb)
 - [ ] C-io_common shared IO module (v1-retained)
-- [ ] C3 CC-filter wiring into sag_detect (AREA_MIN table)
-- [ ] C4 pytest scaffold + CI
+- [x] C3 CC-filter wiring into sag_detect (AREA_MIN table) (398fada — LLTB-1 v0.5.1 `--cc-filter {off,on,auto}`, default off after honest eval)
+- [x] C4 pytest scaffold + CI (3b21e02, session 43 — 58 re-executing checks, 73 total by session 44; CI portion tracked as E4)
 - [ ] C5 archive superseded code (v1-retained)
-- [ ] C6 run_cycle.py one-command chain
-- [ ] C7 silent-except audit
-- [ ] C11 real-data E2E fixture test
+- [x] C6 run_cycle.py one-command chain (20fe1d3, session 47 — + frozen-artifact guard, guarded real run reproduced aggregate exactly)
+- [x] C7 silent-except audit (01f48c6, session 45 — 65 sites, zero bare excepts, 2 dangerous silences fixed)
+- [x] C11 real-data E2E fixture test (3b21e02 — pin f1 0.029746281714785657 tol 1e-5)
 - [ ] C15 remainder (sentinel constant + per-chunk warning)
-- [ ] D1 PU eval redesign (group-split by DTM + bootstrap CIs)
+- [x] D1 PU eval redesign (group-split by DTM + bootstrap CIs) (7629399, session 40 — LODO 21-fold, cluster CIs; e09e381, session 41 — run-C ablation residuals closed)
 - [ ] D2 inspection-verdict capture (user eyes)
 - [ ] D3 LOO cross-validation
-- [ ] D4 Paper 2 benchmark/protocol reframe
+- [x] D4 Paper 2 benchmark/protocol reframe (5adc3cc, session 46 — v3.1-draft test-bed registry + leakage-corrected protocol, refs 14 → 18)
 - [ ] D5 rental decision (user authorization required)
 - [ ] E2 conventions-skill exposure decision (user approval required)
-- [ ] E3 Zenodo release prep
-- [ ] E4 CI workflow
+- [x] E3 Zenodo release prep (2f5b1ff, session 47 — prep complete; upload user-gated)
+- [x] E4 CI workflow (3b21e02 — staged in `admin/ci/`; activation user-gated: root `.github/` exception)
 
 *Note (2026-09-06): the session-37 dispatch initially listed C12/C14/B9 among open items; repo evidence (d80039e diff, 1d5d8e3 verification JSON, session-36 CHANGELOG + ADR files in vault) shows them done — recorded done here.*
+
+*Note (2026-09-12, B10 sweep): ticked against commit evidence — A1–A5, A7, B7/B8/B10/B11, C3/C4/C6/C7/C11, D1, D4, E3 (prep complete; upload user-gated), E4 (staged; activation user-gated). Deliberately left open: B1-B5 cluster (quoted-CSV writer/schema validation/structured flags/per-run summaries/B5 per-candidate records undelivered — annotated above), C-io_common, C5, C15-remainder, D3 (analog LOO — stated as limitation in Paper 1 v2.0, not executed); user-gated: D2, D5, E2, R1-draft commit. Older roadmaps (ZEROCOST, Next_Tasks) checked: all remaining boxes there are blocked (Cycles 3-5, Steps 8.3/8.4, 19.1/19.2) or user-gated (P6.x) — nothing ticked. Status snapshot: `plans/2026-09-12_R2_Status_Report.md`.*
 
 ---
 

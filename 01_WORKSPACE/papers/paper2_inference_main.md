@@ -1,6 +1,4 @@
-# An annotated test-bed registry and leakage-corrected evaluation
-# protocol for lunar void-candidate inference from meter-scale
-# orbital terrain data
+# An annotated test-bed registry and leakage-corrected evaluation protocol for lunar void-candidate inference from meter-scale orbital terrain data
 
 **Target venue:** Icarus (Elsevier; lunar-science flagship) or
 Planetary and Space Science (Elsevier; mid-tier). The v5 §12
@@ -12,20 +10,16 @@ registry + leakage-corrected evaluation protocol + honest baselines**,
 not a survey catalogue (the catalogue framing was the desk-reject
 risk).
 **Authors:** LUNARVOID team.
-**Date:** 2026-09-12 (v3.1-draft, task D4-fix: skeptic objections
-V1–V6 applied to the v3.0-draft-reframe — first-claim narrowed to a
-void-candidate **inference-evaluation** benchmark distinct from pit
-catalogues and detection-training releases (Watson & Baldini 2024;
-Le Corre 2025 dataset release added); title retermed
-benchmark → **test-bed registry** ("benchmark" kept only as the
-forward-looking, Zenodo-gated goal); §4.1 tier-B JSON/registry
-discrepancy quoted explicitly with dates; LROC/ASU web-product
-licence caveat in Data availability; protocol-box fixes (imputation
-leak = latent/hygiene; leak numbering) and language fixes
-("characterized" not "validated"; "missed catalogued-pit
-recovery"); §3.3/§4.6 anchored numbers byte-untouched; supersedes
-v3.0-draft-reframe of 2026-09-10, which superseded the v0.1 skeleton
-of 2026-08-28; not submission-ready).
+**Date:** 2026-09-12 (v3.2-draft, verifier-queued cosmetic fixes,
+no content change: References NEW-block alphabetical reorder —
+Watson & Baldini now entry 17, Williams entry 18 (the one stale
+cross-reference, §2, updated); entry indentation and initial style
+normalized to the block's convention; title block normalized to
+Paper 1's single-line H1 style; supersedes v3.1-draft of 2026-09-12
+(task D4-fix: skeptic objections V1–V6 applied to the
+v3.0-draft-reframe), which superseded the v3.0-draft-reframe of
+2026-09-10 and the v0.1 skeleton of 2026-08-28; not
+submission-ready).
 **Status:** Section-by-section skeleton under the D4 reframe. Built
 from the v1.0 G2 transfer
 freeze (`data/outputs/wp2_sag/transfer/transfer_summary.json`; 2026-08-23;
@@ -259,7 +253,7 @@ deferred WP3 scope, not this paper.
 
 ## 2. Related work (brief; extends Paper 1 §1.2)
 
-- Populated from `notes/prior_art_matrix.csv` (33 refs; priority-done
+- Populated from `notes/prior_art_matrix.csv` (37 refs; priority-done
   rows from Paper 1 carry over). Paper 2 extends with WP3 fusion
   references, MGC3 cross-body (Cushing 2015/2017), and GRAIL/Diviner
   anomaly references.
@@ -340,7 +334,7 @@ deferred WP3 scope, not this paper.
   - **Watson & Baldini 2024** — detection-training release
     (Mask R-CNN cave-entrance detection, Icarus 411:115952); the
     v5 R8 prior-art-collision anchor and precursor to ESSA; see
-    the genre block above and References entry 18.
+    the genre block above and References entry 17.
   - **Cushing 2015 / Cushing 2017** — Mars Global Cave Catalog
     (MGC3); cross-body pretraining source; cited in outline sketch
     §2 but **NOT executed** (deferred — see §3.4).
@@ -1321,7 +1315,7 @@ Prasad & Mazumder 2026, Purohit et al. 2025) were verified against
 arXiv metadata on 2026-09-10 (titles/authors/abstracts; DOIs are
 arXiv identifiers). Pre-submission external audit still required:
 the Laurier/ASU DTM-attribute pit database is not covered by the
-33-ref prior-art matrix and must be audited before the first-claim
+37-ref prior-art matrix and must be audited before the first-claim
 is submitted:*
 
 **Shared with Paper 1 (8 references, verified 2026-08-28):**
@@ -1412,22 +1406,22 @@ by user; +1 optional entry below):**
     (20 datasets; classification/segmentation/detection);
     genre precedent for standardized planetary-task
     evaluation.*
-17. Williams, J.-P., et al. (2017). Cold traps and recent
+17. Watson, T.H., & Baldini, J.U.L. (2024). Martian cave
+    detection via machine learning coupled with visible light
+    imagery. [Mask R-CNN (ResNet50) trained jointly on lunar NAC
+    imagery, Martian HiRISE pit data, and synthetic implanted
+    lunar pits; ~89% bbox / ~96% mask F1 (lunar/Martian).]
+    *Icarus* 411, 115952.
+    https://doi.org/10.1016/j.icarus.2024.115952 *—
+    Detection-training release; v5 R8 prior-art-collision anchor;
+    precursor to ESSA (Le Corre 2025). Bibliographic details
+    verified against the DOI resolver 2026-09-12; bracketed
+    training/F1 summary from `notes/prior_art_matrix.csv` (row
+    WatsonBaldini2024).*
+18. Williams, J.-P., et al. (2017). Cold traps and recent
     thermal behavior of lunar cold spots. *Icarus* 283, 313–
     322. *— Diviner cumulative nighttime temperature; basis
     for P4.3 thermal anomaly stacking.*
- 18. Watson, T. H., & Baldini, J. U. L. (2024). Martian cave
-     detection via machine learning coupled with visible light
-     imagery. [Mask R-CNN (ResNet50) trained jointly on lunar NAC
-     imagery, Martian HiRISE pit data, and synthetic implanted
-     lunar pits; ~89% bbox / ~96% mask F1 (lunar/Martian).]
-     *Icarus* 411, 115952.
-     https://doi.org/10.1016/j.icarus.2024.115952 *—
-     Detection-training release; v5 R8 prior-art-collision anchor;
-     precursor to ESSA (Le Corre 2025). Bibliographic details
-     verified against the DOI resolver 2026-09-12; bracketed
-     training/F1 summary from `notes/prior_art_matrix.csv` (row
-     WatsonBaldini2024).*
 
 *(Optional Paper 2 add — to confirm by user if cited:*
 19. *Besserer, J., et al. (2024). Thermal signature of lunar
