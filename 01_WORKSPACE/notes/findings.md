@@ -882,3 +882,25 @@ Until verdicts are captured, the 27 candidates remain at tier C with their exist
 - **C-class flag (separate ticket, not blocking this commit):** `01_WORKSPACE/code/wp1_analog/explore_indian_tunnel.py` L27–61 executes `load_xyz` + `plt.savefig` at module-import time (no `if __name__ == "__main__":` guard). The AST test work-around papers over a latent landmine — any future test or script that imports this module will overwrite the canonical `preflight_clouds.png`. `make_void_mask.py` does not exist (no second instance). **Future refactor**: wrap the body in a `main()` and gate with `__main__`.
 
 — geo-coder (verifier-cleared), session 52
+
+## conventions — superseded-code banner (added session 55)
+
+**Rule.** When a code file at `01_WORKSPACE/code/**/*.py` becomes superseded by a newer file (per D-tier or audit-driven redesign, e.g. D1 PU eval → groupsplit, or LOW-12 audit-style declared retirement):
+
+1. **Do NOT delete or move** the old file. PROVENANCE_INDEX and audit findings may still cite it by relative path; deleting the path silently breaks those references.
+2. **Add a `SUPERSEDED (...)` banner** at the very top of the module docstring (line 2, after the title line) covering:
+   - Ticket reference (e.g. `C5 / plan v2 ticket`; or `Hermes LOW-N` or `Hermes MED-N`)
+   - Pointer to `findings.md ## conventions — superseded-code banner` (this section)
+   - Replacement file name(s) and 1-line reason ("leakage-corrected eval", "D1 redesign", "real-features", etc.)
+   - Note whether the file remains runnable (yes by default for historical reproducibility; no only when the new file has incompatible CLI)
+3. **Do not change imports, callers, or tests** — they already don't import the superseded file (verified for the C5 batch). If a future superseded file *is* imported, refactor to remove the import first.
+4. **CHANGELOG + commit, but no MANIFEST or PROVENANCE row update** — the file path didn't change.
+
+**Status as discovered (session 55)**:
+- `code/wp5_fusion/pu_learning_baseline.py` — banner added; was a synthetic skeleton; no PROVENANCE entry (no canonical artifact).
+- `code/wp5_fusion/pu_learning_on_registry.py` — banner added; PROVENANCE_INDEX row 183 already lists its output with status "superseded by baseline_v2" (per-artifact supersession, pre-existed).
+- `code/tools/repair_registry_v1.py` — **NOT** superseded. PROVENANCE_INDEX row 168 lists `data/outputs/wp2_sag/registry_repair_2026-09-06.json` as status=`canonical` produced by this script; also shipped in the E3 Zenodo deposit. Touching it would break the canonical evidence trail. Catalogued here as a *false positive for C5* so future sweeps don't re-flag it.
+
+**Audit precedent**: Hermes audit `notes/2026-09-04_AUDIT_REVIEW.md` LOW-12 — same pattern applied to `notes/2026-08-20_LLTB1_v0.2_release_note.md` (>) SUPERSEDED by `notes/2026-08-30_…`). This rule is the code-file extension of that markdown convention.
+
+— orchestrator, session 55

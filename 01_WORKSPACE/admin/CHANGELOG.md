@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-12 (execution session 55 — C5 archive superseded code: 2 docstring banners + 1 convention note)
+
+- **C5 archive superseded code** (orchestrator surgical; project-wide convention): **added `SUPERSEDED (...)` docstring banners** at the top of two WP5/PU files. **No code move** — signal-only by design, so PROVENANCE_INDEX and audit-walk references stay resolvable.
+  - **`code/wp5_fusion/pu_learning_baseline.py`** (synthetic skeleton, 19 KB Sep 10): banner says superseded by `pu_learning_extended.py` (5-feature real model) + `pu_learning_groupsplit.py` (D1 leakage-corrected eval). No PROVENANCE entry — never produced a canonical artifact. Runnable on synthetic inputs only.
+  - **`code/wp5_fusion/pu_learning_on_registry.py`** (real-data PU baseline, 20 KB Sep 10): banner says superseded by `pu_learning_groupsplit.py`. PROVENANCE_INDEX row 183 already pins its output (`pu_learning_registry_baseline.json` `cc82e7b9…` status="superseded by baseline_v2") as historical evidence — pre-existing per-artifact supersession in the index.
+- **`code/tools/repair_registry_v1.py` explicitly NOT touched.** PROVENANCE_INDEX row 168 lists its output (`registry_repair_2026-09-06.json` `a2c80f02…`) as `canonical`; the script also ships in the E3 Zenodo deposit (`data/zenodo_deposit_v1.0/deposit/`). Recorded as a *false positive for C5* in the new convention note so future sweeps won't re-flag it.
+- **Convention note appended** (`notes/findings.md`, `## conventions — superseded-code banner`): the project-wide pattern — add a docstring banner at the top, do NOT delete or move (PROVENANCE citations must stay resolvable), no caller/import edits required (verified clean for this batch), no MANIFEST or PROVENANCE row update. Cites the LOW-12 audit's markdown-precedent for the same pattern. Catalogues the three candidates with the ruling for each.
+- **Verification**: no live Python imports of either file across the workspace (grep clean across `code/`, `tests/`, `notes/`); full pytest suite **89 passed** in 88 s — no regressions.
+
 ## 2026-09-12 (execution session 54 — PROVENANCE_INDEX row 47 deterministic-output pointer)
 
 - **PROVENANCE_INDEX row 47 notes-column pointer** (orchestrator surgical; 1 row only): expanded the `—` notes on `data/outputs/wp1_analog/registration/preflight_clouds.png` to point at `findings.md ## data-quality — session 52`. The canonical on-disk sha stays `ea376b…` (file preserved on disk; this row reflects the frozen state); the script's post-session-52/53 deterministic sha is `4ed3c0…` (documented in findings.md). Future readers of PROVENANCE_INDEX can now trace the why without guessing. No new evidence, no file regeneration, no SHA change; zero writes under `~/lunarvoid/data/`.

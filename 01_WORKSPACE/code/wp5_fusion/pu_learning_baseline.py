@@ -1,5 +1,14 @@
 """pu_learning_baseline.py — Positive-Unlabeled (PU) learning baseline for LLTB-1.
 
+SUPERSEDED (C5 / plan v2 ticket; see findings.md ## conventions — superseded-code banner):
+  - pu_learning_extended.py (real registry features, 5-feature model)
+  - pu_learning_groupsplit.py (D1 leakage-corrected eval protocol;
+    LODO 21-fold + cluster-bootstrap CIs; the published numbers)
+Kept in tree for historical reference (audit walks / Paper 2 methods
+section discussion). Per the project-wide convention, this supersession
+is signal-only — no code move. The script remains runnable on its own
+synthetic inputs but must not be cited as the source of any frozen result.
+
 This skeleton implements the WP5/P5.1 deliverable: a PU-learning
 classifier that learns from the candidate registry where positives are
 **catalogued-pit-recovered TPs** (n=14 at G2; above the floor) and

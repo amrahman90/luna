@@ -1,5 +1,14 @@
 """pu_learning_on_registry.py — Real-data PU-learning baseline on candidate registry.
 
+SUPERSEDED (C5 / plan v2 ticket; see findings.md ## conventions — superseded-code banner):
+  - pu_learning_groupsplit.py (D1 leakage-corrected eval protocol;
+    LODO 21-fold + cluster-bootstrap CIs; the published numbers)
+Kept in tree because PROVENANCE_INDEX row 183 pins this file's output
+(`pu_learning_registry_baseline.json`, sha `cc82e7b9…`, status =
+"superseded by baseline_v2") as historical evidence. Per the
+project-wide convention, supersession is signal-only — no code move;
+PROVENANCE_INDEX citations remain resolvable.
+
 Operates on the 278-row candidate registry (`data/candidate_registry.csv`).
 Wires the pulearn ElkanotoPuClassifier wrapper around scikit-learn's
 LogisticRegression on the actual registry features; produces a baseline F1
