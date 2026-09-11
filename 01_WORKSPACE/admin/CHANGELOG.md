@@ -11,6 +11,7 @@ Newest entries first. Format: date — what — where — why.
 - **Conventions appended** (`notes/findings.md` `## conventions — registry writes + B5 verdict (session 57)`): (a) per-run summary JSON convention for registry writes (pattern: registry_repair_2026-09-06.json); (b) B5 verdict as above; (c) structured flags are a SIDECASTE, never registry columns (sha-frozen registry) + the is_rung_duplicate scope note.
 - **Tests**: 101 → **124 passed** (14 writer incl. 8 mutation injections + 6 sidecar incl. byte-determinism + ~3 anchors). Smoke canary unchanged (F1 0.392/0/0.800, AUC 0.990). Frozen registry md5 unchanged; zero writes under `~/lunarvoid/data/`.
 - **B-cluster disposition**: with quoted-CSV writer + schema validation + structured flags (sidecar form) + per-run summary convention + B5 proof delivered, the B1–B5 cluster tail enumerated in the B10 note is complete. Roadmap tick deferred to archivist bookkeeping.
+- **Bookkeeping (archivist)**: B1–B5 cluster box ticked with commit evidence; MANIFEST row added for candidate_registry_flags.csv (md5 88da3ec5…).
 
 ## 2026-09-12 (execution session 56 — C-io_common: shared IO module extracted from scattered call sites; f1 pins preserved)
 

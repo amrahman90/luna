@@ -259,6 +259,7 @@ gap is the stereo-rebuild for DTMs that DON'T exist on PDS.
 | Product | Source | Local path | SHA-256 | Size (bytes) | Date | Licence | Note |
 |---|---|---|---|---|---|---|---|
 | Pre-B1 registry snapshot | derived: `data/candidate_registry.csv` immediately before the B1 repair run | `01_WORKSPACE/data/candidate_registry_backup_2026-09-06.csv` | `87c8822c2a7f93858db0460ba1767f53b69e8d25b736e8d23e5fa4df285da520` | 101,061 | 2026-09-06 | n/a (internal derived) | one-shot backup; md5 `d38d63fb4bd2536952dfd2fc99e6c327`; repair evidence in `data/outputs/wp2_sag/registry_repair_2026-09-06.json` |
+| Registry structured-flags sidecar `candidate_registry_flags.csv` (278 rows; columns candidate_id,is_active,unique_key,is_tp,is_fp,is_ring,is_funnel,is_rung_duplicate,classification_source) | derived: `data/outputs/wp2_sag/unique_accounting_2026-09-07.json` rules applied to frozen `data/candidate_registry.csv` (producer `code/wp5_fusion/registry_flags.py`) | `01_WORKSPACE/data/candidate_registry_flags.csv` | `1c884a1ee965c9a3bbbc1b34531509a4a676ae8e9f10ed45280a7b0ef7fb498e` | 279 lines (byte size not recomputed; bash allowlist lacks stat/wc) | 2026-09-12 | n/a (internal derived; same as registry) | SIDECASTE, never registry columns (sha-frozen registry md5 unchanged); md5 `88da3ec5c92d7de319aac416068e0402`; partition verified 14 TP + 9 FP + 21 ring + 1 funnel = 45 above-floor; 161 SUPERSEDED / 117 ACTIVE |
 
 ## Derived outputs tree (data/outputs/)
 
