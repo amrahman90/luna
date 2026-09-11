@@ -29,37 +29,33 @@ from __future__ import annotations
 import argparse
 import json
 import struct
+import sys
 import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 
+# Sentinel thresholds and helpers live in the shared IO module
+# (v1 C1, adopted session 56). This re-export block keeps the
+# convert_f32.SENTINEL_MAX_M / WARN_MAX_M / ATTR_SENTINEL_MAX names
+# working for existing test_convert_f32_sentinel.py and the
+# run_lltb1.py driver without changing the surface.
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import (  # noqa: E402
+    ATTR_SENTINEL_MAX,
+    SENTINEL_MAX_M,
+    WARN_MAX_M,
+    keep_or_nan,
+)
+
 FIELDS = ["x", "y", "z", "nir", "r", "g", "b"]
 DTYPE = np.dtype([(f, "<f4") for f in FIELDS])
 BYTES_PER_POINT = DTYPE.itemsize  # 28
 N_ATTRS = 7
-
-# --- sentinel thresholds (LOW-10, audit notes/2026-09-04_AUDIT_REVIEW.md;
-#     dormancy claim refuted by direct measurement, session 51, 2026-09-11) ---
-# The true NASA .f32 "no data" sentinel magnitude is ~1e38. xyz values
-# are NaNed only beyond SENTINEL_MAX_M (1e6 m), so a future analog site
-# with >1 km extent (e.g. SP Mountain ~1.5 km) is NOT silently NaNed.
-# MEASURED (session 51, read-only numpy pass): the gray band
-# (1e3, 1e6] is NOT empty — Kingsbowl_orig.f32 has 37 points there
-# (max |xyz| ~930,515.8 m) and Indian_NorthSurface_1x.f32 has 31
-# (max ~620,616.4 m). These are wild outliers (sites are <=1.2 km
-# extent), not large-site edges: the OLD 1e3 filter silently NaNed
-# them; the 1e6 threshold intentionally KEEPS them as
-# visible-but-flagged (the >WARN_MAX_M warning surfaces them by
-# design) instead of silently NaNing. The frozen npz corpus is NOT
-# regenerated (regeneration is forbidden); if this converter is ever
-# re-run, gray-band points must be explicitly reviewed — never
-# silently kept or dropped. Color/NIR attributes keep their own 1e3
-# bound (colors are [0,255]) — behavior unchanged.
-SENTINEL_MAX_M = 1e6
-WARN_MAX_M = 100.0
-ATTR_SENTINEL_MAX = 1e3
 
 # Diagnostics from the most recent read_f32 call (session 51): a
 # best-effort side channel so downstream tools can see the gray-band
@@ -114,10 +110,15 @@ def read_f32(path: Path) -> np.ndarray:
     # flagged. (LOW-10, audit 2026-09-04; counts re-measured
     # 2026-09-11. Frozen corpus NOT regenerated — any future re-run
     # must review gray-band points explicitly.)
+    # v1 C1 refactor (session 56): keep_or_nan is the shared helper
+    # that produces the per-axis NaN mask (|axis| >= SENTINEL_MAX_M,
+    # NaN-safe). Unifies with io_analog's load_xyz (which previously
+    # used strict <, kept <1e6; now unified on the same >= semantics
+    # via io_common.keep_or_nan).
     xyz_sentinel = (
-        (np.abs(arr["x"]) > SENTINEL_MAX_M)
-        | (np.abs(arr["y"]) > SENTINEL_MAX_M)
-        | (np.abs(arr["z"]) > SENTINEL_MAX_M)
+        keep_or_nan(arr["x"])
+        | keep_or_nan(arr["y"])
+        | keep_or_nan(arr["z"])
     )
     # gray-zone early alert (once per read): kept |xyz| > WARN_MAX_M.
     # MEASURED non-empty (session 51): the real hits so far are wild
@@ -154,9 +155,13 @@ def read_f32(path: Path) -> np.ndarray:
         n_gray_band=int(over_warn.sum()),
         gray_band_max_abs_m=mx,
     )
-    # per-attribute sentinel: outside valid range (for color/nir)
+    # per-attribute sentinel: outside valid range (for color/nir).
+    # ATTR_SENTINEL_MAX is the SEPARATE colour/NIR bound (1e3); see
+    # io_common.ATTR_SENTINEL_MAX docstring for why it differs from
+    # the coordinate sentinel. The shared keep_or_nan(attr=True)
+    # helper applies |arr| >= ATTR_SENTINEL_MAX with NaN-safe semantics.
     for field in ("nir", "r", "g", "b"):
-        attr_sentinel = (np.abs(arr[field]) > ATTR_SENTINEL_MAX) | ~np.isfinite(arr[field])
+        attr_sentinel = keep_or_nan(arr[field], attr=True)
         arr[field] = np.where(attr_sentinel, np.nan, arr[field])
     # zero out xyz where sentinel (all attributes set to NaN)
     for field in ("x", "y", "z"):

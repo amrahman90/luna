@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-12 (execution session 56 — C-io_common: shared IO module extracted from scattered call sites; f1 pins preserved)
+
+- **New module `01_WORKSPACE/code/io_common.py`** (175 lines; **v1 C1** per plan v2, ADJ-1 left packaging dropped): four pillars + frozen-recipe constants.
+  - **Path resolver** (uses `Path.home()`, no hardcoded username): `LLTB1_HOME = ~/lunarvoid`, `LLTB1_DATA = ~/lunarvoid/data`, `LLTB1_VENV_PY = ~/lunarvoid/venv/bin/python`.
+  - **Sentinel constants** (LOW-10 standardized): `SENTINEL_MAX_M = 1e6` (lunar + analog unified per LOW-10), `WARN_MAX_M = 100.0`, `ATTR_SENTINEL_MAX = 1e3` (color/NIR only — documented why it differs), `F32_NODATA = -9999.0` (distinct f32-domain sentinel), `GTIFF_NODATA_NAN = nan`. Lock pins `!= 1e3` and `!= 1e30` as LOW-10 regression guards.
+  - **`keep_or_nan(arr, sentinel_max_m, attr=False)`** — single NaN-safe helper returning a drop-mask (`|a| >= thr | isnan`); `attr=True` swaps in `ATTR_SENTINEL_MAX`. Replaces two near-identical inline blocks in `convert_f32.py` + `io_analog.py`.
+  - **`write_geotiff(arr, transform, path, crs=None, nodata=GTIFF_NODATA_NAN, *, dtype="float32")`** — semantics-equivalent extract of `sag_detect`'s local helper; defaults to `_crs.ANALOG_CRS_WKT`.
+  - **`AREA_MIN_PER_RUNG` dict** — copy of `V0.2_PLAN.md §4.1` table (0.5→50, 1→20, 2→8, 5→3, 8/10→2), source-line cited in docstring; **identity-preserved** (`is` returns True from the consumer module — same dict object).
+  - Module docstring carries **"`v1 C1, adopted session 56`"** provenance.
+- **Six callers updated (behaviour-preserving)**:
+  - `wp1_lla/convert_f32.py` — local `SENTINEL_MAX_M`/`WARN_MAX_M`/`ATTR_SENTINEL_MAX` → import; inline `>1e6` masks → `keep_or_nan(...)`; `warnings.warn(...)` per-call behaviour preserved.
+  - `wp1_analog/io_analog.py` — same swap; mask becomes `~keep_or_nan(...)`.
+  - `wp1_detector/sag_detect.py` — deleted local `write_geotiff` definition, imported from io_common; in-module call sites unchanged because the symbol is bound from the import.
+  - `wp1_detector/vci.py` — inline `rasterio.open(out_tif, "w", profile)` write replaced by `write_geotiff(vci_arr, transform, out_tif, crs=None, nodata=-1.0)` with documented `VCI==0 → -1.0` pre-coercion so the NaN-or-nodata translate is a no-op.
+  - `wp1_detector/v0_2_pipeline_integration.py` — **hardcoded `HOME_DATA = Path("/home/frostflux/lunarvoid/data")` removed** (the only two literal username-references in `code/`; second one is `cc_filter_eval_v0_6.py:49`); local `AREA_MIN_PER_RUNG` dict removed, imported; `is`-identity verified.
+  - `wp1_detector/cc_filter_eval_v0_6.py` — hardcoded `DATA` → `LLTB1_DATA / "lltb1"`; `VENV` → `LLTB1_VENV_PY`.
+- **Tests**: new `tests/test_io_common.py` **12 tests** (sentinel constants locked at LOW-10 values; `keep_or_nan` regimes 500/5000/1e38 + NaN; `write_geotiff` `tmp_path` round-trip with driver/dtype/nodata/shape assertions; `AREA_MIN_PER_RUNG` is-identity; `sag_detect.write_geotiff is io_common.write_geotiff`); one boundary test in `tests/test_convert_f32_sentinel.py` updated for the `>` → `>=` semantic shift (only matters at the exact `1e6` threshold — zero real-data impact since real sentinels are ~1e38 and real geometry is `<< 1e6`).
+- **Suite**: 89 → **101 passed**, 0 failed.
+- **F1 pins preserved** (re-verified): `test_smoke_f1_per_rung` 0.39160839160839167/0.0/0.8; `test_smoke_fusion_auc` 0.990; `test_e2e_fieg::test_pinned_f1_values` f1_test_slope `0.029746281714785657`. `verify_v02` 21/21, `verify_v03` 15/15, `verify_v04` 11/11 — all PASS-ALL.
+- **No data writes**: zero `~/lunarvoid/data` mtime drift; re-running the v0.2 E2E byte-identical semantically (only wall_time clock noise `0.717s → 0.732s` — produced by the verifier's step-7 re-run, was reverted via `git checkout` before this commit); `01_WORKSPACE/data/outputs/` clean.
+
 ## 2026-09-12 (execution session 55 — C5 archive superseded code: 2 docstring banners + 1 convention note)
 
 - **C5 archive superseded code** (orchestrator surgical; project-wide convention): **added `SUPERSEDED (...)` docstring banners** at the top of two WP5/PU files. **No code move** — signal-only by design, so PROVENANCE_INDEX and audit-walk references stay resolvable.

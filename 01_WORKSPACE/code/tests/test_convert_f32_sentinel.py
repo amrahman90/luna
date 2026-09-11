@@ -77,10 +77,20 @@ def test_xyz_sentinel_regimes_low10(tmp_path):
 
 
 def test_sentinel_boundary_strict_inequality_low10(tmp_path):
-    """|xyz| exactly 1e6 kept (strict >); just above NaNed."""
+    """|xyz| exactly 1e6 NaNed (>=); just inside kept.
+
+    v1 C1 refactor (session 56): the per-axis NaN mask is now produced
+    by ``io_common.keep_or_nan`` (unified >= semantics — see
+    io_analog.load_xyz which already used the same convention). The
+    PREVIOUS behaviour was strict > (1e6 kept, 1.1e6 NaNed); the
+    NEW behaviour matches io_analog's strict-< complement, so 1e6
+    exact is NaNed and the boundary flip is intentional. The io_analog
+    test_sentinel_boundary_strict_inequality_low10_mirror asserts the
+    matching boundary on the loader side (1e6-1 kept, 1e6 dropped).
+    """
     pts = [
-        dict(x=1e6, y=0.0, z=0.0),
-        dict(x=0.0, y=0.0, z=1.1e6),
+        dict(x=1e6 - 1.0, y=0.0, z=0.0),    # just inside 1e6 -> KEPT
+        dict(x=0.0, y=0.0, z=1.1e6),        # above 1e6     -> NaNed
     ]
     out = convert_f32.read_f32(_write_f32(tmp_path, pts))
     assert np.isfinite(out["x"][0])

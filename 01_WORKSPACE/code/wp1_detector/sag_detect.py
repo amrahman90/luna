@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -39,6 +40,19 @@ from rasterio.transform import Affine, from_bounds
 from scipy.ndimage import label as ndlabel
 from skimage.filters import frangi
 from whitebox import WhiteboxTools
+
+# v1 C1 refactor (session 56): write_geotiff was extracted to
+# 01_WORKSPACE/code/io_common.py. This module re-exports it as
+# ``sag_detect.write_geotiff`` so the four call sites within this
+# file (line ~466, ~582, ~585, ~589) keep working unchanged, and
+# so any external importer using the historical name continues to
+# resolve. The semantics are identical (NaN-or-finite-nodata
+# translate + rasterio GTiff float32).
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import write_geotiff  # noqa: E402
 
 # C3 (LLTB-1 v0.6 candidate): standalone connected-component engine +
 # per-rung AREA_MIN table. Dual import style: this file is executed BOTH
@@ -123,19 +137,15 @@ def sink_fill_planchon(wbt: WhiteboxTools, dem_path: Path, out_path: Path) -> Pa
     return out_path
 
 
-def write_geotiff(arr: np.ndarray, transform: Affine, path: Path, crs: str = None, nodata=np.nan):
-    # C9: default to the shared local-metric CRS (was: hardcoded "EPSG:32631")
-    if crs is None:
-        from _crs import ANALOG_CRS_WKT
-        crs = ANALOG_CRS_WKT
-    profile = {
-        "driver": "GTiff", "dtype": "float32", "nodata": float(nodata) if np.isfinite(nodata) else -9999.0,
-        "width": arr.shape[1], "height": arr.shape[0], "count": 1,
-        "transform": transform, "crs": crs, "compress": "deflate", "BIGTIFF": "IF_SAFER",
-    }
-    with rasterio.open(path, "w", **profile) as dst:
-        arr2 = np.where(np.isfinite(arr), arr, profile["nodata"]).astype(np.float32)
-        dst.write(arr2, 1)
+# v1 C1 refactor (session 56): write_geotiff moved to io_common.py.
+# Re-exported above (top-of-file ``from io_common import write_geotiff``)
+# so sag_detect.write_geotiff(...) keeps resolving for the four in-module
+# call sites and any external importer. Kept as a thin alias to make the
+# v0.5-pin E2E tests (test_e2e_fieg.py) keep passing: they exercise the
+# detector through the CLI which never calls write_geotiff directly, but
+# the v0.6 C3 evaluation (cc_filter_eval_v0_6.py) and any custom caller
+# that imports ``sag_detect.write_geotiff`` will continue to work.
+# write_geotiff = io_common.write_geotiff  (re-export done at module top)
 
 
 def f1_at_threshold(scores: np.ndarray, truth: np.ndarray, thr: float):

@@ -29,7 +29,7 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
+import sys
 import time
 import math
 from pathlib import Path
@@ -38,12 +38,29 @@ from typing import Any
 import numpy as np
 import rasterio
 
+# v1 C1 refactor (session 56): HOME_DATA and AREA_MIN_PER_RUNG come
+# from the shared IO module. The path resolver replaces the
+# hard-coded /home/frostflux/lunarvoid/data (C5 reproducibility
+# blocker); the per-rung table is the io_common copy which mirrors
+# connected_component_filter.AREA_MIN_PER_RUNG byte-for-byte.
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import AREA_MIN_PER_RUNG, LLTB1_DATA  # noqa: E402
+
+# C3: the standalone connected-component engine stays here (the v0.2
+# pipeline integration is the wired-up smoke test for that engine).
 from connected_component_filter import connected_component_filter
 
 # --- Paths ------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]  # 01_WORKSPACE/
 REPO_DATA = REPO_ROOT / "data"
-HOME_DATA = Path("/home/frostflux/lunarvoid/data")
+# v1 C1: HOME_DATA is now an alias for the shared LLTB1_DATA
+# (~/lunarvoid/data). Frozen pipeline outputs under REPO_DATA/outputs
+# are unchanged — this script writes only to OUT_JSON (under
+# REPO_DATA/outputs/wp1_detector/), never to the data root.
+HOME_DATA = LLTB1_DATA
 
 SCORE_RASTER = REPO_DATA / "outputs" / "wp2_sag" / "MTP" / "TRANQPIT1_5m_score.tif"
 TRANSFER_SUMMARY = REPO_DATA / "outputs" / "wp2_sag" / "transfer" / "transfer_summary.json"
@@ -51,16 +68,6 @@ OUT_JSON = REPO_DATA / "outputs" / "wp1_detector" / "v0_2_integration_test.json"
 
 DTM = "TRANQPIT1"
 RUNG_M = 5.0
-
-# Per-rung area_min table from V0.2_PLAN.md §4.1. Keyed by rung_m as float.
-AREA_MIN_PER_RUNG: dict[float, int] = {
-    0.5: 50,
-    1.0: 20,
-    2.0: 8,
-    5.0: 3,
-    8.0: 2,
-    10.0: 2,
-}
 
 
 def load_score_raster(path: Path) -> tuple[np.ndarray, dict[str, Any]]:

@@ -35,8 +35,20 @@ import time
 from datetime import date
 from pathlib import Path
 
+# v1 C1 refactor (session 56): the per-site npz dir is now derived from
+# io_common.LLTB1_DATA ("~/lunarvoid/data") + "lltb1" instead of the
+# hard-coded /home/frostflux/lunarvoid/data/lltb1 literal. The hard-coded
+# literal was the same string the previous version of this script
+# carried; swapping to the resolver preserves the on-disk path exactly
+# (no data writes, no SHA-256 drift).
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import LLTB1_DATA, LLTB1_VENV_PY  # noqa: E402
+
 REPO = Path("/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube")
-VENV = Path("/home/frostflux/lunarvoid/venv/bin/python")
+VENV = LLTB1_VENV_PY  # io_common.LLTB1_VENV_PY (~/lunarvoid/venv/bin/python)
 SAG = REPO / "01_WORKSPACE/code/wp1_detector/sag_detect.py"
 OUT_JSON = (REPO / "01_WORKSPACE/data/outputs/wp1_detector/"
             "cc_filter_evaluation_v0_6.json")
@@ -46,7 +58,7 @@ TMP = Path("/tmp/opencode/cc_eval_v0_6")
 # Pins: notes/2026-08-21_LLTB1_v0.4_release_note.md §5 (4-dp rounded);
 # cave_1x pin = the fixed-10° value from the same note's caveat section
 # (conventions §8: "use fixed --slope-mask-degrees 10 (F1 0.068)").
-DATA = Path("/home/frostflux/lunarvoid/data/lltb1")
+DATA = LLTB1_DATA / "lltb1"
 SITES = [
     ("IndianTunnel_NorthSurface",
      DATA / "IndianTunnel_NorthSurface/lltb1/IndianTunnel_NorthSurface_0.5m.npz",

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -30,6 +31,18 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+
+# v1 C1 refactor (session 56): the inline rasterio GeoTIFF write was
+# replaced with io_common.write_geotiff. Behaviour preserved: VCI cells
+# of 0 are still translated to nodata=-1.0 on disk (the loader does
+# `np.where(VCI > 0, VCI, -1.0)` BEFORE the call, so write_geotiff's
+# NaN-or-finite-nodata translate becomes a no-op for the all-finite
+# VCI array). The CRS stays ANALOG_CRS_WKT (default in write_geotiff).
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import write_geotiff  # noqa: E402
 
 
 def vci_raster(x, y, z, pixel: float, h_min: float, h_max: float, h_bin: float):
@@ -128,20 +141,16 @@ def main():
     plt.close(fig)
     print(f"[out ] figure -> {fig_path}", flush=True)
 
-    # VCI raster GeoTIFF (C9: shared ANALOG_CRS_WKT — was: hardcoded EPSG:32631)
-    import rasterio
+    # VCI raster GeoTIFF (C9: shared ANALOG_CRS_WKT — was: hardcoded EPSG:32631;
+    # v1 C1, session 56: inline rasterio.open replaced with io_common.write_geotiff)
     from rasterio.transform import Affine
     transform = Affine(px, 0.0, x_min, 0.0, px, y_min)
-    from _crs import ANALOG_CRS_WKT  # 2 levels up: wp1_detector -> code
-    profile = {
-        "driver": "GTiff", "dtype": "float32", "nodata": -1.0,
-        "width": nx, "height": ny, "count": 1,
-        "transform": transform, "crs": ANALOG_CRS_WKT,
-        "compress": "deflate", "BIGTIFF": "IF_SAFER",
-    }
     out_tif = args.outdir / "vci.tif"
-    with rasterio.open(out_tif, "w", **profile) as dst:
-        dst.write(np.where(VCI > 0, VCI, -1.0).astype(np.float32), 1)
+    # Pre-translate VCI==0 cells to the nodata sentinel (VCI uses 0 for
+    # "no points in column"); write_geotiff's NaN-or-finite-nodata
+    # translate is then a no-op for the all-finite pre-coerced array.
+    vci_arr = np.where(VCI > 0, VCI, -1.0).astype(np.float32)
+    write_geotiff(vci_arr, transform, out_tif, crs=None, nodata=-1.0)
     print(f"[out ] vci raster -> {out_tif}", flush=True)
 
     # centroids CSV

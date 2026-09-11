@@ -24,25 +24,32 @@ Grid convention matches wp1_ladder/degrade.py cloud_to_master_grid:
 """
 from __future__ import annotations
 
+import sys
 import warnings
+from pathlib import Path
 
 import numpy as np
 
-# Sentinel thresholds — mirror of convert_f32.LOW-10 (audit
-# notes/2026-09-04_AUDIT_REVIEW.md). True NASA .f32 sentinel magnitude
-# is ~1e38; npz xyz are NaNed only beyond 1e6 m so a future >1 km site
-# (e.g. SP Mountain ~1.5 km) is not silently NaNed. Gray band
-# (1e3, 1e6] keeps wild outliers visible-but-flagged via the >WARN_MAX_M
-# warning instead of silently NaNing them.
-SENTINEL_MAX_M = 1e6
-WARN_MAX_M = 100.0
+# Sentinel thresholds and helpers live in the shared IO module
+# (v1 C1, adopted session 56). Re-exported under their historical
+# names so existing consumers (register_cave, coarse_search,
+# explore_indian_tunnel) and test_io_analog_sentinel.py continue
+# to import them unchanged.
+_HERE = Path(__file__).resolve().parent
+_CODE = _HERE.parent
+if str(_CODE) not in sys.path:
+    sys.path.insert(0, str(_CODE))
+from io_common import SENTINEL_MAX_M, WARN_MAX_M, keep_or_nan  # noqa: E402
 
 
 def load_xyz(npz_path, max_points: int | None = None, seed: int = 42):
     """Load x/y/z from a wp1_lla npz, drop sentinels, optional RNG subsample.
 
     Sentinel policy (LOW-10 mirror, session 52):
-      - drop xyz with any |axis| > SENTINEL_MAX_M (1e6 m) OR not finite.
+      - drop xyz where any axis is sentinel (~1e38, ~inf, or any
+        |axis| >= SENTINEL_MAX_M = 1e6 m). The shared ``keep_or_nan``
+        helper applies |axis| >= SENTINEL_MAX_M, NaN-safe; the loader
+        KEEPS the complement (~keep_or_nan).
       - if any KEPT |axis| > WARN_MAX_M (100 m), emit ONE warning naming
         npz_path, count, and max |axis| value (visible-but-flagged).
     Returns (x, y, z) float32 arrays.
@@ -51,13 +58,13 @@ def load_xyz(npz_path, max_points: int | None = None, seed: int = 42):
     x = np.asarray(data["x"], dtype=np.float64)
     y = np.asarray(data["y"], dtype=np.float64)
     z = np.asarray(data["z"], dtype=np.float64)
+    # v1 C1 refactor (session 56): keep_or_nan unifies the strict-< mask
+    # with convert_f32's NaN-mask convention. The complement of
+    # keep_or_nan equals np.isfinite(axis) & (|axis| < SENTINEL_MAX_M).
     ok = (
-        (np.abs(x) < SENTINEL_MAX_M)
-        & (np.abs(y) < SENTINEL_MAX_M)
-        & (np.abs(z) < SENTINEL_MAX_M)
-        & np.isfinite(x)
-        & np.isfinite(y)
-        & np.isfinite(z)
+        ~keep_or_nan(x, sentinel_max_m=SENTINEL_MAX_M)
+        & ~keep_or_nan(y, sentinel_max_m=SENTINEL_MAX_M)
+        & ~keep_or_nan(z, sentinel_max_m=SENTINEL_MAX_M)
     )
     # Session-52 LOW-10 mirror: surfaces gray-band outliers the old 1e3
     # rule silently NaNed. KEPT-only (sentinel points already excluded
