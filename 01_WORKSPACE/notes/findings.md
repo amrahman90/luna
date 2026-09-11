@@ -904,3 +904,13 @@ Until verdicts are captured, the 27 candidates remain at tier C with their exist
 **Audit precedent**: Hermes audit `notes/2026-09-04_AUDIT_REVIEW.md` LOW-12 — same pattern applied to `notes/2026-08-20_LLTB1_v0.2_release_note.md` (>) SUPERSEDED by `notes/2026-08-30_…`). This rule is the code-file extension of that markdown convention.
 
 — orchestrator, session 55
+
+## conventions — registry writes + B5 verdict (session 57)
+
+**(a) Per-run summary convention (registry writes).** Any script that writes or repairs `01_WORKSPACE/data/candidate_registry.csv` emits a sibling summary JSON next to the artifact it produces (pattern: `data/outputs/wp2_sag/registry_repair_2026-09-06.json`), recording what changed, row/status counts, and the md5 of the output. The frozen registry itself is sha-frozen (md5 `a60fb52152e33f37e9052434ad026a6e`) — writers must reproduce it byte-identically from their own parse; `wp5_fusion/registry_io.py::write_registry` + `load_registry` (raw-parse attrs) is the proven mechanism (`tests/test_registry_io_writer.py`). Sidecar emitters print the summary to stdout instead of writing extra data files (scope discipline: one data file per dispatch).
+
+**(b) B5 verdict — anchors resolve, proven executable.** Per-candidate records live IN the registry (peaks = `sag_amp_m`/`span_m`/`score`, rung in the id suffix `NNNNcm`), with `evidence` pointers `…transfer_summary.json#<candidate_id>` joining each row to its (DTM × rung) pair context (raster path via `pair_results.source_score_tif`). `tests/test_registry_anchors.py` is the executable proof: all 278/278 data rows resolve to one of the 54 `pair_results` entries on (dtm, rung_m) — no terrain-extrapolation or hand-added stragglers.
+
+**(c) Structured flags are a SIDECASTE file, never registry columns.** Classification flags (TP/FP/ring/funnel, is_active, unique_key, is_rung_duplicate) live in `data/candidate_registry_flags.csv` (emitted by `code/wp5_fusion/registry_flags.py`, source of truth `unique_accounting_2026-09-07.json`), because the registry CSV is sha-frozen and cited in both papers + the Zenodo deposit. Finding of record: `is_rung_duplicate` is structurally 0 on the frozen corpus — every multi-rung copy of a feature is already status=SUPERSEDED via `superseded_by` (161 rows); the B1 key scale is corroborated by the accounting sensitivity block (3-dp lon/lat grouping n_groups=21 == n_unique_above_floor=21). *Scope note (verifier session 57): `is_rung_duplicate` counts ACTIVE×ACTIVE unique_key collisions; the papers' 278→117 / 45→21 counts are row-level and include the 161 SUPERSEDED multi-rung copies, which `superseded_by` resolves — hence the flag is 0 by construction.*
+
+— geo-coder, session 57
