@@ -2,9 +2,20 @@
 
 Reuses the NASA .f32 / npz conventions of wp1_lla/convert_f32.py:
 - 7-attr float32 point records, local metric site frame.
-- sentinel rule: |x| or |y| or |z| > 1000 m -> drop (skill bug-catalog #4;
-  the NorthSurface npz JSON still shows +-6e5 m z values inside its
-  "finite" set, so we re-filter here regardless of what the JSON says).
+- Sentinel rule (LOW-10 mirror, session 52, 2026-09-11): any |x|, |y| or
+  |z| > SENTINEL_MAX_M = 1e6 m -> drop (the previous 1e3 m heuristic would
+  silently NaN the edges of any future >1 km analog site, e.g. SP Mountain
+  ~1.5 km). MEASURED (session 51 read-only numpy pass): the gray band
+  (1e3, 1e6] is NOT empty — Kingsbowl_orig.f32 has 37 points there (max
+  |xyz| ~930,515.8 m) and Indian_NorthSurface_1x.f32 has 31 (max
+  ~620,616.4 m); sites are <=1.2 km extent so these are wild outliers
+  the old 1e3 rule silently NaNed. The new 1e6 rule KEEPS them
+  visible-but-flagged: any KEPT |xyz| exceeding WARN_MAX_M = 100 m
+  emits ONE warning per load_xyz call (file name, count, max value,
+  cites "session 52 / LOW-10 mirror"). NaN xyz continue to drop
+  naturally via the np.isfinite mask (NaN < X is False).
+- Color/NIR sentinel semantics do not apply here (npz stores x/y/z
+  only); only the coordinate sentinel is in scope.
 
 Grid convention matches wp1_ladder/degrade.py cloud_to_master_grid:
   origin = (x_min, y_min) of the reference cloud, 0.5 m posting,
@@ -13,14 +24,27 @@ Grid convention matches wp1_ladder/degrade.py cloud_to_master_grid:
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 
-SENTINEL_ABS = 1000.0
+# Sentinel thresholds — mirror of convert_f32.LOW-10 (audit
+# notes/2026-09-04_AUDIT_REVIEW.md). True NASA .f32 sentinel magnitude
+# is ~1e38; npz xyz are NaNed only beyond 1e6 m so a future >1 km site
+# (e.g. SP Mountain ~1.5 km) is not silently NaNed. Gray band
+# (1e3, 1e6] keeps wild outliers visible-but-flagged via the >WARN_MAX_M
+# warning instead of silently NaNing them.
+SENTINEL_MAX_M = 1e6
+WARN_MAX_M = 100.0
 
 
 def load_xyz(npz_path, max_points: int | None = None, seed: int = 42):
     """Load x/y/z from a wp1_lla npz, drop sentinels, optional RNG subsample.
 
+    Sentinel policy (LOW-10 mirror, session 52):
+      - drop xyz with any |axis| > SENTINEL_MAX_M (1e6 m) OR not finite.
+      - if any KEPT |axis| > WARN_MAX_M (100 m), emit ONE warning naming
+        npz_path, count, and max |axis| value (visible-but-flagged).
     Returns (x, y, z) float32 arrays.
     """
     data = np.load(npz_path)
@@ -28,13 +52,34 @@ def load_xyz(npz_path, max_points: int | None = None, seed: int = 42):
     y = np.asarray(data["y"], dtype=np.float64)
     z = np.asarray(data["z"], dtype=np.float64)
     ok = (
-        (np.abs(x) < SENTINEL_ABS)
-        & (np.abs(y) < SENTINEL_ABS)
-        & (np.abs(z) < SENTINEL_ABS)
+        (np.abs(x) < SENTINEL_MAX_M)
+        & (np.abs(y) < SENTINEL_MAX_M)
+        & (np.abs(z) < SENTINEL_MAX_M)
         & np.isfinite(x)
         & np.isfinite(y)
         & np.isfinite(z)
     )
+    # Session-52 LOW-10 mirror: surfaces gray-band outliers the old 1e3
+    # rule silently NaNed. KEPT-only (sentinel points already excluded
+    # by `ok`); one warning per load_xyz call regardless of axis count.
+    over_warn = ok & (
+        (np.abs(x) > WARN_MAX_M) | (np.abs(y) > WARN_MAX_M) | (np.abs(z) > WARN_MAX_M)
+    )
+    if over_warn.any():
+        max_abs = float(
+            max(
+                float(np.abs(x[over_warn]).max()),
+                float(np.abs(y[over_warn]).max()),
+                float(np.abs(z[over_warn]).max()),
+            )
+        )
+        warnings.warn(
+            f"{npz_path}: {int(over_warn.sum())} points with kept |xyz| > "
+            f"{WARN_MAX_M:g} m (max {max_abs:.1f} m); sentinels (~1e38) are NaNed "
+            f"only beyond {SENTINEL_MAX_M:g} m — verify this site's extent "
+            f"(session 52 / LOW-10 mirror; gray zone between real data and sentinel)",
+            stacklevel=2,
+        )
     x, y, z = x[ok], y[ok], z[ok]
     if max_points is not None and len(x) > max_points:
         rng = np.random.default_rng(seed)
