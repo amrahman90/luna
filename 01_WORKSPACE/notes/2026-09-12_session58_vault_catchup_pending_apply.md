@@ -561,3 +561,7 @@ MOC: [[mocs/MOC Sessions & Ops]] · Wikilink to canonical CHANGELOG: [[../admin/
 - **Gotchas:** retro-skeptic session 58: SOUND-with-wording — `unique_key` is the accounting root-primary, not a 3-dp string; NEW disclosure: 6 cross-DTM near-duplicate ACTIVE pairs (12 rows, below-floor: FRESHMELT/FRESHMELT1 ×5 + TYCHOPK/TYCHOPK04 ×1) unresolved by `superseded_by` — below-floor, outside FP accounting.
 
 MOC: [[mocs/MOC Sessions & Ops]] · Wikilink to canonical CHANGELOG: [[../admin/CHANGELOG]]
+
+---
+
+**APPLIED 2026-09-12 (orchestrator bash, per §Apply instructions):** 32 session notes written (sessions 26–57; sessions/ now complete 01–57); 00_HOME A1/A2/A3 applied and verified. Vault is gitignored — no vault files enter git. This staging note is retained as the audit record of the transfer.
