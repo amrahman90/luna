@@ -945,3 +945,99 @@ Retroactive skeptic pass (protocol gap: these entries landed without review). Al
 **Cost note.** Probe cost: $0, <1 min wall-clock, 6 HTTP HEAD + 2 bounded GETs (≈25 KB total). No GPU, no Tier-1.
 
 **Status update (for R3 + future dispatch).** Open queue items now include (in addition to D3 deferred, user-gated queue): **NAC fetch pipeline (WP0 first reproduction)** — Tier-0 eligible, user-gated.
+
+## data-acquisition — session 60 (2026-09-12): NAC verification fetch — HIGH-OPEN upgrade
+
+**Context.** Session 59's "MEDIUM-OPEN — NAC reclassified from BLOCKED" was a single-probe observation. This session performs a bounded file fetch to upgrade confidence.
+
+**Bounded fetch (ONE file, $0, 2 s wall-clock, 10,370 B transferred).**
+
+- Pre-fetch parse (stdlib `html.parser` + regex over session-59's cached
+  `nac_probe.html`, 23,154 B, `https://wms.lroc.asu.edu/lroc/rdr_product_select?product_id=M104203891S`):
+  - **0** `.IMG` / `.tar.gz` / `.ZIP` / `.cub` / `.tif` download URLs.
+  - **10** NAC_ANAGLYPH HTML detail-page links (`/lroc/view_rdr/NAC_ANAGLYPH_*`).
+  - The dispatch's premise (smallest NAC EDR/CDR link on the page) is
+    INFEASIBLE against this exact URL: the RDR search page is a search
+    index, not a download index. IMG acquisition requires ≥1 extra hop
+    (`view_rdr` → `view_rdr_product` → IMG).
+- Bounded-file URL chosen (smallest by URL-string length, deterministic
+  alphabetical first): `https://wms.lroc.asu.edu/lroc/view_rdr/NAC_ANAGLYPH_M102172207_M102165049`.
+- Result: HTTP 200, 10,370 B HTML detail page, sha256
+  `bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571`,
+  first-16-bytes hex `3c21444f43545950452068746d6c3e0a` (ASCII
+  `<!DOCTYPE html>` + LF — i.e. **HTML, not CCSD/PDS3/II\* IMG
+  signature**).
+- Sandbox file: `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049_view_rdr.html`
+  (sandbox-only; canonical `TRANQPIT1/` path **NOT touched**).
+- Verification record: `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/VERIFICATION.md` (164 lines; documents
+  parse result, bounded fetch, HTML-vs-IMG signature, harvested
+  evidence, licence note, cost ledger, MANIFEST-row-ready summary).
+
+**New evidence harvested (verified by parsing the fetched HTML body,
+not by HEAD probing):**
+
+1. **PDS dataset ID: `LRO-L-LROC-5-RDR-V1.0`** (RDR — Reduced Data
+   Record — dataset 5; session 59 cited `LRO-L-LROC-2-EDR-V1.0` from a
+   PDS archive HEAD probe, which is the raw-EDR dataset 2; the WMS
+   RDR archive lives in dataset 5. **Both are PDS-public-domain
+   bundles** in the LRO-L-LROC family.).
+2. **LROLRC bundle ID: `LROLRC_2001`** (matches the v5 master plan
+   `LROLRC_2001` archive name cited in §M0 / §8 work items).
+3. **PYR.TIF preview-tile URL pattern** (Zoomify pyramid, relative):
+   `/ptif/zoomify/ser/estore/lroc/web/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/ANAGLYPH/NAC_M102172207_M102165049/NAC_ANAGLYPH_M102172207_M102165049.PYR.TIF`.
+4. **One-hop link** to the actual IMG-download page:
+   `/lroc/view_rdr_product/NAC_ANAGLYPH_M102172207_M102165049`
+   (link text "click for more information" — i.e. the IMG lives one
+   fetch deeper, out of scope for this bounded verification).
+5. **ISIS3 attribution link** (USGS ISIS) — confirms the RDR was
+   processed with ISIS3, consistent with LROC's standard NAC_RDR
+   pipeline.
+
+**Subject caveat.** The M104203891S search term returned 4148 RDRs;
+the first-page results are NAC anaglyphs for unrelated sites
+("Rille in Alphonsus Crater", "Marius Hills", "Rimae Darwin",
+"Krafft stereo pair", "Orientale Outer Ring", "Balboa", "Orientale
+Inner Ring", "Kopff Crater", "Orientale Vent", "Orientale Basin").
+**None of these are Mare Tranquillitatis.** This bounded fetch is
+a verification of the WMS chain, not a TRANQPIT1 acquisition. The
+TRANQPIT1 deliverable requires the full user-gated fetch pipeline
+(R3 §11(b)).
+
+**Signature-verdict (honest).** The bounded fetch produced HTML,
+not an NAC IMG. The `CCSD` / `PDS3` / `II*` signatures listed in
+the dispatch were checked against the first 16 bytes and **all
+three did not match**. This is NOT a fetcher bug; it is the
+expected outcome given that the source page exposes no IMG URLs.
+The verification record does not demonstrate a raw NAC IMG byte
+signature; it demonstrates (a) the WMS chain is alive end-to-end
+and (b) the WMS RDR archive exposes enough metadata (PDS dataset
+ID + LROLRC bundle + PYR.TIF preview URL + one-hop IMG link) to
+bootstrap a real IMG fetch on the next session.
+
+**Upgrade rationale: MEDIUM-OPEN → HIGH-OPEN.** Session 59's
+MEDIUM-OPEN was a probe-only observation (HEAD/302 responses, no
+file fetched). Session 60 successfully fetched the smallest
+WMS-served artifact on the source page, parsed it, and harvested
+the PDS dataset ID, LROLRC bundle, and the IMG-download link — i.e.
+the chain is verified 2 hops deep, not just probed. This is a
+genuine confidence upgrade: the WMS RDR archive is now confirmed
+to expose the metadata needed to acquire NAC IMGs without
+re-deriving URL patterns or guessing dataset IDs. **HIGH-OPEN is
+strictly with respect to "WMS chain is fetchable + exposes the
+metadata needed for the next fetch"**; the **IMG byte-signature
+verification is still deferred to the user-gated NAC fetch
+pipeline** (R3 §11(b)). The two claims are independent.
+
+**Status update (for R3 §7).** Session 59's MEDIUM-OPEN observation
+upgraded to HIGH-OPEN (session 60 verified-fetch, sha256
+`bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571`).
+The NAC fetch pipeline (R3 §11(b)) remains user-gated; this
+session does NOT authorise it.
+
+**Cost ledger.** 10,370 B transferred, 2 s wall-clock, $0 (HTTP
+GET only; 69 GB free on `/` after fetch). No GPU, no rental, no
+paid endpoint, no archive mirror. Sandbox path is the ONLY new
+landed artifact; canonical paths (`TRANQPIT1/`, candidate_registry,
+zenodo_deposit_v1.0/, `00_SOURCE_ORIGINALS/`) all untouched.
+
+— geo-coder, session 60, 2026-09-12

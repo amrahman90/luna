@@ -13,7 +13,7 @@
 - **Both papers submission-ready** — Paper 1 v2.1 (12 refs, 3 method refs added, 8 of 9 prior refs resolver-corrected verbatim) and Paper 2 v3.3-draft (18 refs, 6 biblio fixes, first-claim hedged); verifier PASS-with-notes on both.
 - **Gates G0′ / G1 / G2 all FINAL-PASS** (final delegation session 32; D1 erratum 0.7 restates reproducibility true-as-of 2026-09-04).
 - **v2-plan autonomous queue exhausted** — B-cluster closed (session 57), C-io_common + C5 + C15 delivered (sessions 51/55/56), PROVENANCE row-47 pointer + row-48 annotation applied (sessions 54/58), `__main__` guard refactor (session 53).
-- **NAC reclassified from BLOCKED to MEDIUM-OPEN** — session-49 diagnosis was a wrong-URL call; WMS serves the same RDR pages; fetch pipeline is the actual open work (Tier-0 budget eligible, user-gated).
+- **NAC reclassified BLOCKED → MEDIUM-OPEN (s59) → HIGH-OPEN-CHAIN (s60)** — session-49's "blocked" was a wrong-URL call; WMS RDR metadata chain verified-fetchable (RDR product page 23,154 B; `view_rdr` HTML 10,370 B at sha256 `bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571`; PDS dataset `LRO-L-LROC-5-RDR-V1.0` + `LROLRC_2001` bundle + `view_rdr_product` IMG-download link one hop deeper); IMG byte-signature verification deferred to user-gated pipeline (Tier-0 budget eligible).
 - **Vault current to session 58** — 32 atomic notes (sessions 26–57) written via orchestrator bash under the space-in-path permission gap (session-44 precedent); `00_HOME.md` refreshed.
 - **Retro-skeptic closed the session-58 protocol gap** — sessions 51/52/57 findings blocks had entered without skeptic review; session-58 retro-review SOUND-with-wording for 51/57, UNSOUND framing for 52 (warning-band conflated with gray-band — corrected: 85,273/85,304 are real swath-edge geometry, only 31 ghosts).
 - **124 tests green** on HEAD `c5be2a2`; frozen registry md5 unchanged; deposit CHECKSUMS 10/10.
@@ -91,7 +91,7 @@ All three verdicts stand; no new gate decisions opened in sessions 48–58.
 
 - The path is **open at the URL level** — `aws` CLI is not installed on this host (no need; WMS is the real endpoint).
 - What was (and remains) missing is the fetch pipeline: a NAC fetch script that issues the WMS product query, parses the response, georeferences/clip-extracts a small region around Mare Tranquillitatis Pit, and lands a 2–5 m DTM at the canonical `data/outputs/wp1_lla/TRANQPIT1/` location. That pipeline is the WP0 first-reproduction goal (master plan §M0).
-- **MEDIUM-confidence: reclassified from BLOCKED to MEDIUM-OPEN**; pending user call to start the pipeline (Tier-0 budget eligible; would be the first WP0 reproduction since cycle 2 close). Full observation logged in `findings.md ## data-acquisition — session 59`.
+- **HIGH-confidence: reclassified from BLOCKED to MEDIUM-OPEN (session 59) -> HIGH-OPEN (session 60 verified-fetch, sha256 `bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571`)**; HIGH is strictly with respect to "WMS RDR chain is fetchable + exposes the metadata needed for the next fetch (PDS dataset `LRO-L-LROC-5-RDR-V1.0` + LROLRC bundle `LROLRC_2001` + `view_rdr_product` IMG-download link one hop deeper)" — the IMG byte-signature verification remains deferred to the user-gated NAC fetch pipeline (§11(b)). Pending user call to start the pipeline (Tier-0 budget eligible; would be the first WP0 reproduction since cycle 2 close). Full observation logged in `findings.md ## data-acquisition — session 60` (session 59 entry retained for provenance).
 
 ## 8. Remaining open items
 

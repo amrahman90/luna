@@ -80,5 +80,10 @@ Thumbs.db
 # inspection cycle via playwright; ~2 MB total per cycle).
 01_WORKSPACE/admin/thumbs/
 
+# NAC sandbox verification fetch (session 60) — kept on disk for verifiability,
+# hidden from git; VERIFICATION.md lives at a tracked sibling path.
+01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.html
+01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.IMG
+
 .opencode/
 opencode.json
