@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-12 (execution session 63 — recheck-of-recheck: verifier PASS-with-notes on session 62; 00_HOME housekeeping drift fix (session-count 43→62, R3 line-count 141→150); protocol step 5 confirms v2-plan queue exhausted; all remaining work user-gated)
+
+- **Recheck-of-recheck** (per user directive "use proper skills and recheck if everything was done properly then proceed"): both skills freshly loaded; lock acquired; state integrity re-checked ALL PASS at HEAD `e436cfe` (md5 `a60fb52152e3`; sidecar `1c884a1ee9…`; deposit CHECKSUMS 10/10; verifier scripts v02 21/21, v03 15/15, v04 11/11; suite 124 passed 6 warnings; 66 GB free).
+- **Verifier on session 62**: PASS-with-notes (11 of 11 checklist items; stylistic notes only — inline-code anchor vs literal wikilink; paraphrased "PRESERVED"; 00_HOME checklist line numbers off-by-1; no corrections required).
+- **00_HOME housekeeping drift fixed**: L23 `43 sessions` → `62 sessions` (drifted during sessions 51–62 bookkeeping); L26 `141 lines` → `150 lines` (R3 grew by 9 lines during session-62 corrections). Both orchestrator-direct edits (no role cleanly owns vault lines beyond the catch-up A1/A2/A3 framework).
+- **Roadmap re-read (protocol step 5)**: only 12 unticked steps remain, ALL user-gated per R3 §11 — Step 8.3/8.4 (TRANQPIT1 local ASP reproduction; user-gate (a)), Step 19.1/19.2 (NAC CDR fetch + photometric stereo; depends on R3 §11(b)), P6.0–P6.8 (Hetzner AX52 rental; user-gate (c)). Per protocol stop condition "gate decision requires human judgement" → stand down pending user direction.
+- **R1 draft** (untracked at `01_WORKSPACE/plans/2026-08-21_R1_Roadmap_draft.md`) preserved per R3 §11(d).
+
 ## 2026-09-12 (execution session 62 — protocol recheck sessions 58–61: retro-skeptic on session-60 HIGH-OPEN-METADATA-CHAIN; verifier FAIL session-60 + PASS-with-notes session-59; corrections applied; vault catch-up sessions 58–61)
 
 - **Protocol recheck** (skills reloaded at session start per step 0a — first time sessions 59–61 missed this; corrected going forward). State integrity ALL PASS at HEAD: frozen registry md5 `a60fb52152e3` unchanged; deposit CHECKSUMS 10/10; suite **124 passed, 8 warnings** at HEAD.
