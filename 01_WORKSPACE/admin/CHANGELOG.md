@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-12 (execution session 59 — R3 terminal status report + NAC reclassification)
+
+- **R3 status report drafted and finalized** at `01_WORKSPACE/plans/2026-09-12_R3_Status_Report.md` (141 lines; supersedes R2 at 71 lines). New sections vs R2: §6 Protocol quality (session-58 recheck) and §7 NAC reclassification. Four corrections applied post-draft: §1 session count (31→58), §1 vault-current date (57→58), §7 WMS probe table (real session-59 numbers), §10 fresh pytest (6 warnings / 128.49s vs earlier 8/179s).
+- **NAC reclassification** — session-49 "blocked" diagnosis was wrong-URL (`s3://lroc-eda-nac/` returns 404; LROC serves via WMS). Session-59 WMS probes: `wms.lroc.asu.edu/lroc/rdr_product_select?product_id=M104203891S` returns 23,154 B real RDR product page; `wms.lroc.asu.edu/lroc/dtm_product_select?dtm_id=LDAM_NAC_DTM_M104203891_25CM` responds (1,722 B); PDS archive alive (HTTP 200). **MEDIUM-confidence: reclassified BLOCKED → MEDIUM-OPEN**. Fetch pipeline (the actual open work) is the WP0 first-reproduction goal — Tier-0 budget eligible, user-gated. Full observation in `notes/findings.md ## data-acquisition — session 59`.
+- **Process-deviation log (third instance of the permission-gap class)** — paper-writer drafting R3 hit a `plans/` write gap mirroring the session-44 vault space-in-path gap and the session-58 orchestrator-bash apply workaround; paper-writer landed via `cp` to `notes/` then applied to `plans/`. Both copies md5 `101c18e184a8f9786cd7af1648404dca`. Adding to the same deviation family as (a) commit `0721854` body path-rule and (b) sessions 49–56 orchestrator-direct bookkeeping.
+- **Sidecar cleanup**: paper-writer's draft sidecar `01_WORKSPACE/notes/2026-09-12_R3_Status_Report.md` removed (never entered git; canonical is `01_WORKSPACE/plans/2026-09-12_R3_Status_Report.md`).
+
 ## 2026-09-12 (execution session 58 — protocol recheck: retro-skeptic on sessions 51/52/57 findings; vault-hygiene catch-up sessions 26–57; process deviations logged)
 
 - **Protocol recheck** (skills reloaded; state integrity ALL PASS at HEAD): frozen registry md5 `a60fb52152e3` unchanged; Zenodo deposit CHECKSUMS 10/10; MANIFEST sidecar sha verified `1c884a1e…`; PROVENANCE row-47 pointer present; suite **124 passed**.

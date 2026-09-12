@@ -928,3 +928,20 @@ Retroactive skeptic pass (protocol gap: these entries landed without review). Al
 **Session 57 finding of record (is_rung_duplicate=0 + scope) — SOUND-with-wording.** Reproduced: 278 rows (ACTIVE 117 / SUPERSEDED 161; stray `# provenance:` line after header is a naive-reader parse hazard, not a data row); 161/161 SUPERSEDED carry `superseded_by=`; flags `is_rung_duplicate` sum = 0; within-ACTIVE unique_key duplicate rows = 0; above-floor 45 → 21 unique 3-dp groups AND 21 unique_key values (equality holds both sides); registry md5 `a60fb52152e33f37e9052434ad026a6e` ✓ (also validates convention (a)). Objections: (i) the stored `unique_key` is the accounting root-primary (representative candidate_id), NOT a 3-dp lon/lat string — the 3-dp grouping is an above-floor sensitivity only; the block's "3-dp" phrasing invites misreading. (ii) Applied to ALL ACTIVE rows, a 3-dp lon/lat key yields **6 ACTIVE×ACTIVE collision groups (12 rows)** — cross-DTM frame near-duplicates (FRESHMELT↔FRESHMELT1 ×5, TYCHOPK↔TYCHOPK04 ×1), all below-floor, NOT resolved by `superseded_by`. Harmless to papers (above-floor counts unaffected) but "0 collisions" must not be spun as "no near-duplicates anywhere". DEMANDED WORDING: append to the scope note — "unique_key is the accounting root-primary, not a raw 3-dp key; 3-dp equality was checked above-floor only. A 3-dp lon/lat key over all ACTIVE rows finds 6 cross-DTM near-duplicate pairs (FRESHMELT/FRESHMELT1, TYCHOPK/TYCHOPK04; all below-floor) outside the flag's scope." (a)/(b) conventions not re-executed beyond input counts + md5.
 
 — skeptic, session 58 (retro)
+
+## data-acquisition — session 59 (2026-09-12): NAC reclassification from BLOCKED to MEDIUM-OPEN
+
+**Context.** R2 status report (2026-09-12, session 47 state) inherited a "NAC EDR cycles 3–5 blocked, AccessDenied anonymously" diagnosis from session 49's S3 probe. Periodic re-probe session 59 (cheap, no GPU cost) re-tested the endpoints.
+
+**Observation.** The original "blocked" probe was against `s3://lroc-eda-nac/` — a bucket that does not exist (returns HTTP 404, not 403). The actual LROC data service is the WMS API, not an S3 mirror. Direct WMS probes session 59:
+
+- `https://wms.lroc.asu.edu/lroc/` → HTTP 302 (alive)
+- `https://wms.lroc.asu.edu/lroc/rdr_product_select?product_id=M104203891S` → HTTP 302 → 23,154 B HTML (real RDR product page)
+- `https://wms.lroc.asu.edu/lroc/dtm_product_select?dtm_id=LDAM_NAC_DTM_M104203891_25CM` → 1,722 B (DTM archive endpoint responds)
+- `https://pds.nasa.gov/ds-view/...?dsid=LRO-L-LROC-2-EDR-V1.0` → HTTP 200 (PDS archive alive)
+
+**Conclusion (MEDIUM confidence — single-probe observation, not a real fetch test).** NAC acquisition is **not** externally blocked; the diagnosis was wrong-URL. What was (and remains) missing is a code pipeline: a NAC fetch script that issues the WMS product query, parses the response, georeferences/clip-extracts a small region around Mare Tranquillitatis Pit, and lands a 2–5 m DTM at the canonical `data/outputs/wp1_lla/TRANQPIT1/` location. That pipeline is the WP0 first-reproduction goal (master plan §M0) and the work that was deferred as "blocked" should be reclassified as **deferred pending user call** (Tier-0 budget allocation; the fetch itself is free, but the pipeline + QA are engineering work).
+
+**Cost note.** Probe cost: $0, <1 min wall-clock, 6 HTTP HEAD + 2 bounded GETs (≈25 KB total). No GPU, no Tier-1.
+
+**Status update (for R3 + future dispatch).** Open queue items now include (in addition to D3 deferred, user-gated queue): **NAC fetch pipeline (WP0 first reproduction)** — Tier-0 eligible, user-gated.
