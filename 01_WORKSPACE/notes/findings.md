@@ -1041,3 +1041,23 @@ landed artifact; canonical paths (`TRANQPIT1/`, candidate_registry,
 zenodo_deposit_v1.0/, `00_SOURCE_ORIGINALS/`) all untouched.
 
 — geo-coder, session 60, 2026-09-12
+
+## skeptic — session 62 (retro): session 60 NAC HIGH-OPEN-CHAIN audit
+
+VERDICT: **SOUND-with-wording**. Underlying verification is honest; two wording errors (Attack 2 load-bearing); one minor convention note.
+
+**Attack 1 (split).** SOUND-with-wording. HEAD on `view_rdr_product` (line 989 URL) returns `content-type: text/html; charset=utf-8`, status 200 after a 302 → `data.lroc.im-ldi.com` — also HTML, not an IMG byte. "Chain verified 2 hops deep" is wrong; it is 2 HTML hops, ≥1 further hop to any byte. **Demand:** reword to "verified through two HTML hops; IMG byte not reached".
+
+**Attack 2 (view_rdr vs view_rdr_product).** **UNSOUND**. They are confirmed DIFFERENT endpoints (HTML line 103 lists the link; HEAD confirms second host + PDS session cookies `Set-Cookie: _lroc_pds=...`). "One-hop IMG-download link" mis-describes — both return HTML. The IMG byte requires form/cookies/JS (HTML shows paginated `.download_container` divs at lines 186–207; session cookie set on redirect target). **Demand:** strike "IMG-download link"; substitute "next HTML viewer page; IMG byte acquisition is form-driven, ≥1 further hop".
+
+**Attack 3 (TRANQPIT1 relevance).** SOUND. Subject caveat (lines 996–1004) is explicit and adequate. Chain verified on the correct dataset family (RDR = `LRO-L-LROC-5-RDR-V1.0`; matches DTM pattern `LDAM_NAC_DTM_*` from session-59 dispatch).
+
+**Attack 4 (sandbox path).** SOUND-with-wording. HTML + md verification artifacts are not rasters and do not bind conventions §1's "rasters ONLY under `~/lunarvoid/data/`" rule. `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/` sits in the workspace data tree. **Demand:** one sentence in VERIFICATION.md: "sandbox path holds verification doc + HTML, not a raster".
+
+**Attack 5 (calibration tightness).** SOUND-with-wording. "HIGH-OPEN-CHAIN" used bare in R3 §1 lacks the §7 qualifier. **Demand:** "HIGH-OPEN-METADATA-CHAIN (IMG-byte signature verification deferred to R3 §11(b))" wherever used as a headline.
+
+**Spot-checks.** sha256 `bb2c525c…` re-computed against cached HTML: match. 10,370 B: match. PDS dataset `LRO-L-LROC-5-RDR-V1.0` (HTML line 151 IMG path prefix): match. Bundle `LROLRC_2001` (line 151): match. 4148 RDR count not independently re-fetched (out of scope; not material). HEAD on `view_rdr_product` (302 → `data.lroc.im-ldi.com/lroc/view_rdr_product/...`, 200, `content-type: text/html; charset=utf-8`): confirms Attack 2 finding.
+
+**Downgrade.** None. Tier stays HIGH-OPEN-METADATA-CHAIN. The IMG byte signature IS genuinely deferred; this audit only nudges wording + adds a third hop to the disclaimer.
+
+— skeptic, session 62, 2026-09-12 (retroactive audit of session 60)

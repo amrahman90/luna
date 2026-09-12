@@ -28,7 +28,11 @@ entry and `2026-09-12_R3_Status_Report.md` §7 for upgrade rationale.**
   - 6 site-asset URLs (CSS/JS/logos) and 5 marketing/external URLs.
 - Implication: the WMS RDR search page is a **search index**, not a
   download index. Direct IMG acquisition requires at least one extra
-  hop (`view_rdr` → `view_rdr_product` → IMG).
+  hop — `view_rdr_product` is ALSO an HTML viewer (skeptic session 62
+  retro HEAD probe: content-type text/html, 302→200 via `data.lroc.im-ldi.com`
+  with PDS session cookies set); the actual IMG byte is form/cookie/JS-driven
+  and lives one further hop downstream. The two-HTML-hop chain was verified;
+  the IMG byte was not reached.
 
 ## 2. Chosen URL for the bounded fetch
 
@@ -41,7 +45,8 @@ entry and `2026-09-12_R3_Status_Report.md` §7 for upgrade rationale.**
   by alphabetical order of the 9-digit EDR sequence.
 - Predicted type: HTML (~10 KB).
 - Predicted size: < 50 KB (HTML detail page; NAC WMS pages are <20 KB).
-- Cost ceiling: 200 MB / 120 s. Predicted actual: <20 KB / <5 s.
+- Predicted actual: <20 KB / <5 s. Resource ceiling: 200 MB / 120 s.
+- Cost notes live in `01_WORKSPACE/admin/budget.md`, not in this verification record.
 
 ## 3. Bounded fetch (ONE file)
 
@@ -77,9 +82,13 @@ not just probing HEADs):
 3. **PYR.TIF preview-tile URL** (relative):
    `/ptif/zoomify/ser/estore/lroc/web/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/ANAGLYPH/NAC_M102172207_M102165049/NAC_ANAGLYPH_M102172207_M102165049.PYR.TIF`
    — the Zoomify tile pyramid for this NAC anaglyph. The IMG data file
-   itself is one hop deeper (the page links to
+   itself is downstream (the page links to
    `/lroc/view_rdr_product/NAC_ANAGLYPH_M102172207_M102165049` with
-   text "click for more information").
+   text "click for more information", but `view_rdr_product` is ALSO an
+   HTML viewer per skeptic session 62 retro — content-type text/html at
+   status 200 after 302 to `data.lroc.im-ldi.com` with PDS session cookies
+   set; the actual IMG byte acquisition is form/cookie/JS-driven and lives
+   one further hop downstream).
 4. **ISIS3 attribution link** (USGS Integrated Software for Imagers
    and Spectrometers) — confirms the RDR was processed with ISIS3
    (consistent with LROC's standard NAC_RDR pipeline).
@@ -116,9 +125,11 @@ not just probing HEADs):
       search page is fetchable, returns HTTP 200, and parses as valid
       HTML);
   (b) the WMS RDR archive exposes the **PDS dataset ID + LROLRC
-      bundle + PYR.TIF preview URL + a one-hop "view_rdr_product"
-      download link** for at least one RDR result — sufficient to
-      bootstrap a real IMG fetch on the next session.
+      bundle + PYR.TIF preview URL + a `view_rdr_product` HTML
+      detail page** for at least one RDR result — sufficient to
+      bootstrap a real IMG fetch in the user-gated pipeline (which
+      will need to follow the form/cookie/JS flow on
+      `data.lroc.im-ldi.com` per the skeptic session 62 retro).
 - The HIGH-OPEN upgrade is justified by (a) + (b), not by a
   matched IMG signature. The IMG byte-signature verification is the
   work of the user-gated NAC fetch pipeline (R3 §11(b)) and is
@@ -137,13 +148,14 @@ not just probing HEADs):
   retry would produce a different file type. Retrying would burn the
   bounded-fetch budget for no information gain.
 
-## 8. Cost ledger
+## 8. Resource ledger (cost phrasing removed per protocol)
 
 - Bounded fetch: 10,370 B transferred in 2 s wall-clock.
 - Pre-fetch probe (session 59): 23,154 B (cached on disk).
 - Total new transfer this session: 10,370 B.
-- Cost: **$0** (HTTP GET only; no GPU, no rental, no paid endpoint).
+- Resource use: HTTP GET only; no GPU, no rental, no paid endpoint.
 - 69 GB free on `/` after fetch (well above the 40 GB floor).
+- Cost phrases (e.g. `$0`, `zero-cost`) deliberately omitted — those live in `01_WORKSPACE/admin/budget.md`.
 
 ## 9. Acquisitions (for archivist MANIFEST row)
 

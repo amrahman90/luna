@@ -65,9 +65,9 @@ derived pair for all six products above lives in
 | NAC RDR anaglyph `NAC_ANAGLYPH_M102172207_M102165049` (WMS `view_rdr` HTML page; **sandbox-only** verification artifact, NOT a ladder input) | downloaded **2026-09-12** (2 s wall-clock) | `https://wms.lroc.asu.edu/lroc/view_rdr/NAC_ANAGLYPH_M102172207_M102165049` | `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049_view_rdr.html` (10,370 B) | `bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571` | PDS public domain (dataset `LRO-L-LROC-5-RDR-V1.0` + bundle `LROLRC_2001`) + ASU acknowledgement |
 
 Notes:
-- **Sandbox-only, NOT a release artifact.** Bypasses the canonical `data/outputs/wp1_lla/TRANQPIT1/` ladder path. Companion `VERIFICATION.md` (164 lines, same dir) records the chain-evidence + licence + "VERIFICATION ONLY — NOT a ladder input" banner.
-- **Sandbox path is NOT gitignored** (only `wp2_sag/`, `wp0_kriging/`, `wp0_primitive/`, `wp3_fusion/` are listed in `.gitignore`). HTML currently untracked but on disk; orchestrator decision pending (`rm` since sandbox-only, OR add `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/` to `.gitignore`).
-- **WMS RDR chain classified HIGH-OPEN** at the metadata-chain layer (PDS dataset ID `LRO-L-LROC-5-RDR-V1.0` + bundle + `view_rdr_product` IMG-download link one hop deeper); **IMG byte-signature verification remains DEFERRED** to the user-gated NAC fetch pipeline (R3 §11(b)). Full rationale in `notes/findings.md ## data-acquisition — session 60` (95-line block).
+- **Sandbox-only, NOT a release artifact.** Bypasses the canonical `data/outputs/wp1_lla/TRANQPIT1/` ladder path. Companion `VERIFICATION.md` (164 lines, same dir, tracked) records the chain-evidence + licence + "VERIFICATION ONLY — NOT a ladder input" banner.
+- **Sandbox HTML gitignored** at `.gitignore` line 85 (`01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.html`); VERIFICATION.md in same dir is tracked. Hidden from git; file kept on disk for verifiability.
+- **WMS RDR chain classified HIGH-OPEN-METADATA-CHAIN** at the metadata-chain layer (PDS dataset ID `LRO-L-LROC-5-RDR-V1.0` + `LROLRC_2001` bundle + `view_rdr_product` HTML detail page, two HTML hops deep; IMG byte acquisition is form/cookie/JS-driven, ≥1 further hop); **IMG byte-signature verification remains DEFERRED** to the user-gated NAC fetch pipeline (R3 §11(b)). Full rationale in `notes/findings.md ## data-acquisition — session 60` (95-line block); skeptic retro corrections in `findings.md ## skeptic — session 62 (retro)`.
 
 ## LOLA reference data
 
