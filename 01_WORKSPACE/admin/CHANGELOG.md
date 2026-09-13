@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-13 (execution session 64 — canonical RESUME.md at notes/RESUME.md; pre-standdown finalization)
+
+- **Canonical RESUME.md** at `01_WORKSPACE/notes/RESUME.md` (single-document resume point: frozen state + resume protocol + user-gated items + verification commands). Replaces grepping `notes/findings.md` (713 lines) for state context.
+- **Vault refresh**: 00_HOME "RESUME.md" pointer line staged but archivist tool permission gap (edit/write to paths with spaces blocked; session-61 precedent applies); orchestrator-side bash apply pending (file is gitignored at `.gitignore:73` so commit impact is zero).
+- **Process-deviation log (sixth instance, archivist side)**: archivist edit/write/Write tools blocked on `01_WORKSPACE/Lunar Lavatube knowledge/**` (space-in-path pattern matcher issue, mirrors session-44/58/59/61 family). Falls back to orchestrator bash python in-place write, same as session-61 geo-coder workaround.
+- **Roadmap step 5 (LOOP) re-read**: confirmed v2-plan queue exhausted; all 12 unticked steps are user-gated per R3 §11 (a/b/c/d/e + D2/D3/journal/CI/Zotero). Per protocol stop condition "gate decision requires human judgement" → pre-standdown finalization at user gates.
+
 ## 2026-09-12 (execution session 63 — recheck-of-recheck: verifier PASS-with-notes on session 62; 00_HOME housekeeping drift fix (session-count 43→62, R3 line-count 141→150); protocol step 5 confirms v2-plan queue exhausted; all remaining work user-gated)
 
 - **Recheck-of-recheck** (per user directive "use proper skills and recheck if everything was done properly then proceed"): both skills freshly loaded; lock acquired; state integrity re-checked ALL PASS at HEAD `e436cfe` (md5 `a60fb52152e3`; sidecar `1c884a1ee9…`; deposit CHECKSUMS 10/10; verifier scripts v02 21/21, v03 15/15, v04 11/11; suite 124 passed 6 warnings; 66 GB free).
