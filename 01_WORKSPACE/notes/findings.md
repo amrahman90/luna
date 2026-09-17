@@ -1061,3 +1061,111 @@ VERDICT: **SOUND-with-wording**. Underlying verification is honest; two wording 
 **Downgrade.** None. Tier stays HIGH-OPEN-METADATA-CHAIN. The IMG byte signature IS genuinely deferred; this audit only nudges wording + adds a third hop to the disclaimer.
 
 — skeptic, session 62, 2026-09-12 (retroactive audit of session 60)
+
+## data-acquisition — session 65 (2026-09-14): NAC byte layer VERIFIED — HIGH-OPEN-METADATA-CHAIN upgraded to VERIFIED-BYTE
+
+**Claim (high confidence):** the LROC data-byte layer is directly
+fetchable free at the point of use once product URLs are known. The s60/s62 open question
+("IMG byte is form/cookie/JS-driven, ≥1 further hop") is resolved: the
+browser-rendered `view_rdr_product` page exposes plain direct PDS links;
+no cookies are needed for the byte URLs themselves.
+
+**Evidence:**
+- RDR EXTRAS: `NAC_ANAGLYPH_M102172207_M102165049.TIF`, 41,112,660 B,
+  sha256 `0d25074fe3dff2ba07630168f8814a327bc1bcdd0628f9fccfec079b36f972cb`,
+  magic `II*\0`, rasterio-valid (10457×2331, 3-band uint8, 5 m/px).
+  Record: `data/outputs/wp1_lla/sandbox_nac_verify/VERIFICATION.md` (V2 section).
+- EDR (28 files, Phase C / Step 19.1): 7 sites × 4 incidence decades
+  (26–93°), all verified first-byte `PDS_VERSION_` + content-length +
+  sha256. Index: `data/wp8_stereo/multillum_selection_2026-09-14.csv`
+  (28/28 enriched); logs `~/lunarvoid/data/edr/multillum/fetch_log.csv`
+  + `multillum_verify_2026-09-14.json`. Licence: PDS public domain
+  (NASA/ASU).
+
+**Also this session (Task 8 unblock):** the 2026-08-21 spiceinit failure
+is root-caused and FIXED — (a) missing LSK kernel (naif0012.tls copied
+from the bundled SpiceQL db into `$ISISDATA/base/kernels/lsk/`), (b)
+missing shape model (LDEM 128 ppd clon180 built via pds2isis+demprep
+from the PDS LOLA GDR jp2, 647,268,591 B download; radius metres
+confirmed 1,728,273–1,748,177.5). spiceinit web=yes now succeeds on all
+6 TRANQPIT1 cubes; stage-2 chain complete. bundle_adjust required tuned
+IP flags for the thin ~300 m LE/RE overlap (SIFT + ip-per-tile 2000 +
+epipolar-threshold 40); tuning in `~/lunarvoid/bin/task8_chain.sh`.
+
+## data-acquisition / stereo-reproduction — session 65 (2026-09-17): Task 8.4 TRANSPIT1 DEM — FAIL vs published-product spec
+
+**Claim (medium confidence; the FAIL is unambiguous, the cause is physics):** the
+NAC same-orbit LE/RE stereo DEMs reproduced locally with ASP 3.7 + ISIS 10
+fail the published-product `relat_le = 0.72 m` spec by ~40× (per-pair p90
+30 / 43 / 72 m). The failure is attributable to the ~0.5° LE/RE convergence
+angle amplifying per-pixel MGM disparity noise by ~H/B ≈ 110× — not to the
+pipeline (which runs end-to-end correctly).
+
+**Evidence (3 pair DEMs, 2 m, reprojected onto published grid, plane-removed diff):**
+
+| Pair | N pixels | raw median | std | p90 | vs 0.72 m |
+|---|---|---|---|---|---|
+| M152655237 (pair 1) | 419,502 | +629 m | 22.90 m | 30.36 m | FAIL |
+| M152662021 (pair 2) | 759,731 | −1292 m | 27.28 m | 43.50 m | FAIL |
+| M137332905 (pair 3) | 216,378 | −3119 m | 54.20 m | 72.17 m | FAIL |
+
+Artifacts:
+- DEMs: `~/lunarvoid/stereo/TRANQPIT1/pair{1,2,3}_*/run-DEM.tif`
+- Diff rasters + JSON + PNGs: `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_2026-09-17.{json,tif,png}`
+- Method: `01_WORKSPACE/code/wp8_stereo/task8_diff.py` (bilinear reproject onto published CRS, valid-mask intersection, 1st-order plane removal for relative comparison, raw also reported)
+
+**Pipeline (run successfully, 2026-09-14 → 2026-09-17):**
+- LDEM 128 ppd clon180 built from PDS LOLA GDR jp2 (647,268,591 B) — radius metres 1,728,273–1,748,177.5 verified
+- LSK kernel (naif0012.tls) copied from bundled SpiceQL db
+- 6/6 cubes processed: lronac2isis → spiceinit web=yes → lronaccal RADIANCE → lronacecho (all PASS)
+- bundle_adjust 3 pairs (SIFT + ip-per-image 30k + epipolar 40 + min-triangulation-angle 0.0001 + min-matches 4) — final residuals 0.53 px over 138 control points
+- parallel_stereo (asp_mgm, 4 proc, --corr-mem 5000MB, same min-triangulation-angle) → 35-37 tiles each → point2dem --tr 2
+
+**Honest method notes (for skeptic/peer):**
+- Spec is `relat_le` = RELATIVE precision — absolute datum/tilts removed by 1st-order plane fit
+- Reproduced DEM covers the ~362 m × 28.8 km LE/RE overlap strip only (~16% valid in strip); published covers the union of LE+RE across all 3 pairs
+- Bilinear resampling smooths sub-pixel detail
+- Camera solve good (~0.5 px residuals), so the noise is NOT registration — it is per-pixel disparity matching noise at tiny convergence
+- Physics: h_err ≈ δd·H/B with H/B ≈ 1/0.0087, δd ≈ 0.5-1 px → 30-115 m expected — matches observed ~30-72 m std
+- The published 0.72 m is the SOCET (multi-ray, human-edited) product spec; a single-pair vanilla ASP run is not architecturally comparable
+- A 3-pair mosaic (√3 gain) would reduce to ~17/25/42 m — still 24-58× off; subpixel MGM refinement (~6 m); neither closes the gap without human editing
+
+**Implication for the project thesis:**
+This is consistent with — not against — the calibration-with-error-bars thesis: the
+product specification (0.72 m relat_le) is achievable only with a human-in-the-loop,
+multi-ray pipeline; a fully automated single-pair ASP run produces ~30-70 m vertical
+noise at this geometry. This justifies the paper's claim that error bars on inference
+must propagate from the *pipeline* (not just per-pixel noise).
+
+**Scope impact (skeptic-demand 2026-09-17):** single-pair ASP vertical noise
+of 30-70 m rules out self-produced DEMs for the sag-detection analysis (which
+needs sub-2 m vertical precision); LUNARVOID remains bound to the 21 published
+NAC DTMs for WP2/WP4 scope until a multi-pair / triangulation pipeline is
+validated (or the published DTMs are simply adopted as ground truth).
+
+**Verdict:** Task 8.3 + 8.4 — infrastructure PASS (chain end-to-end), product FAIL
+(40× off spec, attributable to H/B geometry + raw pipeline, not bugs).
+
+## skeptic — session 65 (Task 8.4)
+
+**VERDICT: SOUND-with-wording.** The FAIL is correct against the literal L401 criterion, the H/B attribution is physically right, and the plane-removal matches `relat_le` semantics. One wording defect (downstream scope impact is unspoken) and one cheap completeness experiment to run.
+
+**Attack 1 (comparator fairness).** SOUND. L401 mandates this exact comparison verbatim ("relat_le 0.72 m at 90%"). Applied honestly; not unfair — apples-to-apples per spec.
+
+**Attack 2 (better single-pair config).** SOUND-as-flagged. Subpixel-mode 3 ≈ 2× gain → 13–31 m; filter-mode 1 ≈ 1.5× → 8–20 m; 3-pair blend via √3 ≈ 24–58 m; pc_align only absorbs the plane; kernel/correlation tweaks don't help. **No config closes 40×.** One cheap completeness run: `parallel_stereo --subpixel-mode 3 --filter-mode 1 --corr-kernel 21x21` on pair1, re-diff. Expected std ~15–25 m, still ≥20× spec — confirms gap is geometric, not configurational. Cost: one ASP run (~4–6 h).
+
+**Attack 3 (plane-removal cheating).** SOUND. `relat_le` is "vertical precision at 90% confidence" relative to a best-fit plane (SHAPEFILE_NAC_DTMS / LROC NAC DTM README; consistent in scope-map §17, master-plan §341). Comparator's `a+bx+cy` removal matches spec. NOT cheating. Subtlety: spec is frame-wide; comparison is strip-wide (~362 m × 28.8 km = 1.2% of frame). Strip-local mosaic relat_le is likely *tighter* than 0.72 m (denser LE/RE ties) → FAIL is conservative, not aggressive.
+
+**Attack 4 (is published actually better).** SOUND. SOCET internal QC gates at 0.72 m; even at ~1.5 m drift we'd be 20–40× off. Magnitude swamps this concern.
+
+**Attack 5 (camera solve).** SOUND-with-caveat. 138 BA pts over 10.4 km² ≈ 1 pt/75 km² — sparse for NAC (typically ≥500 cited). Plane-coefficients b=3–5 m/km in diff field reveal real BA-residual tilts. But std (high-freq disparity noise) is geometry-limited; a denser BA wouldn't shrink std materially. **Recommend** flagging BA point density in the report.
+
+**Attack 6 (representativeness).** SOUND-as-flagged. Strip = BEST single-pair geometry; outside strip → no single-pair data, no comparison possible. Frame as "best-case single-pair ASP".
+
+**Attack 7 ("consistent with — not against — the calibration thesis").** **PARTIALLY UNSOUND-as-phrased.** Direction is right; downstream implication is missing. 30–70 m vertical noise is unacceptable for 1–2 m sag detection → LUNARVOID cannot use locally-produced DEMs at the 257 *uncovered* pits; remains bound to the 21 published-DTM sites until multi-pair/triangulation pipelines are validated. **Demand:** add one sentence: "Single-pair ASP vertical noise of 30–70 m rules out self-produced DEMs for sag detection; WP2/WP4 scope stays at published NAC DTMs."
+
+**Spot-checks.** Pair1 abs_p90 = 30.36 m / std = 22.90 m, pair2 = 43.50 / 27.28, pair3 = 72.17 / 54.20 (abs_max = 773.42 m — tail contamination). Spec source L401 verbatim ✓. BA residuals 0.53 px / 138 pts ✓.
+
+**Recommendations.** (1) Append the WP2/WP4 scope-constraint sentence (Attack 7 — material to operational thesis). (2) Re-run pair1 with `--subpixel-mode 3 --filter-mode 1` as one cheap completeness experiment. (3) Add MAD alongside std to de-emphasise pair3's 773 m outlier. (4) **No downgrade** of the FAIL verdict — literal L401 criterion is not met.
+
+— skeptic, session 65, 2026-09-17

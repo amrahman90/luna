@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-14/17 (execution session 65 — Phase A/B/C executed; Task 8.3/8.4 + Step 19.1)
+
+- **Task 8.3 + 8.4 — INFRASTRUCTURE PASS, PRODUCT FAIL**: NAC stereo chain now runs end-to-end; LDEM 128ppd clon180 + LSK kernel fixed the 2026-08-21 spiceinit blocker; bundle_adjust root-causes through 3 failure modes (OBALoG IP matching on thin-overlap geometry, missing min-triangulation-angle flag for ~0.5° NAC convergence). 3 pair DEMs produced (pair1 currently being re-run with subpixel-mode 3 + filter-mode 1 per skeptic's completeness experiment). Plane-removed diff vs published DTM: pair1 p90=30.36 m, pair2 p90=43.50 m, pair3 p90=72.17 m vs 0.72 m relat_le spec (L401) — FAIL by 40×; attributable to H/B at 0.5° convergence (σ_z ≈ δd·H²·p_pix/(B·f) predicts 17–57 m, observed 23–54 m std → lower half of predicted range; claim is geometric not bug). Skeptic retro: SOUND-with-wording; demanded one-sentence WP2/WP4 scope-constraint append (applied).
+- **Phase B — VERIFIED-BYTE**: NAC RDR anaglyph TIF (41,112,660 B, sha256 `0d25074f…`, magic `II*\0`) fetched from direct PDS URL exposed by the browser-rendered view_rdr_product page (closes the s60/s62 metadata-chain-only gap). Tier upgrade HIGH-OPEN-METADATA-CHAIN → VERIFIED-BYTE (RDR-EXTRAS family; EDR family verified via Phase C).
+- **Phase C / Step 19.1 — 28/28 NAC EDRs**: 7 sites × 4 incidence decades (26–93°), 5.4 GiB unique, sha256-enriched selection CSV, one truncation caught + repaired.
+- **Step 19.2**: photometric_consistency.py scripted; execution deliberately deferred to avoid CPU contention with the overnight stereo (rerunnable).
+- **Deviation log (5→6)**: session-65 orchestrator-direct edits to R3/VERIFICATION/MANIFEST/findings.md documented previously; this pass adds no new deviations.
+
 ## 2026-09-13 (execution session 64 — canonical RESUME.md at notes/RESUME.md; pre-standdown finalization)
 
 - **Canonical RESUME.md** at `01_WORKSPACE/notes/RESUME.md` (single-document resume point: frozen state + resume protocol + user-gated items + verification commands). Replaces grepping `notes/findings.md` (713 lines) for state context.

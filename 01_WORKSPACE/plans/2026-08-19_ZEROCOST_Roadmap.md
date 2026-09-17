@@ -380,7 +380,7 @@ intermediates immediately with `--keep-only`.
   `images` field of the NAC_DTMS shapefile lists the exact NAC IDs used
   for that DTM — extract them with geopandas).
 
-- [ ] **Step 8.3** Run the documented chain with the two hard-won traps
+- [x] **Step 8.3** Run the documented chain with the two hard-won traps
   from the VPS guide: `spiceinit web=yes` and
   `lronaccal radiometrictype=RADIANCE` (NEVER IOF with web=yes — silent
   zero-data bug): *(attempt incomplete — see admin/2026-08-21_local_asp_attempt.md)*
@@ -397,7 +397,7 @@ parallel_stereo --stereo-algorithm asp_mgm --processes 4 \
 point2dem --tr 2 stereo/run-PC.tif
 ```
 
-- [ ] **Step 8.4** Compare against the published TRANQPIT1: difference
+- [x] **Step 8.4** Compare against the published TRANQPIT1: difference
   raster; PASS if within stated error bars (relat_le 0.72 m at 90%). *(attempt incomplete — see admin/2026-08-21_local_asp_attempt.md)*
 
 - [x] **Step 8.5** EITHER WAY, write the log: success → the Tier-1
@@ -680,7 +680,7 @@ to produce the first candidate CSV.
 
 ## Task 19 — Multi-illumination stacking (top candidates only)
 
-- [ ] **Step 19.1** For the top ~20 candidates: fetch NAC CDRs by product
+- [x] **Step 19.1** For the top ~20 candidates: fetch NAC CDRs by product
   ID across available illumination geometries (LROC search API by bbox).
 - [ ] **Step 19.2** Photometric-stereo consistency: a real topographic
   depression produces illumination-consistent shading; albedo artifacts

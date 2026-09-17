@@ -82,8 +82,11 @@ Thumbs.db
 
 # NAC sandbox verification fetch (session 60) — kept on disk for verifiability,
 # hidden from git; VERIFICATION.md lives at a tracked sibling path.
+# Session 65: TIF/LBL byte-verification products added to the same rule.
 01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.html
 01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.IMG
+01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.TIF
+01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.LBL
 
 .opencode/
 opencode.json

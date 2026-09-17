@@ -63,11 +63,13 @@ derived pair for all six products above lives in
 | Product | Version / as-of | Source URL | Local copy | SHA-256 | Licence |
 |---|---|---|---|---|---|
 | NAC RDR anaglyph `NAC_ANAGLYPH_M102172207_M102165049` (WMS `view_rdr` HTML page; **sandbox-only** verification artifact, NOT a ladder input) | downloaded **2026-09-12** (2 s wall-clock) | `https://wms.lroc.asu.edu/lroc/view_rdr/NAC_ANAGLYPH_M102172207_M102165049` | `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049_view_rdr.html` (10,370 B) | `bb2c525c1ad622bc185c4e7c13a3febcf99a4780d83c8e77a88dc3cabb53c571` | PDS public domain (dataset `LRO-L-LROC-5-RDR-V1.0` + bundle `LROLRC_2001`) + ASU acknowledgement |
+| NAC RDR anaglyph TIF `NAC_ANAGLYPH_M102172207_M102165049.TIF` (Phase B byte verification, s65; **sandbox-only**, NOT a ladder input) | downloaded **2026-09-14** | `https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/ANAGLYPH/NAC_M102172207_M102165049/NAC_ANAGLYPH_M102172207_M102165049.TIF` (302 → 200, content-type binary/octet-stream, 41,112,660 B) | `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049.TIF` (41,112,660 B) | `0d25074fe3dff2ba07630168f8814a327bc1bcdd0628f9fccfec079b36f972cb` | PDS public domain (dataset `LRO-L-LROC-5-RDR-V1.0` + bundle `LROLRC_2001`) + ASU acknowledgement |
+| Companion PDS3 detached label `NAC_ANAGLYPH_M102172207_M102165049.LBL` | downloaded **2026-09-14** | same byte path + `.LBL` suffix | `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049.LBL` (5,091 B) | `0a2c1cd9aa75d6b9d5a217c3478239af3f31fcbdacf4d1fffec4c7f317c7cdb9` | PDS public domain |
 
 Notes:
-- **Sandbox-only, NOT a release artifact.** Bypasses the canonical `data/outputs/wp1_lla/TRANQPIT1/` ladder path. Companion `VERIFICATION.md` (164 lines, same dir, tracked) records the chain-evidence + licence + "VERIFICATION ONLY — NOT a ladder input" banner.
-- **Sandbox HTML gitignored** at `.gitignore` line 85 (`01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.html`); VERIFICATION.md in same dir is tracked. Hidden from git; file kept on disk for verifiability.
-- **WMS RDR chain classified HIGH-OPEN-METADATA-CHAIN** at the metadata-chain layer (PDS dataset ID `LRO-L-LROC-5-RDR-V1.0` + `LROLRC_2001` bundle + `view_rdr_product` HTML detail page, two HTML hops deep; IMG byte acquisition is form/cookie/JS-driven, ≥1 further hop); **IMG byte-signature verification remains DEFERRED** to the user-gated NAC fetch pipeline (R3 §11(b)). Full rationale in `notes/findings.md ## data-acquisition — session 60` (95-line block); skeptic retro corrections in `findings.md ## skeptic — session 62 (retro)`.
+- **Sandbox-only, NOT a release artifact.** Bypasses the canonical `data/outputs/wp1_lla/TRANQPIT1/` ladder path. Companion `VERIFICATION.md` (V1 + V2 sections, same dir, tracked) records the chain-evidence + licence + "VERIFICATION ONLY — NOT a ladder input" banner.
+- **Sandbox files gitignored** at `.gitignore` lines 85–89 (`01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.{html,IMG,TIF,LBL}`); VERIFICATION.md in same dir is tracked. Hidden from git; files kept on disk for verifiability.
+- **Phase B outcome (s65)**: **VERIFIED-BYTE** (RDR-EXTRAS family). Byte fetch resolves the s60/s62 metadata-chain-only gap: the browser-rendered `view_rdr_product` page exposes a plain direct PDS URL, `curl -L` (no cookies) fetches it; magic `II*\0` confirmed (rasterio-valid 10457×2331 px, 3-band uint8, 5 m/px, POLARSTEREOGRAPHIC MOON CRS). EDR family verified separately by the Phase C fetch (Step 19.1 row below). Full rationale in `notes/findings.md ## data-acquisition — session 65`.
 
 ## LOLA reference data
 
@@ -264,6 +266,95 @@ labels (not committed; small, regenerable on re-fetch). Net cost: $0
 (PDS public-domain fetch). Not covered by the DTM-production gap (D2
 Task-8 / §8 T1 trigger) because these products exist on PDS — the
 gap is the stereo-rebuild for DTMs that DON'T exist on PDS.
+
+## WP8 / Step 19.1 — multi-illumination NAC EDR selection (28 files, session 65)
+
+28 NAC EDRs for the 7 above-floor candidate sites × 4 incidence decades
+(26–93°). Fetched 2026-09-14 by `01_WORKSPACE/code/wp8_stereo/multillum_fetch.py`
+(discovery + selection, dry-run by default; `--fetch` for actual downloads);
+byte-verified by `01_WORKSPACE/code/wp8_stereo/verify_multillum.py`
+(one truncation caught and repaired, TRANQPIT1/M1486462961LE — log:
+`local=24551424 remote=264467400; repaired rc=0`).
+
+URL pattern (all 28 follow it, varying only by bundle volume like
+`LROLRC_0067C`, `LROLRC_0025`, etc.):
+`https://pds.lroc.im-ldi.com/data/LRO-L-LROC-2-EDR-V1.0/LROLRC_<VOL>/DATA/ESM<n>/<YYYYDOY>/NAC/<PRODUCT_ID>.IMG`
+
+License: LROC NAC EDR, NASA/ASU, PDS public domain.
+
+| Site | # images | Incidence range | Total bytes (unique) |
+|---|---|---|---|
+| TRANQPIT1 | 4 | 26.77 – 93.20° | 1,031,941,820 |
+| FECUNPIT | 4 | 32.09 – 86.61° | 884,153,844 (some shared with FECNDITATS2) |
+| FECNDITATS2 | 4 | 34.71 – 86.61° | 925,651,164 (2 picks deduped to FECUNPIT via hardlink) |
+| INGENIIPIT | 4 | 35.45 – 84.78° | 925,406,964 |
+| MARIUSPIT01 | 4 | 27.00 – 89.30° | 990,055,632 |
+| PRCLRMPIT01 | 4 | 34.66 – 92.78° | 865,603,968 |
+| SWFECUNPIT1 | 4 | 28.55 – 86.01° | 793,635,264 |
+
+Unique on-disk total (after cross-site hardlinks, no archive mirroring):
+**5,417,242,592 B ≈ 5.4 GiB** (per `multillum_verify_2026-09-14.json`
+`total_bytes_apparent` = 6,417,242,592; 5.4 GiB unique after FECUN/FECNDITATS2
+dedup via hardlink).
+
+Per-row sha256 + size + URL + local-path in:
+- `01_WORKSPACE/data/wp8_stereo/multillum_selection_2026-09-14.csv` (28 rows, sha256-enriched)
+- `01_WORKSPACE/data/wp8_stereo/multillum_verify_2026-09-14.json` (per-file VERIFY_OK / VERIFY_FIX / remote_length; 28/28 ok, 1 fixed)
+
+Raw IMG files under `~/lunarvoid/data/edr/multillum/<SITE>/<PID>.IMG`
+(outside repo; gitignored by session-65 gitignore rule
+`01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/*.{html,IMG,TIF,LBL}` —
+note: the multillum dir lives at `~/lunarvoid/data/edr/multillum/`, NOT
+under the repo; rule applies to sandbox only). The raw NAC EDR .IMG bytes
+are kept on disk for Phase C verification (sha + size + first-byte
+`PDS_VERSION_` check) and re-use in Step 19.2 photometric consistency.
+
+## WP8 / Task 8 — reproduced TRANQPIT1 stereo DEMs (session 65, 2 of 3 pairs)
+
+ASP 3.7 + ISIS 10 end-to-end pipeline. Phase A (LDEM 128 ppd clon180
+shape model + naif0012.tls LSK kernel) fixed the 2026-08-21 spiceinit
+blocker; bundle_adjust required IP-flag tuning for the thin ~300 m
+LE/RE overlap. Pair1 is being re-run (subpixel-mode 3 + filter-mode 1,
+skeptic's completeness experiment); pair1 NEW DEM is NOT yet produced.
+The OLD pair1 DEM was deleted; this pass lands only the 2 completed pairs.
+
+| DEM (reproduced) | Size | Path | Source NAC pair | Parent products |
+|---|---|---|---|---|
+| `pair2_M152662021/run-DEM.tif` (2 m, ASP stereographic, 14401 × 594) | 1.7 MB | `~/lunarvoid/stereo/TRANQPIT1/pair2_M152662021/run-DEM.tif` | M152662021 LE/RE (~0.5° convergence) | LROC NAC EDR (PDS public domain) + LDEM 128 ppd clon180 (PDS public domain) |
+| `pair2_M152662021/ba/` (bundle_adjust audit trail: control points, residuals 0.53 px over 138 control points) | directory | `~/lunarvoid/stereo/TRANQPIT1/pair2_M152662021/ba/` | as above | derived (ASP `parallel_stereo --bundle-adjust-prefix`) |
+| `pair3_M137332905/run-DEM.tif` (2 m, ASP stereographic, 14295 × 106) | 1.2 MB | `~/lunarvoid/stereo/TRANQPIT1/pair3_M137332905/run-DEM.tif` | M137332905 LE/RE (~0.5° convergence) | LROC NAC EDR (PDS public domain) + LDEM 128 ppd clon180 (PDS public domain) |
+| `pair3_M137332905/ba/` (bundle_adjust audit trail) | directory | `~/lunarvoid/stereo/TRANQPIT1/pair3_M137332905/ba/` | as above | derived (ASP `parallel_stereo --bundle-adjust-prefix`) |
+| `chain.log` (3-pair chain run log, 2026-09-14 → 2026-09-17) | text | `~/lunarvoid/stereo/TRANQPIT1/chain.log` | — | derived (chain script `~/lunarvoid/bin/task8_chain.sh`) |
+
+Derived files only (regenerable from the input NAC EDRs + LDEM + ASP/ISIS
+chains). Out-of-repo paths per conventions section 1.
+
+## WP8 / Step 8.4 — TRANQPIT1 DEM vs published DTM diff rasters (session 65)
+
+Plane-removed difference rasters (reproduced − published), 2 m, on the
+published DTM grid (windowed, grid-aligned). Reprojection via
+`rasterio.warp.reproject` (bilinear, num_threads=1). Best-fit plane
+(a + b·x_km + c·y_km) removed before percentile statistics (relat_le
+semantics; spec from `01_WORKSPACE/plans/2026-08-19_ZEROCOST_Roadmap.md`
+L401, `01_WORKSPACE/plans/2026-08-19_WP0_scope_map.md`).
+
+Pair1 diff TIF + PNG pending — pair1 DEM re-run in progress per skeptic's
+completeness experiment. Per-pair TIF + PNG for pair2 + pair3 below.
+
+| Artifact | Path | Content |
+|---|---|---|
+| Task 8.4 summary JSON (spec, geodesy check, method, per-pair stats + verdict) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_2026-09-17.json` | All three pairs; pair1 status=pending; pair2 + pair3 status=compared with verdict FAIL (plane-removed abs_p90 = 43.50 m / 72.17 m vs relat_le 0.72 m spec — FAIL by 40–60×; H/B geometry attribution, see findings.md `## data-acquisition / stereo-reproduction — session 65`) |
+| Pair2 diff TIF (plane-removed diff, published grid, overlap window) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-17.tif` | derived (reprojected on-the-fly by `task8_diff.py`) |
+| Pair2 diff PNG (histogram with ±relat_le + 90th-pct markers) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-17.png` | derived (`matplotlib` figure, dims verified programmatically) |
+| Pair3 diff TIF (plane-removed diff, published grid, overlap window) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-17.tif` | derived |
+| Pair3 diff PNG (histogram) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-17.png` | derived |
+| `task8_diff.py` (Step 8.4 comparator: reproject → plane-remove → percentile → TIF+PNG, single-threaded) | `01_WORKSPACE/code/wp8_stereo/task8_diff.py` | source |
+
+Canonical copies of the TIFs also live under
+`~/lunarvoid/data/outputs/wp8_stereo/` (conventions section 1).
+JSON-reported `raw_diff` median + std + plane coefficients + per-pair
+MAD + abs_p68/p90/p95/max for full transparency; plane coefficients in
+the JSON allow recovery of the raw difference field.
 
 ## Derived registry backups
 

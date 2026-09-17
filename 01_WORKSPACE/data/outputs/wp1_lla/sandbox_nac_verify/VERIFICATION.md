@@ -174,3 +174,43 @@ not just probing HEADs):
 | Sandbox-only | yes; not for ladder/citation |
 
 — geo-coder, session 60, 2026-09-12
+
+---
+
+# V2 UPDATE — session 65 (2026-09-14): IMG-byte fetch SUCCEEDED; tier upgraded to VERIFIED-BYTE
+
+## What changed
+
+The s60/s62 question ("IMG byte is form/cookie/JS-driven, ≥1 further
+hop") is **resolved**: rendering the `view_rdr_product` page in a real
+browser (Playwright; the wms→data 302 carries a session cookie) exposes
+**plain direct PDS byte links** on the product page — no form, no JS
+gate on the byte URLs themselves. Plain `curl -L` (no cookies) fetches
+them.
+
+## Evidence
+
+| Field | Value |
+|---|---|
+| Product | `NAC_ANAGLYPH_M102172207_M102165049.TIF` (39.21 MB listed) |
+| Byte URL | `https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/ANAGLYPH/NAC_M102172207_M102165049/NAC_ANAGLYPH_M102172207_M102165049.TIF` |
+| HTTP | 302 → 200, `content-type: binary/octet-stream`, `content-length: 41112660` |
+| Local file | `01_WORKSPACE/data/outputs/wp1_lla/sandbox_nac_verify/NAC_ANAGLYPH_M102172207_M102165049.TIF` |
+| Size | 41,112,660 B (exact match to listed 39.21 MiB) |
+| SHA-256 | `0d25074fe3dff2ba07630168f8814a327bc1bcdd0628f9fccfec079b36f972cb` |
+| Magic bytes | `49 49 2a 00` = `II*\0` little-endian TIFF — **NOT** `<!DOCTYPE` |
+| Raster validity | rasterio opens: 10457×2331 px, 3 bands uint8 (RGB anaglyph), 5 m/px, POLARSTEREOGRAPHIC MOON CRS |
+| Companion LBL | 5,091 B, SHA-256 `0a2c1cd9aa75d6b9d5a217c3478239af3f31fcbdacf4d1fffec4c7f317c7cdb9` |
+
+Scope note (honest): this verifies the byte layer for the **RDR EXTRAS
+product family** (anaglyph TIF branch). The EDR `.IMG` branch (PDS3
+attached-label format) is verified separately by the 28-file Phase C
+fetch (`~/lunarvoid/data/edr/multillum/`, files start `PDS_VERSION_`).
+
+## Tier change
+
+HIGH-OPEN-METADATA-CHAIN → **VERIFIED-BYTE** (RDR-EXTRAS family; EDR
+family verified via Phase C). Gitignore extended (session 65) to cover
+`*.TIF`/`*.LBL` in this sandbox dir.
+
+— orchestrator, session 65, 2026-09-14

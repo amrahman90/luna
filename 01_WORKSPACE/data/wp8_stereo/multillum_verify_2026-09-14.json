@@ -1,0 +1,294 @@
+{
+ "generated_utc": "2026-09-14T17:44:33+00:00",
+ "n_rows": 28,
+ "n_ok": 28,
+ "n_fixed": 1,
+ "n_failed": 0,
+ "total_bytes_apparent": 6417242592,
+ "per_site": {
+  "TRANQPIT1": {
+   "ok": 4,
+   "total": 4
+  },
+  "FECUNPIT": {
+   "ok": 4,
+   "total": 4
+  },
+  "FECNDITATS2": {
+   "ok": 4,
+   "total": 4
+  },
+  "INGENIIPIT": {
+   "ok": 4,
+   "total": 4
+  },
+  "MARIUSPIT01": {
+   "ok": 4,
+   "total": 4
+  },
+  "PRCLRMPIT01": {
+   "ok": 4,
+   "total": 4
+  },
+  "SWFECUNPIT1": {
+   "ok": 4,
+   "total": 4
+  }
+ },
+ "disk_free_gb_after": 45.7,
+ "licence": "LROC NAC EDR, NASA/ASU, PDS public domain",
+ "results": [
+  {
+   "site": "TRANQPIT1",
+   "product_id": "M1534441049LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "1d269bda08c66879ae8ba3cee35dca9a33139746a7f7b9a5088df59aa42381e6",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "TRANQPIT1",
+   "product_id": "M1486462961LE",
+   "status": "VERIFY_FIX",
+   "size_bytes": "264467400",
+   "sha256": "da25a5f96e09a78901e5aa6dd3f0ab3bc26d59dc240ee0985bdd37f36215553d",
+   "remote_length": 264467400,
+   "detail": "size_mismatch local=24551424 remote=264467400; repaired rc=0; csv_sha_updated(was=1c36258bb25b)"
+  },
+  {
+   "site": "TRANQPIT1",
+   "product_id": "M1335130357LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "238539720",
+   "sha256": "cd8932fad34859ef7b47f37bd8c0aef85f697ced0fa17f55f69ef14aa5e1a56b",
+   "remote_length": 238539720,
+   "detail": ""
+  },
+  {
+   "site": "TRANQPIT1",
+   "product_id": "M1410264499LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "1ba9895713b6bf433aa0bfc906665b69b4357f3e8b78ed17572f539fceb3bdb7",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECUNPIT",
+   "product_id": "M1391387574LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "222983112",
+   "sha256": "f6ec04d3c28c8d77e8f456db544258254c770a6ed30cb618091fb9ff98b17099",
+   "remote_length": 222983112,
+   "detail": ""
+  },
+  {
+   "site": "FECUNPIT",
+   "product_id": "M1514447745LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "448f5ac3e697b0c30a4d9943e8aa7a32e70b8fa3ee8cf405847f5d3a9e493f5f",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECUNPIT",
+   "product_id": "M1350283515LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "c15f8afeae13fa83d6cd3f8f96be9012be6db3d2b903b5126ceda60e6895dc28",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECUNPIT",
+   "product_id": "M1292721337LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "132236232",
+   "sha256": "dacf67bd844037fedc64d0bac897ef60cfe653eccc5250037eb2091794873dad",
+   "remote_length": 132236232,
+   "detail": ""
+  },
+  {
+   "site": "FECNDITATS2",
+   "product_id": "M1197457075LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "473c4235073c86c4813f00c1764fec73364c82667e2fdc98e959398a5b4eee7a",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECNDITATS2",
+   "product_id": "M1514447745LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "448f5ac3e697b0c30a4d9943e8aa7a32e70b8fa3ee8cf405847f5d3a9e493f5f",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECNDITATS2",
+   "product_id": "M1350283515LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "c15f8afeae13fa83d6cd3f8f96be9012be6db3d2b903b5126ceda60e6895dc28",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "FECNDITATS2",
+   "product_id": "M1292721337LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "132236232",
+   "sha256": "dacf67bd844037fedc64d0bac897ef60cfe653eccc5250037eb2091794873dad",
+   "remote_length": 132236232,
+   "detail": ""
+  },
+  {
+   "site": "INGENIIPIT",
+   "product_id": "M1462184181LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "5e87a0aafdfb7a4b7ce7d4f2e6c897e46c308a63d6d916b071b4c480425832be",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "INGENIIPIT",
+   "product_id": "M1528865537LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "f0f3630c70acd3339f065046a305b44b308c374f5bf4cf1a3adb235a275f67b0",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "INGENIIPIT",
+   "product_id": "M1451569797LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "329298b995d6e616329b3c058cd909254000eece4954342ade7e0b79342ee8f4",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "INGENIIPIT",
+   "product_id": "M1171949099LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "132236232",
+   "sha256": "2b25aad55a67eb88431f426e4da862ad7ebc11c79a7e99990d5b9df81a755fb9",
+   "remote_length": 132236232,
+   "detail": ""
+  },
+  {
+   "site": "MARIUSPIT01",
+   "product_id": "M1502268466LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "197055432",
+   "sha256": "fd1c98d0c77b1d052e5dabe1256bba59dbd353d3a8982a21d5708724275aff96",
+   "remote_length": 197055432,
+   "detail": ""
+  },
+  {
+   "site": "MARIUSPIT01",
+   "product_id": "M1528018062LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "585b9fdb676108e3e56db5815a120804496a256bcbcd2cda79f76c7ac649371f",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "MARIUSPIT01",
+   "product_id": "M1169892248LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "d7f2959f75e16b834a2b4e64cf4170cf3187c35a155a8d30ceba438fc02b8be4",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "MARIUSPIT01",
+   "product_id": "M1336885005LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "718358995c6167d9a80876fb86b05b7705aa0574b9824588d91c4a2d8b45bde9",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "PRCLRMPIT01",
+   "product_id": "M1269844469LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "ce4e10f7594cefb1672f1460a8f55e812a875cd48e7c6739ae86d815fb620897",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "PRCLRMPIT01",
+   "product_id": "M1450672896LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "d05f0427b4c0d334dffc1b8f85b85a86134b5d340d2de8a50ad6a1c6ec439502",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "PRCLRMPIT01",
+   "product_id": "M1354457618LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "9bcc03e7be53d6f25471ca2d224fcc4dc4a21b730afe582ec23ac18ed3c0d83f",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "PRCLRMPIT01",
+   "product_id": "M1232211200LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "72602568",
+   "sha256": "7104cc6632611cb8f64c8369379f5088f3f6bdb401fb2f5dcf4b84c50db011b3",
+   "remote_length": 72602568,
+   "detail": ""
+  },
+  {
+   "site": "SWFECUNPIT1",
+   "product_id": "M1534363631LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "37518a1871b6cfeefbc0b1d9c435746bf64b97832e4c26d254892ad7835b3ed4",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "SWFECUNPIT1",
+   "product_id": "M1465311346LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "264467400",
+   "sha256": "119246a3ea422af71d6d275439a80d300e95b642ff2e784adf10d85f6174f74c",
+   "remote_length": 264467400,
+   "detail": ""
+  },
+  {
+   "site": "SWFECUNPIT1",
+   "product_id": "M1409031996LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "132236232",
+   "sha256": "43fee02605736b351901efd8da0538bf74f1f083997ca11133192edb9e4c55bb",
+   "remote_length": 132236232,
+   "detail": ""
+  },
+  {
+   "site": "SWFECUNPIT1",
+   "product_id": "M1510967315LE",
+   "status": "VERIFY_OK",
+   "size_bytes": "132236232",
+   "sha256": "12a4a2e2a6582f49114eb394e542d2d52a0844f430622a25fda8f49e49403515",
+   "remote_length": 132236232,
+   "detail": ""
+  }
+ ]
+}
