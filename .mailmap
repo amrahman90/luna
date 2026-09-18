@@ -1,0 +1,12 @@
+# Normalize commit authors so all commits display as Ahnaf181419.
+# Git's mailmap rewrites authorship display without touching commit objects.
+# See: https://git-scm.com/docs/gitmailmap
+#
+# Format: New Name <new@email> Other Name <other@email>
+#
+# Aliases:
+# - Any past commit authored under the "Ahnaf Shafin <ahnaf@local>" identity
+#   (used transiently during the merge session of 2026-09-18) is attributed
+#   to the canonical author below.
+
+Ahnaf181419 <muhammad.ahnaf.sarker@gmail.com> Ahnaf Shafin <ahnaf@local>
