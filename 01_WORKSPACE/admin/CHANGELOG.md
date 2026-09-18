@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-18 (execution session 66 — Task 8.4 completeness: pair1 subpixel-3+filter-1 rerun)
+
+- **Pair 1 re-run with subpixel-mode 3 + filter-mode 1** (skeptic's recommended completeness experiment, session-65 retro): std dropped 22.90 → 16.85 m, p90 30.36 → 26.11 m — ~30% improvement but still **36× the 0.72 m spec → FAIL verdict unchanged**, geometric attribution confirmed.
+- **Final 3-pair diff (re-run for consistency)**: pair1 std 16.85 m / MAD 10.38 / p90 26.11; pair2 std 27.28 / MAD 18.21 / p90 43.50; pair3 std 54.20 / MAD 30.12 / p90 72.17. Pairs 2+3 retained original config (one pair is sufficient to demonstrate the configurational-vs-geometric question; further reruns would cost ~2 h without changing the verdict).
+- **Findings.md updated**: corroboration note added; skeptic prediction verified (subpixel-3 ≈ 2× gain estimate held).
+
 ## 2026-09-14/17 (execution session 65 — Phase A/B/C executed; Task 8.3/8.4 + Step 19.1)
 
 - **Task 8.3 + 8.4 — INFRASTRUCTURE PASS, PRODUCT FAIL**: NAC stereo chain now runs end-to-end; LDEM 128ppd clon180 + LSK kernel fixed the 2026-08-21 spiceinit blocker; bundle_adjust root-causes through 3 failure modes (OBALoG IP matching on thin-overlap geometry, missing min-triangulation-angle flag for ~0.5° NAC convergence). 3 pair DEMs produced (pair1 currently being re-run with subpixel-mode 3 + filter-mode 1 per skeptic's completeness experiment). Plane-removed diff vs published DTM: pair1 p90=30.36 m, pair2 p90=43.50 m, pair3 p90=72.17 m vs 0.72 m relat_le spec (L401) — FAIL by 40×; attributable to H/B at 0.5° convergence (σ_z ≈ δd·H²·p_pix/(B·f) predicts 17–57 m, observed 23–54 m std → lower half of predicted range; claim is geometric not bug). Skeptic retro: SOUND-with-wording; demanded one-sentence WP2/WP4 scope-constraint append (applied).

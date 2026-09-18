@@ -1,0 +1,177 @@
+{
+  "task": "8.4 \u2014 reproduced vs published TRANQPIT1 DEM comparison",
+  "generated_utc": "2026-09-18T01:13:40.879565+00:00",
+  "spec": {
+    "relat_le_m": 0.72,
+    "percentile": 90,
+    "pass_rule": "90th percentile of |plane-removed diff| <= relat_le",
+    "source": "01_WORKSPACE/plans/2026-08-19_ZEROCOST_Roadmap.md L401; 01_WORKSPACE/plans/2026-08-19_WP0_scope_map.md (TRANQPIT1 relat_le 0.72 m)"
+  },
+  "reference": {
+    "path": "/home/frostflux/lunarvoid/data/dtms/TRANQPIT1/NAC_DTM_TRANQPIT1.TIF",
+    "crs_proj4": "+proj=eqc +lat_ts=8 +lat_0=0 +lon_0=180 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs=True",
+    "shape_wh": [
+      2372,
+      14388
+    ],
+    "res_m": [
+      2.0000000000006,
+      2.0000000000006
+    ],
+    "nodata": -3.4028226550889045e+38
+  },
+  "geodesy_check": {
+    "pit_lon_deg_e": 33.222,
+    "pit_lat_deg": 8.335,
+    "map_x_m": -4407485.841820539,
+    "map_y_m": 252745.12578528599,
+    "ref_pixel_row_col": [
+      8012,
+      1612
+    ],
+    "inside_reference_dtm": true,
+    "crs_route": "pyproj +proj=longlat +R=1737400 -> file WKT CRS"
+  },
+  "method": [
+    "Reproduced DEMs reprojected onto the published DTM grid (rasterio.warp.reproject, bilinear, num_threads=1; overlap window rounded outward to integer published-grid pixels).",
+    "CRS taken from file WKTs: published local equirectangular (+proj=eqc +lat_ts=8 +lon_0=180 +R=1737400) vs ASP stereographic (+proj=stere +lat_0=8.63508 +lon_0=33.2026 +R=1737400). No EPSG assumptions (both Moon sphere).",
+    "Valid mask = both rasters valid; >= 10,000 common pixels required else INSUFFICIENT OVERLAP.",
+    "RELATIVE comparison: best-fit plane (a + b*x + c*y) removed from the difference before percentile statistics \u2014 absolute geolocation/vertical-datum offsets between an ASP bundle-adjusted product and a SOCET product are not part of relative precision. Raw (no-plane) median/std also reported.",
+    "Caveats: bilinear resampling smooths sub-pixel detail (grids are both 2 m but not axis-aligned); reproduced DEM covers only the ~362 m x 28.8 km LE/RE overlap strip with ~16% valid pixels (dense-matching coverage), so statistics characterise that strip only, not the full DTM frame.",
+    "diff TIFs store the PLANE-REMOVED difference on the published grid (windowed, grid-aligned); plane coefficients in this JSON allow recovery of the raw difference field."
+  ],
+  "pairs": {
+    "pair1": {
+      "status": "compared",
+      "reproduced_dem": "/home/frostflux/lunarvoid/stereo/TRANQPIT1/pair1_M152655237/run-DEM.tif",
+      "reproduced_crs_proj4": "+proj=stere +lat_0=8.63507 +lon_0=33.2031 +k=1 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs=True",
+      "n_common_px": 359968,
+      "reproduced_shape_wh": [
+        166,
+        14379
+      ],
+      "reproduced_nodata": -1000000.0,
+      "reproduced_valid_frac_full_scene": 0.1513,
+      "published_valid_frac_in_window": 0.9976,
+      "raw_diff": {
+        "median_m": 686.7764,
+        "std_m": 44.1475,
+        "note": "includes vertical-datum + geolocation offsets; reproduced ASP DEM uses a scene-local height datum"
+      },
+      "plane_fit": {
+        "form": "diff ~ a + b*x_km + c*y_km (least squares, common pixels)",
+        "a_m": 686.4386,
+        "b_m_per_km": 4099.409427,
+        "c_m_per_km": 5.706914
+      },
+      "plane_removed_diff": {
+        "median_m": -0.7605,
+        "std_m": 16.8497,
+        "mad_m": 10.3844,
+        "abs_p68_m": 15.47,
+        "abs_p90_m": 26.11,
+        "abs_p95_m": 31.64,
+        "abs_max_m": 89.88,
+        "abs_p90_m_full_precision": 26.114198
+      },
+      "verdict": "FAIL (90th pct |plane-removed diff| = ",
+      "diff_tif": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair1_2026-09-18.tif",
+      "diff_tif_content": "plane-removed difference (reproduced minus published), metres, on the published DTM grid (windowed to the overlap bbox; grid-aligned integer window of the published transform)",
+      "histogram_png": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair1_2026-09-18.png",
+      "histogram_png_dims_px": [
+        1050,
+        630
+      ],
+      "canonical_tif": "/home/frostflux/lunarvoid/data/outputs/wp8_stereo/task8_diff_pair1_2026-09-18.tif",
+      "verdict_plain": "FAIL"
+    },
+    "pair2": {
+      "status": "compared",
+      "reproduced_dem": "/home/frostflux/lunarvoid/stereo/TRANQPIT1/pair2_M152662021/run-DEM.tif",
+      "reproduced_crs_proj4": "+proj=stere +lat_0=8.57585 +lon_0=33.212 +k=1 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs=True",
+      "n_common_px": 759731,
+      "reproduced_shape_wh": [
+        594,
+        14401
+      ],
+      "reproduced_nodata": -1000000.0,
+      "reproduced_valid_frac_full_scene": 0.0893,
+      "published_valid_frac_in_window": 0.9968,
+      "raw_diff": {
+        "median_m": -1291.9592,
+        "std_m": 147.9051,
+        "note": "includes vertical-datum + geolocation offsets; reproduced ASP DEM uses a scene-local height datum"
+      },
+      "plane_fit": {
+        "form": "diff ~ a + b*x_km + c*y_km (least squares, common pixels)",
+        "a_m": -1320.2692,
+        "b_m_per_km": -5039.79103,
+        "c_m_per_km": -35.137367
+      },
+      "plane_removed_diff": {
+        "median_m": -2.975,
+        "std_m": 27.279,
+        "mad_m": 18.2076,
+        "abs_p68_m": 26.93,
+        "abs_p90_m": 43.5,
+        "abs_p95_m": 53.6,
+        "abs_max_m": 148.35,
+        "abs_p90_m_full_precision": 43.500763
+      },
+      "verdict": "FAIL (90th pct |plane-removed diff| = ",
+      "diff_tif": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-18.tif",
+      "diff_tif_content": "plane-removed difference (reproduced minus published), metres, on the published DTM grid (windowed to the overlap bbox; grid-aligned integer window of the published transform)",
+      "histogram_png": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-18.png",
+      "histogram_png_dims_px": [
+        1050,
+        630
+      ],
+      "canonical_tif": "/home/frostflux/lunarvoid/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-18.tif",
+      "verdict_plain": "FAIL"
+    },
+    "pair3": {
+      "status": "compared",
+      "reproduced_dem": "/home/frostflux/lunarvoid/stereo/TRANQPIT1/pair3_M137332905/run-DEM.tif",
+      "reproduced_crs_proj4": "+proj=stere +lat_0=8.41923 +lon_0=33.2292 +k=1 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs=True",
+      "n_common_px": 216378,
+      "reproduced_shape_wh": [
+        106,
+        14295
+      ],
+      "reproduced_nodata": -1000000.0,
+      "reproduced_valid_frac_full_scene": 0.1852,
+      "published_valid_frac_in_window": 0.9989,
+      "raw_diff": {
+        "median_m": -3118.6533,
+        "std_m": 66.3292,
+        "note": "includes vertical-datum + geolocation offsets; reproduced ASP DEM uses a scene-local height datum"
+      },
+      "plane_fit": {
+        "form": "diff ~ a + b*x_km + c*y_km (least squares, common pixels)",
+        "a_m": -3124.8024,
+        "b_m_per_km": -4558.607505,
+        "c_m_per_km": -6.136767
+      },
+      "plane_removed_diff": {
+        "median_m": 2.5157,
+        "std_m": 54.2011,
+        "mad_m": 30.1222,
+        "abs_p68_m": 44.39,
+        "abs_p90_m": 72.17,
+        "abs_p95_m": 86.07,
+        "abs_max_m": 773.42,
+        "abs_p90_m_full_precision": 72.172642
+      },
+      "verdict": "FAIL (90th pct |plane-removed diff| = ",
+      "diff_tif": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-18.tif",
+      "diff_tif_content": "plane-removed difference (reproduced minus published), metres, on the published DTM grid (windowed to the overlap bbox; grid-aligned integer window of the published transform)",
+      "histogram_png": "/home/frostflux/Ahnaf_Shafin/research_project/Lunar_LavaTube/01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-18.png",
+      "histogram_png_dims_px": [
+        1050,
+        630
+      ],
+      "canonical_tif": "/home/frostflux/lunarvoid/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-18.tif",
+      "verdict_plain": "FAIL"
+    }
+  }
+}

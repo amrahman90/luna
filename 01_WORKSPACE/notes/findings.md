@@ -1109,6 +1109,25 @@ pipeline (which runs end-to-end correctly).
 | M152662021 (pair 2) | 759,731 | −1292 m | 27.28 m | 43.50 m | FAIL |
 | M137332905 (pair 3) | 216,378 | −3119 m | 54.20 m | 72.17 m | FAIL |
 
+Updated 2026-09-18 with skeptic's completeness experiment (subpixel-mode 3 + filter-mode 1)
+on pair 1 only — re-ran pair 1 from scratch with the new flags, re-differenced all 3 pairs for
+consistency:
+
+| Pair (config) | N pixels | raw median | std | MAD | p90 | max | verdict |
+|---|---|---|---|---|---|---|---|
+| M152655237 (pair 1, subpixel-3 + filter-1) | (re-run, see JSON 2026-09-18) | TBD | **16.85 m** | **10.38 m** | **26.11 m** | 89.88 m | FAIL |
+| M152662021 (pair 2, original config) | 759,731 | −1292 m | 27.28 m | 18.21 m | 43.50 m | 148.35 m | FAIL |
+| M137332905 (pair 3, original config) | 216,378 | −3119 m | 54.20 m | 30.12 m | 72.17 m | 773.42 m | FAIL |
+
+**Corroboration of the geometric attribution:** skeptic's completeness prediction
+(`subpixel-mode 3` ≈ 2× gain → std ~15-25 m, still ≥20× spec → confirms gap is
+geometric) is satisfied: pair 1 std dropped 22.90 → 16.85 m (~30% improvement),
+**p90 26.11 m still 36× the 0.72 m spec**. No configuration closes the 40× gap;
+the deficit is H/B amplification of per-pixel MGM noise at 0.5° LE/RE convergence.
+**Verdict unchanged: FAIL.** Pairs 2 + 3 retain original config for cost reasons
+(each pair rerun ≈ 1 h; the pair-1 result is sufficient to demonstrate the
+config-vs-geometry question).
+
 Artifacts:
 - DEMs: `~/lunarvoid/stereo/TRANQPIT1/pair{1,2,3}_*/run-DEM.tif`
 - Diff rasters + JSON + PNGs: `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_2026-09-17.{json,tif,png}`

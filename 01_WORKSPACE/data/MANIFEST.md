@@ -309,27 +309,33 @@ under the repo; rule applies to sandbox only). The raw NAC EDR .IMG bytes
 are kept on disk for Phase C verification (sha + size + first-byte
 `PDS_VERSION_` check) and re-use in Step 19.2 photometric consistency.
 
-## WP8 / Task 8 — reproduced TRANQPIT1 stereo DEMs (session 65, 2 of 3 pairs)
+## WP8 / Task 8 — reproduced TRANQPIT1 stereo DEMs (session 65; pair 1 re-run 2026-09-18 with subpixel-3 + filter-1)
 
 ASP 3.7 + ISIS 10 end-to-end pipeline. Phase A (LDEM 128 ppd clon180
 shape model + naif0012.tls LSK kernel) fixed the 2026-08-21 spiceinit
 blocker; bundle_adjust required IP-flag tuning for the thin ~300 m
-LE/RE overlap. Pair1 is being re-run (subpixel-mode 3 + filter-mode 1,
-skeptic's completeness experiment); pair1 NEW DEM is NOT yet produced.
-The OLD pair1 DEM was deleted; this pass lands only the 2 completed pairs.
+LE/RE overlap. Session 66 (2026-09-18) re-ran pair 1 with
+`--subpixel-mode 3 --filter-mode 1` per skeptic's completeness
+experiment: std dropped 22.90 → 16.85 m, p90 30.36 → 26.11 m (~30%
+improvement; still 36× the 0.72 m spec → FAIL verdict unchanged;
+geometric attribution empirically corroborated). Pairs 2 + 3 retain
+original config (one pair sufficient to demonstrate
+configurational-vs-geometric question).
 
 | DEM (reproduced) | Size | Path | Source NAC pair | Parent products |
 |---|---|---|---|---|
+| `pair1_M152655237/run-DEM.tif` (2 m, ASP stereographic, 14379 × 166; **re-run 2026-09-18 with `--subpixel-mode 3 --filter-mode 1`**) | 1.38 MB | `~/lunarvoid/stereo/TRANQPIT1/pair1_M152655237/run-DEM.tif` | M152655237 LE/RE (~0.5° convergence) | LROC NAC EDR (PDS public domain) + LDEM 128 ppd clon180 (PDS public domain) |
+| `pair1_M152655237/ba/` (bundle_adjust audit trail re-solved + subpixel refinement) | directory | `~/lunarvoid/stereo/TRANQPIT1/pair1_M152655237/ba/` | as above | derived (ASP `parallel_stereo --bundle-adjust-prefix` + subpixel refinement pass) |
 | `pair2_M152662021/run-DEM.tif` (2 m, ASP stereographic, 14401 × 594) | 1.7 MB | `~/lunarvoid/stereo/TRANQPIT1/pair2_M152662021/run-DEM.tif` | M152662021 LE/RE (~0.5° convergence) | LROC NAC EDR (PDS public domain) + LDEM 128 ppd clon180 (PDS public domain) |
 | `pair2_M152662021/ba/` (bundle_adjust audit trail: control points, residuals 0.53 px over 138 control points) | directory | `~/lunarvoid/stereo/TRANQPIT1/pair2_M152662021/ba/` | as above | derived (ASP `parallel_stereo --bundle-adjust-prefix`) |
 | `pair3_M137332905/run-DEM.tif` (2 m, ASP stereographic, 14295 × 106) | 1.2 MB | `~/lunarvoid/stereo/TRANQPIT1/pair3_M137332905/run-DEM.tif` | M137332905 LE/RE (~0.5° convergence) | LROC NAC EDR (PDS public domain) + LDEM 128 ppd clon180 (PDS public domain) |
 | `pair3_M137332905/ba/` (bundle_adjust audit trail) | directory | `~/lunarvoid/stereo/TRANQPIT1/pair3_M137332905/ba/` | as above | derived (ASP `parallel_stereo --bundle-adjust-prefix`) |
-| `chain.log` (3-pair chain run log, 2026-09-14 → 2026-09-17) | text | `~/lunarvoid/stereo/TRANQPIT1/chain.log` | — | derived (chain script `~/lunarvoid/bin/task8_chain.sh`) |
+| `chain.log` (3-pair chain run log, 2026-09-14 → 2026-09-17; pair 1 chain re-run appended 2026-09-18) | text | `~/lunarvoid/stereo/TRANQPIT1/chain.log` | — | derived (chain script `~/lunarvoid/bin/task8_chain.sh`) |
 
 Derived files only (regenerable from the input NAC EDRs + LDEM + ASP/ISIS
 chains). Out-of-repo paths per conventions section 1.
 
-## WP8 / Step 8.4 — TRANQPIT1 DEM vs published DTM diff rasters (session 65)
+## WP8 / Step 8.4 — TRANQPIT1 DEM vs published DTM diff rasters (session 65; pair 1 re-diffed 2026-09-18)
 
 Plane-removed difference rasters (reproduced − published), 2 m, on the
 published DTM grid (windowed, grid-aligned). Reprojection via
@@ -338,12 +344,18 @@ published DTM grid (windowed, grid-aligned). Reprojection via
 semantics; spec from `01_WORKSPACE/plans/2026-08-19_ZEROCOST_Roadmap.md`
 L401, `01_WORKSPACE/plans/2026-08-19_WP0_scope_map.md`).
 
-Pair1 diff TIF + PNG pending — pair1 DEM re-run in progress per skeptic's
-completeness experiment. Per-pair TIF + PNG for pair2 + pair3 below.
+Session 66 (2026-09-18) re-diffed all 3 pairs for consistency with the
+new pair 1 DEM (subpixel-3 + filter-1). Pairs 2 + 3 numbers unchanged
+from 2026-09-17 (same DEMs); pair 1 numbers updated (std 22.90 → 16.85,
+p90 30.36 → 26.11; FAIL verdict unchanged). The 2026-09-18 dated JSON
+supersedes `task8_diff_2026-09-17.json` for pair 1; the 2026-09-17 pair 2
++ pair 3 PNG/TIF artifacts remain canonical (already committed in `919056c`).
 
 | Artifact | Path | Content |
 |---|---|---|
-| Task 8.4 summary JSON (spec, geodesy check, method, per-pair stats + verdict) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_2026-09-17.json` | All three pairs; pair1 status=pending; pair2 + pair3 status=compared with verdict FAIL (plane-removed abs_p90 = 43.50 m / 72.17 m vs relat_le 0.72 m spec — FAIL by 40–60×; H/B geometry attribution, see findings.md `## data-acquisition / stereo-reproduction — session 65`) |
+| Task 8.4 summary JSON (spec, geodesy check, method, per-pair stats + verdict; **supersedes 2026-09-17 JSON for pair 1**) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_2026-09-18.json` | All three pairs; pair1 (subpixel-3 + filter-1) status=compared with verdict FAIL (plane-removed std=16.85 m, abs_p90=26.11 m vs relat_le 0.72 m spec — FAIL by ~36×; geometric attribution empirically corroborated); pair2 + pair3 status=compared with verdict FAIL (plane-removed abs_p90 = 43.50 m / 72.17 m), see findings.md `## data-acquisition / stereo-reproduction — session 65`) |
+| Pair1 diff TIF (plane-removed diff with new subpixel-3 + filter-1 DEM; 2026-09-18) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair1_2026-09-18.tif` | derived (reprojected on-the-fly by `task8_diff.py`) |
+| Pair1 diff PNG (histogram with ±relat_le + 90th-pct markers; 2026-09-18) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair1_2026-09-18.png` | derived (`matplotlib` figure, dims verified programmatically) |
 | Pair2 diff TIF (plane-removed diff, published grid, overlap window) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-17.tif` | derived (reprojected on-the-fly by `task8_diff.py`) |
 | Pair2 diff PNG (histogram with ±relat_le + 90th-pct markers) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair2_2026-09-17.png` | derived (`matplotlib` figure, dims verified programmatically) |
 | Pair3 diff TIF (plane-removed diff, published grid, overlap window) | `01_WORKSPACE/data/outputs/wp8_stereo/task8_diff_pair3_2026-09-17.tif` | derived |
