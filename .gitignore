@@ -90,3 +90,14 @@ Thumbs.db
 
 .opencode/
 opencode.json
+
+# ----------------------------------------------------------------------------
+# luna-web submodule (01_WORKSPACE/luna-web/) — defensive patterns at the
+# parent level in case someone runs `npm install` outside the submodule's
+# own .gitignore (which already covers node_modules/dist/.local internally).
+# ----------------------------------------------------------------------------
+node_modules/
+.vite/
+coverage/
+.env*.local
+.env
