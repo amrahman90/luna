@@ -12,6 +12,10 @@ onward lives somewhere inside this folder. The project root and
 | `data/`    | Dataset indexes, download manifests, licence audit records      |
 | `papers/`  | Paper drafts, figures, submission packages                       |
 | `admin/`   | Budget logs, infrastructure records, meeting notes               |
+| `luna-web/`| Public portal (git submodule → `Ahnaf181419/luna-web@main`).     |
+|            | React 19 + Vite 8 SPA, auto-deploys to GH Pages. Edits inside    |
+|            | the submodule are committed to luna-web's own repo; parent-side |
+|            | pushes do not trigger deploys.                                  |
 
 Conventions:
 - Prefix working files with ISO date: `YYYY-MM-DD_<topic>.<ext>`.
@@ -20,3 +24,13 @@ Conventions:
   (current authoritative: `00_SOURCE_ORIGINALS/LUNARVOID_Master_Plan_v5_Full_Synthesis.txt`).
 - Raw data downloads never live here long-term — record what, where, and
   licence status in `data/`, keep the bytes on the analysis machine.
+
+Submodule workflow (`luna-web/`):
+- Clone with submodules: `git clone --recurse-submodules <repo>`. If you
+  already cloned without that flag, run `git submodule update --init --recursive`.
+- Portal edits are committed inside `01_WORKSPACE/luna-web/` and pushed to
+  `Ahnaf181419/luna-web` (the submodule's remote) to trigger GH Pages
+  deploys. Pushing to the parent does **not** deploy.
+- After committing inside the submodule, record the new pointer in the
+  parent: `git add 01_WORKSPACE/luna-web && git commit -m "bump luna-web"`.
+- Or do it one-shot from the parent root: `git submodule update --remote`.
