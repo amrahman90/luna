@@ -40,6 +40,26 @@ Lunar_LavaTube/
    is the authoritative master plan. Any newer plan versions live in
    `01_WORKSPACE/plans/` and must state which version they supersede.
 
+5. **Commit policy: explicit user permission + session batching.** Set
+   by the user on 2026-09-18 (initial: never commit). Permission to
+   commit granted by the user on 2026-09-18 with the constraint that
+   commits must be batched to logical session completion — NOT per
+   micro-change. **"Full task session"** = geo-coder work + verifier PASS
+   + skeptic review (where required) for one task, OR a logical
+   planning/artifact session that produces a coherent deliverable.
+
+   No agent may commit:
+   - mid-task (between geo-coder finish and verifier PASS)
+   - per-file or per-checkpoint
+   - on WIP code or unreviewed changes
+   - on rule/config changes alone (roll into the next task session's
+     commit instead)
+
+   Each commit represents a coherent, complete unit of work. If
+   unclear whether to commit, STOP and ask. The archivist remains the
+   sole committer; the orchestrator supplies the commit message; the
+   user holds final permission.
+
 ## Project context (read before working)
 
 - Project: LUNARVOID — calibrated multi-evidence inference of lunar lava
