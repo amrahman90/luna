@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-27 (execution session 68 — Outreach prep batch: research statement + preprint abstract + project overview + cold-outreach kit)
+
+- **Why this matters**: PhD applications for Sept 2027 intake have Dec/Jan 2026-27 deadlines (~3-4 months away). The cold-outreach cycle (relationship building for letters of recommendation) must START NOW: faculty need 2-3 months of relationship + a 3-4 week pre-deadline letter-writing window. Pre-empt the LETTER bottleneck — currently the largest single risk in the PhD-application critical path for a solo CSE student with no PI.
+- **What shipped** (six documents, all under `01_WORKSPACE/`):
+  - `papers/research_statement_v1.md` — 1,249 words, methodology-focused RS for European CS/AI PhD admissions
+  - `papers/preprint_abstract_v1.md` — 297 words, for arXiv/ESS Open Archive preprint submission (title: "The Detectable Signal of Lunar Lava Tubes: A Three-Regime Roof-Deformation Forward Model with Cross-DTM Implications")
+  - `papers/project_overview_v1.md` — 596 words, 1-page project summary for cold email body / PDF attachment
+  - `admin/outreach/README.md` — outreach playbook with calendar + tracking + escalation + pivot contingency
+  - `admin/outreach/target_faculty.md` — 12 faculty profiles (Tier 1: Khan/Schölkopf/Gal/Yang/Varoquaux; Tier 2: Rasmussen/Kaski/Tuia/Peters/Thirion; Tier 3: Hennig/Pollefeys) with research-fit notes and per-recipient cold-email angles
+  - `admin/outreach/email_templates.md` — 3 templates (initial outreach, follow-up after no reply, application-season direct) with a quick-personalisation checklist
+- **Calendar**: send FIRST batch (Tier 1 + Tier 2, 10 emails) between 2026-09-30 and 2026-10-04; first follow-up round 2026-10-12 to 2026-10-18; application-season direct mid-November. Lock outreach by 2026-12-01.
+- **Gaps surfaced for future sessions**:
+  - User to fill `[PLACEHOLDER]`s in paper-writer's documents (ORCID, specific target universities, `[Prof. A/B/C]` placeholder slots)
+  - Preprint file upload to arXiv/ESS Open Archive (separate session, after paper §1.2/§1.3 reframe is settled)
+  - Portal deployment to GH Pages (separate session)
+  - WP0.5 paper §1.2 reframe per skeptic's 7 objections (separate session)
+- **No secrets, no MANIFEST additions** (writing-only session; no data acquisitions).
+
 ## 2026-09-27 (execution session 67 — WP0.5: roof deformation forward model + F1 audit response + planning + commit-policy update)
 
 - **Why this matters**: F1 review-finding (master plan v5 "elastic flexure roof-sag detectability" claim unaddressed — no magnitude estimate across six documents / 62 sessions) re-confirmed open by an internal audit on 2026-09-27. WP0.5 builds the missing physics + a parameter sweep that ties flexure to NAC DTM detection floors across roof-thickness regimes.
