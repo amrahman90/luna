@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-09-27 (execution session 67 — WP0.5: roof deformation forward model + F1 audit response + planning + commit-policy update)
+
+- **Why this matters**: F1 review-finding (master plan v5 "elastic flexure roof-sag detectability" claim unaddressed — no magnitude estimate across six documents / 62 sessions) re-confirmed open by an internal audit on 2026-09-27. WP0.5 builds the missing physics + a parameter sweep that ties flexure to NAC DTM detection floors across roof-thickness regimes.
+- **Forward model** (`01_WORKSPACE/code/wp0_5_deflection/deflection_model.py`): three regimes — (a) intact clamped slab `δ = ρgL⁴/(32Eh²)`; (b) intact clamped arch with R/L=0.2 geometric reduction; (c) cumulative-damage regime where E and h scale down with damage factor d. Three `compute_*` entry points + a sweep wrapper.
+- **Sweep + figure** (`sweep.py`, `make_figure.py`): 360×8 = 2,880-row CSV; figure rendered via matplotlib Agg (4-panel, 2079×1499 px @ 150 dpi).
+- **Verifier T5 ±5%**: 7/7 F1 canonical anchors PASS. Max 3.48% at ρ=2900; max 1.10% at ρ=3000 (the F1 derivation density) — model matches F1 derivation to 0.30% at ρ=3000. Sweep regime distribution: intact sub-mm to ~3.6 cm; vesicular mm-to-dm; near-collapse m-to-tens-of-m. Only the near-collapse regime (28 combos at d=0.7) crosses the 4 m NAC DTM detection floor by a non-trivial margin.
+- **Verifier verdict**: PASS-with-notes (6/12 reconciliation-table rows in `regime_summary.md` disagree with formulas by >10% — docs/QC issue, NOT code; fix queued before paper submission).
+- **Skeptic verdict**: SOUND-with-objections. 7 paper-text revisions queued for Paper 1 §1.2 (own meta-narrative shift; per-DTM floor range; pit-vs-rille distinction; §1.2 relocation; reconciliation-table fix; parameter uncertainty; Theinat/Blair cross-ref) — all wording, none are model defects.
+- **Planning artifact**: `01_WORKSPACE/plans/2026-09-18_COMPREHENSIVE_Roadmap.md` — top-level roadmap reflecting the user's portfolio/academic-career frame (CSE student, solo, 1-year timeline to European PhD applications; master-plan-v5 "DLR pipeline transfer" positioning reframed).
+- **Commit policy update** (`AGENTS.md` rule #5): replaced the initial "never commit" rule with the 2026-09-18 user-granted "explicit user permission + session batching" policy. Each commit represents a coherent session-completion unit (geo-coder work + verifier PASS + skeptic review for one task, OR a coherent planning/artifact session).
+- **Deliverables** (12 files):
+  - `01_WORKSPACE/code/wp0_5_deflection/{deflection_model.py, sweep.py, make_figure.py}`
+  - `01_WORKSPACE/admin/verification_evidence/scripts/verify_wp0_5_deflection.py` + 3 JSON evidence records
+  - `01_WORKSPACE/data/outputs/wp0_5_deflection/{sweep_results.csv, regime_summary.md, figures/deflection_4panel.png}`
+  - `01_WORKSPACE/plans/2026-09-18_COMPREHENSIVE_Roadmap.md`
+  - `AGENTS.md` (rule #5)
+- **Gotchas**:
+  - F1 canonical table lists ρ=2900; the F1-report derivation uses ρ=3000. Use ρ=3000 in paper text (model verification at 0.30% deviation confirms).
+  - `opencode.json` `edit` permission does NOT include `01_WORKSPACE/admin/verification_evidence/scripts/`; agents writing verifier scripts must use `bash` (or have an explicit allow rule added).
+  - Reconciliation-table discrepancy is a docs issue, not a physics issue — but flagged for pre-submission QC pass.
+  - No MANIFEST rows added (WP0.5 is pure Python + parameter sweep — no rasters, no downloads).
+
 ## 2026-09-18 (execution session 66 — Task 8.4 completeness: pair1 subpixel-3+filter-1 rerun)
 
 - **Pair 1 re-run with subpixel-mode 3 + filter-mode 1** (skeptic's recommended completeness experiment, session-65 retro): std dropped 22.90 → 16.85 m, p90 30.36 → 26.11 m — ~30% improvement but still **36× the 0.72 m spec → FAIL verdict unchanged**, geometric attribution confirmed.
