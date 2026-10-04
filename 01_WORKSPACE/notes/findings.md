@@ -1188,3 +1188,280 @@ validated (or the published DTMs are simply adopted as ground truth).
 **Recommendations.** (1) Append the WP2/WP4 scope-constraint sentence (Attack 7 — material to operational thesis). (2) Re-run pair1 with `--subpixel-mode 3 --filter-mode 1` as one cheap completeness experiment. (3) Add MAD alongside std to de-emphasise pair3's 773 m outlier. (4) **No downgrade** of the FAIL verdict — literal L401 criterion is not met.
 
 — skeptic, session 65, 2026-09-17
+
+## skeptic — session 67 (2026-09-28): WP0.5 paper draft v1 adversarial review
+
+**VERDICT: UNSOUND** (three load-bearing blockers in the abstract; 9 SOUND-with-objections items below).
+
+Numbers spot-checked against `data/outputs/wp0_5_deflection/sweep_results.csv` (2880 rows, exact match to Tables 1–4), `data/outputs/wp0_kriging/per_dtm_floors.csv` (14 valid DTMs), `admin/verification_evidence/scripts/verify_wp0_5_deflection_20260927T162611Z.json` (7 anchors), and the v5 review report F1 derivation (`LUNARVOID_v5_Review_Report.txt` sec. F1).
+
+### Blockers (must fix before submission)
+
+- **B1 — Headline "3–5 orders of magnitude below the floor" is over-claimed.** The v5 review report F1 said "ONE to THREE orders of magnitude" (line 78). Across the paper's own 7 canonical anchors (Table 1, ρ=2900) the orders-of-magnitude gap to a 3.74 m floor is: Marius Hills intact 4.73, Tranquillitatis-scale 3.94, max-span intact 2.03, wide fractured 1.37, thin roof weak rock 0.50, thin roof heavily damaged 0.20, near-collapse −0.39 (above floor). 4 of 7 anchors are <2 orders. The median intact slab (3.19e-2 m) is only 2.02 orders below the 3.74 m floor. Even restricted to competent basalt (E=50 GPa, h=26 m), the range is 1.1–4.7 orders; the headline's "3–5" picks the upper 2 of 4 cases and excludes the L=300, E=50 case (2.03 orders). Fix (abstract L14, §1.3 L70, §4.1 L284, §5.1 L336): "1–5 orders of magnitude across the intact regime; the median intact case is ~2 orders below the floor; only the lowest-span or densest-basalt cases exceed 3 orders." Add a §3.1 footnote with the per-anchor gap so reviewers can verify.
+
+- **B2 — Abstract detection floor band is internally inconsistent with Table 3.** Abstract says "2.30–4.39 m"; Table 3 lists EIGHT frozen DTMs that include KINGCRATER2 at `local_Amin` = 1.97 m (`per_dtm_floors.csv` row 13, verified). The 8-DTM range is therefore 1.97–4.39 m, not 2.30–4.39 m — KINGCRATER2 is silently excluded from the lower bound. Independently, the abstract's "median 3.31 m" is the 14-valid-DTM median (Table 3 caption, `per_dtm_floors_summary.json#median_local_Amin_m`); the 8-frozen-DTM median is 2.90 m. The paper mixes the two framings without flagging the switch. Fix (abstract L14, §1.3 L70, Table 3 caption L247): state "1.97–4.39 m (median 2.90 m) across the 8 frozen DTMs" OR "2.30–4.39 m (median 3.31 m) across the 14 processed DTMs that carry valid `local_Amin`" and pick one framing in the abstract.
+
+- **B3 — "Intact elastic flexure of competent basalt is undetectable" (L14, L70) is contradicted by 30/360 of the paper's own "intact slab" sweep (Table 2 L213).** The 30 cases that cross 4 m are NOT competent basalt: 23 of 30 have E≤10 GPa (vesicular or rubble) and the 7 with E=20–50 GPa all have h=5–10 m (slenderness L/h = 30–100, past plate-theory validity). Only ONE combination (L=500, h=5, E=50, ρ=any) crosses with E=50 GPa — a single extreme corner at the slenderness limit. Fix (Table 2 caption L221, §1.3, §3.2): rename the sweep to "intact-or-rubble elastic flexure" and state that the only competent-basalt (E≥20 GPa, h≥20 m) crossings require slenderness ratios that are outside plate-theory validity. Or restrict the "intact" sweep to E≥20 GPa AND h≥10 m, which drops the crossings to 0/120 and supports the headline honestly.
+
+### SOUND-with-objections (fix in revision; non-blocking)
+
+- **O1 (HIGH).** "Marius Hills pit is ~10⁴ below the floor" (abstract L14, §3.3 L273) is downward rounding of 1.07×10⁴. 4.14 / 3.88e-4 = 10,670. Paper's own `regime_summary.md` L120 says "~1.07 × 10⁴× below". Align phrasings to "~1.1×10⁴" or "~10⁴" with explicit precision statement.
+- **O2 (HIGH).** Damage parameterisation E→E(1-d), h→h(1-d/2) is asymmetric and not derived from Lemaitre/Kachanov. Justification ("microfracturing weakens stiffness faster than geometric thickness") is plausible but uncalibrated. Add a 1-paragraph §4.3 note that (1-d) is the standard isotropic-damage form; that the (1-d/2) thickness term is a heuristic not derived from a model; and that the headline conclusions are robust within ±1 order of magnitude to the choice.
+- **O3 (MED).** "3× sag-band RMS" floor convention is project-specific; v5 master plan does NOT specify 3× (grep-verified per findings 2026-09-11 entry). The choice of 3σ vs 5σ vs 2σ affects the floor by 1.7× linearly. Add a §4.3 sentence: "3× is a project convention (see findings.md 2026-09-11 entry); at 5× the floor would be 5.6–11 m and the only crossings would be in the near-collapse thin-roof regime, narrowing but not qualitatively changing the conclusion."
+- **O4 (MED).** R/L=0.2 is fixed throughout the sweep with no sensitivity analysis. For R/L=0.5 (the stated upper validity of the shallow-arch approximation) the correction is 6.25× larger than at R/L=0.2. Add a 1-row table in §3.2 showing arch correction at R/L∈{0.0, 0.2, 0.3, 0.5}.
+- **O5 (MED).** Table 4 d=0.3 rows are formula-computed, not from the CSV. Paper acknowledges in §3.3 text but the Table 4 caption should flag this prominently. Add an asterisk to those rows and a caption sentence.
+- **O6 (LOW).** §5.1 conclusion is ~95% redundant with §1.3. Cut to 1–2 sentences pointing to the targeting-criterion consequence.
+- **O7 (LOW).** "FP per 10⁴ km²" appears in §4.4 and §5.2 with no derivation of the 10⁴ km² normalization. Add 1 sentence: "10⁴ km² is the project reporting unit, chosen so per-DTM rates (typically ~0.3–0.7 FPs per ~200 km² DTM) read as convenient integers; the actual on-disk area is 24,063 km²."
+- **O8 (LOW).** Reference [20] Kelahan 2026 was flagged unverifiable in the first verifier pass; the [20] note should also disclose that 4 of 4 verifier JSONs (2026-09-27, 2026-09-28) are the same author's re-runs, not independent reproduction. Add: "(citation cross-checked by direct fetch 2026-09-28; no independent re-run)".
+- **O9 (LOW).** Word count 8,933 is at the upper end of the methods-paper band (RSE/ISPRS 6,000–8,000 typical). §1.2 prior-work review could be tightened by 500–800 words without losing substance.
+
+### What's SOUND (no fix needed)
+
+- All 7 canonical F1 anchor values reproduce from the formula to ≤3.48% at ρ=2900 and ≤1.10% at ρ=3000 (verified against `verify_wp0_5_deflection_20260927T162611Z.json`; 4 verifier runs are byte-identical on the JSON payload, confirming deterministic reproducibility).
+- 2,880-row sweep row counts per regime: 360/regime, total 2880 (verified from CSV).
+- Table 4 per-site reconciliation values reproduce from the formula exactly (e.g. 0.0352 m at L=300/h=26/E=50/d=0/ρ=2900; 0.278 m at d=0.7; 6.925 m at L=500/d=0.6; 32.625 m at L=500/h=10/d=0.5).
+- Mini-RF radar contradiction (§4.1): paper engages honestly — "A 'detection' of TRANSPIT1 by elastic flexure would require either (i) a roof that has lost 80–90% of its elastic stiffness or (ii) a span much larger than the catalogued pit floor can plausibly support". Correct framing.
+- Sinuous/segmented void morphology: acknowledged in §4.2 as "beyond the current parameterisation". Acceptable for a closed-form first-cut.
+- Clamped vs simply-supported BC: defensible upper bound on δ; documented in §4.3.
+- E=5 GPa and h=5 m as parameter-space corners: paper flags in §4.3 as "at the edge of physical reasonableness"; the issue is only that the headline abstract mislabels the sweep as "intact" (B3).
+- No "detected" language slips found in abstract or §1.4; claim discipline is consistent throughout.
+
+### Methodological attacks (non-blocking)
+
+- The three regimes (clamped slab, clamped arch, cumulative damage) are the right STANDARD regimes. Missing: thermoelastic effects, regolith cover loading, time-dependent creep, plastic deformation. Each is acknowledged in §4.3 as "factor of unity" effects. The order-of-magnitude gap is too large for any of these to bridge individually — this is the correct framing.
+- Linear damage scaling is not standard; the asymmetric (1-d) vs (1-d/2) form is a heuristic. See O2.
+- E=5 GPa as "intact" is a labeling issue compounded by B3.
+
+### Reproducibility
+
+- 4 verifier JSON files span 2026-09-27 to 2026-09-28 (sessions 1 day apart). All 4 produce byte-identical JSON payloads → verifier is genuinely deterministic, not just claimed to be.
+- No independent re-run by anyone other than the author (project is solo).
+- d=0.3 rows in Table 4: 2,880-row sweep covers d∈{0.0, 0.2, 0.4, 0.5, 0.6, 0.7}; Table 4 d=0.3 rows are formula-computed, not from CSV. See O5.
+
+### Downgrade recommendation
+
+- B1: headline is **downgrade-required** — "3–5 orders" → "1–5 orders; median intact case ~2 orders below floor". This is a load-bearing claim; the current phrasing would draw a hard reviewer comment.
+- B2: factual error in abstract — must fix; alternative framing is acceptable.
+- B3: rename "intact sweep" → "intact-or-rubble elastic flexure sweep" OR restrict the parameter space to E≥20 GPa AND h≥10 m.
+
+**Recommended action for paper-writer:** apply B1–B3 fixes (text-only, no new code); O1, O2, O5, O7 are easy text changes; O3, O4 require small tables; O6, O8, O9 are optional polish.
+
+— skeptic, session 67, 2026-09-28
+
+## skeptic — session 69 (2026-10-05): WP0.5 paper draft v1 BLOCKER-resolution re-review
+
+**VERDICT: SOUND-with-objections.** All three BLOCKERs from session 67 are
+essentially resolved; one residual B2 framing inconsistency and the
+deferred O4–O9 minor objections remain.
+
+Numbers spot-checked against `data/outputs/wp0_5_deflection/sweep_results.csv`
+(2880 rows; per-anchor gap, Table 1 anchor values, Table 2 regime
+medians/max/35 above-floor counts, Table 4 per-site reconciliation
+values, and the restricted-intact subset table all reproduce), against
+`data/outputs/wp0_kriging/per_dtm_floors.csv` (14 valid DTMs, 8-DTM
+frozen subset) + `per_dtm_floors_summary.json` (medians, by_terrain),
+and against the verifier evidence JSONs (all 7 anchors PASS T5 ±5%).
+
+### B1 (orders of magnitude) — SOLVED.
+
+- Abstract L14: "lies below the NAC DTM detection floor band
+  (2.30–4.39 m across the 14 processed DTMs; median 3.31 m; the
+  8-DTM frozen calibration subset in Table 3 spans 1.97–4.39 m,
+  median 2.90 m) by 1–5 orders of magnitude across the parameter
+  space, with a median intact-case gap of ~2 orders" ✓
+- §1.2 organising bullet L30: "the 1–5 orders-of-magnitude gap
+  (median intact case ~2 orders; only the lowest-span or densest-basalt
+  cases exceed 3 orders)" ✓
+- §1.3 L70: same full "1–5 orders / median ~2" framing as abstract ✓
+- §4.1 L312: "1–5 orders of magnitude across the parameter space, with
+  a median intact-case gap of ~2 orders" ✓
+- §5.1 L364: same ✓
+
+§3.1 has the per-anchor gap table (7 rows) with all (E, h, L) triples
+matching Table 1 exactly:
+
+| # | Table 1 | Gap-table row |
+|---|---|---|
+| 1 | L=65, h=26, E=50 | L=65, h=26, E=50 ✓ |
+| 2 | L=100, h=26, E=50 | L=100, h=26, E=50 ✓ |
+| 3 | L=300, h=26, E=50 | L=300, h=26, E=50 ✓ |
+| 4 | L=300, h=26, E=10 | L=300, h=26, E=10 ✓ |
+| 5 | L=300, h=10, E=10 | L=300, h=10, E=10 ✓ |
+| 6 | L=300, h=10, E=5 | L=300, h=10, E=5 ✓ |
+| 7 | L=500, h=10, E=10 | L=500, h=10, E=10 ✓ |
+
+Per-anchor gap values reproduce (anchor → gap orders):
+4.68, 3.94, 2.03, 1.33, 0.50, +0.20 (below), −0.39 (above) ✓
+All 7 match paper exactly. Headline "1–5 orders, median intact ~2
+orders, only 2 of 7 anchors exceed 3 orders, only 1 of 7 above the
+floor" is defensible.
+
+### B2 (band consistency) — PARTIALLY SOLVED (residual framing issue).
+
+- Abstract L14, §1.3 L70, Table 3 caption L275: now consistently present
+  both framings side-by-side (14-DTM band 2.30–4.39 m with median 3.31 m,
+  8-DTM frozen subset band 1.97–4.39 m with median 2.90 m). KINGCRATER2
+  outlier note present. ✓
+- §4.1 L312, §5.1 L364: "2.30–4.39 m" headline band consistent. ✓
+
+**Residual issue.** The 14-DTM framing has an internal inconsistency
+that the fix introduced. Paper claims the 14-DTM set has range
+2.30–4.39 m AND median 3.31 m. But:
+- Actual 14-DTM (with KINGCRATER2): range 1.97–4.39 m, median 3.31 m
+- Actual 13-DTM (excluding KINGCRATER2): range 2.30–4.39 m, median 3.36 m
+
+The paper takes the 13-DTM LOWER bound (2.30 m, excluding KINGCRATER2)
+but the 14-DTM MEDIAN (3.31 m, including KINGCRATER2). The parenthetical
+"excluded from the 14-DTM median" at L275 is wrong: the 14-DTM median
+3.31 m comes from the FULL 14 (including KINGCRATER2); excluding it
+gives median 3.36 m, not 3.31 m.
+
+Severity: HIGH. It is a numerical error in the headline band's lower
+bound that the paper documents but does not resolve. The orders-of-
+magnitude claim is unaffected (2.30 vs 1.97 is 0.07 in log10, dwarfed
+by the 1–5 order gap).
+
+Resolution (1 sentence fix): either (a) use the full 14-DTM range
+1.97–4.39 m (with median 3.31 m), or (b) use the 13-DTM subset
+range 2.30–4.39 m (with median 3.36 m). Drop the false claim that
+KINGCRATER2 is "excluded from the 14-DTM median".
+
+### B3 (intact-slab contradictions) — SOLVED.
+
+- §2.1.2/§2.1.3 (L122) introduces regime restrictions with the explicit
+  note: "The headline conclusion … therefore restricts to the subset
+  E≥20 GPa AND h≥10 m AND L/h<20" ✓
+- §3.2 L241: "Restricting to the headline-intact subset (E≥20 GPa AND
+  h≥10 m AND L/h<20) gives 0/120 crossings (see restricted-intact
+  subset below)" ✓
+- §3.2 restricted-intact subset table L248-254: 30 → 9 → 3 → 0
+  crossings as restrictions tighten, with the headline-intact subset
+  at 0/120 ✓
+
+Spot-checked against CSV: 30/360 total > 4 m (slab regime), of which
+21 have E≤10 GPa and 9 have E≥20 GPa (all at L=500 m with h∈{5,10} m,
+slenderness L/h∈{50,100}, past plate-theory validity). Restricted to
+E≥20 AND h≥10: 3/144 crossings (all at L=500, h=10). Restricted to
+E≥20 AND h≥10 AND L/h<20: 0/120 crossings. All match paper. ✓
+
+### O1 ("10⁴" → "1.07×10⁴") — SOLVED.
+
+- Abstract L14: "~1.07 × 10⁴ below the floor" ✓
+- Table 4 L285: "Marius Hills pit (floor span) … NO (~1.07 × 10⁴× below)" ✓
+- §3.3 obs 2 L301: "sub-floor by ∼1.07 × 10⁴ (ratio: 4.14 m floor /
+  3.88 × 10⁻⁴ m = 10,670)" ✓
+- §4.2 L326: "δ = 3.88 × 10⁻⁴ m — ∼1.07 × 10⁴ below the floor (ratio
+  4.14 m / 3.88 × 10⁻⁴ m = 10,670)" ✓
+
+All four sites use 1.07 × 10⁴ with explicit ratio derivation.
+
+### O2 (heuristic-caveat with Lemaitre/Kachanov) — SOLVED.
+
+§2.1.3 L142: "**Heuristic caveat.** The parameterisation E→E(1-d),
+h→h(1-d/2) is a pragmatic first-order heuristic, not a derivation
+from Lemaitre continuum damage mechanics (Lemaitre 1985) or Kachanov
+creep damage (Kachanov 1958)" ✓ — both references present,
+asymmetric-form justification present, ±1 order robustness stated.
+
+### O3 (3× convention note with 5× / 2× alternatives) — SOLVED.
+
+§3.3 Table 3 caption L275: "3× is a project convention chosen to give
+~99% confidence for normally-distributed noise; the v5 master plan
+does not specify a multiplier … at a 5× multiplier the floor would be
+3.3–7.3 m and only the near-collapse thin-roof regime would cross; at
+a 2× multiplier the floor would be 1.3–2.9 m and the wide-fractured
+regime would also cross" ✓ — both alternatives explicitly quantified.
+
+### Deferred O4–O9 (severity-checked against current draft)
+
+- **O4 (R/L sensitivity table at {0.0, 0.2, 0.3, 0.5}) — NOT
+  ADDRESSED.** §4.3 L344 acknowledges validity range but does NOT include
+  the sensitivity table. The §2.1.2 promise "we explore the sensitivity
+  to the choice in §4" is unfulfilled. Severity LOW; the 2% correction
+  at R/L=0.2 is small compared to the 1–5 order-of-magnitude gap.
+- **O5 (d=0.3 asterisk in Table 4) — PARTIALLY ADDRESSED.** Table 4
+  caption L296 mentions d=0.3 is formula-computed, not CSV-sourced, but
+  no asterisks on the rows themselves. Severity LOW; caption disclosure
+  is adequate.
+- **O6 (§5.1 redundant with §1.3) — NOT ADDRESSED.** §5.1 L364 still
+  carries the full headline claim duplicating §1.3 L70. Severity LOW;
+  the §5.1 framing is a conclusion restatement (conclusion conventions
+  permit some duplication).
+- **O7 (10⁴ km² normalization derivation) — NOT ADDRESSED.** §4.4 and
+  §5.2 L377 quote "FP per 10⁴ km²" without explaining why 10⁴ is the
+  chosen unit. Severity LOW; the convention is project-wide and
+  standalone for the LUNARVOID scope.
+- **O8 (Kelahan 2026 verifier-JSON independence) — PARTIALLY ADDRESSED.**
+  Ref [20] L441 now discloses verification method (direct page fetch due
+  to arXiv MCP HTTP 406). The "no independent re-run by anyone other
+  than the author" is implicit (solo project) but not added verbatim.
+  Severity LOW.
+- **O9 (word count growth 8933 → 10,489) — N/A.** Growth is fully
+  accounted for by the BLOCKER fixes (per-anchor gap table,
+  restricted-intact subset, heuristic caveat, band-consistency framing);
+  none of the growth is gratuitous.
+
+### New issues spotted (introduced or revealed by this re-review)
+
+- **N1 (LOW) — §3.2 restricted-intact subset row 1 "full slab sweep"
+  reports median 3.24 × 10⁻², but the actual median is 3.187 × 10⁻²
+  (= 3.19 × 10⁻², matching Table 2).** Other rows are similarly
+  slightly off: paper 1.38e-2 vs actual 1.320e-2; paper 8.65e-3 vs
+  actual 8.248e-3; paper 4.37e-3 vs actual 4.173e-3. The paper's
+  "Median gap" column is internally consistent with its "Median δ"
+  column (log10(3.74/δ) ≈ gap), but both are ~1.5% higher than the
+  direct medians. Suspected cause: paper computes median gap first
+  then back-derives median δ as 3.74/10^median_gap, a non-standard
+  statistic the column header does not flag. Severity LOW; values
+  are within 2 sf of each other and do not affect the headline.
+
+### Spot-checked numbers (mine vs claimed)
+
+- Table 1 anchors (ρ=2900 kg/m³): 7.75e-5 / 4.34e-4 / 3.52e-2 / 0.176 /
+  1.189 / 2.378 / 9.176 — all match paper exactly ✓
+- Per-anchor gap to 3.74 m: 4.68 / 3.94 / 2.03 / 1.33 / 0.50 / +0.20
+  / −0.39 orders — all match paper exactly ✓
+- Table 2 (slab): n=360, median 3.187e-2 (paper 3.19e-2), max 7.847e+1
+  (paper 7.85e+1), 35 above 4m (paper 30). Actually re-checked: 30
+  above 4m. My Python earlier 35 must have been a parsing artefact;
+  the 30 number is correct. ✓
+- Table 2 (damaged d=0.7): median 2.514e-1, max 6.191e+2, 78 above 4m
+  — match paper (2.51e-1, 6.19e+2, 78) ✓
+- Restricted-intact subset: 0/120 in headline-intact subset ✓
+- Table 4 Tranquillitatis intact (L=300, h=26, E=50, d=0, ρ=2900):
+  0.0352 m ✓
+- Table 4 Tranquillitatis severe damage (d=0.7): 0.278 m ✓
+- Table 4 Marius Hills wider rille d=0.3 (L=500, h=26, E=10): 2.684 m ✓
+- Verifier evidence: all 7 anchors PASS T5 ±5% at both ρ=2900 and
+  ρ=3000; max error 3.48% (anchor 2, ρ=2900), max error 1.10% (anchor
+  3, ρ=3000) ✓
+
+### Reproducibility (carried forward from session 67; unchanged)
+
+- 4 verifier JSON files span 2026-09-27 to 2026-10-05 (sessions 8 days
+  apart). All 4 produce byte-identical JSON payloads → verifier is
+  genuinely deterministic, not just claimed to be.
+- No independent re-run by anyone other than the author (project is
+  solo).
+- 2,880-row CSV is byte-deterministic: re-running sweep.py produces
+  identical bytes.
+
+### Downgrade recommendation
+
+- No confidence-tier downgrade warranted (no tier labels in the paper;
+  the only "headline" claim is the orders-of-magnitude band and it is
+  now defensible).
+- One residual HIGH issue (B2 14-DTM framing) requires a 1-sentence
+  fix in abstract L14 / §1.3 L70 / §4.1 L312 / §5.1 L364 / Table 3
+  caption L275.
+- One LOW issue (N1 §3.2 median δ values off by ~1.5%) optional.
+
+**Verdict rationale.** The headline orders-of-magnitude claim (the
+load-bearing claim) is now defensible — B1 and B3 fully resolved; B2
+has a residual numerical inconsistency that is fully disclosed and
+does not affect the 1–5 order claim. The deferred O4–O9 objections
+are minor cosmetics that fit the SOUND-WITH-OBJECTIONS category but
+do not block submission. The paper can ship after the 1-sentence B2
+fix; ideally also after the §3.2 median δ recomputation.
+
+— skeptic, session 69, 2026-10-05

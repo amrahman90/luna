@@ -86,24 +86,87 @@ Sites in this regime:
 
 Per the v5 conventions §5 ("3× sag-band RMS ⇒ only A≥4 m single-DTM
 detectable"), the single-DTM detection floor for WP2's sag detector
-is **4 m at most sites** (5 m at MARIUSPIT01 specifically, given its
-higher sag-band noise from rille walls). Reconciliation against the
-forward model:
+spans **2.30 m (FECNDITATS2 — quiet mare) to 4.39 m (GRUITHUIS17 —
+rille-adjacent)** across the on-disk DTM transfer set, with median
+**3.31 m** (`data/outputs/wp0_kriging/per_dtm_floors.csv`, N=21 total rows of which 14 carry valid `local_Amin`; 7 highland/impact-melt rows are skipped because the panel recipe requires ≥4 flat mare panels; `per_dtm_floors_summary.json#median_local_Amin_m`).
+Per-DTM `local_Amin` values are reproduced here for the eight DTMs
+that anchor the v0.5 frozen calibration set:
 
-| Site / regime | Best-case δ (m) | Detector floor (m) | Above floor? |
+| DTM | `local_Amin` (m) | Tier | Notes |
 |---|---|---|---|
-| Tranquillitatis, intact (any L up to 500 m) | 0.04 | 4 | NO (by 5 orders of magnitude) |
-| Tranquillitatis, severe damage (d=0.7, L=300) | 0.7 | 4 | NO (close to 1 m, but not above) |
-| Marius Hills pit (L=65, intact) | 0.0004 | 5 | NO |
-| Marius Hills wider rille (L=300, intact) | 0.18 | 5 | NO |
-| Marius Hills wider rille (L=300, d=0.3) | 0.35 | 5 | NO |
-| Marius Hills wider rille (L=500, d=0.3) | 2.68 | 5 | NO (within 2x) |
-| Ingenii, intact (L=300) | 0.28 | 4 | NO |
-| Pit chain segment (L=300, d=0.6) | 1.67 | 4 | NO (close) |
-| Pit chain segment (L=500, d=0.6) | 12.9 | 4 | **YES (3.2x above floor)** |
-| Sagging rille (L=300, d=0.7) | 1.39 | 4 | NO |
-| Sagging rille (L=500, d=0.5) | 4.83 | 4 | **YES (1.2x above floor)** |
-| Near-collapse (L=500, h=10, E=10, d=0.5) | 4.83 | 4 | **YES** |
+| KINGCRATER2 | 1.97 | good | quiet highland mare fragment |
+| FECNDITATS2 | 2.30 | good | quiet mare, smooth mare baseline |
+| FECUNPIT | 2.57 | good | mare, near-pit |
+| IRIDIUMPIT1 | 2.84 | good | mare rim, topographically gentle |
+| INGENIIPIT | 2.96 | good | rocky-ejecta counter-evidence (Horvath) |
+| TRANQPIT1 | 3.74 | good | v0.5 frozen calibration site |
+| MARIUSPIT01 | 4.14 | good | rille-wall noise inflates floor |
+| GRUITHUIS17 | 4.39 | good | impact-melt + rille fragment |
+
+The headline "4 m" floor in the prior art and gate documents is a
+rounded upward single-number stand-in for this band. Reconciliation
+against the forward model uses the **per-DTM floor** for each
+candidate site.
+
+Reconciliation against the forward model (ρ = 2900 kg/m³ throughout,
+g = 1.62 m/s²; analytical formula δ = ρgL⁴ / (32·E·h²) for the slab,
+× (1 − 0.5·(R/L)²) for the arch, and with E → E(1 − d) and h →
+h(1 − d/2) for cumulative damage):
+
+| Site / regime | L (m) | h (m) | E (GPa) | d | δ (m, formula) | Floor (m) | Above floor? |
+|---|---|---|---|---|---|---|---|
+| Tranquillitatis, intact | 300 | 26 | 50 | 0.0 | **0.0352** | 3.74 | NO (~106× below) |
+| Tranquillitatis, severe damage | 300 | 26 | 50 | 0.7 | **0.278** | 3.74 | NO (~13× below) |
+| Marius Hills pit (floor span) | 65 | 26 | 10 | 0.0 | **3.88 × 10⁻⁴** | 4.14 | NO (~1.07 × 10⁴× below) |
+| Marius Hills wider rille, intact | 300 | 26 | 10 | 0.0 | **0.176** | 4.14 | NO (~24× below) |
+| Marius Hills wider rille, moderate damage | 300 | 26 | 10 | 0.3 | **0.348** | 4.14 | NO (~12× below) |
+| Marius Hills wider rille, moderate damage | 500 | 26 | 10 | 0.3 | **2.684** | 4.14 | NO (~1.5× below) |
+| Ingenii, intact | 300 | 26 | 50 | 0.0 | **0.0352** | 2.96 | NO (~84× below) |
+| Pit chain segment | 300 | 26 | 10 | 0.6 | **0.897** | 3.74 | NO (~4.2× below) |
+| Pit chain segment | 500 | 26 | 10 | 0.6 | **6.925** | 3.74 | **YES (1.85× above)** |
+| Sagging rille | 300 | 26 | 10 | 0.7 | **1.388** | 3.74 | NO (~2.7× below) |
+| Sagging rille | 500 | 26 | 10 | 0.5 | **4.826** | 3.74 | **YES (1.29× above)** |
+| Near-collapse (thin roof) | 500 | 10 | 10 | 0.5 | **32.625** | 3.74 | **YES (8.7× above)** |
+
+**Reconciliation-table provenance** (each row traceable to a CSV
+computation; rows where the prior `regime_summary.md` v0.1 disagreed
+with the formula by >10% are flagged inline below):
+
+1. **Row "Tranquillitatis, intact (any L up to 500 m)"** — prior value
+   `0.04 m` flagged. The figure was a hand-rounded compromise across
+   L=300 m (δ = 0.0352 m) and L=500 m (δ = 0.272 m). Replaced with the
+   explicit L=300 m value `0.0352 m` (CSV
+   `slab,300,26,50,2900,...`); L=500 m gives 0.272 m (still well below
+   the floor — the conclusion is unchanged, only the headline number
+   is corrected).
+2. **Row "Tranquillitatis, severe damage (d=0.7, L=300)"** — prior
+   value `0.7 m` flagged (2.5× above the formula). The 0.7 m figure was
+   a copy-paste artefact. Corrected to `0.278 m` (CSV
+   `damaged_d0.7,300,26,50,2900,...`).
+3. **Row "Ingenii, intact (L=300)"** — prior value `0.28 m` flagged
+   (8× above the formula with the densest-basalt assumption). The 0.28
+   m figure does not match E=50, h=26 (which gives 0.0352 m, the
+   "max-span intact" canonical anchor) nor E=10, h=26 (which gives
+   0.176 m). Corrected to the canonical `0.0352 m` for Ingenii's dense
+   basalt (Costello et al. 2026 site protolith analysis). The same
+   result also matches the v5 F1 "max-span intact rock" anchor to
+   0.30%.
+4. **Row "Pit chain segment (L=300, d=0.6)"** — prior value `1.67 m`
+   flagged (3.7× above the formula with E=20, h=26; within rounding
+   of `1.52 m` with E=10, h=20). Corrected to the canonical pit-chain
+   `(L=300, h=26, E=10, d=0.6)` combination ⇒ `0.897 m` (CSV
+   `damaged_d0.6,300,26,10,2900,...`).
+5. **Row "Pit chain segment (L=500, d=0.6)"** — prior value `12.9 m`
+   flagged (1.9× above the formula with h=26, E=10). Corrected to
+   `6.925 m` (CSV `damaged_d0.6,500,26,10,2900,...`).
+6. **Row "Sagging rille (L=500, d=0.5)"** — prior value `4.83 m` is
+   correct as stated but the parameter triple was implicit; now made
+   explicit `(L=500, h=26, E=10, d=0.5)` with CSV reference
+   `damaged_d0.5,500,26,10,2900,...`.
+7. **Row "Near-collapse (L=500, h=10, E=10, d=0.5)"** — prior value
+   `4.83 m` flagged (6.8× below the formula). This was a duplicate of
+   row 6. Corrected to `32.625 m` (CSV
+   `damaged_d0.5,500,10,10,2900,...`).
 
 **Key observation**: intact elastic flexure of competent basalt is
 **always** below the detection floor by 3-5 orders of magnitude.
@@ -114,25 +177,28 @@ Detection requires BOTH:
 
 **At most sites the forward model says: detection is implausible from
 elastic flexure alone. Only the near-collapse regime produces signals
-above the floor.** This is the strongest honest claim the model
-supports.
+above the per-DTM floor band (2.30–4.39 m).** This is the strongest
+honest claim the model supports.
 
-## Conclusion for Paper 1 §1.2
+## Conclusion for Paper 1 §1.3
 
 The detectable signal is NOT elastic flexure of intact rock. It IS
 cumulative damage in the near-collapse regime (thin roofs, wide spans,
 damaged rock). **Marius Hills** sits closer to the detection
 threshold than **Tranquillitatis** (which is essentially undetectable
 by elastic flexure alone, even at the largest plausible spans with
-intact rock). **Ingenii** sits in the intermediate regime (intact
-dense basalt, plausible roof thickness, large span possible but
-not demonstrated).
+intact rock) because the plausible Marius morphometry is vesicular
+protolith (E ~ 10 GPa) and a wider-rille segment interpretation (L
+≥ 400 m) — the *catalogued pit floor span* alone (L ≈ 65 m) is below
+the floor by ~10⁴. **Ingenii** sits in the intermediate regime
+(intact dense basalt, plausible roof thickness, large span possible
+but not demonstrated).
 
 The forward model therefore defines the **targeting criterion** for
-WP1-WP3: search where the forward model says detection is plausible,
+WP1–WP3: search where the forward model says detection is plausible,
 i.e. wide-span degraded roof segments in or near pit chains and
-rille-wall failures — NOT the catalogued pits, which mostly sit in
-the intact-competent regime below the detection floor.
+rille-wall failures — NOT the catalogued pits themselves, which sit
+in the intact-competent regime below the detection floor.
 
 ## Acceptance check vs dispatch criteria
 
