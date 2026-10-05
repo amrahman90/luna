@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-05 — PDF conversion v1: project overview + WP0.5 paper draft as self-contained PDFs
+
+**Why this matters**: The cold-outreach calendar (Sep 30 – Oct 4, Tier 1 + Tier 2 = 10 emails) has just closed; `project_overview_v1.pdf` is the cold-email attachment that should have gone out with the batch. `wp0_5_paper_draft_v1.pdf` is the arXiv/ESS Open Archive submission package; the user does the actual upload (rule 5) but the PDF must be ready when they do. Both PDFs are self-contained (no external CSS, no font bloat), small (31 KB / 165 KB), and printable on A4.
+
+**What shipped** (3 new files, all untracked → tracked):
+- `admin/outreach/project_overview_v1.pdf` — 2 pages, 31 KB, 596-word 1-page project summary rendered in DejaVu Serif; for cold-email attachment
+- `papers/wp0_5_paper_draft_v1.pdf` — 28 pages, 165 KB, 10,610-word preprint (Abstract → §5.3 → Acknowledgements → References → Appendix A → Appendix B); all sections verified via pdftotext; LaTeX math shown as `$...$` text (acceptable for preprint; journal-submission LaTeX pass deferred)
+- `code/wp0_5_paper_draft/pdf_convert.py` — 190-line conversion pipeline (markdown → HTML via python-markdown → PDF via weasyprint); takes a JOBS table at top of file; uses academic-letter CSS template (A4, 25 mm margins, 11 pt serif, page numbers, table styling); 6 DejaVu font subsets embedded
+
+**Pipeline details**:
+- python-markdown 3.5.2 + weasyprint 70.0 (no LaTeX, no pandoc — all HTML→PDF)
+- Markdown extensions: tables, fenced_code, sane_lists (for the 66-row GFM tables in the paper)
+- PDF size is small (31 KB / 165 KB) because no raster images, no scanned pages, no font bloat — a quality positive for cold-email attachment and arXiv upload
+
+**Gaps surfaced for future sessions** (deferred):
+- LaTeX conversion of `wp0_5_paper_draft_v1.md` for journal submission (RSE/ISPRS require LaTeX; arXiv accepts both PDF and source)
+- PDF generation of the research statement + preprint abstract for additional cold-email angles
+- Word count trim (paper is 10,610 words; RSE/ISPRS target 6,000-8,000; defer the O4-O9 polish pass)
+
+**No secrets, no MANIFEST additions** (writing + tooling session; no new data acquisitions).
+
 ## 2026-10-05 — WP0.5 paper draft v1 ready for arXiv/ESS submission
 
 **Why this matters**: This is the first formal publication deliverable for the LUNARVOID project. The paper is the citable artifact for cold-outreach emails, the portfolio piece for PhD applications, and the formal record of WP0.5's roof-deformation forward model. It also documents the F1 critical finding (roof-sag signal sub-floor by 1-5 orders) that emerged from the v5 review and was modeled in WP0.5.
