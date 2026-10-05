@@ -3,6 +3,65 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-05 — LUNAWEB portal content refresh v1 (WP0.5 + post-R3 updates, no push)
+
+**Why this matters**: The LUNARVOID Portal's content stratum had been frozen at the R3 terminal report (2026-09-12, 58 sessions). Everything since — the WP0.5 forward-model falsification test, the 10,610-word paper draft, the 4-panel deflection figure, the 7/7 anchor reproduction, the 2,880-row sweep, the per-DTM floor band 1.97-4.39 m, the outreach kit — was absent from the public surface. The Portal is the artifact the user shows to PhD-application faculty and cold-email recipients; the WP0.5 F1 finding ("intact-roof sag δ sub-floor by 1-5 orders") is the strongest possible evidence for the Portal's epistemic thesis ("we do not detect, we infer"), and it is now first-class on every relevant surface.
+
+**What shipped** (1 plan file + 2 commits; archivist = sole committer; nothing pushed):
+- `01_WORKSPACE/plans/2026-10-05_LUNAWEB_PORTAL_CONTENT_REFRESH_PLAN_v1.md` — detailed plan (design principles, file-by-file change list, number-provenance table, execution sequence, acceptance criteria, risks)
+- **luna-web submodule** (commit 1, 13 modified + 1 new = 14 files, +360/-47):
+  - `src/lib/lunarvoid-data.ts` — `PROGRAM_RECORD.frozenAsOf` → 'WP0.5 paper draft v1 · 2026-10-05'; `sessionsRun` 58 → 70; added `WP05_RECORD` (3 regimes, 2880-row sweep, floor band 1.97-4.39 m, median 3.31 m, 7/7 anchors ≤3.48%, gap 1-5 orders, median restricted-intact 2.95, honest exceptions verbatim); `GATES` and other frozen numbers UNCHANGED
+  - `src/lib/knowledge.ts` — new dossier 'WP0.5 Forward Model / F1 Sub-Floor Finding' under Concepts & Methods MOC; `DOSSIER_COUNT` 20 → 21; moc-sessions "58" → "70"
+  - `src/lib/registry-export.ts` — JSON export now embeds `wp05` block alongside `program_record`
+  - `src/components/sections/HeroSection.tsx` — new MET-05 metric card (WP0.5 forward model); mission paragraph amended with F1-aware framing; ribbon +WP0.5 marker; text-only preprint teaser (no link)
+  - `src/components/sections/EpistemicThesis.tsx` — PL-01 body amended with F1 exhibit; new ledger row "Forward-model falsification (WP0.5)" in the Calibrated Standard column; PL-03 session count 58 → 70
+  - `src/components/sections/GatesJourneySection.tsx` — 5th JOURNEY card "WP0.5 · 2026-10-05 · Forward-model falsification test"; new WP0.5 stats panel (6 stat tiles) below FROZEN_STATS; 4-panel `deflection_4panel.png` embedded with full caption
+  - `src/components/sections/TheorySection.tsx` — morphometry card body amended with F1 caveat (intact-roof sag sub-floor; only widest-span thin-roof approaches single-DTM claimability); GRAIL naming was already consistent
+  - `src/components/layout/Footer.tsx` — GRAIL GRGM1200A "Degree-680" → GRAIL GL1200A "Degree-1200 spherical harmonic solution" (unification fix)
+  - `src/components/layout/Header.tsx` — 4th telemetry chip "WP0.5 · SAG SUB-FLOOR 1–5 ORD" (xl-only to prevent overflow at smaller breakpoints)
+  - `src/lib/__tests__/program-record.test.ts` — new `WP05_RECORD` test block (6 new tests: paper status, floor band, anchors, gap orders, honest exceptions, 2.95 restricted-intact pin); updated sessionsRun, frozenAsOf, BUDGET_LEDGER session-count pins
+  - `src/lib/__tests__/registry-export.test.ts` — new wp05 JSON-export pin
+  - `README.md` — "Footer (BibTeX + provenance)" → "Footer (frozen-stats line + provenance; BibTeX lands with arXiv DOI)"
+  - `docs/ROADMAP.md` — status table test count 67 → 74; new Phase-5 WP0.5 entry
+  - `public/figures/deflection_4panel.png` (NEW, 388 KB) — copy of `01_WORKSPACE/code/wp0_5_deflection/figures/deflection_4panel.png`
+- **parent repo** (commit 2): submodule pointer bump + this plan file + this CHANGELOG entry
+
+**Number provenance (every value in the new copy traces to a frozen evidence file)**:
+- 70 sessions = max numbered "execution session N" in CHANGELOG (68, 2026-09-27) + 2 dated 2026-10-05 entries
+- 2880 sweep rows = `data/outputs/wp0_5_deflection/sweep_results.csv` row count
+- 1.97-4.39 m / median 3.31 m / n=14 = `data/outputs/wp0_kriging/per_dtm_floors_summary.json` (KINGCRATER2 1.97 m lower-bound outlier)
+- 7/7 anchors ≤3.48% (ρ=2900) / ≤1.10% (ρ=3000) = `admin/verification_evidence/scripts/verify_wp0_5_deflection_20260928T151915Z.json` (all_pass: true)
+- 1-5 orders gap / 2.95 median restricted-intact = `papers/wp0_5_paper_draft_v1.md` §3.1-3.3 (B2-consistent: band always 1.97-4.39, NEVER 2.30)
+- FP 3.74 [1.71, 7.10] = frozen R3 value, UNCHANGED
+- Preprint status text = `papers/wp0_5_paper_draft_v1.md` exists locally; arXiv not yet submitted
+
+**Frozen fields audit**: GATES array (3 entries, dates 2026-08-21/22/24, all FINAL-PASS, all $0 spend) — UNCHANGED. FP row rate 3.74, unique 2.08, registry 278 (117+161), tiers A 0 / B 0, 21/649 DTMs, 24,063 km², v5 run B F1 0.824, PU baseline P 0.90/R 0.8182/AUC 0.8968 — all UNCHANGED. The ONLY frozen-record field that moved is `PROGRAM_RECORD.frozenAsOf` (the freeze-point label, by design).
+
+**Claim discipline audit** (grep):
+- Forbidden phrases ("detected a lava tube", etc.) — 0 hits in src/ (one false positive in test file: it's a `not.toMatch` guard, not a real claim)
+- External paper links (arxiv.org, doi.org) — 0 (text-only teaser, by user decision)
+- Contact email in footer — 0 (no contact line, by user decision)
+- B2 regression check (2.30-4.39 m) — 0 hits
+- F1 sub-floor phrasing — 9 hits across 4 surfaces (hero, thesis, gates, knowledge)
+- Two-floors labels (per-DTM vs single-DTM claimability) — 12 hits, all properly distinguished
+- 7/7 vs 7/8 — 13 hits, all explicitly labeled with the distinction (7/8 = Z2 pit recovery, 7/7 = WP0.5 anchor reproduction)
+
+**Review chain** (orchestrator did geo-coder + verifier-equivalent directly because luna-web is outside geo-coder's edit scope — routing note: geo-coder is scoped to 01_WORKSPACE/code/** and 01_WORKSPACE/data/outputs/** only):
+- Gate (5/5 green): lint 0 errors (7 pre-existing warnings in untouched files), typecheck 0 errors, test 74/74 passing (was 67/67; +7 new pins), format:check clean, build succeeded (~1.1s, 488 KB main chunk gzip 153 KB)
+- Diff-scope audit: only `frozenAsOf` label changed in the frozen-record; all other R3 numbers byte-identical
+- Tests confirm WP05_RECORD fields; honest-exception string contains the verbatim "L=500 m, h=10 m, E=10 GPa: delta=9.18 m" disclosure
+
+**User actions** (NOT performed by orchestrator/archivist — user-driven):
+- Push luna-web main → GH Actions auto-deploys to `https://ahnaf181419.github.io/luna-web/`. Live checks: MET-05 chip, WP0.5 journey card, dossier count 21, gates-tab WP0.5 stats panel + figure
+- Push parent master (8 commits ahead of origin/master) whenever ready; the WP0.5 paper PDF + outreach kit + portal-refresh plan become public
+- Push order is independent — a deliberate benefit of the text-only-teaser decision (no portal link depends on the paper being public)
+
+**Gaps surfaced for future sessions** (deferred):
+- arXiv DOI + BibTeX (needs the user to actually submit to arXiv/ESS)
+- Synced paper §1.2 reframe for journal submission (RSE/ISPRS); LaTeX conversion; O4-O9 paper polish
+- Portal contact line (deferred per user decision)
+- Luna-web tests at 67 → 74 reflect the new pins; the underlying LUNARVOID repo test count (124, frozen) is unchanged
+
 ## 2026-10-05 — PDF conversion v1: project overview + WP0.5 paper draft as self-contained PDFs
 
 **Why this matters**: The cold-outreach calendar (Sep 30 – Oct 4, Tier 1 + Tier 2 = 10 emails) has just closed; `project_overview_v1.pdf` is the cold-email attachment that should have gone out with the batch. `wp0_5_paper_draft_v1.pdf` is the arXiv/ESS Open Archive submission package; the user does the actual upload (rule 5) but the PDF must be ready when they do. Both PDFs are self-contained (no external CSS, no font bloat), small (31 KB / 165 KB), and printable on A4.
