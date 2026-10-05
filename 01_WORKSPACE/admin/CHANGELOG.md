@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-05 — WP0.5 paper draft v1 ready for arXiv/ESS submission
+
+**Why this matters**: This is the first formal publication deliverable for the LUNARVOID project. The paper is the citable artifact for cold-outreach emails, the portfolio piece for PhD applications, and the formal record of WP0.5's roof-deformation forward model. It also documents the F1 critical finding (roof-sag signal sub-floor by 1-5 orders) that emerged from the v5 review and was modeled in WP0.5.
+
+**What shipped** (one new file, four modified):
+- `papers/wp0_5_paper_draft_v1.md` — ~10,400 words main text (Abstract→§5.3→Acknowledgements→References→Appendix A→Appendix B); structured per skeptic's relocation (§1.3/§5.1); restricted-intact subset (§3.2); 7-canonical-anchor verification (§3.1 Table 1 with per-anchor gap table); per-DTM floor band 1.97-4.39 m, median 3.31 m (§3.3); heuristic-caveat on damage parameterization (§2.1.3); detection-floor convention disclosure (Table 3 caption)
+- `data/outputs/wp0_5_deflection/regime_summary.md` — table fix: 7 of 12 reconciliation rows corrected by reading `sweep_results.csv` directly; each fix documented inline with CSV row reference; "4 m" framing replaced with per-DTM band 1.97-4.39 m
+- `notes/findings.md` — appended session 67 (initial review: UNSOUND, 3 BLOCKERs) and session 69 (re-review: SOUND-with-objections, B2 residual + N1 minor); preserves the audit trail
+- `admin/verification_evidence/scripts/verify_wp0_5_deflection_20260928T151915Z.json` — verifier re-run evidence; PASS 7/7 (ALL OK) at ρ=2900 (max 3.48%) and ρ=3000 (max 1.10%); byte-identical to prior 4 runs
+- `admin/CHANGELOG.md` — this entry
+
+**Review chain** (geo-coder → verifier → skeptic → fixes → verifier → skeptic → fixes → commit):
+- Geo-coder: built three-regime forward model, 2,880-row sweep, 4-panel figure
+- Verifier (initial): PASS-with-notes (6/12 table rows disagreed; word count 8,933)
+- Skeptic (initial): UNSOUND — 3 BLOCKERs: (B1) "3-5 orders" over-claimed by ~2×; (B2) band 2.30-4.39 m vs 1.97-4.39 m inconsistent; (B3) intact-basalt claim contradicted by 30/360 sweep
+- Paper-writer fix pass 1: B1, B2, B3 + 3 high-severity objections addressed
+- Verifier (re-check): FAIL — L30 missed + gap table parameter triples inconsistent with Table 1
+- Paper-writer fix pass 2: L30 + gap table alignment
+- Skeptic (re-review): SOUND-with-objections — B1, B3, O1, O2, O3 SOLVED; B2 residual HIGH (13-DTM lower bound with 14-DTM median); N1 LOW (back-derived medians)
+- Paper-writer fix pass 3: B2 residual + N1 addressed
+- Archivist: commit (this session)
+
+**Gaps surfaced for future sessions** (deferred from this draft):
+- O4-O9 from skeptic's initial review (R/L=0.2 sensitivity table, d=0.3 asterisk in Table 4, §5.1 redundant restatement, FP per 10⁴ km² derivation, Kelahan 2026 note, word count trim) — quality-of-paper issues, not claim-strength
+- Preprint upload to arXiv/ESS Open Archive (separate session; ~30-60 min)
+- Paper §1.2 reframe for journal submission (RSE/ISPRS, Icarus — different framing than the preprint)
+- Conversion of Markdown → LaTeX for journal submission
+- Integration with `paper2_inference_main.md` (the inference framework paper, which this paper is "companion to")
+
+**No secrets, no MANIFEST additions** (writing + table-fix session; no new data acquisitions).
+
 ## 2026-09-27 (execution session 68 — Outreach prep batch: research statement + preprint abstract + project overview + cold-outreach kit)
 
 - **Why this matters**: PhD applications for Sept 2027 intake have Dec/Jan 2026-27 deadlines (~3-4 months away). The cold-outreach cycle (relationship building for letters of recommendation) must START NOW: faculty need 2-3 months of relationship + a 3-4 week pre-deadline letter-writing window. Pre-empt the LETTER bottleneck — currently the largest single risk in the PhD-application critical path for a solo CSE student with no PI.
