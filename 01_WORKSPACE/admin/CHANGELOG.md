@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-13 — LUNAWEB Atlas header-row bug fix (user-reported; no push)
+
+**Why this matters**: The user reported the Atlas table's six column headers rendering stacked vertically — and was right. `collar-ribbon` (a display:flex utility) on the `<th>` cells pulled them out of table-cell layout in Chromium: a real defect shipped on the live site since the Phase-1 migration. The earlier audit missed it because its header checks were indirect (heights/line-counts, not positions); the user's report plus a position-level geometry probe caught it.
+
+**What shipped** (luna-web commit `bab24c9` on main, UNPUSHED):
+- TableHead: `collar-ribbon` → `label-mono` (same look, no display override) + `whitespace-nowrap`
+- Regression pin in `App.test.tsx` forbidding display-changing utilities on `thead th`
+- The interim nowrap-only commit `e13c1f7` addressed a misdiagnosis and was reset away per user instruction — it no longer exists in luna-web history; this parent commit moves the recorded pointer e13c1f7 → `bab24c9`
+
+**Verification**: geometry probe at 1280 px and 390 px — one horizontal header row, `table-cell` display, left-to-right order restored; gate green (lint / typecheck / tests 85 → **86** / build); screenshots `.playwright-mcp/atlas-fixed-{1280,390}.png`.
+
+**User actions**: push luna-web main (deploys GH Pages); push parent master (this bookkeeping commit).
+
+**No MANIFEST additions** (no data acquisitions).
+
 ## 2026-10-13 — LUNAWEB audit fix batch (copy currency + a11y + social meta; no push)
 
 **Why this matters**: A full portal audit (impeccable + ponytail-audit + Web Interface Guidelines, plus live-deploy verification against `https://ahnaf181419.github.io/luna-web/`) confirmed the data layer is fully current, but caught one shipped copy defect — a stale literal "58-session journey" in the ⌘K CommandPalette gates subtitle, live on the deployed site while the record stands at 70 — plus accessibility and social-preview gaps on the public artifact the user shows to faculty and cold-email recipients.

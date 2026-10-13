@@ -26,8 +26,8 @@
 | Zenodo CHECKSUMS | 10/10 verified |
 | Disk | ≥40 GB free on `/` required |
 | Spend | $0 across all sessions; $150 budget cap; $800 master-plan ceiling |
-| Git sync (2026-10-13) | Both repos pushed/in-sync earlier this session at parent `b0cddee` / luna-web `4fafdb1`; now luna-web main **ahead 1** (`66da963` audit fix batch) + parent ahead by this bookkeeping commit — both pushes user-gated |
-| Portal (luna-web) | luna-web @ `e13c1f7` — header nowrap polish + `66da963` audit fix batch (copy currency, a11y naming, social meta, dep hygiene); tests 85/85 |
+| Git sync (2026-10-13) | Both repos pushed/in-sync earlier this session at parent `b0cddee` / luna-web `4fafdb1`; now luna-web main **ahead 2** (tip `bab24c9` — audit fix batch + Atlas header-row fix) + parent ahead by this bookkeeping commit — both pushes user-gated (luna-web push deploys GH Pages) |
+| Portal (luna-web) | luna-web @ `bab24c9` — Atlas header-row stacking fix (user-reported: `collar-ribbon` display:flex on `th` broke table-cell layout → `label-mono` + nowrap, + regression pin) atop the audit fix batch (copy currency, a11y naming, social meta, dep hygiene); tests 86/86 |
 
 ## 2. Resume protocol (6 steps)
 
@@ -41,7 +41,7 @@
 ## 3. User-gated items (R3 §11 — per protocol stop conditions, do NOT auto-start)
 
 - **(a)** Step 8.3/8.4: TRANQPIT1 local ASP reproduction (history: session-58 audit verdict "not completed locally; no output DTM exists"; session-65 chain now runs end-to-end — retry is infrastructure-ready).
-- **(f)** Push sync: prior pushes DONE (parent master pushed after the 2026-10-05 date-rewrite, in sync at `b0cddee`; luna-web main pushed at `4fafdb1`, timeline live). NEW pending: luna-web `git push` main (`66da963` audit fix batch — deploys to GH Pages); parent master push of this bookkeeping commit.
+- **(f)** Push sync: prior pushes DONE (parent master pushed after the 2026-10-05 date-rewrite, in sync at `b0cddee`; luna-web main pushed at `4fafdb1`, timeline live). NEW pending: luna-web `git push` main (tip `bab24c9` — audit fix batch + Atlas header-row fix; deploys to GH Pages); parent master push of this bookkeeping commit.
 - **(g)** arXiv/ESS preprint upload of `papers/wp0_5_paper_draft_v1.pdf` (submission-ready; user does the upload).
 - **(b)** Step 19.1/19.2 + NAC IMG-byte-signature fetch pipeline (Tier-0 budget eligible; would be first WP0 reproduction since cycle 2 close).
 - **(c)** P6.0–P6.8: Hetzner AX52 rental (~$55/mo; needs credentials + provider choice).
