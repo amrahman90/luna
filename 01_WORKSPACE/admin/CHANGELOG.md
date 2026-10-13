@@ -3,6 +3,25 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-13 — LUNAWEB audit fix batch (copy currency + a11y + social meta; no push)
+
+**Why this matters**: A full portal audit (impeccable + ponytail-audit + Web Interface Guidelines, plus live-deploy verification against `https://ahnaf181419.github.io/luna-web/`) confirmed the data layer is fully current, but caught one shipped copy defect — a stale literal "58-session journey" in the ⌘K CommandPalette gates subtitle, live on the deployed site while the record stands at 70 — plus accessibility and social-preview gaps on the public artifact the user shows to faculty and cold-email recipients.
+
+**What shipped** (luna-web submodule, commit `66da963` on main, UNPUSHED):
+- Palette gates subtitle now derives from `PROGRAM_RECORD.sessionsRun` (with a regression pin) — no more hand-maintained session literal
+- a11y: 3 calculator sliders named via a ref shim (vendored `ui/slider.tsx` untouched); placeholder-only inputs and icon-only buttons now aria-labelled; skip link + `main#main` added
+- Atlas "Inspect" button owns its onClick (previously worked only via row-click bubbling)
+- WP0.5 figure `<img>` given intrinsic dimensions (2079×1499) — kills the CLS
+- Social meta: `og:image` + `og:url` + `twitter:image` + canonical (was `twitter:card summary_large_image` with no image)
+- `import.meta.dirname` in `vitest.config.ts`; FontThemeToggle lazy-init (drops one lint warning); `npm audit fix` + in-range dep refresh (0 vulnerabilities now; source-map-js HIGH was build-chain only)
+- `docs/ROADMAP.md` internal truth pass (67→79 tests in metrics table, stale "not yet pushed" note, 2 vs 8 lint warnings)
+
+**Verification**: gate all green — lint 0 errors (7 known warnings), typecheck 0, tests 79 → **85/85** (9 files), build ok 909 ms; browser-verified on the built site (palette copy, slider names, skip link, meta tags, 0 console errors). No frozen portal field changed; sessionsRun stays 70 (portal tooling is outside research-session numbering per refresh-v1 convention).
+
+**User actions**: push luna-web main `66da963` (deploys GH Pages) — user-gated; push parent master (this bookkeeping commit) — user-gated.
+
+**No MANIFEST additions** (no data acquisitions).
+
 ## 2026-10-13 — Post-timeline bookkeeping: RESUME refresh + stray-deliverable commits + luna-web ROADMAP
 
 **Why this matters**: After the timeline session, state docs and the repo ledger had drifted: RESUME.md was frozen at session 64 (2026-09-13), luna-web docs/ROADMAP.md pinned 74 tests (now 79), and three legitimate deliverables from earlier sessions sat untracked.

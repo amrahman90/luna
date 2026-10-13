@@ -9,7 +9,7 @@
 
 ---
 
-## 1. Frozen state (verified 2026-10-13, HEAD `a881c2d`)
+## 1. Frozen state (verified 2026-10-13, HEAD `b0cddee` + this bookkeeping commit)
 
 | Item | Value |
 |---|---|
@@ -26,8 +26,8 @@
 | Zenodo CHECKSUMS | 10/10 verified |
 | Disk | ≥40 GB free on `/` required |
 | Spend | $0 across all sessions; $150 budget cap; $800 master-plan ceiling |
-| Git sync (2026-10-13) | parent master **ahead 5 / behind 4** (2026-10-05 history date-rewrite → push needs `--force-with-lease`); luna-web main ahead (22-step timeline batch, not pushed) |
-| Portal (luna-web) | 22-step dateless build timeline on Gates & Journey tab (commit `09b31a1`); tests 79/79 |
+| Git sync (2026-10-13) | Both repos pushed/in-sync earlier this session at parent `b0cddee` / luna-web `4fafdb1`; now luna-web main **ahead 1** (`66da963` audit fix batch) + parent ahead by this bookkeeping commit — both pushes user-gated |
+| Portal (luna-web) | luna-web @ `66da963` — audit fix batch (copy currency, a11y naming, social meta, dep hygiene); tests 85/85 |
 
 ## 2. Resume protocol (6 steps)
 
@@ -41,7 +41,7 @@
 ## 3. User-gated items (R3 §11 — per protocol stop conditions, do NOT auto-start)
 
 - **(a)** Step 8.3/8.4: TRANQPIT1 local ASP reproduction (history: session-58 audit verdict "not completed locally; no output DTM exists"; session-65 chain now runs end-to-end — retry is infrastructure-ready).
-- **(f)** Push sync: parent master `git push --force-with-lease origin master` (history date-rewrite 2026-10-05); luna-web `git push` main (deploys the timeline + ROADMAP batch to GH Pages).
+- **(f)** Push sync: prior pushes DONE (parent master pushed after the 2026-10-05 date-rewrite, in sync at `b0cddee`; luna-web main pushed at `4fafdb1`, timeline live). NEW pending: luna-web `git push` main (`66da963` audit fix batch — deploys to GH Pages); parent master push of this bookkeeping commit.
 - **(g)** arXiv/ESS preprint upload of `papers/wp0_5_paper_draft_v1.pdf` (submission-ready; user does the upload).
 - **(b)** Step 19.1/19.2 + NAC IMG-byte-signature fetch pipeline (Tier-0 budget eligible; would be first WP0 reproduction since cycle 2 close).
 - **(c)** P6.0–P6.8: Hetzner AX52 rental (~$55/mo; needs credentials + provider choice).
@@ -95,6 +95,7 @@ done
 - **s65–68** (2026-09-14→27): NAC stereo chain runs end-to-end locally (LDEM/LSK fix; bundle_adjust root-caused); 3 homemade DEMs FAIL quality vs published — attributed to 0.5° convergence geometry, not bugs; VERIFIED-BYTE NAC anaglyph; 28/28 NAC EDRs fetched; WP0.5 roof-deflection forward model (3 regimes, 2,880-row sweep, 7/7 anchors ≤3.48%); outreach kit; commit-policy rule 5 update.
 - **s69–70 + portal (2026-10-05)**: WP0.5 paper draft v1 (10,610 words, full skeptic chain, SOUND-with-objections resolved); PDF conversions (weasyprint); LUNAWEB portal refresh v1 (WP0.5 first-class, tests 67→74); commit dates of 2 session commits rewritten to 2026-10-04 at user direction (origin now diverged).
 - **s72 timeline (2026-10-13)**: LUNAWEB 22-step dateless build timeline on the Gates & Journey tab (user decisions: all rows, no dates, expand journey block); tests 74→79; plan + figures committed; ROADMAP/RESUME/stray-files bookkeeping (this update).
+- **s73 portal audit (2026-10-13)**: full luna-web audit (3 skills + live check); data layer verified current; 1 shipped stale literal fixed with regression pin; a11y/social/dep fixes; tests 85; ROADMAP truth pass.
 
 ## 6. Permissions in effect (`.gitignore` + role split)
 
