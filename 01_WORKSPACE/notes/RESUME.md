@@ -27,7 +27,7 @@
 | Disk | ≥40 GB free on `/` required |
 | Spend | $0 across all sessions; $150 budget cap; $800 master-plan ceiling |
 | Git sync (2026-10-13) | Both repos pushed/in-sync earlier this session at parent `b0cddee` / luna-web `4fafdb1`; now luna-web main **ahead 1** (`66da963` audit fix batch) + parent ahead by this bookkeeping commit — both pushes user-gated |
-| Portal (luna-web) | luna-web @ `66da963` — audit fix batch (copy currency, a11y naming, social meta, dep hygiene); tests 85/85 |
+| Portal (luna-web) | luna-web @ `e13c1f7` — header nowrap polish + `66da963` audit fix batch (copy currency, a11y naming, social meta, dep hygiene); tests 85/85 |
 
 ## 2. Resume protocol (6 steps)
 
