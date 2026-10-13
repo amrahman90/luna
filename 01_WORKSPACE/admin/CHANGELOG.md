@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-13 — Post-timeline bookkeeping: RESUME refresh + stray-deliverable commits + luna-web ROADMAP
+
+**Why this matters**: After the timeline session, state docs and the repo ledger had drifted: RESUME.md was frozen at session 64 (2026-09-13), luna-web docs/ROADMAP.md pinned 74 tests (now 79), and three legitimate deliverables from earlier sessions sat untracked.
+
+**What shipped**:
+- `notes/RESUME.md` — refreshed to 2026-10-13 state: HEAD a881c2d (registry md5 re-verified unchanged), git-sync divergence row (parent ahead 5/behind 4 from the date-rewrite; luna-web ahead), user-gates (f) push-sync and (g) arXiv upload added, recent-decisions s65–s72 appended, deviation-log entry 6 (C12 cost-phrase amend of the unpushed timeline tip).
+- Strays now TRACKED (were untracked, pre-existing): `00_SOURCE_ORIGINALS/LUNARVOID_v5_Review_Report.txt` (v5 critical review — the F1-finding source cited by the portal data layer; 7 sibling archive files already tracked), `admin/verification_evidence/scripts/verify_wp0_5_deflection_20261005T081813Z.json` (Oct-5 verifier re-run, 7/7 PASS — same evidence class as the tracked 20260928 record), `admin/visual_inspection_verdicts.template.txt` (the D2 verdict-capture form, "awaiting user entry").
+- `luna-web/docs/ROADMAP.md` — status header 2026-10-05→2026-10-13; tests 74→79 (+5 TIMELINE pins); Phase-5 item 3 documents the timeline batch (commit 09b31a1).
+
+**Verification**: registry md5 re-hashed unchanged; luna-web format:check PASS (docs-only change, no code touched); no frozen portal field changed; sessionsRun stays 70 (frozenAsOf label governs — portal sessions don't advance the research-session count, matching the refresh-v1 self-exclusion convention).
+
+**No MANIFEST additions** (no new data acquisitions; the review report is a source document, not a dataset).
+
 ## 2026-10-13 — LUNAWEB 22-step build timeline (Gates/Journey expansion; no push)
 
 **Why this matters**: The portal's Gates & Journey tab summarized the program in 5 milestone cards; the full 22-step arc — including the honest failures (illumination collapse, stereo quality FAIL, fabricated "passed" literal, leak-inflated early ML numbers) — is the strongest evidence for the epistemic thesis the portal sells. User decisions this session: ALL 22 rows, no dates (step numbers carry chronology), expand the existing Journey block.

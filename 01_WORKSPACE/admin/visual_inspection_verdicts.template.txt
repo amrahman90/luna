@@ -1,0 +1,64 @@
+# LUNARVOID — Visual Inspection Verdicts Form (Awaiting User Entry)
+#
+# INSTRUCTIONS:
+# For each cluster/candidate, replace UNASSESSED with one of:
+#   FP_IMPACT_CRATER    — regular impact crater or degraded crater morphology
+#   FP_CRATER_RIM       — floor-fractured crater rim / mare ridge / ejecta feature
+#   FP_RING_ARTIFACT    — multi-scale Frangi filter halo artifact around deep pit
+#   TP_CATALOGUED_PIT   — catalogued pit re-detection (requires user confirmation of 138m distance)
+#   CANDIDATE_TUBE_SAG  — probable roof-sag depression or bridge feature (promotes to Tier B)
+#   AMBIGUOUS           — unresolved under available NAC illumination (retains Tier C)
+#
+# SKEPTIC NOTE: Pre-filling verdicts is prohibited. Changing r003 from FP to TP 
+# would alter the frozen primary FP rate (3.74 -> 2.91 per 10^4 km^2). 
+# Verdicts must be explicitly chosen by the human investigator.
+
+# ==============================================================================
+# Cluster 1: FECUNPIT (Central Mare Fecunditatis)
+# ==============================================================================
+# Feature 1 & 2: Large depressions 552m from catalogued pit (lat ≈ -0.328°, lon ≈ 48.752°)
+LV-FECUNPIT-0400cm-r001: UNASSESSED
+LV-FECUNPIT-0400cm-r002: UNASSESSED
+LV-FECUNPIT-0500cm-r001: UNASSESSED
+LV-FECUNPIT-0500cm-r002: UNASSESSED
+
+# Feature 3: Depression 138m from pit (lat ≈ -0.198°, lon ≈ 48.750°)
+# (Outside 100m match radius; within 150m relaxed radius. Is this the pit rim or separate?)
+LV-FECUNPIT-0400cm-r003: UNASSESSED
+LV-FECUNPIT-0500cm-r003: UNASSESSED
+
+# ==============================================================================
+# Cluster 2: TRANQPIT1 (12 km NW of Mare Tranquillitatis Pit)
+# ==============================================================================
+# Large-amplitude features at embayment margin (lat ≈ 8.747°, lon ≈ 33.197°)
+LV-TRANQPIT1-0500cm-r001: UNASSESSED
+LV-TRANQPIT1-0500cm-r002: UNASSESSED
+LV-TRANQPIT1-0500cm-r003: UNASSESSED
+
+# ==============================================================================
+# Cluster 3: INGENIIPIT Halo Artifacts (Sub-km rings around Mare Ingenii Pit)
+# ==============================================================================
+# Secondary circular filter responses around catalogued pit (lat ≈ -35.950°, lon ≈ 166.055°)
+LV-INGENIIPIT-0200cm-r002: UNASSESSED
+LV-INGENIIPIT-0200cm-r003: UNASSESSED
+LV-INGENIIPIT-0200cm-r004: UNASSESSED
+LV-INGENIIPIT-0200cm-r005: UNASSESSED
+LV-INGENIIPIT-0200cm-r006: UNASSESSED
+LV-INGENIIPIT-0200cm-r007: UNASSESSED
+LV-INGENIIPIT-0200cm-r008: UNASSESSED
+
+LV-INGENIIPIT-0400cm-r002: UNASSESSED
+LV-INGENIIPIT-0400cm-r003: UNASSESSED
+LV-INGENIIPIT-0400cm-r004: UNASSESSED
+LV-INGENIIPIT-0400cm-r005: UNASSESSED
+LV-INGENIIPIT-0400cm-r006: UNASSESSED
+LV-INGENIIPIT-0400cm-r007: UNASSESSED
+LV-INGENIIPIT-0400cm-r008: UNASSESSED
+
+LV-INGENIIPIT-0500cm-r002: UNASSESSED
+LV-INGENIIPIT-0500cm-r003: UNASSESSED
+LV-INGENIIPIT-0500cm-r004: UNASSESSED
+LV-INGENIIPIT-0500cm-r005: UNASSESSED
+LV-INGENIIPIT-0500cm-r006: UNASSESSED
+LV-INGENIIPIT-0500cm-r007: UNASSESSED
+LV-INGENIIPIT-0500cm-r008: UNASSESSED

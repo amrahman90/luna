@@ -1,0 +1,350 @@
+=====================================================================
+REVIEW REPORT
+LUNARVOID Master Plan v5.0 — Critical Assessment
+Reviewed: 06 August 2026
+Review stance: adversarial. Treated as a submitted proposal, not a
+working document. Strengths noted briefly; the value is in Section 2.
+=====================================================================
+
+RECOMMENDATION:  MAJOR REVISION
+                 The plan is well-constructed and internally coherent,
+                 but rests on one unverified physical premise that
+                 determines whether the flagship contribution exists.
+                 That premise is checkable analytically in under a
+                 week, and was never checked across six documents.
+
+SCORECARD
+  Scientific framing and honesty ............ 9.0/10
+  Evidence discipline ....................... 9.0/10
+  Evaluation protocol ....................... 9.0/10
+  Data architecture ......................... 8.5/10
+  Method inheritance ........................ 6.5/10  (overstated)
+  Core premise verification ................. 3.0/10  (never done)
+  Resource realism .......................... 4.5/10  (compute only)
+  Execution readiness ....................... 6.0/10
+  OVERALL ................................... 6.9/10
+
+=====================================================================
+1. WHAT THE PLAN GETS RIGHT  (brief — these need no action)
+=====================================================================
+
+S1  The inference-not-detection framing is correct and consistently
+    maintained. It will survive review.
+S2  The evidence hierarchy table (Sec. 3) is the strongest single
+    artifact. It correctly refuses to let GRAIL (10-30 km) speak about
+    60-300 m features, and correctly demotes Diviner to confirmer.
+S3  The label-limitation insight (Sec. 1) is right and consequential,
+    and it correctly reorders spending away from compute.
+S4  The evaluation protocol is more rigorous than most published work
+    in this area — particularly false positives per 10^4 km^2 rather
+    than FPR, and mandatory manual FP inspection.
+S5  Pre-registering the null-result plan (Sec. 11) is good practice
+    and rare.
+S6  The deliberate-exclusions list reads as maturity, not limitation.
+
+=====================================================================
+2. FINDINGS REQUIRING ACTION
+=====================================================================
+
+-------------------------------------------------------------------
+F1  [CRITICAL] THE ROOF-SAG AMPLITUDE WAS NEVER ESTIMATED
+-------------------------------------------------------------------
+The distinctive scientific hook across three plan versions — "search
+for roofs, not holes" — assumes an intact tube roof produces a surface
+depression large enough to measure. Six documents, ~23,000 words, and
+the magnitude is never computed once.
+
+I computed it. Clamped slab under self-weight, unit width:
+
+    delta = rho * g * L^4 / (32 * E * h^2)
+
+with rho = 3000 kg/m^3, g = 1.62 m/s^2:
+
+    span L   roof h   E(GPa)    deflection
+    ------   ------   ------    ----------
+      65 m     26 m      50       0.08 mm     Marius Hills, intact
+     100 m     26 m      50       0.45 mm
+     300 m     26 m      50       3.6 cm      max span, intact rock
+     300 m     26 m      10       18.2 cm     fractured
+     300 m     10 m      10       1.23 m      thin roof, weak rock
+     300 m     10 m       5       2.46 m      heavily damaged
+     500 m     10 m      10       9.49 m      near-collapse
+
+Against a NAC DTM vertical precision of roughly 0.2-1.0 m, and a
+best-case corrected noise floor of 0.21 m RMSE (and that figure came
+from 5 cm/px drone data over a built-up town, not 2-5 m lunar stereo):
+
+  ELASTIC FLEXURE OF A COMPETENT BASALT ROOF IS UNDETECTABLE. By one
+  to three orders of magnitude. At Marius Hills, sub-millimetre.
+
+Worse, these are UPPER BOUNDS. Real lava tube roofs are arched, and
+arches carry load largely in compression, reducing deflection further.
+A flat-slab model flatters the project.
+
+This does not kill the idea, but it forces a reframing that changes
+what the project is looking for:
+
+  (a) The mechanism must be restated. The detectable signal is NOT
+      elastic flexure. It is CUMULATIVE DEGRADATION OF AN UNSUPPORTED
+      SPAN over ~3.5 Gyr: roof spalling and rubble infill, regolith
+      drainage into fractures, and progressive impact-induced damage
+      preferentially weakening unsupported ground. Those produce
+      metre-scale subsidence — and they are the recognised mechanism
+      behind pit chains and sagging rille segments.
+
+  (b) The detectable population is NARROW and identifiable in advance.
+      Deflection scales as L^4/h^2. Detectability therefore requires
+      thin roofs over wide spans in damaged rock — i.e. the
+      NEAR-COLLAPSE regime. This is a genuine, quantitative,
+      publishable targeting criterion that sharpens the search rather
+      than weakening it. Marius Hills, with ~26 m roof and friable
+      vesicular protolith, sits closer to this regime than
+      Tranquillitatis with its competent dense basalt.
+
+  (c) Gate G1 as written CANNOT BE EVALUATED. It asks whether sag
+      exceeds the noise floor, but the plan supplies no sag amplitude
+      to compare against. The gate has one measured term and one
+      undefined term.
+
+ACTION: insert WP0.5 — ROOF DEFORMATION FORWARD MODEL. Analytical plus
+finite-element deflection across the plausible parameter space (span,
+thickness, modulus, arch geometry, degradation state), producing a
+predicted-amplitude distribution. Cheap: weeks, no new data, no
+compute. It must precede WP1, because it defines what WP1 is testing
+for. Reframe the hook as "detecting near-collapse unsupported spans,"
+not "detecting roof flexure."
+
+-------------------------------------------------------------------
+F2  [CRITICAL] THE NO-CHANGE REFERENCE SURFACE IS SELECTION-BIASED
+-------------------------------------------------------------------
+The kriged-correction transfer (I2/I3) depends on selecting reference
+points where no true elevation change is expected. On Earth this was
+roofs, runways and cleared roads — hard, textured, unambiguously
+identifiable surfaces.
+
+The plan proposes "flat mare panels with no mapped features." But
+featureless low-texture terrain is precisely where stereo correlation
+degrades and DTM quality is WORST. The reference points would therefore
+be drawn from the highest-noise regions of the DTM, and the kriged
+surface would encode correlation failure as if it were systematic
+geometric error — then subtract it from everywhere, including the good
+areas.
+
+This inverts the terrestrial logic and could actively damage the
+product. I introduced this without noticing the inversion.
+
+ACTION: build the reference set from LOLA ground tracks and track
+crossovers instead. LOLA is an independent instrument with independent
+error characteristics, dense coverage, and no texture dependence.
+Crossover residuals are the established lunar analogue of P1's cleared
+roads. Validate that kriging against LOLA does not smooth real relief
+by reporting the spatial-frequency comparison, exactly as the source
+paper did.
+
+-------------------------------------------------------------------
+F3  [MAJOR] VCI MAY NOT BE COMPUTABLE FROM LUNAR ORBITAL STEREO
+-------------------------------------------------------------------
+VCI measures the evenness of the vertical distribution of points WITHIN
+a voxel column. It requires multiple returns per column.
+
+A NAC stereo DTM is 2.5D — one elevation per cell. Converted to a point
+cloud, every column contains exactly one point, so VCI is zero or
+undefined everywhere by construction. The v4/v5 claim that VCI "spikes
+at pit walls" is only true for a genuinely volumetric cloud.
+
+It is salvageable, but conditionally: fusing the pre-gridded ASP
+triangulated clouds (PC.tif) from MANY stereo pairs at differing
+viewing geometries does produce multiple returns per column near steep
+walls and overhangs, because different geometries see different parts
+of the wall. That is a real and interesting method — but it is a
+multi-pair fusion problem, not a drop-in inheritance, and it only works
+where multi-geometry coverage exists.
+
+ACTION: demote VCI from "inherited component" to "conditional method
+requiring multi-pair cloud fusion." Add an explicit feasibility test in
+WP0 on the Tranquillitatis multi-pair stack: compute points-per-column
+statistics before claiming VCI applies. If median column occupancy is
+1, the method is dead and should be cut rather than carried.
+
+-------------------------------------------------------------------
+F4  [MAJOR] THE 30-SECOND RUNTIME CLAIM DOES NOT SCALE
+-------------------------------------------------------------------
+The plan cites ~30 s per dataset on a 16 GB laptop as independent
+confirmation of the Tier-0 infrastructure claim. That runtime was for a
+28.2 ha site. A single NAC DTM footprint is on the order of 100+ km^2 —
+roughly four to five orders of magnitude more area. The inference does
+not hold.
+
+ACTION: remove the claim as stated. Tier 0 remains defensible on other
+grounds (raster operations, pre-made DTMs), but benchmark actual
+runtime on one full NAC DTM in WP0 and state the measured figure.
+
+-------------------------------------------------------------------
+F5  [MAJOR] THE BUDGET IS A COMPUTE BUDGET PRESENTED AS A PROJECT
+    BUDGET
+-------------------------------------------------------------------
+"Under $800 across 30 months" covers cloud instances only. It excludes:
+the WP1 drone field campaign (travel, equipment, personnel, permits);
+any salary or stipend; publication charges (Remote Sensing of
+Environment and ISPRS open-access fees run to several thousand dollars
+each, and the plan proposes six papers); conference travel; and the
+terrestrial analog site access.
+
+Presenting $800 as the project cost would read to a funding reviewer as
+either naive or evasive.
+
+ACTION: relabel explicitly as COMPUTE BUDGET. Add a separate indicative
+cost envelope with the categories above, even if approximate. State
+team size and FTE, which the plan never does anywhere.
+
+-------------------------------------------------------------------
+F6  [MAJOR] LLTB-1 CANNOT BE OPENLY RELEASED AS CURRENTLY CONSTITUTED
+-------------------------------------------------------------------
+The flagship deliverable is an open benchmark. Its primary ground-truth
+component is the NASA Planetary Pits and Caves Analog Dataset, which
+the plan itself correctly flags as research/academic use only, with
+commercial use or incorporation into a redistributed database requiring
+explicit written author consent.
+
+The plan flags the licence in the data section and then proposes open
+release in the deliverables section without connecting the two. As
+written, the flagship deliverable is blocked.
+
+ACTION: one of three, decided in M0-M3, not later.
+  (i)  Seek written consent from the dataset authors. Low cost, should
+       be attempted immediately regardless.
+  (ii) Build LLTB-1 only from openly-licensed sources (Corona/
+       Lanzarote, Grotta di Monte Intraleo) plus own drone data, and
+       cite the NASA set as a validation-only reference not
+       redistributed.
+  (iii) Release LLTB-1 as a processing pipeline plus manifest that
+       regenerates the benchmark from sources users obtain themselves.
+
+-------------------------------------------------------------------
+F7  [MODERATE] THE MATCHING RADIUS DEFEATS ITS OWN PURPOSE
+-------------------------------------------------------------------
+The plan sets a >= 30 m matching radius to respect Lunar Pit Atlas
+coordinate accuracy. But candidate sag features are 60-300 m wide. A
+30 m centroid tolerance against features of that size makes matching
+near-automatic, and precision correspondingly near-meaningless.
+
+ACTION: use polygon IoU matching for extended features, retaining
+centroid-distance matching only for point-like pits. Report both.
+
+-------------------------------------------------------------------
+F8  [MODERATE] THE CIRCULARITY CRITICISM APPLIES TO US TOO
+-------------------------------------------------------------------
+The plan states that scoring the ESSA baseline against the Pit Atlas is
+circular because ESSA was trained on Atlas labels. Two problems. First,
+ESSA's newly-surfaced skylights are genuine out-of-sample evidence and
+the blanket statement understates it. Second, and more importantly, the
+plan's own WP2 calibrates on Tranquillitatis, an Atlas pit — the same
+circularity, uncriticised.
+
+ACTION: state the shared limitation symmetrically. Define one Atlas
+subset reserved for calibration and a disjoint subset never touched
+until final evaluation, applied identically to our detector and to the
+baseline.
+
+-------------------------------------------------------------------
+F9  [MODERATE] SIX PAPERS IN 30 MONTHS IS NOT STAFFED
+-------------------------------------------------------------------
+The plan never states team size. WP3 explicitly requires geophysics
+collaboration that is not identified. WP7 depends on a robotics partner
+who is not named. Six first-author papers plus a benchmark, a platform,
+a provenance graph and a target list, in 30 months, implies a team of
+three to four.
+
+ACTION: state FTE. If solo or a single PhD, cut to three papers
+(benchmark, catalogue, fusion) and move WP4-WP6 to a stated follow-on.
+
+-------------------------------------------------------------------
+F10 [MODERATE] THE DLR POSITIONING IS UNVERIFIED
+-------------------------------------------------------------------
+Section 12's positioning statement leans entirely on transferring an
+in-house DLR pipeline and on an internal path to the DLR Institute of
+Planetary Research. Nothing in the record establishes that the author
+is at DLR. If not, the positioning is not merely weaker — it is
+inaccurate, and "transfers that validated pipeline" becomes an
+overstatement of relationship.
+
+ACTION: verify. If unaffiliated, reframe as "builds on open-access,
+openly-licensed methods published by DLR Jena" — still true, still
+strong, and correctly attributed.
+
+-------------------------------------------------------------------
+F11 [MINOR] NO COMPETITIVE-DISPLACEMENT CONTINGENCY
+-------------------------------------------------------------------
+The field is active; ESSA appeared in 2025. A competing roof-sag or
+near-collapse detection paper published during WP1 would gut Paper 2
+and the plan has no response.
+
+ACTION: add a standing quarterly literature scan with a defined
+pivot — toward the benchmark, the fusion methodology, or Mars, all of
+which retain value independently.
+
+-------------------------------------------------------------------
+F12 [MINOR] "NOT COMPUTE-LIMITED" IS ASSERTED BEFORE IT IS TESTED
+-------------------------------------------------------------------
+Section 1's organising claim is well-argued but rests on the pre-made
+DTM route. If WP2 finds that published DTMs do not cover enough
+tube-relevant mare terrain, the project becomes compute-limited after
+all, and the conclusion silently flips.
+
+ACTION: make the M0-M3 index intersection an explicit gate condition,
+with a stated minimum coverage threshold below which the infrastructure
+strategy is revisited.
+
+=====================================================================
+3. PRIORITISED ACTIONS
+=====================================================================
+
+BEFORE ANY OTHER WORK
+  1. WP0.5 roof deformation forward model (F1). Weeks, no data, no
+     compute. Defines what everything downstream is testing for.
+  2. Reframe the hook: near-collapse unsupported spans, not elastic
+     flexure (F1). Adjust target site priority toward thin-roof,
+     weak-protolith candidates.
+  3. Switch the kriging reference set to LOLA tracks and crossovers
+     (F2).
+
+WITHIN M0-M3
+  4. VCI column-occupancy feasibility test; cut or keep on evidence
+     (F3).
+  5. Write to the NASA dataset authors for release consent (F6).
+  6. State team size, FTE, and a full cost envelope (F5, F9).
+  7. Make index-intersection coverage an explicit gate (F12).
+  8. Verify institutional affiliation and fix positioning (F10).
+
+BEFORE PUBLICATION
+  9. Polygon IoU matching for extended features (F7).
+  10. Symmetric calibration/evaluation split for us and the baseline
+      (F8).
+  11. Measured NAC-scale runtime replacing the 30 s claim (F4).
+  12. Quarterly literature scan and pivot triggers (F11).
+
+=====================================================================
+4. ASSESSMENT
+=====================================================================
+
+The plan's reasoning quality is high and its intellectual honesty is
+unusually good — the evidence hierarchy, the base-rate arithmetic and
+the pre-registered null all reflect genuine discipline. Nothing in this
+review overturns the project's core judgement that lunar void inference
+is feasible, cheap, and under-explored.
+
+But the plan verified everything except its own central premise. It
+scrutinised GRAIL's resolution, Diviner's blindness, ESSA's
+circularity, label scarcity and the base rate — and never once asked
+how big the signal it was hunting actually is. That is a
+characteristic failure mode: the hook was attractive, and attractive
+hooks get elaborated rather than tested.
+
+The good news is that the test is trivial, and the result improves the
+project. Deflection scaling as L^4/h^2 converts a vague aspiration into
+a quantitative targeting criterion: look for thin roofs over wide spans
+in damaged rock, because nothing else moves enough to see. That is a
+sharper, more defensible, more publishable project than v5 describes.
+
+Revise and proceed.
+=====================================================================

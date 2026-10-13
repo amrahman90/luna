@@ -1,18 +1,19 @@
-# RESUME — LUNARVOID project state (2026-09-13, session 64)
+# RESUME — LUNARVOID project state (2026-10-13, post-timeline session)
 
 > Canonical resume document for the LUNARVOID project. Read this
 > file when resuming — it captures the frozen state, resume
 > protocol, user-gated items, and verification commands in a
 > single document, so future sessions don't have to re-read the
 > 713-line `notes/findings.md` dense prose layer.
+> Updated 2026-10-13 (was 2026-09-13 session 64).
 
 ---
 
-## 1. Frozen state (verified 2026-09-13, HEAD `82aedfb`)
+## 1. Frozen state (verified 2026-10-13, HEAD `a881c2d`)
 
 | Item | Value |
 |---|---|
-| Registry md5 | `a60fb52152e33f37e9052434ad026a6e` (278 rows = 117 ACTIVE + 161 SUPERSEDED) |
+| Registry md5 | `a60fb52152e33f37e9052434ad026a6e` (278 rows = 117 ACTIVE + 161 SUPERSEDED) — unchanged 2026-10-13 |
 | Sidecar flags sha256 | `1c884a1ee965c9a3bbbc1b34531509a4a676ae8e9f10ed45280a7b0ef7fb498e` |
 | Above-floor decomp | 45 = 14 TP + 9 FP + 21 ring + 1 funnel |
 | FP (row-based) | **3.74 [1.71, 7.10]** per 10⁴ km² over 24,062.96 km² |
@@ -24,7 +25,9 @@
 | Verifier scripts | v02 21/21 · v03 15/15 · v04 11/11 |
 | Zenodo CHECKSUMS | 10/10 verified |
 | Disk | ≥40 GB free on `/` required |
-| Spend | $0 across 62 sessions; $150 budget cap; $800 master-plan ceiling |
+| Spend | $0 across all sessions; $150 budget cap; $800 master-plan ceiling |
+| Git sync (2026-10-13) | parent master **ahead 5 / behind 4** (2026-10-05 history date-rewrite → push needs `--force-with-lease`); luna-web main ahead (22-step timeline batch, not pushed) |
+| Portal (luna-web) | 22-step dateless build timeline on Gates & Journey tab (commit `09b31a1`); tests 79/79 |
 
 ## 2. Resume protocol (6 steps)
 
@@ -37,7 +40,9 @@
 
 ## 3. User-gated items (R3 §11 — per protocol stop conditions, do NOT auto-start)
 
-- **(a)** Step 8.3/8.4: TRANQPIT1 local ASP reproduction (history: session-58 audit verdict "not completed locally; no output DTM exists").
+- **(a)** Step 8.3/8.4: TRANQPIT1 local ASP reproduction (history: session-58 audit verdict "not completed locally; no output DTM exists"; session-65 chain now runs end-to-end — retry is infrastructure-ready).
+- **(f)** Push sync: parent master `git push --force-with-lease origin master` (history date-rewrite 2026-10-05); luna-web `git push` main (deploys the timeline + ROADMAP batch to GH Pages).
+- **(g)** arXiv/ESS preprint upload of `papers/wp0_5_paper_draft_v1.pdf` (submission-ready; user does the upload).
 - **(b)** Step 19.1/19.2 + NAC IMG-byte-signature fetch pipeline (Tier-0 budget eligible; would be first WP0 reproduction since cycle 2 close).
 - **(c)** P6.0–P6.8: Hetzner AX52 rental (~$55/mo; needs credentials + provider choice).
 - **(d)** R1 roadmap commit at `01_WORKSPACE/plans/2026-08-21_R1_Roadmap_draft.md` (currently untracked).
@@ -86,7 +91,10 @@ done
 - **s61**: `.gitignore` line 85 added (sandbox HTML); MANIFEST row added; VERIFICATION.md (164 lines → 176 after corrections) tracked.
 - **s62**: protocol recheck of s58–61; retro-skeptic on s60 NAC HIGH-OPEN (view_rdr_product is ALSO an HTML viewer; tier preserved, wording corrected); verifier FAIL on s60 + PASS-with-notes on s59; 7 surgical corrections applied; vault catch-up s58–61.
 - **s63**: recheck-of-recheck; verifier PASS-with-notes on s62 (11/11 items); 00_HOME housekeeping drift fixed (43→62 sessions, 141→150 R3 lines).
-- **s64** (this session): canonical RESUME.md + final standdown bookkeeping.
+- **s64**: canonical RESUME.md + final standdown bookkeeping.
+- **s65–68** (2026-09-14→27): NAC stereo chain runs end-to-end locally (LDEM/LSK fix; bundle_adjust root-caused); 3 homemade DEMs FAIL quality vs published — attributed to 0.5° convergence geometry, not bugs; VERIFIED-BYTE NAC anaglyph; 28/28 NAC EDRs fetched; WP0.5 roof-deflection forward model (3 regimes, 2,880-row sweep, 7/7 anchors ≤3.48%); outreach kit; commit-policy rule 5 update.
+- **s69–70 + portal (2026-10-05)**: WP0.5 paper draft v1 (10,610 words, full skeptic chain, SOUND-with-objections resolved); PDF conversions (weasyprint); LUNAWEB portal refresh v1 (WP0.5 first-class, tests 67→74); commit dates of 2 session commits rewritten to 2026-10-04 at user direction (origin now diverged).
+- **s72 timeline (2026-10-13)**: LUNAWEB 22-step dateless build timeline on the Gates & Journey tab (user decisions: all rows, no dates, expand journey block); tests 74→79; plan + figures committed; ROADMAP/RESUME/stray-files bookkeeping (this update).
 
 ## 6. Permissions in effect (`.gitignore` + role split)
 
@@ -105,6 +113,7 @@ done
 3. **s59**: paper-writer R3 draft hit `plans/` write gap, used `cp` via `notes/` → `plans/` workaround (permission gap).
 4. **s61**: geo-coder R3 §7 edit applied via Python in-place write (opencode.json blocks `edit` on `plans/`).
 5. **s62**: orchestrator surgical edits to R3 + VERIFICATION.md + MANIFEST (no subagent cleanly owns plans/ content edits or sandbox verification-record wording fixes).
+6. **s72 (2026-10-13)**: orchestrator-supplied commit message contained `$0` (C12 cost-guard violation); caught by archivist; unpushed tip amended message-only (rewrite remedy reserved for cost-phrase class per s58 precedent). Also: 3 stray deliverables from earlier sessions committed this pass (v5 review report, Oct-5 verify JSON, visual-verdict template) — the Oct-5 sessions had left them untracked.
 
 **Step 0a gap acknowledged**: sessions 59–61 did NOT load the protocol skill at session start (only session 58 did); corrected going forward.
 
