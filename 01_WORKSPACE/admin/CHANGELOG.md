@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Newest entries first. Format: date — what — where — why.
 
+## 2026-10-13 — LUNAWEB 22-step build timeline (Gates/Journey expansion; no push)
+
+**Why this matters**: The portal's Gates & Journey tab summarized the program in 5 milestone cards; the full 22-step arc — including the honest failures (illumination collapse, stereo quality FAIL, fabricated "passed" literal, leak-inflated early ML numbers) — is the strongest evidence for the epistemic thesis the portal sells. User decisions this session: ALL 22 rows, no dates (step numbers carry chronology), expand the existing Journey block.
+
+**What shipped** (luna-web, 3 files; orchestrator direct per session-70 routing precedent — luna-web is outside geo-coder scope):
+- `src/lib/lunarvoid-data.ts` — `TimelineStep` + `TIMELINE` (22 entries, real-record stratum, provenance = admin/CHANGELOG.md sessions 1–70; milestones 08/13/15/19/21)
+- `src/components/sections/GatesJourneySection.tsx` — 5-card JOURNEY grid replaced by a semantic `<ol>` vertical timeline (mono number cells, success-tone milestone cells, neutral spine); header tagline "The complete build record — every step, including the failures."; frozen stats / WP0.5 panel / gates accordion / budget ledger UNTOUCHED
+- `src/lib/__tests__/program-record.test.ts` — +5 TIMELINE pins (order/uniqueness; dateless regex guard; claim-discipline guard; milestone set; content spot-pins)
+- Row 22 rewritten for the public surface (internal commit-date bookkeeping → "Session bookkeeping closed; total program spend: $0 of the $800 lifetime ceiling…") — internal git ops are not portal content
+- Plan file `plans/2026-10-13_LUNAWEB_TIMELINE_PLAN_v1.md` + screenshots `plans/figures/timeline-{desktop,mobile}.png` (parent repo)
+
+**Verification**: format/lint/typecheck/build ALL PASS; tests 74 → 79/79; browser check — 22 steps render on the gates tab, 5 milestone cells, no horizontal overflow at 390 px, number cells aligned; 1 console error = the documented pre-existing R3F tab-switch teardown race (cosmetic, unrelated). No frozen portal field changed.
+
+**User actions**: push luna-web main (deploys); push parent master when ready. Deferred: TIMELINE in registry JSON export (narrative ≠ working set; on request).
+
 ## 2026-10-05 — LUNAWEB portal content refresh v1 (WP0.5 + post-R3 updates, no push)
 
 **Why this matters**: The LUNARVOID Portal's content stratum had been frozen at the R3 terminal report (2026-09-12, 58 sessions). Everything since — the WP0.5 forward-model falsification test, the 10,610-word paper draft, the 4-panel deflection figure, the 7/7 anchor reproduction, the 2,880-row sweep, the per-DTM floor band 1.97-4.39 m, the outreach kit — was absent from the public surface. The Portal is the artifact the user shows to PhD-application faculty and cold-email recipients; the WP0.5 F1 finding ("intact-roof sag δ sub-floor by 1-5 orders") is the strongest possible evidence for the Portal's epistemic thesis ("we do not detect, we infer"), and it is now first-class on every relevant surface.
